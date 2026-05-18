@@ -1,0 +1,60 @@
+name: Build Modules API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/**/manifest.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build api/modules.json from manifests
+        run: |
+          python3 - <<'EOF'
+          import json, os, glob, re
+          from datetime import datetime
+
+          manifests = sorted(glob.glob("modules/**/manifest.json", recursive=True))
+          items = []
+          for path in manifests:
+              with open(path) as f:
+                  data = json.load(f)
+              # Ensure required fields exist
+              module_id = data.get("moduleId") or os.path.basename(os.path.dirname(path))
+              data["moduleId"] = module_id
+              if not data.get("downloadUrl"):
+                  data["downloadUrl"] = f"https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/{module_id}/module.html"
+              if not data.get("githubUrl"):
+                  data["githubUrl"] = f"https://github.com/AI-Hydro/Modules/tree/main/modules/{module_id}"
+              if not data.get("createdAt"):
+                  data["createdAt"] = datetime.now().strftime("%Y-%m-%d")
+              data["updatedAt"] = datetime.now().strftime("%Y-%m-%d")
+              items.append(data)
+
+          os.makedirs("api", exist_ok=True)
+          with open("api/modules.json", "w") as f:
+              json.dump(items, f, indent=2)
+          print(f"Built api/modules.json with {len(items)} module(s):")
+          for item in items:
+              print(f"  - {item['moduleId']}: {item['title']}")
+          EOF
+
+      - name: Commit updated API
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add api/modules.json
+          if git diff --staged --quiet; then
+            echo "No changes to api/modules.json"
+          else
+            git commit -m "ci: rebuild api/modules.json [skip ci]"
+            git push
+          fi
