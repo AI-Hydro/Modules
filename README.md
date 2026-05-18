@@ -13,6 +13,7 @@ Open the **Modules Marketplace** tab in the AI-Hydro HTML Preview panel. Search,
 | Module | Topic | Level | Time |
 |---|---|---|---|
 | [From DEM to TWI](modules/dem-to-twi/) | Terrain analysis | Intro | 20 min |
+| [Reading a Hydrograph](modules/reading-a-hydrograph/) | Streamflow | Intro | 18 min |
 
 ## Contribute a module
 
