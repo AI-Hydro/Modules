@@ -2,17 +2,35 @@
   {
     "moduleId": "dem-to-twi",
     "title": "From DEM to TWI",
-    "description": "Walk through every step from raw elevation data to a Topographic Wetness Index map — with a clickable 5×5 DEM, live slope calculator, interactive watershed map, and executable Python cells.",
+    "description": "Walk through every step from raw elevation data to a Topographic Wetness Index map \u2014 with a clickable 5\u00d75 DEM, live slope calculator, interactive watershed map, and executable Python cells.",
     "version": "0.4.0",
     "author": "AI-Hydro Team",
     "license": "CC-BY-4.0",
     "topic": "terrain-analysis",
     "level": "intro",
     "estimatedMinutes": 20,
-    "tags": ["TWI", "DEM", "terrain", "flow-direction", "contributing-area", "hydrology"],
+    "tags": [
+      "TWI",
+      "DEM",
+      "terrain",
+      "flow-direction",
+      "contributing-area",
+      "hydrology"
+    ],
     "thumbnailUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/thumbnail.png",
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
+    "requires": {
+      "executable": true,
+      "python": [
+        "numpy",
+        "matplotlib"
+      ]
+    },
+    "citation": {
+      "text": "Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrological Sciences Bulletin, 24(1), 43\u201369.",
+      "doi": "10.1080/02626667909491834"
+    },
     "createdAt": "2026-05-18",
     "updatedAt": "2026-05-18"
   }
