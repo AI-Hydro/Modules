@@ -33,5 +33,40 @@
     },
     "createdAt": "2026-05-18",
     "updatedAt": "2026-05-18"
+  },
+  {
+    "moduleId": "reading-a-hydrograph",
+    "title": "Reading a Hydrograph",
+    "description": "Scroll through the anatomy of a storm hydrograph \u2014 rising limb, peak, recession \u2014 then drag a Lyne\u2013Hollick \u03b1 slider to separate baseflow live, watch a 2-panel storm comparison expose non-linear runoff response, and run a Python cell that generates a CAMELS-style annual hydrograph for three contrasting gauges.",
+    "version": "0.1.0",
+    "author": "AI-Hydro Team",
+    "license": "CC-BY-4.0",
+    "topic": "streamflow",
+    "level": "intro",
+    "estimatedMinutes": 18,
+    "tags": [
+      "hydrograph",
+      "baseflow",
+      "BFI",
+      "Lyne-Hollick",
+      "scrollytelling",
+      "streamflow",
+      "CAMELS"
+    ],
+    "thumbnailUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/reading-a-hydrograph/thumbnail.png",
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/reading-a-hydrograph/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/reading-a-hydrograph",
+    "requires": {
+      "executable": true,
+      "python": [
+        "numpy",
+        "matplotlib"
+      ]
+    },
+    "citation": {
+      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89\u201393."
+    },
+    "createdAt": "2026-05-18",
+    "updatedAt": "2026-05-18"
   }
 ]
