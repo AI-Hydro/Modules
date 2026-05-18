@@ -3,7 +3,7 @@
   "title": "Reading a Hydrograph",
   "description": "Scroll through the anatomy of a storm hydrograph — rising limb, peak, recession — then drag a Lyne–Hollick α slider to separate baseflow live, watch a 2-panel storm comparison expose non-linear runoff response, and run a Python cell that generates a CAMELS-style annual hydrograph for three contrasting gauges.",
   "version": "0.1.0",
-  "author": "AI-Hydro Team",
+  "author": "Mohammad Galib, Purdue University",
   "license": "CC-BY-4.0",
   "topic": "streamflow",
   "level": "intro",

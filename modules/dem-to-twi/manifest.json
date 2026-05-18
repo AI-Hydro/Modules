@@ -3,7 +3,7 @@
   "title": "From DEM to TWI",
   "description": "Walk through every step from raw elevation data to a Topographic Wetness Index map — with a clickable 5×5 DEM, live slope calculator, interactive watershed map, and executable Python cells.",
   "version": "0.4.0",
-  "author": "AI-Hydro Team",
+  "author": "Mohammad Galib, Purdue University",
   "license": "CC-BY-4.0",
   "topic": "terrain-analysis",
   "level": "intro",

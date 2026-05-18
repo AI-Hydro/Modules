@@ -13,7 +13,7 @@
   "id": "reading-a-hydrograph",
   "title": "Reading a Hydrograph",
   "version": "0.1.0",
-  "authors": [{ "name": "AI-Hydro Team", "affiliation": "AI-Hydro Project" }],
+  "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "streamflow",
   "level": "intro",
@@ -647,7 +647,7 @@ select:focus { outline:1px solid var(--cyan); }
 <!-- ══════════════════════════════════════════════════════════ -->
 <div id="sec-prov" class="provenance">
   <div class="prov-item"><dt>Module</dt><dd>reading-a-hydrograph · v0.1.0 · CC-BY-4.0</dd></div>
-  <div class="prov-item"><dt>Authors</dt><dd>AI-Hydro Team</dd></div>
+  <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
   <div class="prov-item"><dt>Synthetic event</dt><dd>96-hour gamma response (shape=4, scale=6) on a 4-hour rainfall pulse, hand-tuned for instruction.</dd></div>
   <div class="prov-item"><dt>Baseflow filter</dt><dd>Lyne–Hollick recursive digital filter (1979); 3 passes; default α = 0.925.</dd></div>
   <div class="prov-item"><dt>Storm comparison model</dt><dd>SCS curve-number runoff fraction convolved with gamma UH.</dd></div>
@@ -1338,7 +1338,7 @@ select:focus { outline:1px solid var(--cyan); }
       'ax1.set_title(f"USGS {GAUGE} · {PROFILE} · BFI = {BFI:.3f}", color="#fff", fontsize=11)',
       'ax1.legend(loc="upper left", framealpha=0.4, fontsize=9)',
       '',
-      'ax2.bar(days, storms*5, width=1.0, color="rgba(125,211,252,0.5)", alpha=0.7)',
+      'ax2.bar(days, storms*5, width=1.0, color=(0.49, 0.83, 0.99, 0.5))',
       'ax2.set_xlabel("Day of year"); ax2.set_ylabel("Rain (mm)")',
       'ax2.invert_yaxis()',
       '',
