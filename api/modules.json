@@ -32,7 +32,11 @@
       "doi": "10.1080/02626667909491834"
     },
     "createdAt": "2026-05-18",
-    "updatedAt": "2026-05-18"
+    "updatedAt": "2026-05-19",
+    "isFeatured": true,
+    "downloadCount": 0,
+    "githubReactions": 0,
+    "discussionUrl": ""
   },
   {
     "moduleId": "reading-a-hydrograph",
@@ -66,7 +70,11 @@
     "citation": {
       "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89\u201393."
     },
-    "createdAt": "2026-05-18",
-    "updatedAt": "2026-05-18"
+    "isFeatured": true,
+    "createdAt": "2026-05-19",
+    "updatedAt": "2026-05-19",
+    "downloadCount": 0,
+    "githubReactions": 0,
+    "discussionUrl": ""
   }
 ]
