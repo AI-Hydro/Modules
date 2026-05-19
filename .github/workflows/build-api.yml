@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'modules/**/manifest.json'
+  schedule:
+    # Refresh reaction counts daily at 06:00 UTC
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
+  discussions: read
 
 jobs:
   build:
@@ -19,7 +23,7 @@ jobs:
       - name: Build api/modules.json from manifests
         run: |
           python3 - <<'EOF'
-          import json, os, glob, re
+          import json, os, glob
           from datetime import datetime
 
           manifests = sorted(glob.glob("modules/**/manifest.json", recursive=True))
@@ -27,7 +31,6 @@ jobs:
           for path in manifests:
               with open(path) as f:
                   data = json.load(f)
-              # Ensure required fields exist
               module_id = data.get("moduleId") or os.path.basename(os.path.dirname(path))
               data["moduleId"] = module_id
               if not data.get("downloadUrl"):
@@ -37,6 +40,20 @@ jobs:
               if not data.get("createdAt"):
                   data["createdAt"] = datetime.now().strftime("%Y-%m-%d")
               data["updatedAt"] = datetime.now().strftime("%Y-%m-%d")
+              # Preserve existing reaction/download counts if already in api/modules.json
+              existing_path = "api/modules.json"
+              if os.path.exists(existing_path):
+                  with open(existing_path) as ef:
+                      existing = {e["moduleId"]: e for e in json.load(ef)}
+                  prev = existing.get(module_id, {})
+                  data.setdefault("downloadCount", prev.get("downloadCount", 0))
+                  data.setdefault("githubReactions", prev.get("githubReactions", 0))
+                  data.setdefault("discussionUrl", prev.get("discussionUrl", ""))
+              else:
+                  data.setdefault("downloadCount", 0)
+                  data.setdefault("githubReactions", 0)
+                  data.setdefault("discussionUrl", "")
+              data.setdefault("isFeatured", False)
               items.append(data)
 
           os.makedirs("api", exist_ok=True)
@@ -45,6 +62,69 @@ jobs:
           print(f"Built api/modules.json with {len(items)} module(s):")
           for item in items:
               print(f"  - {item['moduleId']}: {item['title']}")
+          EOF
+
+      - name: Scrape GitHub Discussion reactions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'EOF'
+          import json, subprocess, os
+
+          api_path = "api/modules.json"
+          if not os.path.exists(api_path):
+              print("No api/modules.json found, skipping reaction scrape")
+              exit(0)
+
+          with open(api_path) as f:
+              items = json.load(f)
+
+          repo = "AI-Hydro/Modules"
+          updated = False
+
+          for item in items:
+              module_id = item["moduleId"]
+              title = item.get("title", module_id)
+              discussion_url = item.get("discussionUrl", "")
+
+              # Find or create a discussion for this module
+              search_result = subprocess.run(
+                  ["gh", "api", f"repos/{repo}/discussions",
+                   "--jq", f'[.[] | select(.title == "Module: {title}")] | first'],
+                  capture_output=True, text=True
+              )
+              discussion = None
+              if search_result.returncode == 0 and search_result.stdout.strip() not in ("", "null"):
+                  try:
+                      discussion = json.loads(search_result.stdout.strip())
+                  except Exception:
+                      pass
+
+              if discussion:
+                  reactions_result = subprocess.run(
+                      ["gh", "api", f"repos/{repo}/discussions/{discussion['number']}/reactions",
+                       "--jq", "length"],
+                      capture_output=True, text=True
+                  )
+                  if reactions_result.returncode == 0:
+                      try:
+                          count = int(reactions_result.stdout.strip())
+                          if item.get("githubReactions") != count:
+                              item["githubReactions"] = count
+                              updated = True
+                      except ValueError:
+                          pass
+                  new_url = discussion.get("html_url", "")
+                  if new_url and item.get("discussionUrl") != new_url:
+                      item["discussionUrl"] = new_url
+                      updated = True
+
+          if updated:
+              with open(api_path, "w") as f:
+                  json.dump(items, f, indent=2)
+              print("Updated reaction counts in api/modules.json")
+          else:
+              print("No reaction count changes")
           EOF
 
       - name: Commit updated API
