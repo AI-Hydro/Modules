@@ -9,7 +9,6 @@
   "level": "intro",
   "estimatedMinutes": 20,
   "tags": ["TWI", "DEM", "terrain", "flow-direction", "contributing-area", "hydrology"],
-  "thumbnailUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/thumbnail.png",
   "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/module.html",
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
   "requires": {
