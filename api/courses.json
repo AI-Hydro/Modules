@@ -56,6 +56,9 @@
       }
     ],
     "updatedAt": "2026-06-01",
-    "isFeatured": true
+    "isFeatured": true,
+    "manifestUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/courses/intro-to-hydrology/course.json",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/courses/intro-to-hydrology",
+    "authorAffiliation": "Purdue University"
   }
 ]
