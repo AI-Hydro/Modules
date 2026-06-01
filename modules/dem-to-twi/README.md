@@ -1,32 +1,21 @@
-# From DEM to TWI
+# The Shape of the Land: DEM to TWI
 
-**Level:** Intro · **Time:** ~20 min · **License:** CC-BY-4.0
+**Level:** Intro · **Time:** ~55 min · **License:** CC-BY-4.0 · **Course:** [Introduction to Hydrology](../intro-to-hydrology/)
 
-An interactive learning module that walks through every step of computing the Topographic Wetness Index (TWI) from a Digital Elevation Model.
+Compute the Topographic Wetness Index from a DEM step by step — click cells to trace D8 flow paths, explore the result on a 3-D draggable terrain, and compare elevation vs wetness surfaces side by side with a wipe slider. Includes D8 vs D∞ comparison and a detailed explainer on why ln() matters.
 
 ## What you'll learn
 
-- Why some hillslope cells are wetter than others
-- How D8 flow direction routing works (click any DEM cell to trace its flow path)
-- Why ln() is used instead of raw a/tan(β)
-- D8 vs D∞ algorithm trade-offs
-- How DEM resolution affects TWI values
-- How to compute TWI in Python with numpy
+See the module itself — open it in AI-Hydro's HTML Preview panel.
 
-## What's inside
+## Requirements
 
-- **Interactive 5×5 DEM** — click any cell to highlight upstream contributors and downstream flow path, compute approximate TWI
-- **Real Leaflet map** — USGS gauge 01031500 (Piscataquis basin, Maine) with simulated qualitative TWI overlay
-- **Live calculator** — move sliders to see TWI, tan(β), and a/tan(β) update instantly
-- **Deep-dive reveals** — expandable explanations of Why ln, D8 vs D∞, resolution dependence
-- **Python cells** — point TWI and 16×16 synthetic catchment heatmap (requires AI-Hydro preview kernel)
-- **Checkpoint quiz** — test your understanding
-- **References** — 6 peer-reviewed citations with DOI links
+Python packages: `numpy`, `matplotlib`
 
-## Running in AI-Hydro
+## Citation
 
-Install via the Modules Marketplace in the HTML Preview panel. Requires numpy and matplotlib for the executable cells.
+Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrol. Sci. Bull., 24(1), 43–69.
 
-## Contributing
+## License
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) or open an issue on this repository.
+[CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) — Mohammad Galib, Purdue University

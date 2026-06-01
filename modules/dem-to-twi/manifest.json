@@ -1,25 +1,42 @@
 {
   "moduleId": "dem-to-twi",
-  "title": "From DEM to TWI",
-  "description": "Walk through every step from raw elevation data to a Topographic Wetness Index map — with a clickable 5×5 DEM, live slope calculator, interactive watershed map, and executable Python cells.",
-  "version": "0.4.0",
-  "author": "Mohammad Galib, Purdue University",
-  "license": "CC-BY-4.0",
+  "title": "The Shape of the Land: DEM to TWI",
+  "description": "Compute the Topographic Wetness Index from a DEM step by step — click cells to trace D8 flow paths, explore the result on a 3-D draggable terrain, and compare elevation vs wetness surfaces side by side with a wipe slider. Includes D8 vs D∞ comparison and a detailed explainer on why ln() matters.",
+  "version": "0.2.0",
   "topic": "terrain-analysis",
   "level": "intro",
-  "estimatedMinutes": 20,
-  "tags": ["TWI", "DEM", "terrain", "flow-direction", "contributing-area", "hydrology"],
-  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/module.html",
-  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
+  "estimatedMinutes": 55,
+  "tags": [
+    "TWI",
+    "DEM",
+    "terrain",
+    "D8-routing",
+    "flow-accumulation",
+    "contributing-area",
+    "wetness",
+    "3D",
+    "scene3d"
+  ],
   "requires": {
     "executable": true,
-    "python": ["numpy", "matplotlib"]
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
   },
   "citation": {
-    "text": "Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrological Sciences Bulletin, 24(1), 43–69.",
+    "text": "Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrol. Sci. Bull., 24(1), 43–69.",
     "doi": "10.1080/02626667909491834"
   },
+  "isFeatured": true,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 6,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
+  "author": "Mohammad Galib, Purdue University",
   "createdAt": "2026-05-18",
-  "updatedAt": "2026-05-18",
-  "isFeatured": true
+  "updatedAt": "2026-06-01",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
 }

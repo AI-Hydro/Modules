@@ -1,0 +1,40 @@
+{
+  "moduleId": "baseflow-separation",
+  "title": "Splitting the Flow: Baseflow Separation",
+  "description": "Run the Lyne–Hollick digital filter interactively — drag the α slider to rewrite the live Python cell in real time, compare filtered vs raw hydrographs side by side, and understand why the Baseflow Index matters for drought assessment and groundwater recharge estimation.",
+  "version": "0.1.0",
+  "topic": "baseflow-analysis",
+  "level": "intro",
+  "estimatedMinutes": 40,
+  "tags": [
+    "baseflow",
+    "Lyne-Hollick",
+    "BFI",
+    "digital-filter",
+    "recession",
+    "α-slider",
+    "groundwater",
+    "drought"
+  ],
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89–93."
+  },
+  "isFeatured": true,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 4,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/baseflow-separation/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/baseflow-separation",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-06-01",
+  "updatedAt": "2026-06-01",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}
