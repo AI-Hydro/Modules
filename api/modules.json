@@ -1,39 +1,37 @@
 [
   {
-    "moduleId": "water-cycle-in-motion",
-    "title": "The Water Cycle in Motion",
-    "description": "Trace a water molecule through all six fluxes — evaporation, transpiration, condensation, precipitation, infiltration, runoff — via a Manim animation and a draggable SVG timeline. Run the Python cell to watch the cycle come to life, then use the mass-balance simulator to see why precipitation must equal ET + R + ΔS.",
+    "moduleId": "baseflow-separation",
+    "title": "Splitting the Flow: Baseflow Separation",
+    "description": "Run the Lyne\u2013Hollick digital filter interactively \u2014 drag the \u03b1 slider to rewrite the live Python cell in real time, compare filtered vs raw hydrographs side by side, and understand why the Baseflow Index matters for drought assessment and groundwater recharge estimation.",
     "version": "0.1.0",
-    "topic": "hydrology-fundamentals",
+    "topic": "baseflow-analysis",
     "level": "intro",
-    "estimatedMinutes": 30,
+    "estimatedMinutes": 40,
     "tags": [
-      "water-cycle",
-      "evaporation",
-      "transpiration",
-      "precipitation",
-      "infiltration",
-      "runoff",
-      "mass-balance",
-      "Manim",
-      "timeline"
+      "baseflow",
+      "Lyne-Hollick",
+      "BFI",
+      "digital-filter",
+      "recession",
+      "\u03b1-slider",
+      "groundwater",
+      "drought"
     ],
     "requires": {
       "executable": true,
       "python": [
-        "manim"
-      ],
-      "optional": true
+        "numpy",
+        "matplotlib"
+      ]
     },
     "citation": {
-      "text": "Trenberth, K.E. et al. (2007). Estimates of the global water budget. J. Hydrometeorol., 8(4), 758–769.",
-      "doi": "10.1175/JHM600.1"
+      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89\u201393."
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 1,
-    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/water-cycle-in-motion/module.html",
-    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/water-cycle-in-motion",
+    "courseOrder": 4,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/baseflow-separation/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/baseflow-separation",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
     "updatedAt": "2026-06-01",
@@ -42,35 +40,88 @@
     "discussionUrl": ""
   },
   {
-    "moduleId": "watershed-runoff",
-    "title": "The Watershed: Where Rain Becomes Runoff",
-    "description": "Define a catchment, trace D8 flow paths across a 3-D draggable terrain, and drop a virtual rain cloud over the basin to watch the hydrograph respond. Covers watershed boundaries, flow accumulation, and the link between contributing area and streamflow.",
-    "version": "0.1.0",
-    "topic": "watershed-hydrology",
+    "moduleId": "capstone-basin-story",
+    "title": "Capstone: A Basin's Water Story",
+    "description": "Synthesis capstone for the Intro to Hydrology course. Choose one of four curated basins (or any USGS gauge), fetch a 10-year streamflow record, compute hydrological signatures (BFI, FDC), run a TWI terrain analysis, then narrate the basin's water story through a 6-stage interactive timeline. Generates a structured text report you can export.",
+    "version": "0.2.0",
+    "topic": "catchment-analysis",
     "level": "intro",
-    "estimatedMinutes": 40,
+    "estimatedMinutes": 60,
     "tags": [
-      "watershed",
-      "catchment",
-      "D8-routing",
-      "flow-accumulation",
-      "3D-terrain",
-      "contributing-area",
-      "runoff"
+      "capstone",
+      "basin",
+      "BFI",
+      "FDC",
+      "flow-duration-curve",
+      "TWI",
+      "signatures",
+      "USGS",
+      "synthesis",
+      "timeline",
+      "Plotly"
     ],
     "requires": {
-      "executable": false
+      "executable": true,
+      "python": [
+        "numpy",
+        "matplotlib",
+        "dataretrieval"
+      ],
+      "optional": true
     },
     "citation": {
-      "text": "O'Callaghan, J.F. & Mark, D.M. (1984). The extraction of drainage networks from digital elevation data. Comput. Vision Graph. Image Process., 28, 323–344."
+      "text": "Addor, N. et al. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293\u20135313.",
+      "doi": "10.5194/hess-21-5293-2017"
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 2,
-    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/watershed-runoff/module.html",
-    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/watershed-runoff",
+    "courseOrder": 7,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/capstone-basin-story/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/capstone-basin-story",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "downloadCount": 0,
+    "githubReactions": 0,
+    "discussionUrl": ""
+  },
+  {
+    "moduleId": "dem-to-twi",
+    "title": "The Shape of the Land: DEM to TWI",
+    "description": "Compute the Topographic Wetness Index from a DEM step by step \u2014 click cells to trace D8 flow paths, explore the result on a 3-D draggable terrain, and compare elevation vs wetness surfaces side by side with a wipe slider. Includes D8 vs D\u221e comparison and a detailed explainer on why ln() matters.",
+    "version": "0.2.0",
+    "topic": "terrain-analysis",
+    "level": "intro",
+    "estimatedMinutes": 55,
+    "tags": [
+      "TWI",
+      "DEM",
+      "terrain",
+      "D8-routing",
+      "flow-accumulation",
+      "contributing-area",
+      "wetness",
+      "3D",
+      "scene3d"
+    ],
+    "requires": {
+      "executable": true,
+      "python": [
+        "numpy",
+        "matplotlib"
+      ]
+    },
+    "citation": {
+      "text": "Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrol. Sci. Bull., 24(1), 43\u201369.",
+      "doi": "10.1080/02626667909491834"
+    },
+    "isFeatured": true,
+    "courseId": "intro-hydro-2026",
+    "courseOrder": 6,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
+    "author": "Mohammad Galib, Purdue University",
+    "createdAt": "2026-05-18",
     "updatedAt": "2026-06-01",
     "downloadCount": 0,
     "githubReactions": 0,
@@ -79,7 +130,7 @@
   {
     "moduleId": "reading-a-hydrograph",
     "title": "Reading a Hydrograph",
-    "description": "Anatomy of a storm hydrograph — rising limb, peak, recession — with an interactive BFI explorer, a storm-pair comparison revealing non-linear runoff response, and a live Python cell that generates CAMELS-style annual hydrographs for three contrasting gauges.",
+    "description": "Anatomy of a storm hydrograph \u2014 rising limb, peak, recession \u2014 with an interactive BFI explorer, a storm-pair comparison revealing non-linear runoff response, and a live Python cell that generates CAMELS-style annual hydrographs for three contrasting gauges.",
     "version": "0.2.0",
     "topic": "streamflow",
     "level": "intro",
@@ -102,7 +153,7 @@
       ]
     },
     "citation": {
-      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89–93."
+      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89\u201393."
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
@@ -117,49 +168,9 @@
     "discussionUrl": ""
   },
   {
-    "moduleId": "baseflow-separation",
-    "title": "Splitting the Flow: Baseflow Separation",
-    "description": "Run the Lyne–Hollick digital filter interactively — drag the α slider to rewrite the live Python cell in real time, compare filtered vs raw hydrographs side by side, and understand why the Baseflow Index matters for drought assessment and groundwater recharge estimation.",
-    "version": "0.1.0",
-    "topic": "baseflow-analysis",
-    "level": "intro",
-    "estimatedMinutes": 40,
-    "tags": [
-      "baseflow",
-      "Lyne-Hollick",
-      "BFI",
-      "digital-filter",
-      "recession",
-      "α-slider",
-      "groundwater",
-      "drought"
-    ],
-    "requires": {
-      "executable": true,
-      "python": [
-        "numpy",
-        "matplotlib"
-      ]
-    },
-    "citation": {
-      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89–93."
-    },
-    "isFeatured": true,
-    "courseId": "intro-hydro-2026",
-    "courseOrder": 4,
-    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/baseflow-separation/module.html",
-    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/baseflow-separation",
-    "author": "Mohammad Galib, Purdue University",
-    "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01",
-    "downloadCount": 0,
-    "githubReactions": 0,
-    "discussionUrl": ""
-  },
-  {
     "moduleId": "real-streamflow-data",
     "title": "Catching the Flow: Real Streamflow Data",
-    "description": "Pull live USGS records for four curated CONUS gauges spanning flood-prone Maine to arid Arizona — or enter any gauge ID. Plot the annual regime, spot a flood event, and read a flow-duration curve. Falls back to seeded synthetic data when the network is unavailable.",
+    "description": "Pull live USGS records for four curated CONUS gauges spanning flood-prone Maine to arid Arizona \u2014 or enter any gauge ID. Plot the annual regime, spot a flood event, and read a flow-duration curve. Falls back to seeded synthetic data when the network is unavailable.",
     "version": "0.2.0",
     "topic": "streamflow",
     "level": "intro",
@@ -200,86 +211,75 @@
     "discussionUrl": ""
   },
   {
-    "moduleId": "dem-to-twi",
-    "title": "The Shape of the Land: DEM to TWI",
-    "description": "Compute the Topographic Wetness Index from a DEM step by step — click cells to trace D8 flow paths, explore the result on a 3-D draggable terrain, and compare elevation vs wetness surfaces side by side with a wipe slider. Includes D8 vs D∞ comparison and a detailed explainer on why ln() matters.",
-    "version": "0.2.0",
-    "topic": "terrain-analysis",
+    "moduleId": "water-cycle-in-motion",
+    "title": "The Water Cycle in Motion",
+    "description": "Trace a water molecule through all six fluxes \u2014 evaporation, transpiration, condensation, precipitation, infiltration, runoff \u2014 via a Manim animation and a draggable SVG timeline. Run the Python cell to watch the cycle come to life, then use the mass-balance simulator to see why precipitation must equal ET + R + \u0394S.",
+    "version": "0.1.0",
+    "topic": "hydrology-fundamentals",
     "level": "intro",
-    "estimatedMinutes": 55,
+    "estimatedMinutes": 30,
     "tags": [
-      "TWI",
-      "DEM",
-      "terrain",
-      "D8-routing",
-      "flow-accumulation",
-      "contributing-area",
-      "wetness",
-      "3D",
-      "scene3d"
+      "water-cycle",
+      "evaporation",
+      "transpiration",
+      "precipitation",
+      "infiltration",
+      "runoff",
+      "mass-balance",
+      "Manim",
+      "timeline"
     ],
     "requires": {
       "executable": true,
       "python": [
-        "numpy",
-        "matplotlib"
-      ]
+        "manim"
+      ],
+      "optional": true
     },
     "citation": {
-      "text": "Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrol. Sci. Bull., 24(1), 43–69.",
-      "doi": "10.1080/02626667909491834"
+      "text": "Trenberth, K.E. et al. (2007). Estimates of the global water budget. J. Hydrometeorol., 8(4), 758\u2013769.",
+      "doi": "10.1175/JHM600.1"
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 6,
-    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/module.html",
-    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
+    "courseOrder": 1,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/water-cycle-in-motion/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/water-cycle-in-motion",
     "author": "Mohammad Galib, Purdue University",
-    "createdAt": "2026-05-18",
+    "createdAt": "2026-06-01",
     "updatedAt": "2026-06-01",
     "downloadCount": 0,
     "githubReactions": 0,
     "discussionUrl": ""
   },
   {
-    "moduleId": "capstone-basin-story",
-    "title": "Capstone: A Basin's Water Story",
-    "description": "Synthesis capstone for the Intro to Hydrology course. Choose one of four curated basins (or any USGS gauge), fetch a 10-year streamflow record, compute hydrological signatures (BFI, FDC), run a TWI terrain analysis, then narrate the basin's water story through a 6-stage interactive timeline. Generates a structured text report you can export.",
-    "version": "0.2.0",
-    "topic": "catchment-analysis",
+    "moduleId": "watershed-runoff",
+    "title": "The Watershed: Where Rain Becomes Runoff",
+    "description": "Define a catchment, trace D8 flow paths across a 3-D draggable terrain, and drop a virtual rain cloud over the basin to watch the hydrograph respond. Covers watershed boundaries, flow accumulation, and the link between contributing area and streamflow.",
+    "version": "0.1.0",
+    "topic": "watershed-hydrology",
     "level": "intro",
-    "estimatedMinutes": 60,
+    "estimatedMinutes": 40,
     "tags": [
-      "capstone",
-      "basin",
-      "BFI",
-      "FDC",
-      "flow-duration-curve",
-      "TWI",
-      "signatures",
-      "USGS",
-      "synthesis",
-      "timeline",
-      "Plotly"
+      "watershed",
+      "catchment",
+      "D8-routing",
+      "flow-accumulation",
+      "3D-terrain",
+      "contributing-area",
+      "runoff"
     ],
     "requires": {
-      "executable": true,
-      "python": [
-        "numpy",
-        "matplotlib",
-        "dataretrieval"
-      ],
-      "optional": true
+      "executable": false
     },
     "citation": {
-      "text": "Addor, N. et al. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293–5313.",
-      "doi": "10.5194/hess-21-5293-2017"
+      "text": "O'Callaghan, J.F. & Mark, D.M. (1984). The extraction of drainage networks from digital elevation data. Comput. Vision Graph. Image Process., 28, 323\u2013344."
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 7,
-    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/capstone-basin-story/module.html",
-    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/capstone-basin-story",
+    "courseOrder": 2,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/watershed-runoff/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/watershed-runoff",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
     "updatedAt": "2026-06-01",
