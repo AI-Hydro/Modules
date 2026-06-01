@@ -8,22 +8,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet loaded by AI-Hydro Bridge (data-aihydro-map adapter) — no CDN tag needed -->
 
 <script type="application/vnd.aihydro.module+json">
 {
   "id": "dem-to-twi",
-  "title": "From DEM to TWI",
-  "version": "0.4.0",
+  "title": "The Shape of the Land: DEM to TWI",
+  "version": "0.2.0",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "terrain-analysis",
   "level": "intro",
-  "estimated_minutes": 20,
+  "estimated_minutes": 55,
   "requires": { "executable": true, "python": ["numpy", "matplotlib"] },
-  "citation": { "text": "Beven & Kirkby (1979). Hydrological Sciences Bulletin, 24(1), 43–69." },
-  "ai_hydro_preview_min_version": "0.1"
+  "ai_hydro_preview_min_version": "0.2"
 }
 </script>
 
@@ -87,6 +85,12 @@ a:hover { border-bottom-color:var(--cyan); }
 }
 .brand-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; position:relative; z-index:1; }
 .brand-logo { width:42px; height:42px; flex-shrink:0; }
+@keyframes aihydro-pulse {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 8px rgba(0,163,255,0.40)); }
+  50%      { transform: scale(1.04); filter: drop-shadow(0 0 14px rgba(0,221,255,0.65)); }
+}
+.brand-logo { animation: aihydro-pulse 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .brand-logo { animation: none; } }
 .brand-name {
   font-family:'Quicksand',sans-serif; font-weight:700; font-size:22px; letter-spacing:0.02em;
   background:linear-gradient(135deg,#00A3FF,#00FFFF);
@@ -220,13 +224,10 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 .deep-dive .reveal-body p:last-child { margin-bottom:0; }
 
 /* ── Map ─────────────────────────────────────────────── */
+/* Dark Leaflet palette is injected by the AI-Hydro Bridge; only module-specific
+   overrides (gauge popup table) live here. */
 .map-shell { border:1px solid var(--border); border-radius:18px; overflow:hidden; margin:16px 0; box-shadow:0 12px 32px rgba(0,0,0,0.4); }
-#leafletMap { width:100%; height:420px; background:var(--mid); }
-.leaflet-container { background:#1a1a2e !important; font-family:'Nunito',sans-serif; }
-.leaflet-control-attribution { background:rgba(10,10,21,0.85) !important; color:var(--muted) !important; font-size:10px !important; }
-.leaflet-control-attribution a { color:var(--cyan) !important; }
-.leaflet-control-layers { background:rgba(26,26,46,0.92) !important; color:var(--sub) !important; border:1px solid var(--border) !important; border-radius:10px !important; }
-.leaflet-control-zoom a { background:rgba(26,26,46,0.92) !important; color:var(--cyan) !important; border-color:var(--border) !important; }
+.aihydro-map { width:100%; height:420px; background:var(--mid); border-radius:18px; }
 .gauge-popup .leaflet-popup-content-wrapper { background:rgba(15,15,30,0.95); color:var(--sub); border:1px solid var(--border); border-radius:14px; }
 .gauge-popup .leaflet-popup-tip { background:rgba(15,15,30,0.95); }
 .gauge-popup h4 { font-family:'Poppins',sans-serif; color:var(--text); margin-bottom:8px; font-size:14px; }
@@ -278,17 +279,20 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <!-- ══════════════════════════════════════════════════════════ -->
 <div class="hero">
   <div class="brand-row">
-    <svg class="brand-logo" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="AI-Hydro logo">
+        <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="AI-Hydro logo">
       <defs>
-        <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="aihydroG" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
           <stop offset="0%"  stop-color="#00A3FF"/>
-          <stop offset="100%" stop-color="#00FFFF"/>
+          <stop offset="100%" stop-color="#00DDFF"/>
         </linearGradient>
       </defs>
-      <path d="M20 4 C20 4, 8 18, 8 26 a12 12 0 0 0 24 0 C 32 18, 20 4, 20 4 Z" fill="url(#lg)" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>
-      <path d="M13 24 Q 20 30, 27 24" fill="none" stroke="rgba(10,10,21,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-      <path d="M14 28 Q 20 33, 26 28" fill="none" stroke="rgba(10,10,21,0.35)" stroke-width="1.1" stroke-linecap="round"/>
-      <circle cx="20" cy="14" r="1.7" fill="#FFFFFF"/>
+      <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroG)"/>
+      <ellipse cx="20" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
+      <ellipse cx="80" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
+      <ellipse cx="40" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
+      <ellipse cx="60" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
+      <path d="M 38 62 Q 50 68 62 62" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="14" r="4" fill="url(#aihydroG)"/>
     </svg>
     <span class="brand-name">AI-Hydro</span>
     <span class="brand-tag">Interactive Module · Terrain Analysis</span>
@@ -300,7 +304,14 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
     from raw elevation data to a wetness map you can interact with on a real catchment.
   </p>
   <div class="instruction">
-    Click DEM cells to trace flow paths · Move sliders for live TWI · Click workflow nodes to jump to sections
+    Click DEM cells to trace flow paths · Drag the 3D terrain · Swipe the DEM↔TWI compare · Click workflow nodes to jump
+  </div>
+  <div class="callout tip" style="margin-top:14px;">
+    <span class="callout-label">Follow the arrow — infiltration</span>
+    In <strong>Module 1</strong> you traced the <em>infiltration</em> arrow — water soaking into the ground.
+    This module asks: where on the landscape does that happen preferentially?
+    The answer is the Topographic Wetness Index: terrain geometry predicts soil moisture.
+    The flow paths you delineated in <strong>Module 2</strong> feed directly into the accumulation step here.
   </div>
 </div>
 
@@ -335,7 +346,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <!-- ══════════════════════════════════════════════════════════ -->
 <!--  1 · CONCEPT                                               -->
 <!-- ══════════════════════════════════════════════════════════ -->
-<div id="sec-concept" class="wide card glow">
+<div id="sec-concept" class="wide card glow" data-aihydro-editable="prose">
   <h2>1 · What makes a hillslope cell wet?</h2>
   <div class="concept-grid">
     <div>
@@ -400,15 +411,32 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <!-- ══════════════════════════════════════════════════════════ -->
 <!--  2 · INTERACTIVE WATERSHED MAP                             -->
 <!-- ══════════════════════════════════════════════════════════ -->
-<div id="sec-map" class="wide card">
+<div id="sec-map" class="wide card" data-aihydro-editable="prose">
   <h2>2 · A real catchment: USGS gauge 01031500</h2>
   <p>
     The Piscataquis River drainage in central Maine — a CAMELS benchmark catchment.
     Toggle <strong>TWI (qualitative)</strong> in the layers control to see a simulated wetness pattern
     overlaid on the watershed. Click the gauge marker for metadata.
   </p>
+  <!-- AI-Hydro standardised map contract (Phase 2).
+       The bridge adapter auto-initialises Leaflet, styles, and controls.
+       Custom overlays (TWI canvas) are added via _aihydroMap after ready. -->
   <div class="map-shell">
-    <div id="leafletMap"></div>
+    <div class="aihydro-map"
+         data-aihydro-map-id="watershed-01031500"
+         data-basemap="carto-dark"
+         data-marker-lat="45.265"
+         data-marker-lng="-69.55"
+         data-gauge-id="01031500"
+         data-marker-label="USGS 01031500 — Piscataquis River at Medford, ME"
+         data-style-color="#00DDFF"
+         data-style-fill="#00A3FF"
+         data-style-fill-opacity="0.08"
+         style="width:100%; height:420px;">
+      <script type="application/geo+json">
+{"type":"Feature","properties":{"name":"USGS 01031500","gauge_id":"01031500"},"geometry":{"type":"Polygon","coordinates":[[[-69.397946258,45.106972356],[-69.419563965,45.116669284],[-69.433170808,45.114987067],[-69.434583954,45.108209926],[-69.430751934,45.096708481],[-69.443365357,45.088036416],[-69.458671277,45.093381948],[-69.471145311,45.089000994],[-69.484731475,45.07923952],[-69.494661788,45.087598976],[-69.507071161,45.104863132],[-69.520118288,45.102490704],[-69.556675056,45.084444328],[-69.563278032,45.086880581],[-69.582747996,45.09199403],[-69.591296871,45.087154687],[-69.606525796,45.088031189],[-69.6125038,45.097845801],[-69.607625713,45.108294984],[-69.623461217,45.113613404],[-69.640244455,45.105905455],[-69.673759323,45.087579173],[-69.68186537,45.079256338],[-69.710078104,45.085664819],[-69.721730769,45.097182743],[-69.734368214,45.111799787],[-69.724198379,45.118989462],[-69.709312055,45.125984105],[-69.709217614,45.134210484],[-69.699107129,45.141158798],[-69.693297712,45.144192951],[-69.679886566,45.145802219],[-69.674001804,45.151145888],[-69.679474249,45.183475705],[-69.67321319,45.19162574],[-69.671741261,45.2011968],[-69.671198905,45.21181899],[-69.679670938,45.214630203],[-69.692096382,45.218556639],[-69.701706917,45.222984954],[-69.738927396,45.220822023],[-69.744933907,45.224120124],[-69.764701198,45.232436883],[-69.765891077,45.242710309],[-69.769546984,45.255906898],[-69.769794949,45.265543988],[-69.761978097,45.282435996],[-69.758607709,45.296435666],[-69.740647818,45.319147755],[-69.742438297,45.329285502],[-69.743034921,45.339115285],[-69.750711347,45.36062895],[-69.754024748,45.369741642],[-69.764566047,45.381507767],[-69.76155574,45.387010603],[-69.765114426,45.398599323],[-69.747159244,45.415492614],[-69.713871201,45.433812139],[-69.700306034,45.440201128],[-69.677047061,45.447815749],[-69.64549076,45.427449815],[-69.639960794,45.41729847],[-69.618157678,45.419354831],[-69.592413166,45.422337682],[-69.573903162,45.409576837],[-69.596905505,45.389558308],[-69.595995469,45.378554043],[-69.583928328,45.3668052],[-69.568501809,45.361573596],[-69.554693503,45.352509342],[-69.563690187,45.341001237],[-69.569756744,45.32999179],[-69.547435576,45.325231573],[-69.540349957,45.314784816],[-69.548136305,45.30449377],[-69.55821846,45.299273567],[-69.563223898,45.292628121],[-69.549907667,45.281743021],[-69.534711548,45.264679098],[-69.522797143,45.269196339],[-69.519105615,45.271262426],[-69.49620332,45.277859021],[-69.478675119,45.266917256],[-69.468674502,45.255728702],[-69.438173164,45.229747361],[-69.397479688,45.223764248],[-69.381889762,45.223695781],[-69.364343225,45.226456601],[-69.362604708,45.210348634],[-69.36529405,45.205598246],[-69.354466025,45.196256335],[-69.343303801,45.187374756],[-69.314638475,45.175240629],[-69.318152514,45.169709048],[-69.323145907,45.1596249],[-69.338594276,45.145278211],[-69.338594418,45.133650709],[-69.340320311,45.119252714],[-69.351456705,45.110597805],[-69.370588955,45.104223036],[-69.383801348,45.102978318],[-69.390318032,45.091643602],[-69.397946258,45.106972356]]]}}
+      </script>
+    </div>
   </div>
   <div class="callout agent">
     <span class="callout-label">AI-Hydro agent action</span>
@@ -421,7 +449,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <!-- ══════════════════════════════════════════════════════════ -->
 <!--  3 · INTERACTIVE FLOW-DIRECTION DEM                        -->
 <!-- ══════════════════════════════════════════════════════════ -->
-<div id="sec-dem" class="wide card">
+<div id="sec-dem" class="wide card" data-aihydro-editable="prose">
   <h2>3 · Flow direction — click any cell</h2>
   <p>
     A 5×5 synthetic DEM. Each cell routes water to its lowest 8-neighbour (D8 algorithm).
@@ -569,6 +597,25 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 </div>
 
 <!-- ══════════════════════════════════════════════════════════ -->
+<!--  3b · 3D TERRAIN — scene3d showcase                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-3d" class="wide card" data-aihydro-editable="prose">
+  <h2>3b · The terrain in 3D — drag to explore</h2>
+  <p>
+    The same 5×5 DEM comes alive in three dimensions. <strong>Drag to rotate, scroll to zoom.</strong>
+    Low cells (valleys) appear in blue-green; ridges are white.
+    Notice how the outlet cell sits in the lowest hollow — water has no choice but to flow there.
+  </p>
+  <canvas id="dem3dCanvas" data-aihydro-scene3d
+          style="width:100%; height:400px; border-radius:16px; background:#0a0a15; display:block; touch-action:none;"
+          aria-label="3D DEM terrain — drag to rotate"></canvas>
+  <p style="font-size:13px; color:var(--muted); margin-top:8px;">
+    Reduced-motion mode: 3D scene renders as static once pointer leaves.
+    The same pipeline runs in <code>scene3d</code> for the TWI heatmap in the Capstone (Module 7).
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
 <!--  4 · LIVE CALCULATOR + HISTOGRAM                           -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div id="sec-calc" class="grid2">
@@ -635,7 +682,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <!-- ══════════════════════════════════════════════════════════ -->
 <!--  5 · PYTHON POINT CALC                                     -->
 <!-- ══════════════════════════════════════════════════════════ -->
-<div id="sec-python" class="wide card">
+<div id="sec-python" class="wide card" data-aihydro-editable="prose">
   <h2>5 · Python cell — point TWI calculation</h2>
   <p>Source is regenerated from JavaScript each time you move a slider. Click <strong>Run</strong> to execute in the AI-Hydro kernel.</p>
 
@@ -653,7 +700,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <!-- ══════════════════════════════════════════════════════════ -->
 <!--  6 · MATPLOTLIB HEATMAP                                    -->
 <!-- ══════════════════════════════════════════════════════════ -->
-<div id="sec-heatmap" class="wide card">
+<div id="sec-heatmap" class="wide card" data-aihydro-editable="prose">
   <h2>6 · Synthetic catchment TWI heatmap</h2>
   <p>A 16×16 synthetic hillslope — contributing area peaks in the central valley, slope tapers downhill. Run to see where wetness concentrates.</p>
 
@@ -701,44 +748,136 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
 </div>
 
 <!-- ══════════════════════════════════════════════════════════ -->
-<!--  7 · QUIZ                                                  -->
+<!--  7 · DEM ↔ TWI COMPARE WIPE                               -->
 <!-- ══════════════════════════════════════════════════════════ -->
-<div class="grid2">
-  <div class="card">
-    <h2>7 · Checkpoint</h2>
-    <div class="quiz-q">
-      Two cells share the same contributing area (<em>a</em> = 150 m²/m).
-      Cell A has a 4° slope, cell B has a 22° slope.
-      Which has the <strong>larger TWI</strong>?
+<div id="sec-compare" class="wide card" data-aihydro-editable="prose">
+  <h2>7 · DEM vs TWI — drag the wipe</h2>
+  <p>
+    The left half shows the <strong>elevation surface</strong> (grey = high, dark = low).
+    The right half shows the <strong>TWI surface</strong> (cyan = wet, brown = dry).
+    <strong>Drag the divider</strong> left and right to compare — notice how the wettest cells
+    are not always the lowest ones (a valley with steep walls can stay dry; a flat lowland gets very wet).
+  </p>
+
+  <div class="aihydro-compare" id="twi-compare"
+       style="position:relative; height:300px; border-radius:16px; overflow:hidden; cursor:ew-resize; user-select:none; border:1px solid rgba(125,211,252,0.2);">
+    <canvas id="compDemCanvas" style="position:absolute;inset:0;width:100%;height:100%;" aria-label="DEM elevation heatmap"></canvas>
+    <canvas id="compTwiCanvas" style="position:absolute;inset:0;width:100%;height:100%;" aria-label="TWI wetness heatmap"></canvas>
+    <!-- manual drag wipe overlay (same pattern as M4) -->
+    <div id="compDivider" style="position:absolute;top:0;bottom:0;width:3px;background:rgba(255,255,255,0.8);left:50%;transform:translateX(-50%);cursor:ew-resize;z-index:10;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.9);display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0a15;">⇔</div>
     </div>
-    <div class="quiz-choices">
-      <button class="quiz-btn" onclick="window.quizAnswer(this,false,'Steeper slope → larger tan(β) → smaller a/tan(β) → smaller TWI. Try again.')">
-        Cell B — it's steeper so more energetic
-      </button>
-      <button class="quiz-btn" onclick="window.quizAnswer(this,true,'Gentler slope → smaller tan(β) → larger a/tan(β) → larger ln(a/tan(β)) = TWI.')">
-        Cell A — it's gentler so water lingers
-      </button>
-      <button class="quiz-btn" onclick="window.quizAnswer(this,false,'Equal area is not enough — slope still drives TWI through tan(β).')">
-        Same TWI — contributing area is equal
-      </button>
+    <div id="compLabel" style="position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:space-between;padding:0 12px;pointer-events:none;">
+      <span style="font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,0.75);background:rgba(10,10,21,0.6);padding:3px 8px;border-radius:6px;">Elevation (DEM)</span>
+      <span style="font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;color:rgba(0,221,255,0.9);background:rgba(10,10,21,0.6);padding:3px 8px;border-radius:6px;">Wetness (TWI)</span>
     </div>
-    <div id="quizFeedback" class="quiz-feedback"></div>
   </div>
 
-  <div class="card">
-    <h2>8 · What the agent would do</h2>
-    <div class="callout agent">
-      <span class="callout-label">In the AI-Hydro chat</span>
-      Ask: <em>"Compute TWI for USGS gauge 01031500 and overlay it on the map."</em><br><br>
-      The agent runs the full pipeline — DEM fetch, fill-sinks, D8 routing, accumulation, slope, TWI —
-      and returns a georeferenced raster. The simulated overlay you saw above is a qualitative preview;
-      the agent produces the real thing.
+  <div class="callout tip" style="margin-top:12px;">
+    <span class="callout-label">What to notice</span>
+    The outlet cell (bottom-centre) has very high TWI because all 24 other cells drain through it.
+    Ridge cells (top corners) have low TWI despite being at high elevation — they have almost
+    no contributing area. This is the core insight of topography-driven hydrology.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  8 · CHECKPOINT QUIZ                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
+  <h2>8 · Checkpoint</h2>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">Answer all three questions correctly to mark this module complete.</p>
+
+  <div class="aihydro-quiz" id="m6-quiz" data-module-id="dem-to-twi">
+
+    <div class="quiz-question quiz-block" data-answer="1">
+      <p class="quiz-q">
+        Two cells share the same contributing area (<em>a</em> = 150 m²/m).
+        Cell A has a 4° slope, cell B has a 22° slope.
+        Which has the <strong>larger TWI</strong>?
+      </p>
+      <div class="quiz-choices" role="radiogroup" aria-label="Question 1 choices">
+        <button class="quiz-btn" type="button" data-index="0"
+          data-feedback="Steeper slope → larger tan(β) → smaller a/tan(β) → smaller ln(a/tan(β)) = smaller TWI. Cell B is drier.">
+          Cell B — it's steeper so more energetic
+        </button>
+        <button class="quiz-btn" type="button" data-index="1"
+          data-feedback="Correct — gentler slope → smaller tan(β) → larger a/tan(β) → larger ln(a/tan(β)) = TWI. Water lingers on gentle slopes.">
+          Cell A — it's gentler so water lingers
+        </button>
+        <button class="quiz-btn" type="button" data-index="2"
+          data-feedback="Equal contributing area is not enough — slope drives TWI through the tan(β) denominator.">
+          Same TWI — contributing area is equal
+        </button>
+      </div>
+      <div class="quiz-feedback"></div>
     </div>
-    <div class="callout tip" style="margin-top:12px;">
-      <span class="callout-label">Try it yourself</span>
-      The previous TWI map of this catchment showed mean TWI ≈ 8.00 — a humid, forested basin
-      where saturated-excess runoff is common <span style="color:var(--muted);">[4]</span>.
+
+    <div class="quiz-question quiz-block" data-answer="0">
+      <p class="quiz-q">
+        The outlet cell of a 5×5 watershed has <em>all 24 other cells</em> draining through it.
+        Its slope is 8°. Compared to a mid-slope cell with only 3 upstream cells but the same 8° slope,
+        which has the higher TWI?
+      </p>
+      <div class="quiz-choices" role="radiogroup" aria-label="Question 2 choices">
+        <button class="quiz-btn" type="button" data-index="0"
+          data-feedback="Correct — the outlet's contributing area (a) is 25× larger while slope is the same, so ln(a/tan β) is much larger at the outlet.">
+          The outlet — because it accumulates flow from all upstream cells
+        </button>
+        <button class="quiz-btn" type="button" data-index="1"
+          data-feedback="The mid-slope cell has far less contributing area; with equal slopes, the outlet wins easily.">
+          The mid-slope cell — because it's more isolated and slope matters most
+        </button>
+        <button class="quiz-btn" type="button" data-index="2"
+          data-feedback="Equal slope means the slope term cancels, but the area term does not — so TWI is not equal.">
+          Equal TWI — same slope means same result
+        </button>
+      </div>
+      <div class="quiz-feedback"></div>
     </div>
+
+    <div class="quiz-question quiz-block" data-answer="2">
+      <p class="quiz-q">
+        You compute TWI at 10 m resolution and again at 100 m resolution for the same catchment.
+        Which result will typically show <em>higher mean TWI</em>?
+      </p>
+      <div class="quiz-choices" role="radiogroup" aria-label="Question 3 choices">
+        <button class="quiz-btn" type="button" data-index="0"
+          data-feedback="10 m resolution preserves steep local slopes that appear flat when averaged to 100 m — finer grids usually produce lower mean TWI.">
+          10 m — finer resolution captures more topographic detail
+        </button>
+        <button class="quiz-btn" type="button" data-index="1"
+          data-feedback="At the same resolution, mean TWI should be similar. The difference lies in how slope is smoothed between resolutions.">
+          They produce the same mean TWI — only spatial patterns change
+        </button>
+        <button class="quiz-btn" type="button" data-index="2"
+          data-feedback="Correct — coarser cells average out steep local slopes, so tan(β) is smaller and TWI = ln(a/tan β) is larger. Sørensen et al. (2006) quantified this.">
+          100 m — coarser cells average slope, making tan(β) smaller and TWI larger
+        </button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+  </div><!-- /.aihydro-quiz -->
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  9 · WHAT THE AGENT DOES                                   -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="wide card">
+  <h2>9 · What the AI-Hydro agent does</h2>
+  <div class="callout agent">
+    <span class="callout-label">In the AI-Hydro chat</span>
+    Ask: <em>"Compute TWI for USGS gauge 01031500 and overlay it on the map."</em><br><br>
+    The agent runs the full pipeline — DEM fetch → fill-sinks → D8 routing → flow accumulation →
+    slope → TWI — and returns a georeferenced raster. The simulated overlay you saw above is qualitative;
+    the agent produces the real thing.
+  </div>
+  <div class="callout tip" style="margin-top:12px;">
+    <span class="callout-label">Next step</span>
+    The mean TWI ≈ 8 for USGS 01031500 (Maine headwater) flags it as a wet, humid forested basin
+    where saturated-excess overland flow dominates. You'll revisit that interpretation in the
+    <strong>Module 7 Capstone</strong> when you characterise a full basin end-to-end.
   </div>
 </div>
 
@@ -788,7 +927,7 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
 <!--  PROVENANCE                                                -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div class="provenance">
-  <div class="prov-item"><dt>Module</dt><dd>dem-to-twi · v0.4.0 · CC-BY-4.0</dd></div>
+  <div class="prov-item"><dt>Module</dt><dd>dem-to-twi · v0.2.0 · CC-BY-4.0</dd></div>
   <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
   <div class="prov-item"><dt>Synthetic data</dt><dd>5×5 DEM and 16×16 hillslope grid, hand-crafted for instruction.</dd></div>
   <div class="prov-item"><dt>Real watershed</dt><dd>USGS 01031500 — boundary from the AI-Hydro delineation pipeline.</dd></div>
@@ -798,15 +937,16 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
 
 </main>
 
-<!-- Inline watershed polygon -->
-<script id="watershedGeo" type="application/geo+json">
-{"type":"Feature","properties":{"name":"USGS 01031500","gauge_id":"01031500"},
- "geometry":{"type":"Polygon","coordinates":[[[-69.397946258,45.106972356],[-69.419563965,45.116669284],[-69.433170808,45.114987067],[-69.434583954,45.108209926],[-69.430751934,45.096708481],[-69.443365357,45.088036416],[-69.458671277,45.093381948],[-69.471145311,45.089000994],[-69.484731475,45.07923952],[-69.494661788,45.087598976],[-69.507071161,45.104863132],[-69.520118288,45.102490704],[-69.556675056,45.084444328],[-69.563278032,45.086880581],[-69.582747996,45.09199403],[-69.591296871,45.087154687],[-69.606525796,45.088031189],[-69.6125038,45.097845801],[-69.607625713,45.108294984],[-69.623461217,45.113613404],[-69.640244455,45.105905455],[-69.673759323,45.087579173],[-69.68186537,45.079256338],[-69.710078104,45.085664819],[-69.721730769,45.097182743],[-69.734368214,45.111799787],[-69.724198379,45.118989462],[-69.709312055,45.125984105],[-69.709217614,45.134210484],[-69.699107129,45.141158798],[-69.693297712,45.144192951],[-69.679886566,45.145802219],[-69.674001804,45.151145888],[-69.679474249,45.183475705],[-69.67321319,45.19162574],[-69.671741261,45.2011968],[-69.671198905,45.21181899],[-69.679670938,45.214630203],[-69.692096382,45.218556639],[-69.701706917,45.222984954],[-69.738927396,45.220822023],[-69.744933907,45.224120124],[-69.764701198,45.232436883],[-69.765891077,45.242710309],[-69.769546984,45.255906898],[-69.769794949,45.265543988],[-69.761978097,45.282435996],[-69.758607709,45.296435666],[-69.740647818,45.319147755],[-69.742438297,45.329285502],[-69.743034921,45.339115285],[-69.750711347,45.36062895],[-69.754024748,45.369741642],[-69.764566047,45.381507767],[-69.76155574,45.387010603],[-69.765114426,45.398599323],[-69.747159244,45.415492614],[-69.713871201,45.433812139],[-69.700306034,45.440201128],[-69.677047061,45.447815749],[-69.64549076,45.427449815],[-69.639960794,45.41729847],[-69.618157678,45.419354831],[-69.592413166,45.422337682],[-69.573903162,45.409576837],[-69.596905505,45.389558308],[-69.595995469,45.378554043],[-69.583928328,45.3668052],[-69.568501809,45.361573596],[-69.554693503,45.352509342],[-69.563690187,45.341001237],[-69.569756744,45.32999179],[-69.547435576,45.325231573],[-69.540349957,45.314784816],[-69.548136305,45.30449377],[-69.55821846,45.299273567],[-69.563223898,45.292628121],[-69.549907667,45.281743021],[-69.534711548,45.264679098],[-69.522797143,45.269196339],[-69.519105615,45.271262426],[-69.49620332,45.277859021],[-69.478675119,45.266917256],[-69.468674502,45.255728702],[-69.438173164,45.229747361],[-69.397479688,45.223764248],[-69.381889762,45.223695781],[-69.364343225,45.226456601],[-69.362604708,45.210348634],[-69.36529405,45.205598246],[-69.354466025,45.196256335],[-69.343303801,45.187374756],[-69.314638475,45.175240629],[-69.318152514,45.169709048],[-69.323145907,45.1596249],[-69.338594276,45.145278211],[-69.338594418,45.133650709],[-69.340320311,45.119252714],[-69.351456705,45.110597805],[-69.370588955,45.104223036],[-69.383801348,45.102978318],[-69.390318032,45.091643602],[-69.397946258,45.106972356]]]}}
-</script>
 
 <script>
 (function () {
   'use strict';
+
+  /* ── whenReady — polls until window.aihydro is injected ──────────── */
+  function whenReady(fn) {
+    if (window.aihydro) { fn(); return; }
+    var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
+  }
 
   /* ── Pre-compute the synthetic 16×16 TWI grid (matches the Python heatmap cell).
         Used for the live histogram so it shows real grid data, not a fixed Gaussian. */
@@ -1116,60 +1256,21 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     return canvas.toDataURL('image/png');
   }
 
-  /* ── LEAFLET MAP ─────────────────────────────────────────────────── */
-  function initMap() {
-    if (typeof L === 'undefined') { return setTimeout(initMap, 80); }
+  /* ── LEAFLET MAP — TWI overlay (post-init hook) ──────────────────── */
+  /* The AI-Hydro Bridge adapter initialises the basemap, GeoJSON boundary,
+     and gauge marker automatically from data-aihydro-map attributes.
+     This post-init hook adds the qualitative TWI image overlay + legend,
+     which are specific to this module and not part of the standard contract. */
+  function addTwiOverlayWhenReady() {
+    var mapEl = document.querySelector('.aihydro-map[data-aihydro-map-id="watershed-01031500"]');
+    if (!mapEl) return;
+    var map = mapEl._aihydroMap;
+    var L = window.L;
+    if (!map || !L) { setTimeout(addTwiOverlayWhenReady, 150); return; }
 
-    var carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19, subdomains: 'abcd', attribution: '© OpenStreetMap, © CARTO'
-    });
-    var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18, attribution: '© OpenStreetMap'
-    });
-    var sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 18, attribution: 'Tiles © Esri'
-    });
-
-    var map = L.map('leafletMap', { center: [45.27, -69.55], zoom: 9, layers: [carto] });
-
-    var watershed = JSON.parse(document.getElementById('watershedGeo').textContent);
-    var boundary = L.geoJSON(watershed, {
-      style: { color: '#00DDFF', weight: 2.5, fillColor: '#00A3FF', fillOpacity: 0.08 }
-    }).addTo(map);
-    map.fitBounds(boundary.getBounds(), { padding: [20, 20] });
-
-    var gaugeIcon = L.divIcon({
-      className: '',
-      iconSize: [22, 22],
-      html: '<div style="width:22px;height:22px;border-radius:50%;border:3px solid #00FFFF;background:rgba(0,221,255,0.35);box-shadow:0 0 16px rgba(0,221,255,0.65);"></div>'
-    });
-    var gauge = L.marker([45.265, -69.55], { icon: gaugeIcon }).addTo(map);
-    gauge.bindPopup(
-      '<div class="gauge-popup"><h4>USGS 01031500</h4><table>' +
-      '<tr><td>Catchment</td><td>Piscataquis basin, ME</td></tr>' +
-      '<tr><td>Climate</td><td>Humid, forested</td></tr>' +
-      '<tr><td>Area</td><td>~ 770 km²</td></tr>' +
-      '<tr><td>CAMELS BFI</td><td>~ 0.55</td></tr>' +
-      '<tr><td>Mean TWI</td><td>≈ 8.0</td></tr>' +
-      '</table></div>',
-      { className: 'gauge-popup' }
-    );
-    boundary.bindTooltip('Watershed boundary — gauge 01031500', { sticky: true });
-
-    /* Simulated qualitative TWI canvas overlay */
     var twiOverlay = L.imageOverlay(makeTwiCanvas(), [[45.07, -69.77], [45.45, -69.31]], {
       opacity: 0.70, interactive: false
     });
-
-    var gaugeGroup = L.layerGroup([gauge]).addTo(map);
-
-    L.control.layers(
-      { 'Dark (CARTO)': carto, 'OpenStreetMap': osm, 'Satellite': sat },
-      { 'Watershed boundary': boundary, 'Gauge': gaugeGroup, 'TWI (qualitative)': twiOverlay },
-      { position: 'topright', collapsed: true }
-    ).addTo(map);
-
-    L.control.scale({ position: 'bottomleft', imperial: false }).addTo(map);
 
     /* TWI legend */
     var legend = L.control({ position: 'bottomright' });
@@ -1185,6 +1286,10 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       return div;
     };
     legend.addTo(map);
+
+    /* Attach to layer control if it exists, otherwise just add it */
+    /* For simplicity: just add the overlay directly */
+    twiOverlay.addTo(map);
   }
 
   /* ── INIT ────────────────────────────────────────────────────────── */
@@ -1196,12 +1301,242 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       window.clickDemCell(0, 0);
-      initMap();
+      setTimeout(addTwiOverlayWhenReady, 500);
+      initCompare();
     });
   } else {
     window.clickDemCell(0, 0);
-    initMap();
+    setTimeout(addTwiOverlayWhenReady, 500);
+    initCompare();
   }
+
+  /* ── scene3d: 3D DEM terrain ─────────────────────────────────────── */
+  /* Build a 5×5 elevation grid from DEM_EL and pass to aihydro.scene3d */
+  whenReady(function () {
+    var canvas = document.getElementById('dem3dCanvas');
+    if (!canvas || !window.aihydro || !window.aihydro.scene3d) return;
+
+    /* Convert 5×5 DEM_EL (rows × cols, elevation in metres) to float array */
+    var dem = DEM_EL; /* 5×5 array of elevations */
+
+    window.aihydro.scene3d({
+      canvas: canvas,
+      dem: dem,
+      setup: function (ctx) {
+        var THREE = ctx.THREE, scene = ctx.scene, camera = ctx.camera;
+        var rows = dem.length, cols = dem[0].length;
+
+        /* Elevation range for color mapping */
+        var elMin = Infinity, elMax = -Infinity;
+        for (var r = 0; r < rows; r++)
+          for (var c = 0; c < cols; c++) {
+            if (dem[r][c] < elMin) elMin = dem[r][c];
+            if (dem[r][c] > elMax) elMax = dem[r][c];
+          }
+
+        var positions = [], colors = [], indices = [];
+        var scaleXZ = 2.0, scaleY = 2.5;
+
+        function elColor(el) {
+          var t = (el - elMin) / (elMax - elMin || 1);
+          /* deep blue (low) → green → white (high) */
+          if (t < 0.4) {
+            var f = t / 0.4;
+            return [f * 0.1, 0.4 + f * 0.5, 0.6 + f * 0.3];
+          } else {
+            var f2 = (t - 0.4) / 0.6;
+            return [0.1 + f2 * 0.9, 0.9 + f2 * 0.1, 0.9 + f2 * 0.1];
+          }
+        }
+
+        for (var ri = 0; ri < rows; ri++) {
+          for (var ci = 0; ci < cols; ci++) {
+            var el = dem[ri][ci];
+            var x = (ci / (cols - 1) - 0.5) * scaleXZ * cols;
+            var y = ((el - elMin) / (elMax - elMin || 1)) * scaleY;
+            var z = (ri / (rows - 1) - 0.5) * scaleXZ * rows;
+            positions.push(x, y, z);
+            var col = elColor(el);
+            colors.push(col[0], col[1], col[2]);
+          }
+        }
+        for (var ri2 = 0; ri2 < rows - 1; ri2++) {
+          for (var ci2 = 0; ci2 < cols - 1; ci2++) {
+            var a = ri2 * cols + ci2, b = a + 1, c2 = a + cols, d = c2 + 1;
+            indices.push(a, c2, b, b, c2, d);
+          }
+        }
+
+        var geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3));
+        geo.setIndex(indices);
+        geo.computeVertexNormals();
+
+        var mat  = new THREE.MeshPhongMaterial({ vertexColors: true, side: THREE.DoubleSide, shininess: 40 });
+        var mesh = new THREE.Mesh(geo, mat);
+        scene.add(mesh);
+
+        /* Mark outlet cell with a cyan sphere */
+        var outletEl = dem[4][2];
+        var ox = (2 / (cols - 1) - 0.5) * scaleXZ * cols;
+        var oy = ((outletEl - elMin) / (elMax - elMin || 1)) * scaleY + 0.15;
+        var oz = (4 / (rows - 1) - 0.5) * scaleXZ * rows;
+        var sphere = new THREE.Mesh(
+          new THREE.SphereGeometry(0.12, 8, 8),
+          new THREE.MeshBasicMaterial({ color: 0x00ffff })
+        );
+        sphere.position.set(ox, oy, oz);
+        scene.add(sphere);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        var dl = new THREE.DirectionalLight(0xffffff, 0.9);
+        dl.position.set(5, 10, 5);
+        scene.add(dl);
+
+        camera.position.set(8, 7, 8);
+        camera.lookAt(0, 1, 0);
+      }
+    });
+  });
+
+  /* ── compare: DEM vs TWI canvas wipe ────────────────────────────── */
+  function renderHeatmap(canvas, getColor) {
+    var N = 5, W = canvas.offsetWidth || 400, H = canvas.offsetHeight || 300;
+    canvas.width = W; canvas.height = H;
+    var ctx = canvas.getContext('2d');
+    var cw = W / N, ch = H / N;
+    for (var r = 0; r < N; r++) {
+      for (var c = 0; c < N; c++) {
+        var col = getColor(r, c);
+        ctx.fillStyle = col;
+        ctx.fillRect(c * cw, r * ch, cw, ch);
+        /* cell label */
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.font = '10px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(DEM_EL[r][c]), c * cw + cw / 2, r * ch + ch / 2 + 4);
+      }
+    }
+  }
+
+  function initCompare() {
+    var demCanvas = document.getElementById('compDemCanvas');
+    var twiCanvas = document.getElementById('compTwiCanvas');
+    var divider   = document.getElementById('compDivider');
+    var wrap      = document.getElementById('twi-compare');
+    if (!demCanvas || !twiCanvas || !divider || !wrap) return;
+
+    /* Compute TWI for each cell */
+    var CELL = 10;
+    function cellTwi(r, c) {
+      if (FLOW_TO[r][c] === null) return 14; /* outlet: very high */
+      /* Gather upstream count (reuse findUpstream) */
+      var ups = findUpstream(r, c).length;
+      var nr = FLOW_TO[r][c][0], nc = FLOW_TO[r][c][1];
+      var elDiff = DEM_EL[r][c] - DEM_EL[nr][nc];
+      var diag = (r !== nr && c !== nc);
+      var dist = diag ? CELL * Math.SQRT2 : CELL;
+      var slopeRad = Math.max(Math.atan(elDiff / dist), 0.001);
+      var area_sp = (ups + 1) * CELL;
+      return Math.log(area_sp / Math.tan(slopeRad));
+    }
+
+    /* Elevation color: dark blue (low) → gray → white (high) */
+    var elMin = 66, elMax = 92;
+    function demColor(r, c) {
+      var t = (DEM_EL[r][c] - elMin) / (elMax - elMin);
+      var v = Math.round(60 + t * 170);
+      return 'rgb(' + v + ',' + v + ',' + (v + 20) + ')';
+    }
+
+    /* TWI color: brown (dry <5) → amber (5-8) → cyan (wet >8) */
+    function twiColor(r, c) {
+      var twi = cellTwi(r, c);
+      if (twi > 10)  return 'rgba(0,221,255,0.85)';
+      if (twi > 8)   return 'rgba(52,211,153,0.80)';
+      if (twi > 5)   return 'rgba(245,158,11,0.75)';
+      return 'rgba(239,68,68,0.65)';
+    }
+
+    renderHeatmap(demCanvas, demColor);
+    renderHeatmap(twiCanvas, twiColor);
+
+    /* Wipe: clip TWI canvas to left of divider line */
+    var frac = 0.5;
+    function applyWipe(f) {
+      frac = Math.max(0.02, Math.min(0.98, f));
+      var pct = (frac * 100).toFixed(1) + '%';
+      twiCanvas.style.clipPath = 'inset(0 0 0 ' + pct + ')';
+      divider.style.left = pct;
+    }
+    applyWipe(0.5);
+
+    /* Drag handling */
+    var dragging = false;
+    function startDrag(clientX) {
+      dragging = true;
+      var rect = wrap.getBoundingClientRect();
+      applyWipe((clientX - rect.left) / rect.width);
+    }
+    wrap.addEventListener('mousedown',  function (e) { startDrag(e.clientX); });
+    wrap.addEventListener('mousemove',  function (e) { if (dragging) { var r = wrap.getBoundingClientRect(); applyWipe((e.clientX - r.left) / r.width); } });
+    window.addEventListener('mouseup',  function () { dragging = false; });
+    wrap.addEventListener('touchstart', function (e) { if (e.touches.length) startDrag(e.touches[0].clientX); }, { passive: true });
+    wrap.addEventListener('touchmove',  function (e) { if (e.touches.length && dragging) { var r = wrap.getBoundingClientRect(); applyWipe((e.touches[0].clientX - r.left) / r.width); } }, { passive: true });
+    wrap.addEventListener('touchend',   function () { dragging = false; });
+
+    /* Try the bridge compare helper as well (no-op if not available) */
+    whenReady(function () {
+      if (window.aihydro.compare) window.aihydro.compare('#twi-compare');
+    });
+  }
+
+  /* ── Canonical .aihydro-quiz wiring ──────────────────────────────── */
+  (function wireQuiz() {
+    var quiz = document.getElementById('m6-quiz');
+    if (!quiz) return;
+    var questions = quiz.querySelectorAll('.quiz-question');
+    var answered  = new Array(questions.length).fill(false);
+    var correct   = new Array(questions.length).fill(false);
+
+    function tryComplete() {
+      if (!answered.every(Boolean)) return;
+      var allCorrect = correct.every(Boolean);
+      var score = correct.filter(Boolean).length / correct.length;
+      whenReady(function () {
+        window.aihydro.quiz({ moduleId: 'dem-to-twi', passed: allCorrect, score: score });
+      });
+      try {
+        window.parent.postMessage({ type: 'aihydro-quiz-complete', moduleId: 'dem-to-twi', passed: allCorrect, score: score }, '*');
+      } catch (e) { /* cross-origin guard */ }
+    }
+
+    questions.forEach(function (qEl, qi) {
+      var answer  = parseInt(qEl.dataset.answer, 10);
+      var buttons = qEl.querySelectorAll('.quiz-btn');
+      var fb      = qEl.querySelector('.quiz-feedback');
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (answered[qi]) return;
+          answered[qi] = true;
+          var idx = parseInt(btn.dataset.index, 10);
+          var isCorrect = (idx === answer);
+          correct[qi] = isCorrect;
+          buttons.forEach(function (b) { b.disabled = true; b.style.cursor = 'default'; });
+          btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+          if (fb) {
+            fb.textContent = (isCorrect ? '✓ ' : '✗ ') + (btn.dataset.feedback || '');
+            fb.style.color = isCorrect ? '#86efac' : '#fca5a5';
+          }
+          tryComplete();
+        });
+        btn.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); btn.click(); }
+        });
+      });
+    });
+  })();
 
 })();
 </script>

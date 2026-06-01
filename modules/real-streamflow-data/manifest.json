@@ -1,0 +1,43 @@
+{
+  "moduleId": "real-streamflow-data",
+  "title": "Catching the Flow: Real Streamflow Data",
+  "description": "Pull live USGS records for four curated CONUS gauges spanning flood-prone Maine to arid Arizona — or enter any gauge ID. Plot the annual regime, spot a flood event, and read a flow-duration curve. Falls back to seeded synthetic data when the network is unavailable.",
+  "version": "0.2.0",
+  "topic": "streamflow",
+  "level": "intro",
+  "estimatedMinutes": 45,
+  "tags": [
+    "USGS",
+    "NWIS",
+    "streamflow",
+    "gauge",
+    "annual-regime",
+    "flood",
+    "flow-duration-curve",
+    "Leaflet",
+    "CONUS"
+  ],
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib",
+      "dataretrieval"
+    ],
+    "optional": true
+  },
+  "citation": {
+    "text": "USGS National Water Information System (NWIS). https://waterdata.usgs.gov/"
+  },
+  "isFeatured": true,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 5,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/real-streamflow-data/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/real-streamflow-data",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-06-01",
+  "updatedAt": "2026-06-01",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}

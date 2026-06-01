@@ -1,0 +1,61 @@
+[
+  {
+    "courseId": "intro-hydro-2026",
+    "title": "Introduction to Hydrology",
+    "abstract": "A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean to a full basin characterisation at your fingertips. Seven modules, each showcasing a different interactive capability of the AI-Hydro learning hub.",
+    "version": "0.2.0",
+    "author": "Mohammad Galib, Purdue University",
+    "license": "CC-BY-4.0",
+    "estimatedHours": 5,
+    "level": "intro",
+    "tags": [
+      "hydrology",
+      "water-cycle",
+      "watershed",
+      "streamflow",
+      "baseflow",
+      "DEM",
+      "TWI",
+      "USGS"
+    ],
+    "modules": [
+      {
+        "moduleId": "water-cycle-in-motion",
+        "title": "The Water Cycle in Motion",
+        "estimatedMinutes": 30
+      },
+      {
+        "moduleId": "watershed-runoff",
+        "title": "The Watershed: Where Rain Becomes Runoff",
+        "estimatedMinutes": 40
+      },
+      {
+        "moduleId": "reading-a-hydrograph",
+        "title": "Reading a Hydrograph",
+        "estimatedMinutes": 30
+      },
+      {
+        "moduleId": "baseflow-separation",
+        "title": "Splitting the Flow: Baseflow Separation",
+        "estimatedMinutes": 40
+      },
+      {
+        "moduleId": "real-streamflow-data",
+        "title": "Catching the Flow: Real Streamflow Data",
+        "estimatedMinutes": 45
+      },
+      {
+        "moduleId": "dem-to-twi",
+        "title": "The Shape of the Land: DEM to TWI",
+        "estimatedMinutes": 55
+      },
+      {
+        "moduleId": "capstone-basin-story",
+        "title": "Capstone: A Basin's Water Story",
+        "estimatedMinutes": 60
+      }
+    ],
+    "updatedAt": "2026-06-01",
+    "isFeatured": true
+  }
+]

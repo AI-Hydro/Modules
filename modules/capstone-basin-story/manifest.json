@@ -1,0 +1,46 @@
+{
+  "moduleId": "capstone-basin-story",
+  "title": "Capstone: A Basin's Water Story",
+  "description": "Synthesis capstone for the Intro to Hydrology course. Choose one of four curated basins (or any USGS gauge), fetch a 10-year streamflow record, compute hydrological signatures (BFI, FDC), run a TWI terrain analysis, then narrate the basin's water story through a 6-stage interactive timeline. Generates a structured text report you can export.",
+  "version": "0.2.0",
+  "topic": "catchment-analysis",
+  "level": "intro",
+  "estimatedMinutes": 60,
+  "tags": [
+    "capstone",
+    "basin",
+    "BFI",
+    "FDC",
+    "flow-duration-curve",
+    "TWI",
+    "signatures",
+    "USGS",
+    "synthesis",
+    "timeline",
+    "Plotly"
+  ],
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib",
+      "dataretrieval"
+    ],
+    "optional": true
+  },
+  "citation": {
+    "text": "Addor, N. et al. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293–5313.",
+    "doi": "10.5194/hess-21-5293-2017"
+  },
+  "isFeatured": true,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 7,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/capstone-basin-story/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/capstone-basin-story",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-06-01",
+  "updatedAt": "2026-06-01",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}

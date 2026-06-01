@@ -1,0 +1,42 @@
+{
+  "moduleId": "water-cycle-in-motion",
+  "title": "The Water Cycle in Motion",
+  "description": "Trace a water molecule through all six fluxes — evaporation, transpiration, condensation, precipitation, infiltration, runoff — via a Manim animation and a draggable SVG timeline. Run the Python cell to watch the cycle come to life, then use the mass-balance simulator to see why precipitation must equal ET + R + ΔS.",
+  "version": "0.1.0",
+  "topic": "hydrology-fundamentals",
+  "level": "intro",
+  "estimatedMinutes": 30,
+  "tags": [
+    "water-cycle",
+    "evaporation",
+    "transpiration",
+    "precipitation",
+    "infiltration",
+    "runoff",
+    "mass-balance",
+    "Manim",
+    "timeline"
+  ],
+  "requires": {
+    "executable": true,
+    "python": [
+      "manim"
+    ],
+    "optional": true
+  },
+  "citation": {
+    "text": "Trenberth, K.E. et al. (2007). Estimates of the global water budget. J. Hydrometeorol., 8(4), 758–769.",
+    "doi": "10.1175/JHM600.1"
+  },
+  "isFeatured": true,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 1,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/water-cycle-in-motion/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/water-cycle-in-motion",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-06-01",
+  "updatedAt": "2026-06-01",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}
