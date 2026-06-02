@@ -2,7 +2,7 @@
   {
     "courseId": "intro-hydro-2026",
     "title": "Introduction to Hydrology",
-    "abstract": "A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean to a full basin characterisation at your fingertips. Seven modules, each showcasing a different interactive capability of the AI-Hydro learning hub.",
+    "abstract": "A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean to a full basin characterisation at your fingertips. Eight modules, each showcasing a different interactive capability of the AI-Hydro learning hub, culminating in a personalised certificate of completion.",
     "version": "0.2.0",
     "author": "Mohammad Galib, Purdue University",
     "license": "CC-BY-4.0",
@@ -53,9 +53,14 @@
         "moduleId": "capstone-basin-story",
         "title": "Capstone: A Basin's Water Story",
         "estimatedMinutes": 60
+      },
+      {
+        "moduleId": "course-certificate",
+        "title": "Congratulations: Course Complete",
+        "estimatedMinutes": 5
       }
     ],
-    "updatedAt": "2026-06-01",
+    "updatedAt": "2026-06-02",
     "isFeatured": true,
     "manifestUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/courses/intro-to-hydrology/course.json",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/courses/intro-to-hydrology",

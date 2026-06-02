@@ -2,7 +2,7 @@
   {
     "moduleId": "baseflow-separation",
     "title": "Splitting the Flow: Baseflow Separation",
-    "description": "Run the Lyne\u2013Hollick digital filter interactively \u2014 drag the \u03b1 slider to rewrite the live Python cell in real time, compare filtered vs raw hydrographs side by side, and understand why the Baseflow Index matters for drought assessment and groundwater recharge estimation.",
+    "description": "Run the Lyne–Hollick digital filter interactively — drag the α slider to rewrite the live Python cell in real time, compare filtered vs raw hydrographs side by side, and understand why the Baseflow Index matters for drought assessment and groundwater recharge estimation.",
     "version": "0.1.0",
     "topic": "baseflow-analysis",
     "level": "intro",
@@ -13,7 +13,7 @@
       "BFI",
       "digital-filter",
       "recession",
-      "\u03b1-slider",
+      "α-slider",
       "groundwater",
       "drought"
     ],
@@ -25,7 +25,7 @@
       ]
     },
     "citation": {
-      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89\u201393."
+      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89–93."
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
@@ -70,7 +70,7 @@
       "optional": true
     },
     "citation": {
-      "text": "Addor, N. et al. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293\u20135313.",
+      "text": "Addor, N. et al. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293–5313.",
       "doi": "10.5194/hess-21-5293-2017"
     },
     "isFeatured": true,
@@ -86,9 +86,41 @@
     "discussionUrl": ""
   },
   {
+    "moduleId": "course-certificate",
+    "title": "Congratulations: Course Complete",
+    "description": "Collect your name, preview a branded certificate of completion, and print or save it as a permanent record of finishing the Introduction to Hydrology course.",
+    "version": "0.1.0",
+    "topic": "course-completion",
+    "level": "intro",
+    "estimatedMinutes": 5,
+    "tags": [
+      "certificate",
+      "completion",
+      "capstone",
+      "course"
+    ],
+    "requires": {
+      "executable": false
+    },
+    "citation": {
+      "text": "AI-Hydro Learning Hub — Introduction to Hydrology (2026)."
+    },
+    "isFeatured": true,
+    "courseId": "intro-hydro-2026",
+    "courseOrder": 8,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/course-certificate/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/course-certificate",
+    "author": "Mohammad Galib, Purdue University",
+    "createdAt": "2026-06-02",
+    "updatedAt": "2026-06-02",
+    "downloadCount": 0,
+    "githubReactions": 0,
+    "discussionUrl": ""
+  },
+  {
     "moduleId": "dem-to-twi",
     "title": "The Shape of the Land: DEM to TWI",
-    "description": "Compute the Topographic Wetness Index from a DEM step by step \u2014 click cells to trace D8 flow paths, explore the result on a 3-D draggable terrain, and compare elevation vs wetness surfaces side by side with a wipe slider. Includes D8 vs D\u221e comparison and a detailed explainer on why ln() matters.",
+    "description": "Compute the Topographic Wetness Index from a DEM step by step — click cells to trace D8 flow paths, explore the result on a 3-D draggable terrain, and compare elevation vs wetness surfaces side by side with a wipe slider. Includes D8 vs D∞ comparison and a detailed explainer on why ln() matters.",
     "version": "0.2.0",
     "topic": "terrain-analysis",
     "level": "intro",
@@ -112,7 +144,7 @@
       ]
     },
     "citation": {
-      "text": "Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrol. Sci. Bull., 24(1), 43\u201369.",
+      "text": "Beven, K.J. & Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrol. Sci. Bull., 24(1), 43–69.",
       "doi": "10.1080/02626667909491834"
     },
     "isFeatured": true,
@@ -130,7 +162,7 @@
   {
     "moduleId": "reading-a-hydrograph",
     "title": "Reading a Hydrograph",
-    "description": "Anatomy of a storm hydrograph \u2014 rising limb, peak, recession \u2014 with an interactive BFI explorer, a storm-pair comparison revealing non-linear runoff response, and a live Python cell that generates CAMELS-style annual hydrographs for three contrasting gauges.",
+    "description": "Anatomy of a storm hydrograph — rising limb, peak, recession — with an interactive BFI explorer, a storm-pair comparison revealing non-linear runoff response, and a live Python cell that generates CAMELS-style annual hydrographs for three contrasting gauges.",
     "version": "0.2.0",
     "topic": "streamflow",
     "level": "intro",
@@ -153,7 +185,7 @@
       ]
     },
     "citation": {
-      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89\u201393."
+      "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89–93."
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
@@ -170,7 +202,7 @@
   {
     "moduleId": "real-streamflow-data",
     "title": "Catching the Flow: Real Streamflow Data",
-    "description": "Pull live USGS records for four curated CONUS gauges spanning flood-prone Maine to arid Arizona \u2014 or enter any gauge ID. Plot the annual regime, spot a flood event, and read a flow-duration curve. Falls back to seeded synthetic data when the network is unavailable.",
+    "description": "Pull live USGS records for four curated CONUS gauges spanning flood-prone Maine to arid Arizona — or enter any gauge ID. Plot the annual regime, spot a flood event, and read a flow-duration curve. Falls back to seeded synthetic data when the network is unavailable.",
     "version": "0.2.0",
     "topic": "streamflow",
     "level": "intro",
@@ -213,7 +245,7 @@
   {
     "moduleId": "water-cycle-in-motion",
     "title": "The Water Cycle in Motion",
-    "description": "Trace a water molecule through all six fluxes \u2014 evaporation, transpiration, condensation, precipitation, infiltration, runoff \u2014 via a Manim animation and a draggable SVG timeline. Run the Python cell to watch the cycle come to life, then use the mass-balance simulator to see why precipitation must equal ET + R + \u0394S.",
+    "description": "Trace a water molecule through all six fluxes — evaporation, transpiration, condensation, precipitation, infiltration, runoff — via a Manim animation and a draggable SVG timeline. Run the Python cell to watch the cycle come to life, then use the mass-balance simulator to see why precipitation must equal ET + R + ΔS.",
     "version": "0.1.0",
     "topic": "hydrology-fundamentals",
     "level": "intro",
@@ -237,7 +269,7 @@
       "optional": true
     },
     "citation": {
-      "text": "Trenberth, K.E. et al. (2007). Estimates of the global water budget. J. Hydrometeorol., 8(4), 758\u2013769.",
+      "text": "Trenberth, K.E. et al. (2007). Estimates of the global water budget. J. Hydrometeorol., 8(4), 758–769.",
       "doi": "10.1175/JHM600.1"
     },
     "isFeatured": true,
@@ -273,7 +305,7 @@
       "executable": false
     },
     "citation": {
-      "text": "O'Callaghan, J.F. & Mark, D.M. (1984). The extraction of drainage networks from digital elevation data. Comput. Vision Graph. Image Process., 28, 323\u2013344."
+      "text": "O'Callaghan, J.F. & Mark, D.M. (1984). The extraction of drainage networks from digital elevation data. Comput. Vision Graph. Image Process., 28, 323–344."
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",

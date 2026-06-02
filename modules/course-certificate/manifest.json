@@ -1,0 +1,32 @@
+{
+  "moduleId": "course-certificate",
+  "title": "Congratulations: Course Complete",
+  "description": "Collect your name, preview a branded certificate of completion, and print or save it as a permanent record of finishing the Introduction to Hydrology course.",
+  "version": "0.1.0",
+  "topic": "course-completion",
+  "level": "intro",
+  "estimatedMinutes": 5,
+  "tags": [
+    "certificate",
+    "completion",
+    "capstone",
+    "course"
+  ],
+  "requires": {
+    "executable": false
+  },
+  "citation": {
+    "text": "AI-Hydro Learning Hub — Introduction to Hydrology (2026)."
+  },
+  "isFeatured": true,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 8,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/course-certificate/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/course-certificate",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-06-02",
+  "updatedAt": "2026-06-02",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}

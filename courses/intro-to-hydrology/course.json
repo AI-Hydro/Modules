@@ -9,7 +9,7 @@
 	],
 	"version": "0.2.0",
 	"license": "CC-BY-4.0",
-	"abstract": "A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean to a full basin characterisation at your fingertips. Seven modules, each showcasing a different interactive capability of the AI-Hydro learning hub.",
+	"abstract": "A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean to a full basin characterisation at your fingertips. Eight modules, each showcasing a different interactive capability of the AI-Hydro learning hub, culminating in a personalised certificate of completion.",
 	"kernel": "isolated",
 	"estimatedHours": 5,
 	"modules": [
@@ -88,6 +88,17 @@
 				"dem-to-twi"
 			],
 			"downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/capstone-basin-story/module.html"
+		},
+		{
+			"id": "course-certificate",
+			"path": "../../modules/course-certificate/module.html",
+			"title": "Congratulations: Course Complete",
+			"abstract": "Collect your name, preview a branded certificate of completion, and print or save it as a permanent record of finishing the course.",
+			"estimatedMinutes": 5,
+			"prerequisites": [
+				"capstone-basin-story"
+			],
+			"downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/course-certificate/module.html"
 		}
 	]
 }

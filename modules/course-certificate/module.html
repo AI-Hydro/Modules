@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Course Complete — AI-Hydro Interactive Module</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+<script type="application/vnd.aihydro.module+json">
+{
+  "id": "course-certificate",
+  "title": "Congratulations: Course Complete",
+  "version": "0.1.0",
+  "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
+  "license": "CC-BY-4.0",
+  "topic": "course-completion",
+  "level": "intro",
+  "estimated_minutes": 5,
+  "requires": { "executable": false },
+  "ai_hydro_preview_min_version": "0.2"
+}
+</script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:#00A3FF;  --cyan:#00DDFF;  --bright:#00FFFF;
+  --bg:#0a0a15;    --navy:#1a1a2e;  --mid:#0f0f1e;
+  --text:#FFFFFF;  --sub:#7dd3fc;   --muted:#94a3b8;
+  --border:rgba(125,211,252,0.15);
+  --shadow:0 24px 64px rgba(0,0,0,0.55);
+  --green:#34d399;  --violet:#a78bfa;  --amber:#fbbf24;
+}
+
+body {
+  font-family:'Nunito',system-ui,sans-serif; font-size:16px; line-height:1.65;
+  color:var(--sub);
+  background:
+    radial-gradient(ellipse at 10% 0%,   rgba(0,163,255,0.18) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 100%, rgba(52,211,153,0.10) 0%, transparent 40%),
+    var(--bg);
+  min-height:100vh;
+}
+main { max-width:960px; margin:0 auto; padding:32px 24px 80px; }
+
+h1 { font-family:'Quicksand',sans-serif; font-weight:700; color:var(--text);
+     font-size:clamp(28px,4.5vw,48px); line-height:1.08; letter-spacing:-0.02em; }
+h2 { font-family:'Poppins',sans-serif; font-weight:600; color:var(--text);
+     font-size:20px; letter-spacing:-0.01em; margin-bottom:8px; }
+h3 { font-family:'Poppins',sans-serif; font-weight:500; color:var(--sub);
+     font-size:12px; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+p  { color:var(--sub); margin-bottom:10px; }
+strong { color:var(--text); }
+code { font-family:'JetBrains Mono',monospace; font-size:0.88em;
+       background:rgba(0,221,255,0.10); padding:2px 7px; border-radius:5px; color:var(--cyan); }
+a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,255,0.3); }
+a:hover { border-bottom-color:var(--cyan); }
+
+.card {
+  background:rgba(26,26,46,0.82);
+  border:1px solid var(--border); border-radius:24px;
+  padding:26px 28px; box-shadow:var(--shadow);
+  backdrop-filter:blur(4px);
+}
+.card.glow { box-shadow:var(--shadow),0 0 0 1px rgba(0,221,255,0.18),inset 0 0 40px rgba(0,163,255,0.04); }
+.wide  { margin:20px 0; }
+
+.callout {
+  border-left:3px solid var(--cyan); background:rgba(0,221,255,0.06);
+  padding:13px 16px; border-radius:0 12px 12px 0; margin:14px 0; font-size:15px;
+}
+.callout.tip   { border-color:var(--green); background:rgba(52,211,153,0.07); }
+.callout-label { font-family:'Poppins',sans-serif; font-size:11px; font-weight:700;
+                 text-transform:uppercase; letter-spacing:0.07em; display:block; margin-bottom:5px; color:var(--cyan); }
+.callout.tip .callout-label { color:var(--green); }
+
+/* ── Hero ─────────────────────────────────────────────── */
+.hero {
+  border:1px solid rgba(52,211,153,0.30); border-radius:28px; padding:36px 38px; margin-bottom:22px;
+  background:linear-gradient(135deg,rgba(52,211,153,0.08) 0%,rgba(0,163,255,0.05) 100%);
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(52,211,153,0.10),transparent 55%);
+  pointer-events:none;
+}
+.brand-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; position:relative; z-index:1; }
+.brand-logo { width:42px; height:42px; flex-shrink:0; }
+@keyframes aihydro-pulse {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 8px rgba(0,163,255,0.40)); }
+  50%      { transform: scale(1.04); filter: drop-shadow(0 0 14px rgba(0,221,255,0.65)); }
+}
+.brand-logo { animation: aihydro-pulse 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .brand-logo { animation: none; } }
+.brand-name {
+  font-family:'Quicksand',sans-serif; font-weight:700; font-size:22px; letter-spacing:0.02em;
+  background:linear-gradient(135deg,#00A3FF,#00FFFF);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.brand-tag {
+  font-family:'Poppins',sans-serif; font-size:11px; font-weight:600;
+  color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;
+  padding-left:14px; border-left:1px solid var(--border);
+}
+.gradient-text { background:linear-gradient(135deg,#00A3FF,#34d399); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero-sub { font-size:17px; color:var(--sub); max-width:640px; margin:12px 0 18px; position:relative; z-index:1; }
+.instruction {
+  display:inline-flex; gap:10px; align-items:flex-start;
+  background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.25);
+  border-radius:14px; padding:12px 16px; color:var(--muted); font-size:14px; position:relative; z-index:1;
+}
+.instruction::before { content:'🎓'; flex-shrink:0; }
+
+/* ── Certificate card ─────────────────────────────────── */
+.cert-wrap {
+  position:relative;
+  background:linear-gradient(145deg, #0d1f2c 0%, #0a1520 100%);
+  border:2px solid rgba(0,163,255,0.30);
+  border-radius:24px;
+  padding:50px 48px 42px;
+  margin:24px 0;
+  box-shadow:0 0 80px rgba(0,163,255,0.08), inset 0 0 60px rgba(0,163,255,0.03);
+  overflow:hidden;
+}
+.cert-wrap::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 15% 0%,  rgba(0,163,255,0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 100%, rgba(52,211,153,0.06) 0%, transparent 40%);
+  pointer-events:none;
+}
+.cert-header {
+  text-align:center; margin-bottom:32px; position:relative; z-index:1;
+}
+.cert-header .cert-logo {
+  width:72px; height:72px; margin-bottom:14px;
+  display:inline-block;
+  filter: drop-shadow(0 0 18px rgba(0,163,255,0.45));
+  animation: floatBadge 3s ease-in-out infinite;
+}
+@keyframes floatBadge {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@media (prefers-reduced-motion: reduce) { .cert-header .cert-logo { animation: none; } }
+.cert-title {
+  font-family:'Quicksand',sans-serif; font-weight:700;
+  font-size:clamp(22px,3.5vw,32px); color:var(--text);
+  letter-spacing:0.02em;
+}
+.cert-subtitle {
+  font-family:'Poppins',sans-serif; font-size:14px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:0.12em; margin-top:6px;
+}
+.cert-body {
+  text-align:center; position:relative; z-index:1;
+  font-size:17px; line-height:1.7; color:var(--sub);
+}
+.cert-body .presents { font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:0.10em; margin-bottom:8px; }
+.cert-body .recipient {
+  font-family:'Quicksand',sans-serif; font-weight:700;
+  font-size:clamp(24px,4vw,38px); color:var(--bright);
+  display:block; margin:14px 0;
+  min-height:1.2em;
+  border-bottom:2px dashed rgba(0,221,255,0.30);
+  padding-bottom:8px;
+  transition:color 0.2s;
+}
+.cert-body .recipient.placeholder { color:rgba(0,221,255,0.35); border-bottom-color:rgba(0,221,255,0.15); }
+.cert-course {
+  font-family:'Poppins',sans-serif; font-weight:600;
+  font-size:18px; color:var(--text); margin-top:4px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.cert-course-icon { font-size:22px; display:inline-block; }
+.cert-course-sub {
+  font-size:13px; color:var(--muted);
+}
+
+/* ── Module checklist ──────────────────────────────────── */
+.module-checklist {
+  max-width:500px; margin:28px auto 0;
+  text-align:left; position:relative; z-index:1;
+}
+.module-checklist h3 {
+  text-align:center; margin-bottom:14px; color:var(--green);
+}
+.check-row {
+  display:flex; align-items:center; gap:12px;
+  padding:8px 0; border-bottom:1px solid rgba(125,211,252,0.06);
+  font-size:14px; color:var(--sub);
+}
+.check-row:last-child { border-bottom:none; }
+.check-icon {
+  flex-shrink:0; width:24px; height:24px;
+  border-radius:50%; background:var(--green);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:var(--bg); font-weight:700;
+}
+
+/* ── Signature area ────────────────────────────────────── */
+.cert-signature {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  max-width:500px; margin:32px auto 0;
+  padding-top:24px; border-top:1px solid rgba(125,211,252,0.10);
+  position:relative; z-index:1;
+}
+.sig-block { text-align:center; }
+.sig-line {
+  font-family:'Poppins',sans-serif; font-size:14px; font-weight:600;
+  color:var(--text); border-bottom:1.5px solid rgba(0,221,255,0.35);
+  padding-bottom:6px; margin-bottom:6px; min-width:160px;
+}
+.sig-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
+
+/* ── Issued date ───────────────────────────────────────── */
+.cert-date {
+  text-align:center; position:relative; z-index:1;
+  font-size:12px; color:var(--muted);
+  margin-top:20px;
+  font-family:'JetBrains Mono',monospace;
+}
+.cert-date span { color:var(--cyan); }
+
+/* ── Name input ────────────────────────────────────────── */
+.input-block {
+  max-width:500px; margin:0 auto 0; text-align:center; position:relative; z-index:1;
+}
+.name-input {
+  font-family:'Quicksand',sans-serif; font-size:20px; font-weight:600;
+  text-align:center;
+  background:rgba(15,15,30,0.8);
+  color:var(--bright);
+  border:2px solid rgba(0,221,255,0.30);
+  border-radius:14px;
+  padding:14px 20px;
+  width:100%; max-width:420px;
+  outline:none;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.name-input:focus {
+  border-color:var(--cyan);
+  box-shadow:0 0 24px rgba(0,221,255,0.15);
+}
+.name-input::placeholder {
+  color:rgba(0,221,255,0.30); font-weight:500;
+}
+
+/* ── Share & Print row ─────────────────────────────────── */
+.share-row {
+  display:flex; justify-content:center; align-items:center; gap:32px;
+  margin:20px 0 8px; flex-wrap:wrap; position:relative; z-index:1;
+}
+.print-btn-wrap { text-align:center; }
+.print-btn {
+  font-family:'Poppins',sans-serif; font-weight:700; font-size:15px;
+  background:linear-gradient(135deg,#00A3FF,#00DDFF);
+  color:var(--bg); border:none; border-radius:999px;
+  padding:12px 32px; cursor:pointer;
+  transition:transform 0.1s,box-shadow 0.2s;
+  letter-spacing:0.03em;
+}
+.print-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(0,221,255,0.35); }
+.print-hint {
+  display:block; font-size:11px; color:var(--muted); margin-top:6px;
+}
+.print-hint strong { color:var(--cyan); }
+
+/* ── Share buttons ─────────────────────────────────────── */
+.share-btns { display:flex; align-items:center; gap:8px; }
+.share-label {
+  font-family:'Poppins',sans-serif; font-size:11px; font-weight:600;
+  color:var(--muted); text-transform:uppercase; letter-spacing:0.07em;
+  margin-right:2px;
+}
+.share-btn {
+  width:40px; height:40px; border-radius:10px; border:1px solid var(--border);
+  background:rgba(15,15,30,0.7); color:var(--sub);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:border-color 0.15s,color 0.15s,background 0.15s;
+}
+.share-btn svg { pointer-events:none; }
+.share-btn:hover { border-color:var(--cyan); color:var(--text); background:rgba(0,221,255,0.08); }
+.share-btn.linkedin:hover { border-color:#0A66C2; color:#0A66C2; background:rgba(10,102,194,0.10); }
+.share-btn.twitter:hover { border-color:#E8E8E8; color:#E8E8E8; background:rgba(255,255,255,0.06); }
+
+/* ── Provenance ────────────────────────────────────────── */
+.provenance { border-top:1px solid var(--border); margin-top:32px; padding:22px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:16px 32px; }
+.prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
+.prov-item dd { font-size:13px; color:var(--sub); }
+@media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
+
+/* ── Print stylesheet ──────────────────────────────────── */
+@media print {
+  /* strip chrome */
+  body {
+    background: white !important;
+    color: #111 !important;
+    font-size:13px !important;
+    line-height:1.35 !important;
+  }
+  main { max-width:100%; padding:10px 20px !important; }
+  .hero, .card, .callout, .instruction, .input-block, .share-row,
+  .provenance, .aihydro-made-with { display:none !important; }
+  .cert-wrap {
+    background: white !important;
+    border: 3px solid #003366 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    padding:24px 32px !important;
+    margin:0 !important;
+    max-width:7.2in !important;
+    page-break-inside:avoid;
+  }
+  .cert-wrap::before { display:none !important; }
+  .cert-header { margin-bottom:16px !important; }
+  .cert-header .cert-logo { animation:none !important; width:36px !important; height:36px !important; filter:none !important; margin-bottom:6px !important; }
+  .cert-subtitle { font-size:10px !important; margin-top:2px !important; }
+  .cert-title { font-size:22px !important; color:#003366 !important; }
+  .cert-body { font-size:14px !important; line-height:1.5 !important; }
+  .cert-body .presents { font-size:11px !important; margin-bottom:4px !important; }
+  .recipient { font-size:24px !important; margin:8px 0 !important; padding-bottom:4px !important; min-height:auto !important; }
+  .cert-course { font-size:15px !important; margin-top:2px !important; }
+  .cert-course-sub { font-size:11px !important; }
+  .module-checklist { max-width:100% !important; margin:14px auto 0 !important; }
+  .module-checklist h3 { font-size:12px !important; margin-bottom:8px !important; }
+  .check-row { font-size:11px !important; padding:4px 0 !important; display:inline-flex !important; width:50% !important; box-sizing:border-box !important; }
+  .check-icon { width:18px !important; height:18px !important; font-size:10px !important; }
+  .cert-signature { margin:16px auto 0 !important; padding-top:14px !important; max-width:100% !important; }
+  .sig-line { font-size:13px !important; padding-bottom:4px !important; margin-bottom:4px !important; min-width:130px !important; }
+  .sig-label, .cert-body .presents, .cert-subtitle, .cert-date, .sig-label { color:#555 !important; font-size:9px !important; }
+  .cert-date { margin-top:10px !important; font-size:10px !important; }
+  .cert-title, .cert-body, .recipient, .cert-course, .cert-course-sub,
+  .sig-line, .sig-label, .check-row { color:#111 !important; }
+  .recipient { border-bottom-color:#003366 !important; }
+  .gradient-text {
+    background:none !important;
+    -webkit-background-clip:inherit !important;
+    background-clip:inherit !important;
+    color:#003366 !important;
+  }
+  .sig-line { border-bottom-color:#003366 !important; }
+  .check-icon { background:#003366 !important; color:white !important; }
+  @page { size: letter; margin: 0.3in; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  HERO                                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="brand-row">
+    <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="AI-Hydro logo">
+      <defs>
+        <linearGradient id="aihydroG" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"  stop-color="#00A3FF"/>
+          <stop offset="100%" stop-color="#00DDFF"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroG)"/>
+      <ellipse cx="20" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
+      <ellipse cx="80" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
+      <ellipse cx="40" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
+      <ellipse cx="60" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
+      <path d="M 38 62 Q 50 68 62 62" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="14" r="4" fill="url(#aihydroG)"/>
+    </svg>
+    <span class="brand-name">AI-Hydro</span>
+    <span class="brand-tag">Course Completion</span>
+  </div>
+
+  <h1>You did it. <span class="gradient-text">Course complete.</span></h1>
+  <p class="hero-sub">
+    All seven modules done — from a Manim water-cycle animation to a full basin
+    characterisation. Enter your name below to generate your certificate.
+  </p>
+  <div class="instruction">
+    Type your name · Preview updates live · Print or save as PDF
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  NAME INPUT                                                -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="input-block">
+  <label for="studentName" style="display:block; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">
+    Enter your name
+  </label>
+  <input type="text" id="studentName" class="name-input"
+         placeholder="Type your name here…"
+         maxlength="60"
+         aria-label="Your name as it should appear on the certificate">
+</div>
+
+<div class="share-row">
+  <div class="print-btn-wrap">
+    <button class="print-btn" type="button" id="printBtn"
+            onclick="window._aihydroPrint()"
+            title="Prints directly; use browser 'Save as PDF' to get a PDF file">
+      🖨 Print / Save as PDF
+    </button>
+    <span class="print-hint">Opens browser print dialog → choose "<strong>Save as PDF</strong>"</span>
+  </div>
+  <div class="share-btns">
+    <span class="share-label">Share</span>
+    <a class="share-btn linkedin" id="shareLinkedIn"
+       href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgithub.com%2FAI-Hydro%2FAI-Hydro"
+       target="_blank" rel="noopener"
+       title="Share on LinkedIn" aria-label="Share on LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-btn twitter" id="shareTwitter"
+       href="https://twitter.com/intent/tweet?text=I%20just%20completed%20%22Introduction%20to%20Hydrology%22%20%E2%80%94%20an%20interactive%20AI-Hydro%20course%20by%20Purdue%20University.%0A%0A7%20modules%20covering%20the%20full%20water%20cycle%2C%20streamflow%20analysis%2C%20baseflow%20separation%2C%20DEM%20processing%2C%20and%20a%20capstone%20basin%20study.%20%F0%9F%8C%8A%F0%9F%92%A7%0A%0A%23Hydrology%20%23AIHydro%20%23EarthScience&url=https%3A%2F%2Fgithub.com%2FAI-Hydro%2FAI-Hydro"
+       target="_blank" rel="noopener"
+       title="Share on X / Twitter" aria-label="Share on X">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  CERTIFICATE                                               -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="cert-wrap" id="certificate">
+  <div class="cert-header">
+    <svg class="cert-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="AI-Hydro logo">
+      <defs>
+        <linearGradient id="certLogoGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"  stop-color="#00A3FF"/>
+          <stop offset="100%" stop-color="#00DDFF"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#certLogoGrad)"/>
+      <ellipse cx="20" cy="52" rx="5" ry="7" fill="url(#certLogoGrad)"/>
+      <ellipse cx="80" cy="52" rx="5" ry="7" fill="url(#certLogoGrad)"/>
+      <ellipse cx="40" cy="48" rx="6" ry="9" fill="#0a1520"/>
+      <ellipse cx="60" cy="48" rx="6" ry="9" fill="#0a1520"/>
+      <path d="M 38 62 Q 50 68 62 62" stroke="#0a1520" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="14" r="4" fill="url(#certLogoGrad)"/>
+    </svg>
+    <div class="cert-subtitle">AI-Hydro · Interactive Learning Hub</div>
+    <div class="cert-title gradient-text">Certificate of Completion</div>
+  </div>
+
+  <div class="cert-body">
+    <span class="presents">This certifies that</span>
+    <span class="recipient placeholder" id="certName">Your Name Here</span>
+    <span style="font-size:15px; color:var(--sub);">has successfully completed</span>
+    <div class="cert-course">
+      <span class="cert-course-icon">💧</span>
+      Introduction to Hydrology
+    </div>
+    <div class="cert-course-sub">AI-Hydro Interactive Course · 7 Modules · ~5 Hours</div>
+  </div>
+
+  <!-- Module checklist -->
+  <div class="module-checklist">
+    <h3>Modules Completed</h3>
+    <div class="check-row"><div class="check-icon">✓</div> The Water Cycle in Motion</div>
+    <div class="check-row"><div class="check-icon">✓</div> The Watershed: Where Rain Becomes Runoff</div>
+    <div class="check-row"><div class="check-icon">✓</div> Reading a Hydrograph</div>
+    <div class="check-row"><div class="check-icon">✓</div> Splitting the Flow: Baseflow Separation</div>
+    <div class="check-row"><div class="check-icon">✓</div> Catching the Flow: Real Streamflow Data</div>
+    <div class="check-row"><div class="check-icon">✓</div> The Shape of the Land: DEM to TWI</div>
+    <div class="check-row"><div class="check-icon">✓</div> Capstone: A Basin's Water Story</div>
+  </div>
+
+  <!-- Signature area -->
+  <div class="cert-signature">
+    <div class="sig-block">
+      <div class="sig-line">Mohammad Galib</div>
+      <div class="sig-label">Course Author</div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-line">Purdue University</div>
+      <div class="sig-label">Institution</div>
+    </div>
+  </div>
+
+  <!-- Issued date — updates via JS -->
+  <div class="cert-date">
+    Issued: <span id="certDate">—</span> · Made with AI-Hydro · CC-BY-4.0
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  PROVENANCE                                               -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="wide card provenance" style="margin-top:14px;">
+  <div class="prov-item">
+    <dt>Module</dt>
+    <dd><code>course-certificate</code> · v0.1.0 · CC-BY-4.0</dd>
+  </div>
+  <div class="prov-item">
+    <dt>Author</dt>
+    <dd>Mohammad Galib · Purdue University</dd>
+  </div>
+  <div class="prov-item">
+    <dt>Course</dt>
+    <dd>Introduction to Hydrology · <code>intro-hydro-2026</code></dd>
+  </div>
+  <div class="prov-item">
+    <dt>Prerequisite</dt>
+    <dd>Requires completion of all 7 course modules</dd>
+  </div>
+</div>
+
+  <!-- Made with AI-Hydro -->
+  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+    <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
+      <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+        <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
+      </svg>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+    </span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  SCRIPTS                                                   -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── Set today's date ──────────────────────────────── */
+  var dateEl = document.getElementById('certDate');
+  if (dateEl) {
+    dateEl.textContent = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+
+  /* ── Live name → certificate preview ────────────────── */
+  var nameInput   = document.getElementById('studentName');
+  var certNameEl  = document.getElementById('certName');
+
+  if (nameInput && certNameEl) {
+    nameInput.addEventListener('input', function () {
+      var name = nameInput.value.trim();
+      if (name) {
+        certNameEl.textContent = name;
+        certNameEl.classList.remove('placeholder');
+      } else {
+        certNameEl.textContent = 'Your Name Here';
+        certNameEl.classList.add('placeholder');
+      }
+    });
+  }
+
+  /* ── Share & Print handlers (VS Code webview safe) ─── */
+  var vscodeApi = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null;
+
+  window._aihydroOpenShare = function (platform) {
+    var url;
+    if (platform === 'linkedin') {
+      url = 'https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgithub.com%2FAI-Hydro%2FAI-Hydro';
+    } else if (platform === 'twitter') {
+      url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(
+        'I just completed "Introduction to Hydrology" — an interactive AI-Hydro course by Purdue University.\n\n' +
+        '7 modules covering the full water cycle, streamflow analysis, baseflow separation, DEM processing, and a capstone basin study. \uD83C\uDF0A\uD83D\uDCA7\n\n' +
+        '#Hydrology #AIHydro #EarthScience'
+      ) + '&url=https%3A%2F%2Fgithub.com%2FAI-Hydro%2FAI-Hydro';
+    }
+    if (!url) return;
+    if (vscodeApi) {
+      vscodeApi.postMessage({ command: 'openExternalLink', url: url });
+    } else {
+      window.open(url, '_blank', 'noopener');
+    }
+  };
+
+  window._aihydroPrint = function () {
+    if (vscodeApi) {
+      vscodeApi.postMessage({ command: 'print' });
+    } else {
+      window.print();
+    }
+  };
+
+  /* ── Wire buttons (also handles SVG click-through) ──── */
+  var printBtn = document.getElementById('printBtn');
+  if (printBtn) {
+    printBtn.addEventListener('click', window._aihydroPrint);
+  }
+  var liBtn = document.getElementById('shareLinkedIn');
+  if (liBtn) {
+    liBtn.addEventListener('click', function(e) { e.preventDefault(); window._aihydroOpenShare('linkedin'); });
+  }
+  var twBtn = document.getElementById('shareTwitter');
+  if (twBtn) {
+    twBtn.addEventListener('click', function(e) { e.preventDefault(); window._aihydroOpenShare('twitter'); });
+  }
+
+})();
+</script>
+
+  <script>
+  /* Standalone-browser fallback — disable Run buttons outside AI-Hydro preview */
+  (function(){
+    var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
+                    (typeof window.aihydro !== 'undefined') ||
+                    (typeof window.acquireVsCodeApi === 'function');
+    if (inPreview) return;
+    document.querySelectorAll('.aihydro-run').forEach(function(btn){
+      btn.disabled = true;
+      btn.innerHTML = '\uD83D\uDD12 Open in AI-Hydro to run';
+      btn.style.opacity = '0.55';
+      btn.style.cursor = 'not-allowed';
+    });
+  })();
+</script>
+
+  <script>
+  /* Auto-open certificate in external browser on first load inside AI-Hydro preview */
+  (function(){
+    if (sessionStorage.getItem('aihydro_cert_opened_browser')) return;
+    var api = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null;
+    if (!api) return;  /* not inside VS Code webview — nothing to do */
+    sessionStorage.setItem('aihydro_cert_opened_browser', '1');
+    /* Post to extension: open current file:// URL in system browser */
+    api.postMessage({ command: 'openInBrowser', url: window.location.href });
+  })();
+</script>
+</body>
+</html>
