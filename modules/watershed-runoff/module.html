@@ -12,7 +12,7 @@
 {
   "id": "watershed-runoff",
   "title": "The Watershed: Where Rain Becomes Runoff",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "watershed-hydrology",
@@ -391,13 +391,25 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
   <dl class="provenance">
     <div class="prov-item"><dt>Author</dt><dd>Mohammad Galib · Purdue University</dd></div>
     <div class="prov-item"><dt>License</dt><dd>CC-BY-4.0 — free to reuse with attribution</dd></div>
-    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.1.0</dd></div>
+    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.1.1</dd></div>
     <div class="prov-item"><dt>Course</dt><dd>Introduction to Hydrology · <code>intro-hydro-2026</code></dd></div>
     <div class="prov-item"><dt>Data</dt><dd>All terrain is synthetic (procedurally generated); no real DEM used</dd></div>
     <div class="prov-item"><dt>Dependencies</dt><dd>three.js r128 (lazy CDN, 3-D only); no kernel required</dd></div>
   </dl>
 </div>
 
+  <!-- Made with AI-Hydro -->
+  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+    <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
+      <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+        <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
+      </svg>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+    </span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+  </div>
 </main>
 <script>
 (function () {
@@ -697,6 +709,21 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
     }
   });
 })();
+</script>
+  <script>
+  /* Standalone-browser fallback — disable Run buttons outside AI-Hydro preview */
+  (function(){
+    var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
+                    (typeof window.aihydro !== 'undefined') ||
+                    (typeof window.acquireVsCodeApi === 'function');
+    if (inPreview) return;
+    document.querySelectorAll('.aihydro-run').forEach(function(btn){
+      btn.disabled = true;
+      btn.innerHTML = '🔒 Open in AI-Hydro to run';
+      btn.style.opacity = '0.55';
+      btn.style.cursor = 'not-allowed';
+    });
+  })();
 </script>
 </body>
 </html>

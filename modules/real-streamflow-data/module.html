@@ -157,16 +157,8 @@ select:focus { outline:1px solid var(--cyan); }
 .other-input input:focus { outline:1px solid var(--cyan); }
 .other-input.visible { display:block; }
 
-/* ── Code cells ─────────────────────── */
-.aihydro-cell { border:1px solid rgba(0,221,255,0.22); border-radius:18px; background:rgba(2,6,23,0.55); padding:18px 20px; margin:16px 0; }
-.cell-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-.cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,221,255,0.12); color:var(--cyan); padding:3px 10px; border-radius:6px; }
-.cell-desc { font-size:13px; color:var(--muted); flex:1; }
 .run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.04em; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
 .run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
-.aihydro-source { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; overflow-x:auto; background:rgba(0,0,0,0.45); border-radius:10px; padding:14px; margin-bottom:12px; color:var(--text); border:1px solid rgba(125,211,252,0.08); max-height:420px; }
-.aihydro-output { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; min-height:2em; background:rgba(0,0,0,0.30); border-radius:10px; padding:12px; color:var(--sub); overflow:auto; max-height:480px; }
-.aihydro-output:empty::before { content:'(no output yet — click Run ▶)'; color:var(--muted); font-style:italic; }
 
 /* ── Stat chips ─────────────────────── */
 .stat-row { display:flex; flex-wrap:wrap; gap:12px; margin:14px 0; }
@@ -334,18 +326,25 @@ select:focus { outline:1px solid var(--cyan); }
     The selected gauge (highlighted blue) is what the Python cell will use.
   </p>
 
-  <!-- Leaflet map — the bridge renders this via data-aihydro-map -->
+  <!-- Leaflet map — the bridge renders this via .aihydro-map[data-aihydro-map-id] -->
   <div class="map-container">
-    <div data-aihydro-map
-         data-center="38.5,-96"
-         data-zoom="4"
-         data-markers='[
-           {"lat":47.26,"lng":-68.35,"label":"01013500","color":"#f59e0b","popup":"Fish River near Fort Kent, ME\nFlood-prone New England"},
-           {"lat":44.90,"lng":-123.83,"label":"14305500","color":"#00A3FF","popup":"Siletz River at Siletz, OR\nPacific NW snowmelt"},
-           {"lat":32.28,"lng":-110.93,"label":"09484000","color":"#a78bfa","popup":"Rillito Creek near Tucson, AZ\nFlashy arid basin"},
-           {"lat":30.67,"lng":-89.82,"label":"02472000","color":"#34d399","popup":"Bogue Chitto near Bush, LA\nBaseflow-dominated coastal plain"}
-         ]'
+    <div class="aihydro-map"
+         data-aihydro-map-id="gauge-map"
+         data-center-lat="38.5"
+         data-center-lng="-96"
+         data-initial-zoom="4"
          style="height:380px; border-radius:16px; border:1px solid rgba(125,211,252,0.2);">
+      <script type="application/geo+json">
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type":"Feature","geometry":{"type":"Point","coordinates":[-68.35,47.26]},"properties":{"label":"01013500","color":"#f59e0b","popup":"Fish River near Fort Kent, ME\nFlood-prone New England"}},
+    {"type":"Feature","geometry":{"type":"Point","coordinates":[-123.83,44.90]},"properties":{"label":"14305500","color":"#00A3FF","popup":"Siletz River at Siletz, OR\nPacific NW snowmelt"}},
+    {"type":"Feature","geometry":{"type":"Point","coordinates":[-110.93,32.28]},"properties":{"label":"09484000","color":"#a78bfa","popup":"Rillito Creek near Tucson, AZ\nFlashy arid basin"}},
+    {"type":"Feature","geometry":{"type":"Point","coordinates":[-89.82,30.67]},"properties":{"label":"02472000","color":"#34d399","popup":"Bogue Chitto near Bush, LA\nBaseflow-dominated coastal plain"}}
+  ]
+}
+      </script>
       <!-- fallback when Leaflet bridge is not available -->
       <div class="map-placeholder">
         <div class="map-icon">🗺️</div>
@@ -403,9 +402,9 @@ select:focus { outline:1px solid var(--cyan); }
 
   <!-- Main Python cell -->
   <div class="aihydro-cell" data-aihydro-cell-id="streamflow-fetch" data-language="python">
-    <div class="cell-header">
-      <span class="cell-lang">python</span>
-      <span class="cell-desc">USGS daily streamflow · multi-year record · flood identification</span>
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">python</span>
+      <span class="aihydro-cell-desc">USGS daily streamflow · multi-year record · flood identification</span>
       <button class="run-btn aihydro-run" type="button">Run ▶</button>
     </div>
     <pre class="aihydro-source" id="cellSource"></pre>
@@ -604,6 +603,18 @@ select:focus { outline:1px solid var(--cyan); }
   <div class="prov-item"><dt>Environment</dt><dd>Python (numpy, matplotlib) · optional: dataretrieval.</dd></div>
 </div>
 
+  <!-- Made with AI-Hydro -->
+  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+    <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
+      <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+        <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
+      </svg>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+    </span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+  </div>
 </main>
 
 <script>
@@ -739,7 +750,6 @@ select:focus { outline:1px solid var(--cyan); }
       'ax2.set_title("Annual regime  (mean Q by calendar month)", fontsize=9, color="#94a3b8")',
       '',
       'plt.tight_layout()',
-      'plt.show()',
       '',
       'print(f"\\nGauge      : {GAUGE_ID}  {GAUGE_NAME}")',
       'print(f"Period     : {START_YR}–{START_YR + N_YEARS - 1}  ({N_YEARS} years)")',
@@ -869,5 +879,20 @@ select:focus { outline:1px solid var(--cyan); }
 })();
 </script>
 
+  <script>
+  /* Standalone-browser fallback — disable Run buttons outside AI-Hydro preview */
+  (function(){
+    var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
+                    (typeof window.aihydro !== 'undefined') ||
+                    (typeof window.acquireVsCodeApi === 'function');
+    if (inPreview) return;
+    document.querySelectorAll('.aihydro-run').forEach(function(btn){
+      btn.disabled = true;
+      btn.innerHTML = '🔒 Open in AI-Hydro to run';
+      btn.style.opacity = '0.55';
+      btn.style.cursor = 'not-allowed';
+    });
+  })();
+</script>
 </body>
 </html>

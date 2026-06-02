@@ -12,7 +12,7 @@
 {
   "id": "water-cycle-in-motion",
   "title": "The Water Cycle in Motion",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "hydrology-fundamentals",
@@ -183,18 +183,6 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 }
 .cycle-svg-wrap svg { display:block; width:100%; height:auto; }
 
-/* ── Code cells ───────────────────────────────────────── */
-.aihydro-cell { border:1px solid rgba(0,221,255,0.22); border-radius:18px; background:rgba(2,6,23,0.55); padding:18px 20px; margin:16px 0; }
-.cell-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-.cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,221,255,0.12); color:var(--cyan); padding:3px 10px; border-radius:6px; }
-.cell-desc { font-size:13px; color:var(--muted); flex:1; }
-.aihydro-source { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; overflow-x:auto; background:rgba(0,0,0,0.45); border-radius:10px; padding:14px; margin-bottom:12px; color:var(--text); border:1px solid rgba(125,211,252,0.08); max-height:420px; }
-.aihydro-output { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; min-height:2em; background:rgba(0,0,0,0.30); border-radius:10px; padding:12px; color:var(--sub); overflow:auto; max-height:480px; }
-.aihydro-output:empty::before { content:'(no output yet)'; color:var(--muted); font-style:italic; }
-.aihydro-output-images { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-.aihydro-output-images img,
-.aihydro-output-images video { max-width:100%; border-radius:8px; }
-
 /* ── Quiz ─────────────────────────────────────────────── */
 .aihydro-quiz { margin:0; }
 .aihydro-quiz-question { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border); }
@@ -208,6 +196,17 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 .aihydro-quiz-feedback.show { display:block; }
 .aihydro-quiz-submit { font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:10px 28px; cursor:pointer; margin-top:8px; transition:transform 0.1s,box-shadow 0.2s; }
 .aihydro-quiz-submit:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
+
+/* ── Video render cells (Manim) ── unclip output for playback ── */
+.aihydro-cell[data-aihydro-render="video"] .aihydro-output {
+  max-height: none !important;
+  overflow: visible;
+}
+.aihydro-cell[data-aihydro-render="video"] .aihydro-output-video video {
+  max-height: 80vh;
+  width: 100%;
+  border-radius: 10px;
+}
 
 /* ── References & provenance ──────────────────────────── */
 .refs ol { counter-reset:r; padding:0; list-style:none; }
@@ -310,10 +309,10 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
        data-aihydro-cell-id="water-cycle-film"
        data-language="python"
        data-aihydro-render="video">
-    <div class="cell-header">
-      <span class="cell-lang">Python · Manim</span>
-      <span class="cell-desc">Renders the water-cycle animation (~15 s at 480p)</span>
-      <button class="aihydro-run" type="button" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.04em;background:linear-gradient(135deg,#00A3FF,#00DDFF);color:#0a0a15;border:none;border-radius:999px;padding:6px 16px;cursor:pointer;transition:transform 0.1s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 20px rgba(0,221,255,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">▶ Run</button>
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">Python · Manim</span>
+      <span class="aihydro-cell-desc">Renders the water-cycle animation (~15 s at 480p)</span>
+      <button class="aihydro-run" type="button">▶ Run</button>
     </div>
     <pre class="aihydro-source">from manim import *
 
@@ -775,7 +774,7 @@ class WaterCycle(Scene):
     </div>
     <div class="prov-item">
       <dt>Module ID</dt>
-      <dd><code>water-cycle-in-motion</code> · v0.1.0</dd>
+      <dd><code>water-cycle-in-motion</code> · v0.1.1</dd>
     </div>
     <div class="prov-item">
       <dt>Course</dt>
@@ -792,6 +791,18 @@ class WaterCycle(Scene):
   </dl>
 </div><!-- /sec-prov -->
 
+  <!-- Made with AI-Hydro -->
+  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+    <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
+      <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+        <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
+      </svg>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+    </span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+  </div>
 </main>
 
 <!-- ══════════════════════════════════════════════════════ -->
@@ -1131,5 +1142,20 @@ class WaterCycle(Scene):
 })();
 </script>
 
+  <script>
+  /* Standalone-browser fallback — disable Run buttons outside AI-Hydro preview */
+  (function(){
+    var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
+                    (typeof window.aihydro !== 'undefined') ||
+                    (typeof window.acquireVsCodeApi === 'function');
+    if (inPreview) return;
+    document.querySelectorAll('.aihydro-run').forEach(function(btn){
+      btn.disabled = true;
+      btn.innerHTML = '🔒 Open in AI-Hydro to run';
+      btn.style.opacity = '0.55';
+      btn.style.cursor = 'not-allowed';
+    });
+  })();
+</script>
 </body>
 </html>

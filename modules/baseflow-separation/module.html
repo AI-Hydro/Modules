@@ -5,14 +5,14 @@
 <title>Splitting the Flow: Baseflow Separation — AI-Hydro Interactive Module</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Poppins:wght@400;500;600;700&amp;family=Nunito:wght@400;600;700&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet">
 
 <script type="application/vnd.aihydro.module+json">
 {
   "id": "baseflow-separation",
   "title": "Splitting the Flow: Baseflow Separation",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "baseflow-analysis",
@@ -111,9 +111,9 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 
 /* Code cells */
 .aihydro-cell { border:1px solid rgba(0,221,255,0.22); border-radius:18px; background:rgba(2,6,23,0.55); padding:18px 20px; margin:16px 0; }
-.cell-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-.cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,221,255,0.12); color:var(--cyan); padding:3px 10px; border-radius:6px; }
-.cell-desc { font-size:13px; color:var(--muted); flex:1; }
+.aihydro-cell-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+.aihydro-cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,221,255,0.12); color:var(--cyan); padding:3px 10px; border-radius:6px; }
+.aihydro-cell-desc { font-size:13px; color:var(--muted); flex:1; }
 .run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
 .run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
 .aihydro-source { font-family:'JetBrains Mono',monospace; font-size:12.5px; white-space:pre; overflow-x:auto; background:rgba(0,0,0,0.45); border-radius:10px; padding:14px; margin-bottom:12px; color:var(--text); border:1px solid rgba(125,211,252,0.08); max-height:380px; }
@@ -150,7 +150,749 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 .prov-item dd { font-size:13px; color:var(--sub); }
 @media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
 </style>
-</head>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Poppins:wght@400;500;600&amp;family=Nunito:wght@400;700&amp;family=Comfortaa:wght@400;600&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet">
+<style id="aihydro-preview-style">
+:root {
+  --aihydro-blue: #00A3FF;
+  --aihydro-cyan: #00DDFF;
+  --aihydro-hero-cyan: #00D4FF;
+  --aihydro-bright-cyan: #00FFFF;
+  --aihydro-bg-deep: #0a0a15;
+  --aihydro-bg-navy: #1a1a2e;
+  --aihydro-bg-mid: #0f0f1e;
+  --aihydro-text: #FFFFFF;
+  --aihydro-text-accent: #7dd3fc;
+  --aihydro-text-muted: #94a3b8;
+  --aihydro-border: rgba(125, 211, 252, 0.18);
+  --aihydro-border-strong: rgba(0, 221, 255, 0.45);
+  --aihydro-gradient-primary: linear-gradient(135deg, #00A3FF 0%, #00DDFF 100%);
+  --aihydro-gradient-hero: linear-gradient(135deg, #00D4FF 0%, #00FFFF 100%);
+  --aihydro-font-display: 'Quicksand', system-ui, sans-serif;
+  --aihydro-font-heading: 'Poppins', 'Nunito', system-ui, sans-serif;
+  --aihydro-font-body: 'Nunito', system-ui, sans-serif;
+  --aihydro-font-ui: 'Comfortaa', 'Quicksand', system-ui, sans-serif;
+  --aihydro-font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+/* ---- Module shell -------------------------------------------------- */
+body.aihydro-module, .aihydro-module {
+  background: linear-gradient(180deg, var(--aihydro-bg-deep) 0%, var(--aihydro-bg-navy) 100%);
+  color: var(--aihydro-text-accent);
+  font-family: var(--aihydro-font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+.aihydro-module .aihydro-content {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+.aihydro-module h1, .aihydro-module h2, .aihydro-module h3 {
+  font-family: var(--aihydro-font-heading);
+  color: var(--aihydro-text);
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+.aihydro-module h1 { font-weight: 600; font-size: 32px; margin: 0 0 8px; }
+.aihydro-module h2 { font-weight: 600; font-size: 24px; margin: 28px 0 12px; }
+.aihydro-module h3 { font-weight: 500; font-size: 19px; margin: 20px 0 8px; }
+.aihydro-module p { margin: 0 0 14px; }
+.aihydro-module strong { color: var(--aihydro-text); }
+.aihydro-module a { color: var(--aihydro-cyan); text-decoration: none; }
+.aihydro-module a:hover { text-decoration: underline; }
+
+/* ---- Module header ------------------------------------------------- */
+.aihydro-module-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(0,163,255,0.10) 0%, rgba(0,221,255,0.04) 100%);
+  border-bottom: 1px solid var(--aihydro-border);
+}
+.aihydro-module-header .aihydro-brand-mark {
+  font-family: var(--aihydro-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  background: var(--aihydro-gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  white-space: nowrap;
+}
+.aihydro-module-header .aihydro-module-title {
+  font-family: var(--aihydro-font-heading);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--aihydro-text);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aihydro-module-header .aihydro-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--aihydro-font-ui);
+  font-size: 11px;
+}
+.aihydro-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--aihydro-border);
+  color: var(--aihydro-text-accent);
+  background: rgba(125,211,252,0.06);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.aihydro-pill.is-primary {
+  background: var(--aihydro-gradient-primary);
+  color: var(--aihydro-bg-deep);
+  border: none;
+  font-weight: 600;
+}
+
+.aihydro-authors {
+  font-family: var(--aihydro-font-ui);
+  font-size: 12px;
+  color: var(--aihydro-text-muted);
+  margin: 4px 0 0;
+}
+
+/* ---- Steps --------------------------------------------------------- */
+.aihydro-step {
+  margin: 28px 0;
+  padding: 20px 22px;
+  background: rgba(15,15,30,0.55);
+  border: 1px solid var(--aihydro-border);
+  border-radius: 14px;
+  position: relative;
+}
+.aihydro-step[data-aihydro-status="done"]   { border-color: var(--aihydro-border-strong); }
+.aihydro-step[data-aihydro-status="active"] { box-shadow: 0 0 0 1px var(--aihydro-cyan), 0 10px 30px rgba(0,221,255,0.10); }
+.aihydro-step > .aihydro-step-index {
+  position: absolute; top: -14px; left: 18px;
+  background: var(--aihydro-gradient-primary);
+  color: var(--aihydro-bg-deep);
+  font-family: var(--aihydro-font-ui); font-weight: 600;
+  padding: 4px 12px; border-radius: 999px; font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Callouts ------------------------------------------------------ */
+.aihydro-callout {
+  border-left: 3px solid var(--aihydro-cyan);
+  background: rgba(0,221,255,0.06);
+  padding: 12px 14px;
+  border-radius: 0 10px 10px 0;
+  margin: 16px 0;
+  font-size: 15px;
+}
+.aihydro-callout .aihydro-callout-title {
+  font-family: var(--aihydro-font-heading);
+  font-weight: 600;
+  color: var(--aihydro-text);
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.aihydro-callout.is-note    { border-color: var(--aihydro-cyan); }
+.aihydro-callout.is-warning { border-color: #facc15; background: rgba(250,204,21,0.07); }
+.aihydro-callout.is-tip     { border-color: #34d399; background: rgba(52,211,153,0.07); }
+.aihydro-callout.is-agent   {
+  border-color: var(--aihydro-blue);
+  background: linear-gradient(135deg, rgba(0,163,255,0.10), rgba(0,221,255,0.04));
+}
+.aihydro-callout.is-warning .aihydro-callout-title { color: #facc15; }
+.aihydro-callout.is-tip .aihydro-callout-title     { color: #34d399; }
+
+/* ---- Figures ------------------------------------------------------- */
+.aihydro-figure {
+  margin: 18px 0;
+  padding: 12px;
+  background: var(--aihydro-bg-deep);
+  border: 1px solid var(--aihydro-border);
+  border-radius: 10px;
+}
+.aihydro-figure img, .aihydro-figure svg, .aihydro-figure canvas {
+  display: block; max-width: 100%; height: auto;
+  margin: 0 auto; border-radius: 6px;
+}
+.aihydro-figure-caption {
+  font-family: var(--aihydro-font-ui);
+  font-size: 12px;
+  color: var(--aihydro-text-muted);
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ---- Parameter panel ---------------------------------------------- */
+.aihydro-params {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+  padding: 14px 16px;
+  background: rgba(0,163,255,0.05);
+  border: 1px dashed var(--aihydro-border-strong);
+  border-radius: 10px;
+}
+.aihydro-param-row {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.aihydro-param-row label,
+.aihydro-params label {
+  font-family: var(--aihydro-font-ui);
+  font-size: 12px;
+  color: var(--aihydro-text-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.aihydro-params input[type="number"],
+.aihydro-params input[type="text"],
+.aihydro-params select {
+  background: var(--aihydro-bg-deep);
+  border: 1px solid var(--aihydro-border);
+  color: var(--aihydro-text);
+  font-family: var(--aihydro-font-mono);
+  padding: 6px 10px; border-radius: 6px; font-size: 14px;
+}
+.aihydro-params input[type="range"] {
+  accent-color: var(--aihydro-cyan);
+  width: 100%;
+}
+.aihydro-param-value {
+  font-family: var(--aihydro-font-mono);
+  color: var(--aihydro-cyan);
+  font-size: 13px;
+}
+
+/* ---- Buttons ------------------------------------------------------- */
+.aihydro-button,
+.aihydro-run {
+  font-family: var(--aihydro-font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: var(--aihydro-gradient-primary);
+  color: var(--aihydro-bg-deep);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+.aihydro-button:hover,
+.aihydro-run:hover { box-shadow: 0 6px 18px rgba(0,221,255,0.30); transform: translateY(-1px); }
+.aihydro-button:disabled,
+.aihydro-run:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+.aihydro-button.is-ghost {
+  background: transparent; color: var(--aihydro-cyan);
+  border: 1px solid var(--aihydro-border-strong);
+}
+
+/* ---- Cells (executable code) -------------------------------------- */
+.aihydro-cell {
+  border: 1px solid var(--aihydro-border);
+  border-radius: 10px;
+  margin: 14px 0;
+  padding: 12px 14px;
+  background: var(--aihydro-bg-deep);
+  color: var(--aihydro-text-accent);
+  position: relative;
+}
+.aihydro-cell[data-aihydro-focused="1"] {
+  outline: 1px solid var(--aihydro-cyan);
+}
+/* Run-state accent stripe so a slow or failed cell reads at a glance. */
+.aihydro-cell[data-aihydro-cell-status="warming"],
+.aihydro-cell[data-aihydro-cell-status="running"] {
+  box-shadow: inset 3px 0 0 var(--aihydro-cyan);
+}
+.aihydro-cell[data-aihydro-cell-status="done"] {
+  box-shadow: inset 3px 0 0 rgba(74,222,128,0.85);
+}
+.aihydro-cell[data-aihydro-cell-status="error"] {
+  box-shadow: inset 3px 0 0 rgba(248,113,113,0.9);
+}
+/* Status pill appended to the cell header, label driven by the attribute. */
+.aihydro-cell[data-aihydro-cell-status] .aihydro-cell-header::after {
+  font-family: var(--aihydro-font-ui);
+  font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 999px; margin-left: auto;
+}
+.aihydro-cell[data-aihydro-cell-status="warming"] .aihydro-cell-header::after {
+  content: "Warming"; color: var(--aihydro-cyan); background: rgba(0,221,255,0.12);
+  animation: aihydroPulse 1.2s ease-in-out infinite;
+}
+.aihydro-cell[data-aihydro-cell-status="running"] .aihydro-cell-header::after {
+  content: "Running"; color: var(--aihydro-cyan); background: rgba(0,221,255,0.12);
+  animation: aihydroPulse 1.2s ease-in-out infinite;
+}
+.aihydro-cell[data-aihydro-cell-status="done"] .aihydro-cell-header::after {
+  content: "Done"; color: rgba(74,222,128,0.95); background: rgba(74,222,128,0.12);
+}
+.aihydro-cell[data-aihydro-cell-status="error"] .aihydro-cell-header::after {
+  content: "Error"; color: rgba(248,113,113,0.95); background: rgba(248,113,113,0.12);
+}
+@keyframes aihydroPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) {
+  .aihydro-cell[data-aihydro-cell-status] .aihydro-cell-header::after { animation: none; }
+}
+.aihydro-cell .aihydro-cell-header {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--aihydro-font-ui);
+  font-size: 11px;
+  color: var(--aihydro-text-muted);
+  margin-bottom: 8px;
+}
+.aihydro-cell .aihydro-cell-header .aihydro-cell-lang {
+  background: rgba(0,221,255,0.10);
+  color: var(--aihydro-cyan);
+  padding: 2px 8px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.aihydro-source {
+  font-family: var(--aihydro-font-mono);
+  font-size: 13px;
+  white-space: pre-wrap;
+  margin: 0 0 10px;
+  padding: 10px;
+  background: var(--aihydro-bg-mid);
+  border-radius: 6px;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 280px;
+  resize: vertical;
+  color: var(--aihydro-text);
+  transition: max-height 0.2s ease, opacity 0.15s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125,211,252,0.25) transparent;
+}
+.aihydro-source::-webkit-scrollbar { width: 6px; height: 6px; }
+.aihydro-source::-webkit-scrollbar-track { background: transparent; }
+.aihydro-source::-webkit-scrollbar-thumb { background: rgba(125,211,252,0.25); border-radius: 3px; }
+.aihydro-source.is-collapsed {
+  max-height: 3.2em;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.65;
+  -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+  margin-bottom: 4px;
+  user-select: none;
+}
+.aihydro-toggle-source {
+  font-family: var(--aihydro-font-ui);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--aihydro-border);
+  background: transparent;
+  color: var(--aihydro-text-muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.aihydro-toggle-source:hover {
+  color: var(--aihydro-cyan);
+  border-color: var(--aihydro-border-strong);
+  background: rgba(0,221,255,0.06);
+}
+.aihydro-copy {
+  font-family: var(--aihydro-font-ui);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--aihydro-border);
+  cursor: pointer;
+  background: transparent;
+  color: var(--aihydro-text-muted);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  margin-left: auto;
+}
+.aihydro-copy:hover { color: var(--aihydro-cyan); border-color: var(--aihydro-border-strong); background: rgba(0,221,255,0.06); }
+.aihydro-copy.copied { color: #34d399; border-color: #34d399; }
+.aihydro-output-wrap {
+  position: relative;
+}
+.aihydro-copy-output {
+  position: absolute;
+  top: 6px; right: 8px;
+  font-family: var(--aihydro-font-ui);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--aihydro-border);
+  background: rgba(10,10,21,0.75);
+  color: var(--aihydro-text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  z-index: 2;
+  white-space: nowrap;
+}
+.aihydro-output-wrap:hover .aihydro-copy-output { opacity: 1; }
+.aihydro-copy-output:hover { color: var(--aihydro-cyan); border-color: var(--aihydro-border-strong); }
+.aihydro-copy-output.copied { color: #34d399; border-color: #34d399; }
+.aihydro-output {
+  font-family: var(--aihydro-font-mono);
+  font-size: 13px;
+  white-space: pre-wrap;
+  min-height: 1.2em;
+  margin: 0;
+  padding: 10px;
+  background: rgba(0,0,0,0.30);
+  border-radius: 6px;
+  max-height: 320px;
+  overflow: auto;
+  color: var(--aihydro-text-accent);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125,211,252,0.20) transparent;
+}
+.aihydro-output::-webkit-scrollbar { width: 6px; height: 6px; }
+.aihydro-output::-webkit-scrollbar-track { background: transparent; }
+.aihydro-output::-webkit-scrollbar-thumb { background: rgba(125,211,252,0.20); border-radius: 3px; }
+.aihydro-output:empty::before {
+  content: "(no output yet)";
+  color: var(--aihydro-text-muted); font-style: italic;
+}
+.aihydro-stderr { color: #f48771; }
+.aihydro-stdout { color: var(--aihydro-text-accent); }
+.aihydro-error  { color: #f87171; }
+.aihydro-output-images { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.aihydro-output-images img { max-width: 100%; height: auto; border-radius: 4px; }
+.aihydro-output-video { margin-top: 8px; }
+.aihydro-output-video video { max-width: 100%; height: auto; border-radius: 6px; background: #000; box-shadow: 0 2px 10px rgba(0,0,0,0.35); }
+.aihydro-truncated { font-size: 11px; opacity: 0.75; margin-top: 6px; }
+
+/* ---- Standalone-mode pill (replaces run buttons outside the preview) */
+.aihydro-standalone-pill {
+  font-family: var(--aihydro-font-ui);
+  font-size: 12px;
+  color: var(--aihydro-text-muted);
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px dashed var(--aihydro-border);
+  background: rgba(125,211,252,0.05);
+  cursor: not-allowed;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.aihydro-standalone-pill::before {
+  content: "↗"; color: var(--aihydro-cyan); font-weight: 700;
+}
+
+/* ---- Quiz / question --------------------------------------------- */
+.aihydro-question {
+  margin: 16px 0;
+  padding: 16px 18px;
+  background: rgba(0,163,255,0.06);
+  border: 1px solid var(--aihydro-border);
+  border-radius: 10px;
+}
+.aihydro-question .aihydro-question-prompt {
+  font-family: var(--aihydro-font-heading);
+  font-weight: 500;
+  color: var(--aihydro-text);
+  margin-bottom: 10px;
+}
+.aihydro-question .aihydro-choices {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.aihydro-choice {
+  font-family: var(--aihydro-font-ui);
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--aihydro-border);
+  background: var(--aihydro-bg-deep);
+  color: var(--aihydro-text-accent);
+  cursor: pointer;
+  text-align: left;
+}
+.aihydro-choice:hover { border-color: var(--aihydro-cyan); color: var(--aihydro-cyan); }
+.aihydro-choice[data-aihydro-state="correct"]   { background: rgba(52,211,153,0.18); border-color: #34d399; color: #d1fae5; }
+.aihydro-choice[data-aihydro-state="incorrect"] { background: rgba(248,113,113,0.15); border-color: #f87171; color: #fee2e2; }
+.aihydro-feedback {
+  margin-top: 10px;
+  font-size: 14px;
+  font-family: var(--aihydro-font-body);
+  color: var(--aihydro-text-accent);
+  min-height: 1.2em;
+}
+
+/* ---- Reveal ------------------------------------------------------- */
+.aihydro-reveal {
+  border: 1px solid var(--aihydro-border);
+  border-radius: 8px;
+  margin: 12px 0;
+  background: var(--aihydro-bg-mid);
+}
+.aihydro-reveal > summary {
+  cursor: pointer;
+  padding: 10px 14px;
+  font-family: var(--aihydro-font-ui);
+  font-weight: 600;
+  color: var(--aihydro-cyan);
+  list-style: none;
+}
+.aihydro-reveal > summary::-webkit-details-marker { display: none; }
+.aihydro-reveal > summary::before {
+  content: "▸"; display: inline-block; margin-right: 8px;
+  transition: transform 0.15s ease;
+}
+.aihydro-reveal[open] > summary::before { transform: rotate(90deg); }
+.aihydro-reveal-body { padding: 0 14px 12px; }
+
+/* ---- Provenance footer ------------------------------------------- */
+.aihydro-provenance {
+  margin: 32px 0 0;
+  padding: 18px 20px;
+  border-top: 1px solid var(--aihydro-border);
+  background: rgba(15,15,30,0.50);
+  font-family: var(--aihydro-font-ui);
+  font-size: 12px;
+  color: var(--aihydro-text-muted);
+  border-radius: 0 0 12px 12px;
+}
+.aihydro-provenance dt {
+  color: var(--aihydro-text-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.aihydro-provenance dd { margin: 2px 0 0; color: var(--aihydro-text-muted); }
+.aihydro-provenance .aihydro-cite {
+  display: block; margin-top: 10px; font-style: italic;
+  color: var(--aihydro-text-accent);
+}
+
+/* ---- Radio-input quiz (SKILL.md standard format) ------------------- */
+.aihydro-quiz { margin: 18px 0; }
+.aihydro-quiz-question {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--aihydro-border);
+  border-radius: 8px;
+  background: rgba(0,163,255,0.04);
+  transition: border-color 0.2s, background 0.2s;
+}
+.aihydro-quiz-question.aq-correct {
+  border-color: rgba(52,211,153,0.40);
+  background: rgba(52,211,153,0.06);
+}
+.aihydro-quiz-question.aq-incorrect {
+  border-color: rgba(248,113,113,0.35);
+  background: rgba(248,113,113,0.05);
+}
+.aihydro-quiz-question .q-text {
+  font-family: var(--aihydro-font-heading);
+  font-weight: 500;
+  color: var(--aihydro-text);
+  margin: 0 0 10px;
+}
+.aihydro-quiz-option {
+  display: flex; align-items: baseline; gap: 8px;
+  margin: 6px 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--aihydro-text-accent);
+}
+.aihydro-quiz-option input[type="radio"] { cursor: pointer; accent-color: var(--aihydro-cyan); }
+.aihydro-quiz-feedback {
+  margin-top: 10px; padding: 8px 12px;
+  border-left: 2px solid var(--aihydro-border);
+  background: rgba(148,163,184,0.07);
+  font-size: 13px; color: var(--aihydro-text-accent);
+  border-radius: 0 4px 4px 0;
+  display: none;
+}
+.aihydro-quiz-question.aq-incorrect .aihydro-quiz-feedback[data-show="true"] { display: block; }
+.aihydro-quiz-submit {
+  padding: 7px 18px;
+  border: 1px solid var(--aihydro-cyan);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--aihydro-cyan);
+  font-family: var(--aihydro-font-ui);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.aihydro-quiz-submit:hover { background: rgba(0,221,255,0.10); }
+#quizScore { font-size: 14px; color: var(--aihydro-text-accent); margin-left: 14px; }
+
+/* ── Interactivity primitives (timeline / compare / sim) ─────────────── */
+.aihydro-timeline {
+  display: flex; align-items: center; gap: 10px;
+  margin: 10px 0; padding: 6px 8px;
+  border: 1px solid var(--aihydro-border); border-radius: 8px;
+  background: var(--aihydro-bg-mid);
+}
+.aihydro-tl-btn {
+  width: 28px; height: 28px; flex-shrink: 0;
+  border: 1px solid var(--aihydro-border); border-radius: 6px;
+  background: rgba(0,221,255,0.08); color: var(--aihydro-cyan);
+  cursor: pointer; font-size: 13px; line-height: 1;
+}
+.aihydro-tl-btn:hover { background: rgba(0,221,255,0.16); }
+.aihydro-tl-scrub { flex: 1; accent-color: var(--aihydro-cyan); }
+.aihydro-compare { overflow: hidden; border-radius: 8px; }
+.aihydro-compare > * { display: block; max-width: 100%; }
+.aihydro-compare-handle {
+  position: absolute; top: 0; bottom: 0; width: 2px;
+  background: var(--aihydro-cyan); transform: translateX(-1px);
+  pointer-events: none; box-shadow: 0 0 8px rgba(0,221,255,0.5);
+}
+.aihydro-compare-range {
+  position: absolute; left: 0; right: 0; bottom: 8px; width: 100%;
+  margin: 0; accent-color: var(--aihydro-cyan); cursor: ew-resize;
+}
+canvas[data-aihydro-sim], canvas[data-aihydro-scene3d] {
+  display: block; max-width: 100%; border-radius: 8px;
+  border: 1px solid var(--aihydro-border); background: var(--aihydro-bg-deep);
+}
+canvas[data-aihydro-scene3d] { width: 100%; min-height: 320px; cursor: grab; }
+canvas[data-aihydro-scene3d]:active { cursor: grabbing; }
+</style><style id="aihydro-leaflet-normalizer">
+html:has(.folium-map),
+body:has(.folium-map) {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body:has(.folium-map) > .folium-map,
+.folium-map {
+  width: 100vw !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+}
+.folium-map.leaflet-container,
+.leaflet-container {
+  background: #e5e3df !important;
+}
+</style><style id="aihydro-editor-style-v3">[data-aihydro-editable].aihydro-edit-active {
+  outline: 1px dashed rgba(0,221,255,0.35);
+  outline-offset: 4px;
+  border-radius: 4px;
+  min-height: 1em;
+  transition: outline-color 0.15s;
+}
+[data-aihydro-editable].aihydro-edit-active:hover {
+  outline-color: rgba(0,221,255,0.55);
+}
+[data-aihydro-editable].aihydro-edit-active:focus {
+  outline: 2px solid rgba(0,221,255,0.8);
+  outline-offset: 4px;
+}
+.aihydro-component-hover {
+  outline: 2px solid rgba(0,221,255,0.35) !important;
+  outline-offset: 4px !important;
+  cursor: pointer !important;
+  transition: outline-color 0.15s;
+}
+.aihydro-component-selected {
+  outline: 2px solid rgba(0,221,255,0.9) !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 24px rgba(0,221,255,0.35) !important;
+}
+.aihydro-component-pin {
+  position: absolute;
+  top: -10px; right: -10px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #00A3FF, #00DDFF);
+  border: none; border-radius: 16px;
+  color: #0a0a15;
+  font-family: Poppins, system-ui, sans-serif;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,221,255,0.4);
+}
+.aihydro-component-pin.has-comment { background: rgba(0,221,255,0.85); }
+.aihydro-selection-bubble {
+  position: fixed; z-index: 99998;
+  display: none;
+  align-items: center; gap: 2px;
+  padding: 3px 5px;
+  background: rgba(15,15,30,0.97);
+  border: 1px solid rgba(0,221,255,0.6);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  font-family: Poppins, system-ui, sans-serif;
+  font-size: 12px; user-select: none; white-space: nowrap;
+}
+.aihydro-selection-bubble.visible { display: inline-flex; }
+.aihydro-selection-bubble button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 22px;
+  border: none; background: transparent;
+  color: #cbd5e1; border-radius: 4px; cursor: pointer;
+  font-family: inherit; font-size: inherit; font-weight: 700;
+}
+.aihydro-selection-bubble button:hover { background: rgba(0,221,255,0.18); color: #00DDFF; }
+.aihydro-selection-bubble .bb-comment {
+  width: auto; padding: 0 10px 0 8px;
+  background: rgba(0,221,255,0.15); color: #00DDFF;
+  font-weight: 700; gap: 4px;
+}
+.aihydro-selection-bubble .bb-comment:hover { background: rgba(0,221,255,0.3); }
+.aihydro-selection-bubble .bb-divider {
+  width: 1px; height: 14px;
+  background: rgba(125,211,252,0.2); margin: 0 2px;
+}
+.aihydro-composer {
+  position: fixed; z-index: 99999;
+  width: 320px;
+  background: rgba(15,15,30,0.98);
+  border: 1px solid rgba(0,221,255,0.5);
+  border-radius: 12px; padding: 12px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.65);
+  font-family: Nunito, system-ui, sans-serif;
+}
+.aihydro-composer .cmp-target {
+  margin: 0 0 8px; padding: 5px 9px;
+  border-left: 3px solid rgba(0,221,255,0.5);
+  font-size: 12px; color: #94a3b8; font-style: italic;
+  background: rgba(0,221,255,0.05); border-radius: 4px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.aihydro-composer textarea {
+  width: 100%; box-sizing: border-box;
+  background: rgba(10,10,21,0.8);
+  border: 1px solid rgba(125,211,252,0.3); border-radius: 8px;
+  color: #e2e8f0; font-size: 13px; font-family: inherit;
+  padding: 8px 10px; resize: vertical; min-height: 64px; outline: none;
+}
+.aihydro-composer textarea:focus { border-color: rgba(0,221,255,0.7); }
+.aihydro-composer .cmp-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
+.aihydro-composer button {
+  font-family: Poppins, system-ui, sans-serif; font-size: 12px; font-weight: 600;
+  padding: 5px 12px; border-radius: 7px; border: none; cursor: pointer;
+}
+.aihydro-composer .cmp-cancel { background: rgba(125,211,252,0.1); color: #7dd3fc; }
+.aihydro-composer .cmp-add { background: linear-gradient(135deg, #00A3FF, #00DDFF); color: #0a0a15; }
+.aihydro-composer .cmp-hint { margin-top: 6px; font-size: 10px; color: #64748b; text-align: right; }</style></head>
 <body>
 <main>
 
@@ -160,17 +902,17 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
         <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="AI-Hydro logo">
       <defs>
         <linearGradient id="aihydroG" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stop-color="#00A3FF"/>
-          <stop offset="100%" stop-color="#00DDFF"/>
+          <stop offset="0%" stop-color="#00A3FF"></stop>
+          <stop offset="100%" stop-color="#00DDFF"></stop>
         </linearGradient>
       </defs>
-      <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroG)"/>
-      <ellipse cx="20" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
-      <ellipse cx="80" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
-      <ellipse cx="40" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
-      <ellipse cx="60" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
-      <path d="M 38 62 Q 50 68 62 62" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <circle cx="50" cy="14" r="4" fill="url(#aihydroG)"/>
+      <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroG)"></path>
+      <ellipse cx="20" cy="52" rx="5" ry="7" fill="url(#aihydroG)"></ellipse>
+      <ellipse cx="80" cy="52" rx="5" ry="7" fill="url(#aihydroG)"></ellipse>
+      <ellipse cx="40" cy="48" rx="6" ry="9" fill="#1a1a2e"></ellipse>
+      <ellipse cx="60" cy="48" rx="6" ry="9" fill="#1a1a2e"></ellipse>
+      <path d="M 38 62 Q 50 68 62 62" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"></path>
+      <circle cx="50" cy="14" r="4" fill="url(#aihydroG)"></circle>
     </svg>
     <span class="brand-name">AI-Hydro</span>
     <span class="brand-tag">Interactive Module · Baseflow Analysis</span>
@@ -203,7 +945,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 </div>
 
 <!-- §1 CONCEPT -->
-<div id="sec-concept" class="wide card glow" data-aihydro-editable="prose">
+<div id="sec-concept" class="wide card glow aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
   <h2>1 · Two flows, one stream</h2>
   <p>
     When it rains, two very different processes contribute to the stream at the same time:
@@ -234,7 +976,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 </div>
 
 <!-- §2 LYNE-HOLLICK FILTER -->
-<div id="sec-math" class="wide card" data-aihydro-editable="prose">
+<div id="sec-math" class="wide card aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
   <h2>2 · The Lyne–Hollick digital filter</h2>
   <p>
     Lyne &amp; Hollick (1979) proposed the simplest viable digital filter for automated
@@ -284,7 +1026,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 </div>
 
 <!-- §3 LIVE CODE + rewriteCell -->
-<div id="sec-cell" class="wide card glow" data-aihydro-editable="prose">
+<div id="sec-cell" class="wide card glow aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
   <h2>3 · Drag α — watch the code rewrite itself</h2>
   <p>
     Move the slider below. As you drag, the value of <code>alpha</code> in the Python
@@ -318,11 +1060,11 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
   </div>
 
   <!-- Python kernel cell -->
-  <div class="aihydro-cell" data-aihydro-cell-id="lh-filter" data-language="python">
-    <div class="cell-header">
-      <span class="cell-lang">Python</span>
-      <span class="cell-desc">Lyne–Hollick baseflow separation — α is updated by the slider above</span>
-      <button class="run-btn" type="button">▶ Run</button>
+  <div class="aihydro-cell" data-aihydro-cell-id="lh-filter" data-language="python" data-aihydro-focused="1" data-aihydro-editable="comment-only">
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">Python</span>
+      <span class="aihydro-cell-desc">Lyne–Hollick baseflow separation — α is updated by the slider above</span>
+      <button class="aihydro-run" type="button">▶ Run</button>
     </div>
     <pre class="aihydro-source" id="lhSource">import numpy as np
 import matplotlib
@@ -374,12 +1116,11 @@ ax.xaxis.label.set_color('#7dd3fc'); ax.title.set_color('white')
 for sp in ax.spines.values(): sp.set_color('#334466')
 ax.legend(framealpha=0.4, fontsize=9, labelcolor='white')
 plt.tight_layout()
-plt.show()
 
 print(f"α = {alpha:.3f}")
 print(f"BFI = {BFI:.4f}  ({BFI*100:.1f}% of flow is baseflow)")
 print(f"Mean Q = {Q.mean():.2f} m³/s  |  Mean base = {base.mean():.2f} m³/s")</pre>
-    <div class="aihydro-output"></div>
+    <div class="aihydro-output-wrap"><div class="aihydro-output"></div><button type="button" class="aihydro-copy-output">Copy output</button></div>
   </div>
 
   <div class="callout tip" style="margin-top:14px;">
@@ -389,7 +1130,7 @@ print(f"Mean Q = {Q.mean():.2f} m³/s  |  Mean base = {base.mean():.2f} m³/s")<
 </div>
 
 <!-- §4 COMPARE WIPE -->
-<div id="sec-compare" class="wide card" data-aihydro-editable="prose">
+<div id="sec-compare" class="wide card aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
   <h2>4 · Before and after — drag to compare</h2>
   <p>
     The <strong>wipe control</strong> below shows the same synthetic hydrograph:
@@ -399,34 +1140,34 @@ print(f"Mean Q = {Q.mean():.2f} m³/s  |  Mean base = {base.mean():.2f} m³/s")<
   </p>
 
   <!-- aihydro.compare block -->
-  <div class="aihydro-compare" id="hydrographCompare" style="height:280px;margin:16px 0;">
+  <div class="aihydro-compare" id="hydrographCompare" style="height: 280px; margin: 16px 0px; position: relative;" data-aihydro-wired="1">
     <!-- LEFT: total Q only -->
     <div id="cmpLeft">
       <svg id="svgLeft" viewBox="0 0 700 280" style="width:100%;height:100%;display:block;" aria-label="Total streamflow — unseparated">
-        <rect x="0" y="0" width="700" height="280" fill="#0f0f1e"/>
-        <path id="pathQLeft" d="" fill="rgba(0,163,255,0.22)" stroke="none"/>
-        <path id="lineQLeft" d="" fill="none" stroke="#00DDFF" stroke-width="2.2"/>
+        <rect x="0" y="0" width="700" height="280" fill="#0f0f1e"></rect>
+        <path id="pathQLeft" d="M 30,216.42872766893163 L 31.75824175824176,222.56306640690087 L 33.51648351648352,218.15421442234518 L 35.27472527472528,219.36596784245722 L 37.032967032967036,220.90985385213472 L 38.79120879120879,216.18459791933174 L 40.54945054945055,222.41494359618952 L 42.30769230769231,215.05757189951623 L 44.065934065934066,221.2658433807293 L 45.824175824175825,216.48613954112477 L 47.582417582417584,217.9618549042166 L 49.34065934065934,219.06834672044852 L 51.098901098901095,178.00218121707434 L 52.857142857142854,192.06742080061287 L 54.61538461538461,190.9289153136856 L 56.37362637362637,202.10036317071564 L 58.13186813186813,200.7827948996899 L 59.89010989010989,205.4951931794314 L 61.64835164835165,117.65576358041949 L 63.40659340659341,135.2346936910114 L 65.16483516483517,158.00942225116546 L 66.92307692307693,163.802618210541 L 68.68131868131869,180.46268849143635 L 70.43956043956044,183.0429558502374 L 72.19780219780219,191.3177872232077 L 73.95604395604396,196.43820152561764 L 75.71428571428571,196.1560475708173 L 77.47252747252747,204.57384163166762 L 79.23076923076923,199.36611772825236 L 80.98901098901098,207.51913450166492 L 82.74725274725274,203.1250361783108 L 84.50549450549451,206.48030729256635 L 86.26373626373626,207.38096160609885 L 88.02197802197801,204.1447548726535 L 89.78021978021978,169.08006028446295 L 91.53846153846155,170.9341624884276 L 93.2967032967033,184.61770291356794 L 95.05494505494505,184.2104291604398 L 96.81318681318682,191.77885928562634 L 98.57142857142857,194.47437346348346 L 100.32967032967034,193.47154125739107 L 102.08791208791209,200.37400757104515 L 103.84615384615385,194.4400951395363 L 105.6043956043956,202.05947683318993 L 107.36263736263736,196.63877311769778 L 109.12087912087912,200.17007640774028 L 110.87912087912088,199.71342946209873 L 112.63736263736264,196.85453358725428 L 114.3956043956044,201.80689294778756 L 116.15384615384615,194.62707699685467 L 117.91208791208791,201.24782844528883 L 119.67032967032966,194.78930656840865 L 121.42857142857142,197.97364564336047 L 123.1868131868132,196.63664914177605 L 124.94505494505495,193.97341926707998 L 126.7032967032967,198.28272198055646 L 128.46153846153845,190.90478590679749 L 130.2197802197802,197.3136416606788 L 131.97802197802196,190.46136416657632 L 133.73626373626374,193.78125683472138 L 135.4945054945055,191.95123968202753 L 137.25274725274724,189.2433346179667 L 139.01098901098902,193.25598879247946 L 140.76923076923077,185.97889562628092 L 142.52747252747253,192.3796496862313 L 144.28571428571428,185.32435744143626 L 146.04395604395603,188.90823633769313 L 147.8021978021978,141.80803404051215 L 149.56043956043956,149.35282195927127 L 151.3186813186813,160.80045523002008 L 153.0769230769231,159.67400989660393 L 154.83516483516485,170.74950432575872 L 156.5934065934066,167.1707882517298 L 158.35164835164835,173.86319080465597 L 160.1098901098901,173.50350128231952 L 161.86813186813185,173.18197670185168 L 163.62637362637363,177.9413008746996 L 165.3846153846154,171.99380942554149 L 167.14285714285714,179.17086236954336 L 168.90109890109892,172.42496417867312 L 170.65934065934067,177.02960626047948 L 172.41758241758242,174.48939514289827 L 174.17582417582418,173.09426124429876 L 175.93406593406593,176.44469474239435 L 177.6923076923077,169.81433416276036 L 179.45054945054946,176.28771924529133 L 181.2087912087912,168.89611321140688 L 182.96703296703296,173.65610791779147 L 184.72527472527472,170.39742691170505 L 186.48351648351647,169.06784082839278 L 188.24175824175825,171.88726270361306 L 190,165.28321889838125 L 191.75824175824175,171.5776272890538 L 193.5164835164835,163.98255106819158 L 195.27472527472528,168.6133621898246 L 197.03296703296704,165.03846894136313 L 198.7912087912088,164.0865938882771 L 200.54945054945054,166.61026118468158 L 202.3076923076923,111.1739000553944 L 204.06593406593404,128.27720894463232 L 205.82417582417582,129.0697491729998 L 207.58241758241758,140.53967706469788 L 209.34065934065933,141.79319628740012 L 211.09890109890108,145.2229036241055 L 212.85714285714283,150.56261177146501 L 214.61538461538458,146.87284617189053 L 216.3736263736264,154.9569632714069 L 218.13186813186815,148.72870322670457 L 219.8901098901099,155.01188356174447 L 221.64835164835165,151.74941781049154 L 223.4065934065934,152.27884560821047 L 225.16483516483518,154.75847432806694 L 226.92307692307693,149.35029397555098 L 228.6813186813187,155.81669008206654 L 230.43956043956044,148.36550334452647 L 232.1978021978022,153.95072233427217 L 233.95604395604394,149.69059568589273 L 235.71428571428572,150.0536932534895 L 237.47252747252747,152.12945823811464 L 239.23076923076923,146.60548077630872 L 240.98901098901098,152.67673829653546 L 242.74725274725273,144.98814985798123 L 244.50549450549448,150.61555060315257 L 246.2637362637363,145.95765784508475 L 248.02197802197804,93.3717758323055 L 249.7802197802198,106.5151285930501 L 251.53846153846155,110.48936540202601 L 253.2967032967033,123.62797070596648 L 255.05494505494508,121.54681393840636 L 256.8131868131868,131.74023709048828 L 258.57142857142856,130.2321540952094 L 260.3296703296703,133.93468696079367 L 262.08791208791206,137.0655242523078 L 263.8461538461538,133.80742970356562 L 265.6043956043956,140.95937373849864 L 267.3626373626374,134.3517804528904 L 269.1208791208791,141.19015655690856 L 270.8791208791209,136.68820545756228 L 272.6373626373626,138.64121287666225 L 274.3956043956044,139.80210949044306 L 276.1538461538462,135.59087990216358 L 277.91208791208794,141.62286763839668 L 279.6703296703297,134.31109541983153 L 281.42857142857144,140.7417670202367 L 283.1868131868132,135.92610967916585 L 284.94505494505495,137.84526866287808 L 286.7032967032967,138.37427650594543 L 288.46153846153845,134.26593635446932 L 290.2197802197802,139.9776151695237 L 291.97802197802196,132.61585633851791 L 293.7362637362637,139.11830418127929 L 295.4945054945055,133.67159277159823 L 297.25274725274727,136.0126793062983 L 299.010989010989,136.26796114718036 L 300.7692307692308,132.55366326728142 L 302.5274725274725,80.73192171428272 L 304.2857142857143,86.21113011934227 L 306.0439560439561,102.79432844009926 L 307.80219780219784,104.89762720447376 L 309.5604395604396,113.65712305944876 L 311.31868131868134,118.31325144422962 L 313.0769230769231,118.64399732087202 L 314.83516483516485,126.94684164165812 L 316.5934065934066,122.09329543574763 L 318.35164835164835,130.67858348621877 L 320.1098901098901,126.28007376006022 L 321.86813186813185,130.49661095313257 L 323.6263736263736,131.02265654424315 L 325.3846153846154,128.7631841868499 L 327.14285714285717,134.58494010667425 L 328.9010989010989,128.08814336126443 L 330.65934065934067,135.41160153407415 L 332.4175824175824,129.78565970739822 L 334.1758241758242,133.54756169101066 L 335.9340659340659,133.13457256957153 L 337.6923076923077,131.16374993585893 L 339.45054945054943,136.34028948133277 L 341.2087912087912,129.65802303036736 L 342.96703296703294,136.82337338822728 L 344.7252747252747,130.85827235305487 L 346.4835164835165,134.83644548234784 L 348.24175824175825,134.0152299877495 L 350,131.97764122198967 L 351.75824175824175,136.98759820758772 L 353.5164835164835,130.51957815713536 L 355.27472527472526,137.806316284621 L 357.032967032967,131.7487311681133 L 358.79120879120876,136.1129441991351 L 360.54945054945057,135.02525343029885 L 362.3076923076923,71.82754076366089 L 364.0659340659341,90.28091491811367 L 365.8241758241758,94.65246467072208 L 367.5824175824176,110.30367804876099 L 369.34065934065933,110.60257760462775 L 371.0989010989011,120.35155234633336 L 372.85714285714283,122.90114100355926 L 374.6153846153846,124.77221533584314 L 376.37362637362634,131.77254763777248 L 378.1318681318681,127.61896163624084 L 379.89010989010984,136.52145010739264 L 381.64835164835165,131.43608434298864 L 383.4065934065934,137.4010469296233 L 385.16483516483515,136.45920651588486 L 386.9230769230769,136.2528758910322 L 388.68131868131866,141.08532556931826 L 390.4395604395604,135.66134889105115 L 392.19780219780216,143.43322453013042 L 393.9560439560439,137.36851915878734 L 395.71428571428567,142.95370836678848 L 397.4725274725274,141.5997937477923 L 399.23076923076917,46.296296296296305 L 400.98901098901104,71.50362344803972 L 402.7472527472528,82.38776523822395 L 404.50549450549454,102.68745468297638 L 406.2637362637363,106.31019215128967 L 408.02197802197804,119.79541592068159 L 409.7802197802198,123.66199202356617 L 411.53846153846155,128.47468280739878 L 413.2967032967033,136.0756249987892 L 415.05494505494505,133.70893310423423 L 416.8131868131868,77.71486403098194 L 418.57142857142856,87.64988398809237 L 420.32967032967036,106.37799273760396 L 422.0879120879121,113.82610009686474 L 423.84615384615387,122.05698659425454 L 425.6043956043956,131.73223953039619 L 427.3626373626374,131.4616015156733 L 429.1208791208791,142.63395584218392 L 430.8791208791209,139.09855797110336 L 432.6373626373626,147.63320928086762 L 434.3956043956044,147.29765912959726 L 436.15384615384613,149.44759306330567 L 437.9120879120879,153.78924733253152 L 439.67032967032964,149.86355797889422 L 441.42857142857144,157.92315014316674 L 443.1868131868132,151.9828300788571 L 444.94505494505495,158.91139121769976 L 446.7032967032967,156.21745856722913 L 448.46153846153845,157.7823364916353 L 450.2197802197802,161.06203351101874 L 451.97802197802196,157.26799494586209 L 453.7362637362637,164.6906657997992 L 455.49450549450546,158.30286545635536 L 457.2527472527472,165.11855743067002 L 459.01098901098896,161.88800024517025 L 460.76923076923083,163.6353158751558 L 462.5274725274726,166.4436590292308 L 464.28571428571433,162.37031807026818 L 466.0439560439561,169.69289149928596 L 467.80219780219784,163.304736152907 L 469.5604395604396,170.32386344685204 L 471.31868131868134,96.8774023091928 L 473.0769230769231,114.47350274987988 L 474.83516483516485,129.00582526599572 L 476.5934065934066,134.6080407081702 L 478.35164835164835,149.1115547553817 L 480.10989010989016,148.4223140655966 L 481.8681318681319,160.05098364104418 L 483.62637362637366,159.73175196338968 L 485.3846153846154,164.90723650431642 L 487.14285714285717,169.14321052979565 L 488.9010989010989,167.2840822646339 L 490.65934065934067,175.5945123315229 L 492.4175824175824,170.216977418196 L 494.1758241758242,178.33267376295203 L 495.9340659340659,174.8912919246136 L 497.6923076923077,178.1926934441078 L 499.45054945054943,180.34344358832917 L 501.20879120879124,177.4289239065103 L 502.967032967033,184.50840549075917 L 504.72527472527474,178.33524022055855 L 506.4835164835165,186.40756479487 L 508.24175824175825,182.09771533951155 L 510,185.2629974464775 L 511.75824175824175,186.68113610316144 L 513.5164835164835,183.77433687737292 L 515.2747252747253,190.42506262804793 L 517.032967032967,184.10877838228907 L 518.7912087912088,191.66980003480367 L 520.5494505494505,187.0934391828671 L 522.3076923076924,116.45161142464201 L 524.065934065934,133.88409328426465 L 525.8241758241759,144.03583053283114 L 527.5824175824175,160.39718609652198 L 529.3406593406594,161.86167965501392 L 531.098901098901,175.52017310383184 L 532.8571428571429,175.3776653114411 L 534.6153846153845,182.81208880921747 L 536.3736263736264,186.3056743100061 L 538.131868131868,186.19520145100245 L 539.8901098901099,194.08162110365163 L 541.6483516483516,189.19082528962724 L 543.4065934065934,197.90395258904937 L 545.1648351648352,193.62075504416353 L 546.9230769230769,198.3113369723036 L 548.6813186813187,199.04860688439155 L 550.4395604395604,197.3903810940909 L 552.1978021978022,203.56667702986235 L 553.9560439560439,197.61538700740448 L 555.7142857142857,205.473185919004 L 557.4725274725274,200.7605312347394 L 559.2307692307692,205.07607955568628 L 560.989010989011,204.90764250653825 L 562.7472527472528,203.14697990061939 L 564.5054945054945,208.71816882380043 L 566.2637362637363,124.29567228864383 L 568.021978021978,149.27438204703475 L 569.7802197802198,157.16062398587906 L 571.5384615384615,172.22338251623174 L 573.2967032967033,179.81874090844008 L 575.054945054945,184.7101367112403 L 576.8131868131868,194.91752101149856 L 578.5714285714286,192.72515351099622 L 580.3296703296703,203.35188311462187 L 582.0879120879122,199.8533939992281 L 583.8461538461538,206.46143118460253 L 585.6043956043957,206.8753095088556 L 587.3626373626373,206.78068514797434 L 589.1208791208792,212.54297868959833 L 590.8791208791208,207.23569078391412 L 592.6373626373627,215.30816015921687 L 594.3956043956043,209.64178599931404 L 596.1538461538462,214.94829093757332 L 597.9120879120878,213.76251158765712 L 599.6703296703297,213.02895752715486 L 601.4285714285714,218.243323368228 L 603.1868131868132,212.3525463215736 L 604.945054945055,219.8101736798027 L 606.7032967032967,213.5157644464109 L 608.4615384615385,218.69429645637987 L 610.2197802197802,134.36249338395953 L 611.978021978022,151.95320979803785 L 613.7362637362637,170.31884485355113 L 615.4945054945055,175.59179646793845 L 617.2527472527472,191.55188490796712 L 619.010989010989,191.76002934527992 L 620.7692307692308,202.33751933000934 L 622.5274725274726,204.12425270506262 L 624.2857142857143,206.91402913324328 L 626.0439560439561,213.14805043565758 L 627.8021978021978,209.38921188026626 L 629.5604395604396,218.09275082815475 L 631.3186813186813,212.56087619700477 L 633.0769230769231,218.97579928837644 L 634.8351648351648,216.97754313532675 L 636.5934065934066,217.41839660095212 L 638.3516483516484,221.2077109020736 L 640.1098901098901,215.98279933293173 L 641.8681318681319,223.29205158223672 L 643.6263736263736,216.61671088469413 L 645.3846153846154,222.97701840160016 L 647.1428571428571,219.85491228163025 L 648.9010989010989,133.36527102015495 L 650.6593406593406,155.477545578027 L 652.4175824175824,164.98110828312142 L 654.1758241758241,183.47935830198293 L 655.9340659340659,185.49182803063803 L 657.6923076923076,198.3147104963739 L 659.4505494505494,200.2748841975113 L 661.2087912087912,204.97912238340018 L 662.967032967033,210.83307607542304 L 664.7252747252747,208.15293044906085 L 666.4835164835165,216.85286496960123 L 668.2417582417582,211.23992133070638 L 670,218.34790610462403 L 670,250 L 668.2417582417582,250 L 666.4835164835165,250 L 664.7252747252747,250 L 662.967032967033,250 L 661.2087912087912,250 L 659.4505494505494,250 L 657.6923076923076,250 L 655.9340659340659,250 L 654.1758241758241,250 L 652.4175824175824,250 L 650.6593406593406,250 L 648.9010989010989,250 L 647.1428571428571,250 L 645.3846153846154,250 L 643.6263736263736,250 L 641.8681318681319,250 L 640.1098901098901,250 L 638.3516483516484,250 L 636.5934065934066,250 L 634.8351648351648,250 L 633.0769230769231,250 L 631.3186813186813,250 L 629.5604395604396,250 L 627.8021978021978,250 L 626.0439560439561,250 L 624.2857142857143,250 L 622.5274725274726,250 L 620.7692307692308,250 L 619.010989010989,250 L 617.2527472527472,250 L 615.4945054945055,250 L 613.7362637362637,250 L 611.978021978022,250 L 610.2197802197802,250 L 608.4615384615385,250 L 606.7032967032967,250 L 604.945054945055,250 L 603.1868131868132,250 L 601.4285714285714,250 L 599.6703296703297,250 L 597.9120879120878,250 L 596.1538461538462,250 L 594.3956043956043,250 L 592.6373626373627,250 L 590.8791208791208,250 L 589.1208791208792,250 L 587.3626373626373,250 L 585.6043956043957,250 L 583.8461538461538,250 L 582.0879120879122,250 L 580.3296703296703,250 L 578.5714285714286,250 L 576.8131868131868,250 L 575.054945054945,250 L 573.2967032967033,250 L 571.5384615384615,250 L 569.7802197802198,250 L 568.021978021978,250 L 566.2637362637363,250 L 564.5054945054945,250 L 562.7472527472528,250 L 560.989010989011,250 L 559.2307692307692,250 L 557.4725274725274,250 L 555.7142857142857,250 L 553.9560439560439,250 L 552.1978021978022,250 L 550.4395604395604,250 L 548.6813186813187,250 L 546.9230769230769,250 L 545.1648351648352,250 L 543.4065934065934,250 L 541.6483516483516,250 L 539.8901098901099,250 L 538.131868131868,250 L 536.3736263736264,250 L 534.6153846153845,250 L 532.8571428571429,250 L 531.098901098901,250 L 529.3406593406594,250 L 527.5824175824175,250 L 525.8241758241759,250 L 524.065934065934,250 L 522.3076923076924,250 L 520.5494505494505,250 L 518.7912087912088,250 L 517.032967032967,250 L 515.2747252747253,250 L 513.5164835164835,250 L 511.75824175824175,250 L 510,250 L 508.24175824175825,250 L 506.4835164835165,250 L 504.72527472527474,250 L 502.967032967033,250 L 501.20879120879124,250 L 499.45054945054943,250 L 497.6923076923077,250 L 495.9340659340659,250 L 494.1758241758242,250 L 492.4175824175824,250 L 490.65934065934067,250 L 488.9010989010989,250 L 487.14285714285717,250 L 485.3846153846154,250 L 483.62637362637366,250 L 481.8681318681319,250 L 480.10989010989016,250 L 478.35164835164835,250 L 476.5934065934066,250 L 474.83516483516485,250 L 473.0769230769231,250 L 471.31868131868134,250 L 469.5604395604396,250 L 467.80219780219784,250 L 466.0439560439561,250 L 464.28571428571433,250 L 462.5274725274726,250 L 460.76923076923083,250 L 459.01098901098896,250 L 457.2527472527472,250 L 455.49450549450546,250 L 453.7362637362637,250 L 451.97802197802196,250 L 450.2197802197802,250 L 448.46153846153845,250 L 446.7032967032967,250 L 444.94505494505495,250 L 443.1868131868132,250 L 441.42857142857144,250 L 439.67032967032964,250 L 437.9120879120879,250 L 436.15384615384613,250 L 434.3956043956044,250 L 432.6373626373626,250 L 430.8791208791209,250 L 429.1208791208791,250 L 427.3626373626374,250 L 425.6043956043956,250 L 423.84615384615387,250 L 422.0879120879121,250 L 420.32967032967036,250 L 418.57142857142856,250 L 416.8131868131868,250 L 415.05494505494505,250 L 413.2967032967033,250 L 411.53846153846155,250 L 409.7802197802198,250 L 408.02197802197804,250 L 406.2637362637363,250 L 404.50549450549454,250 L 402.7472527472528,250 L 400.98901098901104,250 L 399.23076923076917,250 L 397.4725274725274,250 L 395.71428571428567,250 L 393.9560439560439,250 L 392.19780219780216,250 L 390.4395604395604,250 L 388.68131868131866,250 L 386.9230769230769,250 L 385.16483516483515,250 L 383.4065934065934,250 L 381.64835164835165,250 L 379.89010989010984,250 L 378.1318681318681,250 L 376.37362637362634,250 L 374.6153846153846,250 L 372.85714285714283,250 L 371.0989010989011,250 L 369.34065934065933,250 L 367.5824175824176,250 L 365.8241758241758,250 L 364.0659340659341,250 L 362.3076923076923,250 L 360.54945054945057,250 L 358.79120879120876,250 L 357.032967032967,250 L 355.27472527472526,250 L 353.5164835164835,250 L 351.75824175824175,250 L 350,250 L 348.24175824175825,250 L 346.4835164835165,250 L 344.7252747252747,250 L 342.96703296703294,250 L 341.2087912087912,250 L 339.45054945054943,250 L 337.6923076923077,250 L 335.9340659340659,250 L 334.1758241758242,250 L 332.4175824175824,250 L 330.65934065934067,250 L 328.9010989010989,250 L 327.14285714285717,250 L 325.3846153846154,250 L 323.6263736263736,250 L 321.86813186813185,250 L 320.1098901098901,250 L 318.35164835164835,250 L 316.5934065934066,250 L 314.83516483516485,250 L 313.0769230769231,250 L 311.31868131868134,250 L 309.5604395604396,250 L 307.80219780219784,250 L 306.0439560439561,250 L 304.2857142857143,250 L 302.5274725274725,250 L 300.7692307692308,250 L 299.010989010989,250 L 297.25274725274727,250 L 295.4945054945055,250 L 293.7362637362637,250 L 291.97802197802196,250 L 290.2197802197802,250 L 288.46153846153845,250 L 286.7032967032967,250 L 284.94505494505495,250 L 283.1868131868132,250 L 281.42857142857144,250 L 279.6703296703297,250 L 277.91208791208794,250 L 276.1538461538462,250 L 274.3956043956044,250 L 272.6373626373626,250 L 270.8791208791209,250 L 269.1208791208791,250 L 267.3626373626374,250 L 265.6043956043956,250 L 263.8461538461538,250 L 262.08791208791206,250 L 260.3296703296703,250 L 258.57142857142856,250 L 256.8131868131868,250 L 255.05494505494508,250 L 253.2967032967033,250 L 251.53846153846155,250 L 249.7802197802198,250 L 248.02197802197804,250 L 246.2637362637363,250 L 244.50549450549448,250 L 242.74725274725273,250 L 240.98901098901098,250 L 239.23076923076923,250 L 237.47252747252747,250 L 235.71428571428572,250 L 233.95604395604394,250 L 232.1978021978022,250 L 230.43956043956044,250 L 228.6813186813187,250 L 226.92307692307693,250 L 225.16483516483518,250 L 223.4065934065934,250 L 221.64835164835165,250 L 219.8901098901099,250 L 218.13186813186815,250 L 216.3736263736264,250 L 214.61538461538458,250 L 212.85714285714283,250 L 211.09890109890108,250 L 209.34065934065933,250 L 207.58241758241758,250 L 205.82417582417582,250 L 204.06593406593404,250 L 202.3076923076923,250 L 200.54945054945054,250 L 198.7912087912088,250 L 197.03296703296704,250 L 195.27472527472528,250 L 193.5164835164835,250 L 191.75824175824175,250 L 190,250 L 188.24175824175825,250 L 186.48351648351647,250 L 184.72527472527472,250 L 182.96703296703296,250 L 181.2087912087912,250 L 179.45054945054946,250 L 177.6923076923077,250 L 175.93406593406593,250 L 174.17582417582418,250 L 172.41758241758242,250 L 170.65934065934067,250 L 168.90109890109892,250 L 167.14285714285714,250 L 165.3846153846154,250 L 163.62637362637363,250 L 161.86813186813185,250 L 160.1098901098901,250 L 158.35164835164835,250 L 156.5934065934066,250 L 154.83516483516485,250 L 153.0769230769231,250 L 151.3186813186813,250 L 149.56043956043956,250 L 147.8021978021978,250 L 146.04395604395603,250 L 144.28571428571428,250 L 142.52747252747253,250 L 140.76923076923077,250 L 139.01098901098902,250 L 137.25274725274724,250 L 135.4945054945055,250 L 133.73626373626374,250 L 131.97802197802196,250 L 130.2197802197802,250 L 128.46153846153845,250 L 126.7032967032967,250 L 124.94505494505495,250 L 123.1868131868132,250 L 121.42857142857142,250 L 119.67032967032966,250 L 117.91208791208791,250 L 116.15384615384615,250 L 114.3956043956044,250 L 112.63736263736264,250 L 110.87912087912088,250 L 109.12087912087912,250 L 107.36263736263736,250 L 105.6043956043956,250 L 103.84615384615385,250 L 102.08791208791209,250 L 100.32967032967034,250 L 98.57142857142857,250 L 96.81318681318682,250 L 95.05494505494505,250 L 93.2967032967033,250 L 91.53846153846155,250 L 89.78021978021978,250 L 88.02197802197801,250 L 86.26373626373626,250 L 84.50549450549451,250 L 82.74725274725274,250 L 80.98901098901098,250 L 79.23076923076923,250 L 77.47252747252747,250 L 75.71428571428571,250 L 73.95604395604396,250 L 72.19780219780219,250 L 70.43956043956044,250 L 68.68131868131869,250 L 66.92307692307693,250 L 65.16483516483517,250 L 63.40659340659341,250 L 61.64835164835165,250 L 59.89010989010989,250 L 58.13186813186813,250 L 56.37362637362637,250 L 54.61538461538461,250 L 52.857142857142854,250 L 51.098901098901095,250 L 49.34065934065934,250 L 47.582417582417584,250 L 45.824175824175825,250 L 44.065934065934066,250 L 42.30769230769231,250 L 40.54945054945055,250 L 38.79120879120879,250 L 37.032967032967036,250 L 35.27472527472528,250 L 33.51648351648352,250 L 31.75824175824176,250 L 30,250 Z" fill="rgba(0,163,255,0.22)" stroke="none"></path>
+        <path id="lineQLeft" d="M 30,216.42872766893163 L 31.75824175824176,222.56306640690087 L 33.51648351648352,218.15421442234518 L 35.27472527472528,219.36596784245722 L 37.032967032967036,220.90985385213472 L 38.79120879120879,216.18459791933174 L 40.54945054945055,222.41494359618952 L 42.30769230769231,215.05757189951623 L 44.065934065934066,221.2658433807293 L 45.824175824175825,216.48613954112477 L 47.582417582417584,217.9618549042166 L 49.34065934065934,219.06834672044852 L 51.098901098901095,178.00218121707434 L 52.857142857142854,192.06742080061287 L 54.61538461538461,190.9289153136856 L 56.37362637362637,202.10036317071564 L 58.13186813186813,200.7827948996899 L 59.89010989010989,205.4951931794314 L 61.64835164835165,117.65576358041949 L 63.40659340659341,135.2346936910114 L 65.16483516483517,158.00942225116546 L 66.92307692307693,163.802618210541 L 68.68131868131869,180.46268849143635 L 70.43956043956044,183.0429558502374 L 72.19780219780219,191.3177872232077 L 73.95604395604396,196.43820152561764 L 75.71428571428571,196.1560475708173 L 77.47252747252747,204.57384163166762 L 79.23076923076923,199.36611772825236 L 80.98901098901098,207.51913450166492 L 82.74725274725274,203.1250361783108 L 84.50549450549451,206.48030729256635 L 86.26373626373626,207.38096160609885 L 88.02197802197801,204.1447548726535 L 89.78021978021978,169.08006028446295 L 91.53846153846155,170.9341624884276 L 93.2967032967033,184.61770291356794 L 95.05494505494505,184.2104291604398 L 96.81318681318682,191.77885928562634 L 98.57142857142857,194.47437346348346 L 100.32967032967034,193.47154125739107 L 102.08791208791209,200.37400757104515 L 103.84615384615385,194.4400951395363 L 105.6043956043956,202.05947683318993 L 107.36263736263736,196.63877311769778 L 109.12087912087912,200.17007640774028 L 110.87912087912088,199.71342946209873 L 112.63736263736264,196.85453358725428 L 114.3956043956044,201.80689294778756 L 116.15384615384615,194.62707699685467 L 117.91208791208791,201.24782844528883 L 119.67032967032966,194.78930656840865 L 121.42857142857142,197.97364564336047 L 123.1868131868132,196.63664914177605 L 124.94505494505495,193.97341926707998 L 126.7032967032967,198.28272198055646 L 128.46153846153845,190.90478590679749 L 130.2197802197802,197.3136416606788 L 131.97802197802196,190.46136416657632 L 133.73626373626374,193.78125683472138 L 135.4945054945055,191.95123968202753 L 137.25274725274724,189.2433346179667 L 139.01098901098902,193.25598879247946 L 140.76923076923077,185.97889562628092 L 142.52747252747253,192.3796496862313 L 144.28571428571428,185.32435744143626 L 146.04395604395603,188.90823633769313 L 147.8021978021978,141.80803404051215 L 149.56043956043956,149.35282195927127 L 151.3186813186813,160.80045523002008 L 153.0769230769231,159.67400989660393 L 154.83516483516485,170.74950432575872 L 156.5934065934066,167.1707882517298 L 158.35164835164835,173.86319080465597 L 160.1098901098901,173.50350128231952 L 161.86813186813185,173.18197670185168 L 163.62637362637363,177.9413008746996 L 165.3846153846154,171.99380942554149 L 167.14285714285714,179.17086236954336 L 168.90109890109892,172.42496417867312 L 170.65934065934067,177.02960626047948 L 172.41758241758242,174.48939514289827 L 174.17582417582418,173.09426124429876 L 175.93406593406593,176.44469474239435 L 177.6923076923077,169.81433416276036 L 179.45054945054946,176.28771924529133 L 181.2087912087912,168.89611321140688 L 182.96703296703296,173.65610791779147 L 184.72527472527472,170.39742691170505 L 186.48351648351647,169.06784082839278 L 188.24175824175825,171.88726270361306 L 190,165.28321889838125 L 191.75824175824175,171.5776272890538 L 193.5164835164835,163.98255106819158 L 195.27472527472528,168.6133621898246 L 197.03296703296704,165.03846894136313 L 198.7912087912088,164.0865938882771 L 200.54945054945054,166.61026118468158 L 202.3076923076923,111.1739000553944 L 204.06593406593404,128.27720894463232 L 205.82417582417582,129.0697491729998 L 207.58241758241758,140.53967706469788 L 209.34065934065933,141.79319628740012 L 211.09890109890108,145.2229036241055 L 212.85714285714283,150.56261177146501 L 214.61538461538458,146.87284617189053 L 216.3736263736264,154.9569632714069 L 218.13186813186815,148.72870322670457 L 219.8901098901099,155.01188356174447 L 221.64835164835165,151.74941781049154 L 223.4065934065934,152.27884560821047 L 225.16483516483518,154.75847432806694 L 226.92307692307693,149.35029397555098 L 228.6813186813187,155.81669008206654 L 230.43956043956044,148.36550334452647 L 232.1978021978022,153.95072233427217 L 233.95604395604394,149.69059568589273 L 235.71428571428572,150.0536932534895 L 237.47252747252747,152.12945823811464 L 239.23076923076923,146.60548077630872 L 240.98901098901098,152.67673829653546 L 242.74725274725273,144.98814985798123 L 244.50549450549448,150.61555060315257 L 246.2637362637363,145.95765784508475 L 248.02197802197804,93.3717758323055 L 249.7802197802198,106.5151285930501 L 251.53846153846155,110.48936540202601 L 253.2967032967033,123.62797070596648 L 255.05494505494508,121.54681393840636 L 256.8131868131868,131.74023709048828 L 258.57142857142856,130.2321540952094 L 260.3296703296703,133.93468696079367 L 262.08791208791206,137.0655242523078 L 263.8461538461538,133.80742970356562 L 265.6043956043956,140.95937373849864 L 267.3626373626374,134.3517804528904 L 269.1208791208791,141.19015655690856 L 270.8791208791209,136.68820545756228 L 272.6373626373626,138.64121287666225 L 274.3956043956044,139.80210949044306 L 276.1538461538462,135.59087990216358 L 277.91208791208794,141.62286763839668 L 279.6703296703297,134.31109541983153 L 281.42857142857144,140.7417670202367 L 283.1868131868132,135.92610967916585 L 284.94505494505495,137.84526866287808 L 286.7032967032967,138.37427650594543 L 288.46153846153845,134.26593635446932 L 290.2197802197802,139.9776151695237 L 291.97802197802196,132.61585633851791 L 293.7362637362637,139.11830418127929 L 295.4945054945055,133.67159277159823 L 297.25274725274727,136.0126793062983 L 299.010989010989,136.26796114718036 L 300.7692307692308,132.55366326728142 L 302.5274725274725,80.73192171428272 L 304.2857142857143,86.21113011934227 L 306.0439560439561,102.79432844009926 L 307.80219780219784,104.89762720447376 L 309.5604395604396,113.65712305944876 L 311.31868131868134,118.31325144422962 L 313.0769230769231,118.64399732087202 L 314.83516483516485,126.94684164165812 L 316.5934065934066,122.09329543574763 L 318.35164835164835,130.67858348621877 L 320.1098901098901,126.28007376006022 L 321.86813186813185,130.49661095313257 L 323.6263736263736,131.02265654424315 L 325.3846153846154,128.7631841868499 L 327.14285714285717,134.58494010667425 L 328.9010989010989,128.08814336126443 L 330.65934065934067,135.41160153407415 L 332.4175824175824,129.78565970739822 L 334.1758241758242,133.54756169101066 L 335.9340659340659,133.13457256957153 L 337.6923076923077,131.16374993585893 L 339.45054945054943,136.34028948133277 L 341.2087912087912,129.65802303036736 L 342.96703296703294,136.82337338822728 L 344.7252747252747,130.85827235305487 L 346.4835164835165,134.83644548234784 L 348.24175824175825,134.0152299877495 L 350,131.97764122198967 L 351.75824175824175,136.98759820758772 L 353.5164835164835,130.51957815713536 L 355.27472527472526,137.806316284621 L 357.032967032967,131.7487311681133 L 358.79120879120876,136.1129441991351 L 360.54945054945057,135.02525343029885 L 362.3076923076923,71.82754076366089 L 364.0659340659341,90.28091491811367 L 365.8241758241758,94.65246467072208 L 367.5824175824176,110.30367804876099 L 369.34065934065933,110.60257760462775 L 371.0989010989011,120.35155234633336 L 372.85714285714283,122.90114100355926 L 374.6153846153846,124.77221533584314 L 376.37362637362634,131.77254763777248 L 378.1318681318681,127.61896163624084 L 379.89010989010984,136.52145010739264 L 381.64835164835165,131.43608434298864 L 383.4065934065934,137.4010469296233 L 385.16483516483515,136.45920651588486 L 386.9230769230769,136.2528758910322 L 388.68131868131866,141.08532556931826 L 390.4395604395604,135.66134889105115 L 392.19780219780216,143.43322453013042 L 393.9560439560439,137.36851915878734 L 395.71428571428567,142.95370836678848 L 397.4725274725274,141.5997937477923 L 399.23076923076917,46.296296296296305 L 400.98901098901104,71.50362344803972 L 402.7472527472528,82.38776523822395 L 404.50549450549454,102.68745468297638 L 406.2637362637363,106.31019215128967 L 408.02197802197804,119.79541592068159 L 409.7802197802198,123.66199202356617 L 411.53846153846155,128.47468280739878 L 413.2967032967033,136.0756249987892 L 415.05494505494505,133.70893310423423 L 416.8131868131868,77.71486403098194 L 418.57142857142856,87.64988398809237 L 420.32967032967036,106.37799273760396 L 422.0879120879121,113.82610009686474 L 423.84615384615387,122.05698659425454 L 425.6043956043956,131.73223953039619 L 427.3626373626374,131.4616015156733 L 429.1208791208791,142.63395584218392 L 430.8791208791209,139.09855797110336 L 432.6373626373626,147.63320928086762 L 434.3956043956044,147.29765912959726 L 436.15384615384613,149.44759306330567 L 437.9120879120879,153.78924733253152 L 439.67032967032964,149.86355797889422 L 441.42857142857144,157.92315014316674 L 443.1868131868132,151.9828300788571 L 444.94505494505495,158.91139121769976 L 446.7032967032967,156.21745856722913 L 448.46153846153845,157.7823364916353 L 450.2197802197802,161.06203351101874 L 451.97802197802196,157.26799494586209 L 453.7362637362637,164.6906657997992 L 455.49450549450546,158.30286545635536 L 457.2527472527472,165.11855743067002 L 459.01098901098896,161.88800024517025 L 460.76923076923083,163.6353158751558 L 462.5274725274726,166.4436590292308 L 464.28571428571433,162.37031807026818 L 466.0439560439561,169.69289149928596 L 467.80219780219784,163.304736152907 L 469.5604395604396,170.32386344685204 L 471.31868131868134,96.8774023091928 L 473.0769230769231,114.47350274987988 L 474.83516483516485,129.00582526599572 L 476.5934065934066,134.6080407081702 L 478.35164835164835,149.1115547553817 L 480.10989010989016,148.4223140655966 L 481.8681318681319,160.05098364104418 L 483.62637362637366,159.73175196338968 L 485.3846153846154,164.90723650431642 L 487.14285714285717,169.14321052979565 L 488.9010989010989,167.2840822646339 L 490.65934065934067,175.5945123315229 L 492.4175824175824,170.216977418196 L 494.1758241758242,178.33267376295203 L 495.9340659340659,174.8912919246136 L 497.6923076923077,178.1926934441078 L 499.45054945054943,180.34344358832917 L 501.20879120879124,177.4289239065103 L 502.967032967033,184.50840549075917 L 504.72527472527474,178.33524022055855 L 506.4835164835165,186.40756479487 L 508.24175824175825,182.09771533951155 L 510,185.2629974464775 L 511.75824175824175,186.68113610316144 L 513.5164835164835,183.77433687737292 L 515.2747252747253,190.42506262804793 L 517.032967032967,184.10877838228907 L 518.7912087912088,191.66980003480367 L 520.5494505494505,187.0934391828671 L 522.3076923076924,116.45161142464201 L 524.065934065934,133.88409328426465 L 525.8241758241759,144.03583053283114 L 527.5824175824175,160.39718609652198 L 529.3406593406594,161.86167965501392 L 531.098901098901,175.52017310383184 L 532.8571428571429,175.3776653114411 L 534.6153846153845,182.81208880921747 L 536.3736263736264,186.3056743100061 L 538.131868131868,186.19520145100245 L 539.8901098901099,194.08162110365163 L 541.6483516483516,189.19082528962724 L 543.4065934065934,197.90395258904937 L 545.1648351648352,193.62075504416353 L 546.9230769230769,198.3113369723036 L 548.6813186813187,199.04860688439155 L 550.4395604395604,197.3903810940909 L 552.1978021978022,203.56667702986235 L 553.9560439560439,197.61538700740448 L 555.7142857142857,205.473185919004 L 557.4725274725274,200.7605312347394 L 559.2307692307692,205.07607955568628 L 560.989010989011,204.90764250653825 L 562.7472527472528,203.14697990061939 L 564.5054945054945,208.71816882380043 L 566.2637362637363,124.29567228864383 L 568.021978021978,149.27438204703475 L 569.7802197802198,157.16062398587906 L 571.5384615384615,172.22338251623174 L 573.2967032967033,179.81874090844008 L 575.054945054945,184.7101367112403 L 576.8131868131868,194.91752101149856 L 578.5714285714286,192.72515351099622 L 580.3296703296703,203.35188311462187 L 582.0879120879122,199.8533939992281 L 583.8461538461538,206.46143118460253 L 585.6043956043957,206.8753095088556 L 587.3626373626373,206.78068514797434 L 589.1208791208792,212.54297868959833 L 590.8791208791208,207.23569078391412 L 592.6373626373627,215.30816015921687 L 594.3956043956043,209.64178599931404 L 596.1538461538462,214.94829093757332 L 597.9120879120878,213.76251158765712 L 599.6703296703297,213.02895752715486 L 601.4285714285714,218.243323368228 L 603.1868131868132,212.3525463215736 L 604.945054945055,219.8101736798027 L 606.7032967032967,213.5157644464109 L 608.4615384615385,218.69429645637987 L 610.2197802197802,134.36249338395953 L 611.978021978022,151.95320979803785 L 613.7362637362637,170.31884485355113 L 615.4945054945055,175.59179646793845 L 617.2527472527472,191.55188490796712 L 619.010989010989,191.76002934527992 L 620.7692307692308,202.33751933000934 L 622.5274725274726,204.12425270506262 L 624.2857142857143,206.91402913324328 L 626.0439560439561,213.14805043565758 L 627.8021978021978,209.38921188026626 L 629.5604395604396,218.09275082815475 L 631.3186813186813,212.56087619700477 L 633.0769230769231,218.97579928837644 L 634.8351648351648,216.97754313532675 L 636.5934065934066,217.41839660095212 L 638.3516483516484,221.2077109020736 L 640.1098901098901,215.98279933293173 L 641.8681318681319,223.29205158223672 L 643.6263736263736,216.61671088469413 L 645.3846153846154,222.97701840160016 L 647.1428571428571,219.85491228163025 L 648.9010989010989,133.36527102015495 L 650.6593406593406,155.477545578027 L 652.4175824175824,164.98110828312142 L 654.1758241758241,183.47935830198293 L 655.9340659340659,185.49182803063803 L 657.6923076923076,198.3147104963739 L 659.4505494505494,200.2748841975113 L 661.2087912087912,204.97912238340018 L 662.967032967033,210.83307607542304 L 664.7252747252747,208.15293044906085 L 666.4835164835165,216.85286496960123 L 668.2417582417582,211.23992133070638 L 670,218.34790610462403" fill="none" stroke="#00DDFF" stroke-width="2.2"></path>
         <text x="16" y="22" font-family="Poppins,sans-serif" font-size="12" fill="#94a3b8" font-weight="600">Total Q (unseparated)</text>
         <text x="16" y="270" font-family="Poppins,sans-serif" font-size="11" fill="#334466">Day of year →</text>
       </svg>
     </div>
     <!-- RIGHT: baseflow + quickflow separated -->
-    <div id="cmpRight">
+    <div id="cmpRight" style="clip-path: inset(0px 0px 0px 50%); position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;">
       <svg id="svgRight" viewBox="0 0 700 280" style="width:100%;height:100%;display:block;" aria-label="Separated baseflow and quickflow">
-        <rect x="0" y="0" width="700" height="280" fill="#0f0f1e"/>
-        <path id="pathBase" d="" fill="rgba(52,211,153,0.50)" stroke="none"/>
-        <path id="pathQuick" d="" fill="rgba(0,163,255,0.28)" stroke="none"/>
-        <path id="lineQRight" d="" fill="none" stroke="#00DDFF" stroke-width="2.2"/>
-        <path id="lineBase" d="" fill="none" stroke="#34d399" stroke-width="1.2" stroke-dasharray="5 3"/>
+        <rect x="0" y="0" width="700" height="280" fill="#0f0f1e"></rect>
+        <path id="pathBase" d="M 30,216.42872766893163 L 31.75824175824176,222.56306640690087 L 33.51648351648352,218.15421442234518 L 35.27472527472528,219.36596784245722 L 37.032967032967036,220.90985385213472 L 38.79120879120879,217.39623246646508 L 40.54945054945055,222.41494359618952 L 42.30769230769231,217.6287923315278 L 44.065934065934066,221.2658433807293 L 45.824175824175825,217.7593032657665 L 47.582417582417584,217.9618549042166 L 49.34065934065934,219.06834672044852 L 51.098901098901095,216.33558218079986 L 52.857142857142854,213.98802359290315 L 54.61538461538461,212.3012844277216 L 56.37362637362637,211.11728603880752 L 58.13186813186813,210.39160801353717 L 59.89010989010989,209.84766196548892 L 61.64835164835165,206.22724819657168 L 63.40659340659341,200.24359672950746 L 65.16483516483517,196.22198132262605 L 66.92307692307693,193.57328424074308 L 68.68131868131869,193.604936977902 L 70.43956043956044,194.56591925955595 L 72.19780219780219,195.16474745329919 L 73.95604395604396,196.43820152561764 L 75.71428571428571,196.1560475708173 L 77.47252747252747,204.57384163166762 L 79.23076923076923,199.36611772825236 L 80.98901098901098,207.51913450166492 L 82.74725274725274,203.1250361783108 L 84.50549450549451,206.48030729256635 L 86.26373626373626,207.38096160609885 L 88.02197802197801,204.1447548726535 L 89.78021978021978,196.15049418466072 L 91.53846153846155,194.18974047479455 L 93.2967032967033,192.9587048917598 L 95.05494505494505,192.33411427224758 L 96.81318681318682,192.68596319515686 L 98.57142857142857,194.47437346348346 L 100.32967032967034,193.47154125739107 L 102.08791208791209,200.37400757104515 L 103.84615384615385,194.4400951395363 L 105.6043956043956,202.05947683318993 L 107.36263736263736,196.63877311769778 L 109.12087912087912,200.17007640774028 L 110.87912087912088,199.71342946209873 L 112.63736263736264,196.85453358725428 L 114.3956043956044,201.80689294778756 L 116.15384615384615,195.41028037290025 L 117.91208791208791,201.24782844528883 L 119.67032967032966,195.7812244896008 L 121.42857142857142,197.97364564336047 L 123.1868131868132,196.63664914177605 L 124.94505494505495,195.8897516412949 L 126.7032967032967,198.28272198055646 L 128.46153846153845,195.80908519338612 L 130.2197802197802,197.3136416606788 L 131.97802197802196,195.5470379433599 L 133.73626373626374,195.29010838515657 L 135.4945054945055,195.1083188756479 L 137.25274725274724,194.7699914962241 L 139.01098901098902,194.505966761899 L 140.76923076923077,194.13932742046012 L 142.52747252747253,193.7673233131448 L 144.28571428571428,193.3986743319465 L 146.04395604395603,192.92749602376784 L 147.8021978021978,190.85979396116795 L 149.56043956043956,187.46384151407227 L 151.3186813186813,185.03480129511527 L 153.0769230769231,183.17498364023004 L 154.83516483516485,181.82774165055136 L 156.5934065934066,180.86267199841583 L 158.35164835164835,180.08674581314912 L 160.1098901098901,179.60649083042452 L 161.86813186813185,179.1367094425491 L 163.62637362637363,178.8685791434786 L 165.3846153846154,178.57600234397674 L 167.14285714285714,179.17086236954336 L 168.90109890109892,178.15996005401522 L 170.65934065934067,177.9025094414323 L 172.41758241758242,177.74178378595155 L 174.17582417582418,177.4455371165251 L 175.93406593406593,177.24483268228667 L 177.6923076923077,176.93618381505848 L 179.45054945054946,176.64479703173106 L 181.2087912087912,176.34083097147737 L 182.96703296703296,175.96097694096153 L 184.72527472527472,175.66591122649552 L 186.48351648351647,175.22091542476204 L 188.24175824175825,174.8651631503551 L 190,174.39416897415325 L 191.75824175824175,173.94688803312056 L 193.5164835164835,173.48437811903324 L 195.27472527472528,172.94539650728134 L 197.03296703296704,172.4864354366548 L 198.7912087912088,171.8921426350172 L 200.54945054945054,171.40136400262685 L 202.3076923076923,168.96316774893268 L 204.06593406593404,165.27034675526372 L 205.82417582417582,162.52558167803016 L 207.58241758241758,160.44651653609156 L 209.34065934065933,159.00051054658837 L 211.09890109890108,157.83857600227572 L 212.85714285714283,157.0926396294389 L 214.61538461538458,156.46452133010683 L 216.3736263736264,156.0483000844725 L 218.13186813186815,155.7328900718162 L 219.8901098901099,155.44319532099684 L 221.64835164835165,155.28850447338093 L 223.4065934065934,155.0429265160787 L 225.16483516483518,154.9286065249832 L 226.92307692307693,154.71303984699512 L 228.6813186813187,155.81669008206654 L 230.43956043956044,154.36865673208104 L 232.1978021978022,154.12786594012994 L 233.95604395604394,153.95482542037635 L 235.71428571428572,153.64862434907496 L 237.47252747252747,153.45684570382952 L 239.23076923076923,153.15014248908318 L 240.98901098901098,152.8869650176336 L 242.74725274725273,152.58287594710544 L 244.50549450549448,152.22429901836506 L 246.2637362637363,151.9289719087966 L 248.02197802197804,149.50915277853898 L 249.7802197802198,145.79172523609938 L 251.53846153846155,142.9950143682073 L 253.2967032967033,141.04978839464144 L 255.05494505494508,139.66510868920733 L 256.8131868131868,138.68848995110034 L 258.57142857142856,138.1108178742315 L 260.3296703296703,137.65876307326423 L 262.08791208791206,137.4968637632607 L 263.8461538461538,137.3423347543614 L 265.6043956043956,140.95937373849864 L 267.3626373626374,137.36867695077416 L 269.1208791208791,141.19015655690856 L 270.8791208791209,137.5143737315762 L 272.6373626373626,138.64121287666225 L 274.3956043956044,139.80210949044306 L 276.1538461538462,137.6561231776889 L 277.91208791208794,141.62286763839668 L 279.6703296703297,137.7453958764068 L 281.42857142857144,140.7417670202367 L 283.1868131868132,137.77434588886803 L 284.94505494505495,137.84526866287808 L 286.7032967032967,138.37427650594543 L 288.46153846153845,137.63152138865632 L 290.2197802197802,139.9776151695237 L 291.97802197802196,137.49604886320913 L 293.7362637362637,139.11830418127929 L 295.4945054945055,137.30045663734666 L 297.25274725274727,137.1160825924668 L 299.010989010989,137.04290041503722 L 300.7692307692308,136.84549379945176 L 302.5274725274725,134.58029120130155 L 304.2857142857143,130.74713380496488 L 306.0439560439561,128.02880346557157 L 307.80219780219784,126.21509154232517 L 309.5604395604396,126.80593170163623 L 311.31868131868134,127.68328935972788 L 313.0769230769231,128.42961354706657 L 314.83516483516485,128.88644009294234 L 316.5934065934066,129.24047021896178 L 318.35164835164835,130.67858348621877 L 320.1098901098901,129.55239893195937 L 321.86813186813185,130.49661095313257 L 323.6263736263736,131.02265654424315 L 325.3846153846154,129.5292774475009 L 327.14285714285717,134.58494010667425 L 328.9010989010989,129.1947409247037 L 330.65934065934067,135.41160153407415 L 332.4175824175824,129.78565970739822 L 334.1758241758242,133.54756169101066 L 335.9340659340659,133.13457256957153 L 337.6923076923077,131.16374993585893 L 339.45054945054943,136.34028948133277 L 341.2087912087912,129.65802303036736 L 342.96703296703294,136.82337338822728 L 344.7252747252747,130.85827235305487 L 346.4835164835165,134.83644548234784 L 348.24175824175825,134.0152299877495 L 350,131.97764122198967 L 351.75824175824175,136.98759820758772 L 353.5164835164835,130.97435234508612 L 355.27472527472526,137.806316284621 L 357.032967032967,131.7487311681133 L 358.79120879120876,136.1129441991351 L 360.54945054945057,135.02525343029885 L 362.3076923076923,129.81756820789428 L 364.0659340659341,126.16031768036876 L 365.8241758241758,123.63329558892244 L 367.5824175824176,125.28686597229985 L 369.34065934065933,126.48960149761918 L 371.0989010989011,127.38250986427907 L 372.85714285714283,127.84922579854931 L 374.6153846153846,128.17456749818564 L 376.37362637362634,131.77254763777248 L 378.1318681318681,128.0426540934787 L 379.89010989010984,136.52145010739264 L 381.64835164835165,131.43608434298864 L 383.4065934065934,137.4010469296233 L 385.16483516483515,136.45920651588486 L 386.9230769230769,136.2528758910322 L 388.68131868131866,141.08532556931826 L 390.4395604395604,135.66134889105115 L 392.19780219780216,143.43322453013042 L 393.9560439560439,137.36851915878734 L 395.71428571428567,142.95370836678848 L 397.4725274725274,141.5997937477923 L 399.23076923076917,128.63237201437153 L 400.98901098901104,123.40244110370628 L 402.7472527472528,126.37871466637431 L 404.50549450549454,129.12258802089653 L 406.2637362637363,131.11910947525575 L 408.02197802197804,132.5839450514128 L 409.7802197802198,133.4640997335173 L 411.53846153846155,134.06375613768228 L 413.2967032967033,136.0756249987892 L 415.05494505494505,134.1533589314847 L 416.8131868131868,136.45942328531254 L 418.57142857142856,140.81972457794296 L 420.32967032967036,144.37154508186958 L 422.0879120879121,147.15015308170484 L 423.84615384615387,149.51841873598693 L 425.6043956043956,151.3527813581757 L 427.3626373626374,152.95460791237628 L 429.1208791208791,154.24435082319638 L 430.8791208791209,155.32906114075473 L 432.6373626373626,156.2990485068171 L 434.3956043956044,157.01528750424285 L 436.15384615384613,157.71604383460433 L 437.9120879120879,158.21044575109235 L 439.67032967032964,158.72807086693393 L 441.42857142857144,159.12007493227748 L 443.1868131868132,159.45794667454223 L 444.94505494505495,159.78314959559066 L 446.7032967032967,159.9630461931414 L 448.46153846153845,160.20330149019895 L 450.2197802197802,161.06203351101874 L 451.97802197802196,160.35595588371228 L 453.7362637362637,164.6906657997992 L 455.49450549450546,160.20881576660588 L 457.2527472527472,165.11855743067002 L 459.01098901098896,161.88800024517025 L 460.76923076923083,163.6353158751558 L 462.5274725274726,166.4436590292308 L 464.28571428571433,162.37031807026818 L 466.0439560439561,169.69289149928596 L 467.80219780219784,163.304736152907 L 469.5604395604396,170.32386344685204 L 471.31868131868134,158.5326498888761 L 473.0769230769231,162.8183685936874 L 474.83516483516485,166.14907437091034 L 476.5934065934066,168.93357232095042 L 478.35164835164835,171.1287432335862 L 480.10989010989016,172.94186286789136 L 481.8681318681319,174.45850184204576 L 483.62637362637366,175.6396208182481 L 485.3846153846154,176.7196310818477 L 487.14285714285717,177.5056641276416 L 488.9010989010989,178.2590709706492 L 490.65934065934067,178.81202559274954 L 492.4175824175824,179.2909132185244 L 494.1758241758242,179.69762302619603 L 495.9340659340659,179.94781006801333 L 497.6923076923077,180.22395742344463 L 499.45054945054943,180.34344358832917 L 501.20879120879124,180.41621421446428 L 502.967032967033,184.50840549075917 L 504.72527472527474,180.28625320842113 L 506.4835164835165,186.40756479487 L 508.24175824175825,182.09771533951155 L 510,185.2629974464775 L 511.75824175824175,186.68113610316144 L 513.5164835164835,183.77433687737292 L 515.2747252747253,190.42506262804793 L 517.032967032967,184.10877838228907 L 518.7912087912088,191.66980003480367 L 520.5494505494505,187.0934391828671 L 522.3076923076924,176.8670498184061 L 524.065934065934,181.05887663980764 L 525.8241758241759,184.47230215855842 L 527.5824175824175,187.08763679454887 L 529.3406593406594,189.19235603120677 L 531.098901098901,190.85463411108114 L 532.8571428571429,192.10374613027935 L 534.6153846153845,193.15851929811313 L 536.3736263736264,193.8557872228565 L 538.131868131868,194.4724371695337 L 539.8901098901099,194.8238446743072 L 541.6483516483516,195.08230046979378 L 543.4065934065934,197.90395258904937 L 545.1648351648352,195.16170402140696 L 546.9230769230769,198.3113369723036 L 548.6813186813187,199.04860688439155 L 550.4395604395604,197.3903810940909 L 552.1978021978022,203.56667702986235 L 553.9560439560439,197.61538700740448 L 555.7142857142857,205.473185919004 L 557.4725274725274,200.7605312347394 L 559.2307692307692,205.07607955568628 L 560.989010989011,204.90764250653825 L 562.7472527472528,203.14697990061939 L 564.5054945054945,208.71816882380043 L 566.2637362637363,189.42445986943 L 568.021978021978,193.46722042945493 L 569.7802197802198,196.73071103050881 L 571.5384615384615,199.32844409370773 L 573.2967032967033,201.2182318543595 L 575.054945054945,202.7550258849962 L 576.8131868131868,203.80431213015513 L 578.5714285714286,204.61374252493144 L 580.3296703296703,205.1468688124008 L 582.0879120879122,205.43423883311505 L 583.8461538461538,206.46143118460253 L 585.6043956043957,206.8753095088556 L 587.3626373626373,206.78068514797434 L 589.1208791208792,212.54297868959833 L 590.8791208791208,207.23569078391412 L 592.6373626373627,215.30816015921687 L 594.3956043956043,209.64178599931404 L 596.1538461538462,214.94829093757332 L 597.9120879120878,213.76251158765712 L 599.6703296703297,213.02895752715486 L 601.4285714285714,218.243323368228 L 603.1868131868132,212.3525463215736 L 604.945054945055,219.8101736798027 L 606.7032967032967,213.5157644464109 L 608.4615384615385,218.69429645637987 L 610.2197802197802,202.42187676934216 L 611.978021978022,199.34749273500904 L 613.7362637362637,202.4457196600805 L 615.4945054945055,204.83683309245907 L 617.2527472527472,206.56102166579743 L 619.010989010989,207.76954041221694 L 620.7692307692308,208.63879171556064 L 622.5274725274726,209.07727055594103 L 624.2857142857143,209.36576755351842 L 626.0439560439561,213.14805043565758 L 627.8021978021978,209.38921188026626 L 629.5604395604396,218.09275082815475 L 631.3186813186813,212.56087619700477 L 633.0769230769231,218.97579928837644 L 634.8351648351648,216.97754313532675 L 636.5934065934066,217.41839660095212 L 638.3516483516484,221.2077109020736 L 640.1098901098901,215.98279933293173 L 641.8681318681319,223.29205158223672 L 643.6263736263736,216.61671088469413 L 645.3846153846154,222.97701840160016 L 647.1428571428571,219.85491228163025 L 648.9010989010989,206.95549765184478 L 650.6593406593406,203.94853031928236 L 652.4175824175824,207.49333059404245 L 654.1758241758241,210.1903384833525 L 655.9340659340659,212.2745070225721 L 657.6923076923076,213.92622900303692 L 659.4505494505494,215.11256129947702 L 661.2087912087912,216.124903840749 L 662.967032967033,216.79129340383042 L 664.7252747252747,217.3830466585538 L 666.4835164835165,217.77873441119348 L 668.2417582417582,218.0813566756021 L 670,218.34790610462403 L 670,250 L 668.2417582417582,250 L 666.4835164835165,250 L 664.7252747252747,250 L 662.967032967033,250 L 661.2087912087912,250 L 659.4505494505494,250 L 657.6923076923076,250 L 655.9340659340659,250 L 654.1758241758241,250 L 652.4175824175824,250 L 650.6593406593406,250 L 648.9010989010989,250 L 647.1428571428571,250 L 645.3846153846154,250 L 643.6263736263736,250 L 641.8681318681319,250 L 640.1098901098901,250 L 638.3516483516484,250 L 636.5934065934066,250 L 634.8351648351648,250 L 633.0769230769231,250 L 631.3186813186813,250 L 629.5604395604396,250 L 627.8021978021978,250 L 626.0439560439561,250 L 624.2857142857143,250 L 622.5274725274726,250 L 620.7692307692308,250 L 619.010989010989,250 L 617.2527472527472,250 L 615.4945054945055,250 L 613.7362637362637,250 L 611.978021978022,250 L 610.2197802197802,250 L 608.4615384615385,250 L 606.7032967032967,250 L 604.945054945055,250 L 603.1868131868132,250 L 601.4285714285714,250 L 599.6703296703297,250 L 597.9120879120878,250 L 596.1538461538462,250 L 594.3956043956043,250 L 592.6373626373627,250 L 590.8791208791208,250 L 589.1208791208792,250 L 587.3626373626373,250 L 585.6043956043957,250 L 583.8461538461538,250 L 582.0879120879122,250 L 580.3296703296703,250 L 578.5714285714286,250 L 576.8131868131868,250 L 575.054945054945,250 L 573.2967032967033,250 L 571.5384615384615,250 L 569.7802197802198,250 L 568.021978021978,250 L 566.2637362637363,250 L 564.5054945054945,250 L 562.7472527472528,250 L 560.989010989011,250 L 559.2307692307692,250 L 557.4725274725274,250 L 555.7142857142857,250 L 553.9560439560439,250 L 552.1978021978022,250 L 550.4395604395604,250 L 548.6813186813187,250 L 546.9230769230769,250 L 545.1648351648352,250 L 543.4065934065934,250 L 541.6483516483516,250 L 539.8901098901099,250 L 538.131868131868,250 L 536.3736263736264,250 L 534.6153846153845,250 L 532.8571428571429,250 L 531.098901098901,250 L 529.3406593406594,250 L 527.5824175824175,250 L 525.8241758241759,250 L 524.065934065934,250 L 522.3076923076924,250 L 520.5494505494505,250 L 518.7912087912088,250 L 517.032967032967,250 L 515.2747252747253,250 L 513.5164835164835,250 L 511.75824175824175,250 L 510,250 L 508.24175824175825,250 L 506.4835164835165,250 L 504.72527472527474,250 L 502.967032967033,250 L 501.20879120879124,250 L 499.45054945054943,250 L 497.6923076923077,250 L 495.9340659340659,250 L 494.1758241758242,250 L 492.4175824175824,250 L 490.65934065934067,250 L 488.9010989010989,250 L 487.14285714285717,250 L 485.3846153846154,250 L 483.62637362637366,250 L 481.8681318681319,250 L 480.10989010989016,250 L 478.35164835164835,250 L 476.5934065934066,250 L 474.83516483516485,250 L 473.0769230769231,250 L 471.31868131868134,250 L 469.5604395604396,250 L 467.80219780219784,250 L 466.0439560439561,250 L 464.28571428571433,250 L 462.5274725274726,250 L 460.76923076923083,250 L 459.01098901098896,250 L 457.2527472527472,250 L 455.49450549450546,250 L 453.7362637362637,250 L 451.97802197802196,250 L 450.2197802197802,250 L 448.46153846153845,250 L 446.7032967032967,250 L 444.94505494505495,250 L 443.1868131868132,250 L 441.42857142857144,250 L 439.67032967032964,250 L 437.9120879120879,250 L 436.15384615384613,250 L 434.3956043956044,250 L 432.6373626373626,250 L 430.8791208791209,250 L 429.1208791208791,250 L 427.3626373626374,250 L 425.6043956043956,250 L 423.84615384615387,250 L 422.0879120879121,250 L 420.32967032967036,250 L 418.57142857142856,250 L 416.8131868131868,250 L 415.05494505494505,250 L 413.2967032967033,250 L 411.53846153846155,250 L 409.7802197802198,250 L 408.02197802197804,250 L 406.2637362637363,250 L 404.50549450549454,250 L 402.7472527472528,250 L 400.98901098901104,250 L 399.23076923076917,250 L 397.4725274725274,250 L 395.71428571428567,250 L 393.9560439560439,250 L 392.19780219780216,250 L 390.4395604395604,250 L 388.68131868131866,250 L 386.9230769230769,250 L 385.16483516483515,250 L 383.4065934065934,250 L 381.64835164835165,250 L 379.89010989010984,250 L 378.1318681318681,250 L 376.37362637362634,250 L 374.6153846153846,250 L 372.85714285714283,250 L 371.0989010989011,250 L 369.34065934065933,250 L 367.5824175824176,250 L 365.8241758241758,250 L 364.0659340659341,250 L 362.3076923076923,250 L 360.54945054945057,250 L 358.79120879120876,250 L 357.032967032967,250 L 355.27472527472526,250 L 353.5164835164835,250 L 351.75824175824175,250 L 350,250 L 348.24175824175825,250 L 346.4835164835165,250 L 344.7252747252747,250 L 342.96703296703294,250 L 341.2087912087912,250 L 339.45054945054943,250 L 337.6923076923077,250 L 335.9340659340659,250 L 334.1758241758242,250 L 332.4175824175824,250 L 330.65934065934067,250 L 328.9010989010989,250 L 327.14285714285717,250 L 325.3846153846154,250 L 323.6263736263736,250 L 321.86813186813185,250 L 320.1098901098901,250 L 318.35164835164835,250 L 316.5934065934066,250 L 314.83516483516485,250 L 313.0769230769231,250 L 311.31868131868134,250 L 309.5604395604396,250 L 307.80219780219784,250 L 306.0439560439561,250 L 304.2857142857143,250 L 302.5274725274725,250 L 300.7692307692308,250 L 299.010989010989,250 L 297.25274725274727,250 L 295.4945054945055,250 L 293.7362637362637,250 L 291.97802197802196,250 L 290.2197802197802,250 L 288.46153846153845,250 L 286.7032967032967,250 L 284.94505494505495,250 L 283.1868131868132,250 L 281.42857142857144,250 L 279.6703296703297,250 L 277.91208791208794,250 L 276.1538461538462,250 L 274.3956043956044,250 L 272.6373626373626,250 L 270.8791208791209,250 L 269.1208791208791,250 L 267.3626373626374,250 L 265.6043956043956,250 L 263.8461538461538,250 L 262.08791208791206,250 L 260.3296703296703,250 L 258.57142857142856,250 L 256.8131868131868,250 L 255.05494505494508,250 L 253.2967032967033,250 L 251.53846153846155,250 L 249.7802197802198,250 L 248.02197802197804,250 L 246.2637362637363,250 L 244.50549450549448,250 L 242.74725274725273,250 L 240.98901098901098,250 L 239.23076923076923,250 L 237.47252747252747,250 L 235.71428571428572,250 L 233.95604395604394,250 L 232.1978021978022,250 L 230.43956043956044,250 L 228.6813186813187,250 L 226.92307692307693,250 L 225.16483516483518,250 L 223.4065934065934,250 L 221.64835164835165,250 L 219.8901098901099,250 L 218.13186813186815,250 L 216.3736263736264,250 L 214.61538461538458,250 L 212.85714285714283,250 L 211.09890109890108,250 L 209.34065934065933,250 L 207.58241758241758,250 L 205.82417582417582,250 L 204.06593406593404,250 L 202.3076923076923,250 L 200.54945054945054,250 L 198.7912087912088,250 L 197.03296703296704,250 L 195.27472527472528,250 L 193.5164835164835,250 L 191.75824175824175,250 L 190,250 L 188.24175824175825,250 L 186.48351648351647,250 L 184.72527472527472,250 L 182.96703296703296,250 L 181.2087912087912,250 L 179.45054945054946,250 L 177.6923076923077,250 L 175.93406593406593,250 L 174.17582417582418,250 L 172.41758241758242,250 L 170.65934065934067,250 L 168.90109890109892,250 L 167.14285714285714,250 L 165.3846153846154,250 L 163.62637362637363,250 L 161.86813186813185,250 L 160.1098901098901,250 L 158.35164835164835,250 L 156.5934065934066,250 L 154.83516483516485,250 L 153.0769230769231,250 L 151.3186813186813,250 L 149.56043956043956,250 L 147.8021978021978,250 L 146.04395604395603,250 L 144.28571428571428,250 L 142.52747252747253,250 L 140.76923076923077,250 L 139.01098901098902,250 L 137.25274725274724,250 L 135.4945054945055,250 L 133.73626373626374,250 L 131.97802197802196,250 L 130.2197802197802,250 L 128.46153846153845,250 L 126.7032967032967,250 L 124.94505494505495,250 L 123.1868131868132,250 L 121.42857142857142,250 L 119.67032967032966,250 L 117.91208791208791,250 L 116.15384615384615,250 L 114.3956043956044,250 L 112.63736263736264,250 L 110.87912087912088,250 L 109.12087912087912,250 L 107.36263736263736,250 L 105.6043956043956,250 L 103.84615384615385,250 L 102.08791208791209,250 L 100.32967032967034,250 L 98.57142857142857,250 L 96.81318681318682,250 L 95.05494505494505,250 L 93.2967032967033,250 L 91.53846153846155,250 L 89.78021978021978,250 L 88.02197802197801,250 L 86.26373626373626,250 L 84.50549450549451,250 L 82.74725274725274,250 L 80.98901098901098,250 L 79.23076923076923,250 L 77.47252747252747,250 L 75.71428571428571,250 L 73.95604395604396,250 L 72.19780219780219,250 L 70.43956043956044,250 L 68.68131868131869,250 L 66.92307692307693,250 L 65.16483516483517,250 L 63.40659340659341,250 L 61.64835164835165,250 L 59.89010989010989,250 L 58.13186813186813,250 L 56.37362637362637,250 L 54.61538461538461,250 L 52.857142857142854,250 L 51.098901098901095,250 L 49.34065934065934,250 L 47.582417582417584,250 L 45.824175824175825,250 L 44.065934065934066,250 L 42.30769230769231,250 L 40.54945054945055,250 L 38.79120879120879,250 L 37.032967032967036,250 L 35.27472527472528,250 L 33.51648351648352,250 L 31.75824175824176,250 L 30,250 Z" fill="rgba(52,211,153,0.50)" stroke="none"></path>
+        <path id="pathQuick" d="M 30,216.42872766893163 L 31.75824175824176,222.56306640690087 L 33.51648351648352,218.15421442234518 L 35.27472527472528,219.36596784245722 L 37.032967032967036,220.90985385213472 L 38.79120879120879,216.18459791933174 L 40.54945054945055,222.41494359618952 L 42.30769230769231,215.05757189951623 L 44.065934065934066,221.2658433807293 L 45.824175824175825,216.48613954112477 L 47.582417582417584,217.9618549042166 L 49.34065934065934,219.06834672044852 L 51.098901098901095,178.00218121707434 L 52.857142857142854,192.06742080061287 L 54.61538461538461,190.9289153136856 L 56.37362637362637,202.10036317071564 L 58.13186813186813,200.7827948996899 L 59.89010989010989,205.4951931794314 L 61.64835164835165,117.65576358041949 L 63.40659340659341,135.2346936910114 L 65.16483516483517,158.00942225116546 L 66.92307692307693,163.802618210541 L 68.68131868131869,180.46268849143635 L 70.43956043956044,183.0429558502374 L 72.19780219780219,191.3177872232077 L 73.95604395604396,196.43820152561764 L 75.71428571428571,196.1560475708173 L 77.47252747252747,204.57384163166762 L 79.23076923076923,199.36611772825236 L 80.98901098901098,207.51913450166492 L 82.74725274725274,203.1250361783108 L 84.50549450549451,206.48030729256635 L 86.26373626373626,207.38096160609885 L 88.02197802197801,204.1447548726535 L 89.78021978021978,169.08006028446295 L 91.53846153846155,170.9341624884276 L 93.2967032967033,184.61770291356794 L 95.05494505494505,184.2104291604398 L 96.81318681318682,191.77885928562634 L 98.57142857142857,194.47437346348346 L 100.32967032967034,193.47154125739107 L 102.08791208791209,200.37400757104515 L 103.84615384615385,194.4400951395363 L 105.6043956043956,202.05947683318993 L 107.36263736263736,196.63877311769778 L 109.12087912087912,200.17007640774028 L 110.87912087912088,199.71342946209873 L 112.63736263736264,196.85453358725428 L 114.3956043956044,201.80689294778756 L 116.15384615384615,194.62707699685467 L 117.91208791208791,201.24782844528883 L 119.67032967032966,194.78930656840865 L 121.42857142857142,197.97364564336047 L 123.1868131868132,196.63664914177605 L 124.94505494505495,193.97341926707998 L 126.7032967032967,198.28272198055646 L 128.46153846153845,190.90478590679749 L 130.2197802197802,197.3136416606788 L 131.97802197802196,190.46136416657632 L 133.73626373626374,193.78125683472138 L 135.4945054945055,191.95123968202753 L 137.25274725274724,189.2433346179667 L 139.01098901098902,193.25598879247946 L 140.76923076923077,185.97889562628092 L 142.52747252747253,192.3796496862313 L 144.28571428571428,185.32435744143626 L 146.04395604395603,188.90823633769313 L 147.8021978021978,141.80803404051215 L 149.56043956043956,149.35282195927127 L 151.3186813186813,160.80045523002008 L 153.0769230769231,159.67400989660393 L 154.83516483516485,170.74950432575872 L 156.5934065934066,167.1707882517298 L 158.35164835164835,173.86319080465597 L 160.1098901098901,173.50350128231952 L 161.86813186813185,173.18197670185168 L 163.62637362637363,177.9413008746996 L 165.3846153846154,171.99380942554149 L 167.14285714285714,179.17086236954336 L 168.90109890109892,172.42496417867312 L 170.65934065934067,177.02960626047948 L 172.41758241758242,174.48939514289827 L 174.17582417582418,173.09426124429876 L 175.93406593406593,176.44469474239435 L 177.6923076923077,169.81433416276036 L 179.45054945054946,176.28771924529133 L 181.2087912087912,168.89611321140688 L 182.96703296703296,173.65610791779147 L 184.72527472527472,170.39742691170505 L 186.48351648351647,169.06784082839278 L 188.24175824175825,171.88726270361306 L 190,165.28321889838125 L 191.75824175824175,171.5776272890538 L 193.5164835164835,163.98255106819158 L 195.27472527472528,168.6133621898246 L 197.03296703296704,165.03846894136313 L 198.7912087912088,164.0865938882771 L 200.54945054945054,166.61026118468158 L 202.3076923076923,111.1739000553944 L 204.06593406593404,128.27720894463232 L 205.82417582417582,129.0697491729998 L 207.58241758241758,140.53967706469788 L 209.34065934065933,141.79319628740012 L 211.09890109890108,145.2229036241055 L 212.85714285714283,150.56261177146501 L 214.61538461538458,146.87284617189053 L 216.3736263736264,154.9569632714069 L 218.13186813186815,148.72870322670457 L 219.8901098901099,155.01188356174447 L 221.64835164835165,151.74941781049154 L 223.4065934065934,152.27884560821047 L 225.16483516483518,154.75847432806694 L 226.92307692307693,149.35029397555098 L 228.6813186813187,155.81669008206654 L 230.43956043956044,148.36550334452647 L 232.1978021978022,153.95072233427217 L 233.95604395604394,149.69059568589273 L 235.71428571428572,150.0536932534895 L 237.47252747252747,152.12945823811464 L 239.23076923076923,146.60548077630872 L 240.98901098901098,152.67673829653546 L 242.74725274725273,144.98814985798123 L 244.50549450549448,150.61555060315257 L 246.2637362637363,145.95765784508475 L 248.02197802197804,93.3717758323055 L 249.7802197802198,106.5151285930501 L 251.53846153846155,110.48936540202601 L 253.2967032967033,123.62797070596648 L 255.05494505494508,121.54681393840636 L 256.8131868131868,131.74023709048828 L 258.57142857142856,130.2321540952094 L 260.3296703296703,133.93468696079367 L 262.08791208791206,137.0655242523078 L 263.8461538461538,133.80742970356562 L 265.6043956043956,140.95937373849864 L 267.3626373626374,134.3517804528904 L 269.1208791208791,141.19015655690856 L 270.8791208791209,136.68820545756228 L 272.6373626373626,138.64121287666225 L 274.3956043956044,139.80210949044306 L 276.1538461538462,135.59087990216358 L 277.91208791208794,141.62286763839668 L 279.6703296703297,134.31109541983153 L 281.42857142857144,140.7417670202367 L 283.1868131868132,135.92610967916585 L 284.94505494505495,137.84526866287808 L 286.7032967032967,138.37427650594543 L 288.46153846153845,134.26593635446932 L 290.2197802197802,139.9776151695237 L 291.97802197802196,132.61585633851791 L 293.7362637362637,139.11830418127929 L 295.4945054945055,133.67159277159823 L 297.25274725274727,136.0126793062983 L 299.010989010989,136.26796114718036 L 300.7692307692308,132.55366326728142 L 302.5274725274725,80.73192171428272 L 304.2857142857143,86.21113011934227 L 306.0439560439561,102.79432844009926 L 307.80219780219784,104.89762720447376 L 309.5604395604396,113.65712305944876 L 311.31868131868134,118.31325144422962 L 313.0769230769231,118.64399732087202 L 314.83516483516485,126.94684164165812 L 316.5934065934066,122.09329543574763 L 318.35164835164835,130.67858348621877 L 320.1098901098901,126.28007376006022 L 321.86813186813185,130.49661095313257 L 323.6263736263736,131.02265654424315 L 325.3846153846154,128.7631841868499 L 327.14285714285717,134.58494010667425 L 328.9010989010989,128.08814336126443 L 330.65934065934067,135.41160153407415 L 332.4175824175824,129.78565970739822 L 334.1758241758242,133.54756169101066 L 335.9340659340659,133.13457256957153 L 337.6923076923077,131.16374993585893 L 339.45054945054943,136.34028948133277 L 341.2087912087912,129.65802303036736 L 342.96703296703294,136.82337338822728 L 344.7252747252747,130.85827235305487 L 346.4835164835165,134.83644548234784 L 348.24175824175825,134.0152299877495 L 350,131.97764122198967 L 351.75824175824175,136.98759820758772 L 353.5164835164835,130.51957815713536 L 355.27472527472526,137.806316284621 L 357.032967032967,131.7487311681133 L 358.79120879120876,136.1129441991351 L 360.54945054945057,135.02525343029885 L 362.3076923076923,71.82754076366089 L 364.0659340659341,90.28091491811367 L 365.8241758241758,94.65246467072208 L 367.5824175824176,110.30367804876099 L 369.34065934065933,110.60257760462775 L 371.0989010989011,120.35155234633336 L 372.85714285714283,122.90114100355926 L 374.6153846153846,124.77221533584314 L 376.37362637362634,131.77254763777248 L 378.1318681318681,127.61896163624084 L 379.89010989010984,136.52145010739264 L 381.64835164835165,131.43608434298864 L 383.4065934065934,137.4010469296233 L 385.16483516483515,136.45920651588486 L 386.9230769230769,136.2528758910322 L 388.68131868131866,141.08532556931826 L 390.4395604395604,135.66134889105115 L 392.19780219780216,143.43322453013042 L 393.9560439560439,137.36851915878734 L 395.71428571428567,142.95370836678848 L 397.4725274725274,141.5997937477923 L 399.23076923076917,46.296296296296305 L 400.98901098901104,71.50362344803972 L 402.7472527472528,82.38776523822395 L 404.50549450549454,102.68745468297638 L 406.2637362637363,106.31019215128967 L 408.02197802197804,119.79541592068159 L 409.7802197802198,123.66199202356617 L 411.53846153846155,128.47468280739878 L 413.2967032967033,136.0756249987892 L 415.05494505494505,133.70893310423423 L 416.8131868131868,77.71486403098194 L 418.57142857142856,87.64988398809237 L 420.32967032967036,106.37799273760396 L 422.0879120879121,113.82610009686474 L 423.84615384615387,122.05698659425454 L 425.6043956043956,131.73223953039619 L 427.3626373626374,131.4616015156733 L 429.1208791208791,142.63395584218392 L 430.8791208791209,139.09855797110336 L 432.6373626373626,147.63320928086762 L 434.3956043956044,147.29765912959726 L 436.15384615384613,149.44759306330567 L 437.9120879120879,153.78924733253152 L 439.67032967032964,149.86355797889422 L 441.42857142857144,157.92315014316674 L 443.1868131868132,151.9828300788571 L 444.94505494505495,158.91139121769976 L 446.7032967032967,156.21745856722913 L 448.46153846153845,157.7823364916353 L 450.2197802197802,161.06203351101874 L 451.97802197802196,157.26799494586209 L 453.7362637362637,164.6906657997992 L 455.49450549450546,158.30286545635536 L 457.2527472527472,165.11855743067002 L 459.01098901098896,161.88800024517025 L 460.76923076923083,163.6353158751558 L 462.5274725274726,166.4436590292308 L 464.28571428571433,162.37031807026818 L 466.0439560439561,169.69289149928596 L 467.80219780219784,163.304736152907 L 469.5604395604396,170.32386344685204 L 471.31868131868134,96.8774023091928 L 473.0769230769231,114.47350274987988 L 474.83516483516485,129.00582526599572 L 476.5934065934066,134.6080407081702 L 478.35164835164835,149.1115547553817 L 480.10989010989016,148.4223140655966 L 481.8681318681319,160.05098364104418 L 483.62637362637366,159.73175196338968 L 485.3846153846154,164.90723650431642 L 487.14285714285717,169.14321052979565 L 488.9010989010989,167.2840822646339 L 490.65934065934067,175.5945123315229 L 492.4175824175824,170.216977418196 L 494.1758241758242,178.33267376295203 L 495.9340659340659,174.8912919246136 L 497.6923076923077,178.1926934441078 L 499.45054945054943,180.34344358832917 L 501.20879120879124,177.4289239065103 L 502.967032967033,184.50840549075917 L 504.72527472527474,178.33524022055855 L 506.4835164835165,186.40756479487 L 508.24175824175825,182.09771533951155 L 510,185.2629974464775 L 511.75824175824175,186.68113610316144 L 513.5164835164835,183.77433687737292 L 515.2747252747253,190.42506262804793 L 517.032967032967,184.10877838228907 L 518.7912087912088,191.66980003480367 L 520.5494505494505,187.0934391828671 L 522.3076923076924,116.45161142464201 L 524.065934065934,133.88409328426465 L 525.8241758241759,144.03583053283114 L 527.5824175824175,160.39718609652198 L 529.3406593406594,161.86167965501392 L 531.098901098901,175.52017310383184 L 532.8571428571429,175.3776653114411 L 534.6153846153845,182.81208880921747 L 536.3736263736264,186.3056743100061 L 538.131868131868,186.19520145100245 L 539.8901098901099,194.08162110365163 L 541.6483516483516,189.19082528962724 L 543.4065934065934,197.90395258904937 L 545.1648351648352,193.62075504416353 L 546.9230769230769,198.3113369723036 L 548.6813186813187,199.04860688439155 L 550.4395604395604,197.3903810940909 L 552.1978021978022,203.56667702986235 L 553.9560439560439,197.61538700740448 L 555.7142857142857,205.473185919004 L 557.4725274725274,200.7605312347394 L 559.2307692307692,205.07607955568628 L 560.989010989011,204.90764250653825 L 562.7472527472528,203.14697990061939 L 564.5054945054945,208.71816882380043 L 566.2637362637363,124.29567228864383 L 568.021978021978,149.27438204703475 L 569.7802197802198,157.16062398587906 L 571.5384615384615,172.22338251623174 L 573.2967032967033,179.81874090844008 L 575.054945054945,184.7101367112403 L 576.8131868131868,194.91752101149856 L 578.5714285714286,192.72515351099622 L 580.3296703296703,203.35188311462187 L 582.0879120879122,199.8533939992281 L 583.8461538461538,206.46143118460253 L 585.6043956043957,206.8753095088556 L 587.3626373626373,206.78068514797434 L 589.1208791208792,212.54297868959833 L 590.8791208791208,207.23569078391412 L 592.6373626373627,215.30816015921687 L 594.3956043956043,209.64178599931404 L 596.1538461538462,214.94829093757332 L 597.9120879120878,213.76251158765712 L 599.6703296703297,213.02895752715486 L 601.4285714285714,218.243323368228 L 603.1868131868132,212.3525463215736 L 604.945054945055,219.8101736798027 L 606.7032967032967,213.5157644464109 L 608.4615384615385,218.69429645637987 L 610.2197802197802,134.36249338395953 L 611.978021978022,151.95320979803785 L 613.7362637362637,170.31884485355113 L 615.4945054945055,175.59179646793845 L 617.2527472527472,191.55188490796712 L 619.010989010989,191.76002934527992 L 620.7692307692308,202.33751933000934 L 622.5274725274726,204.12425270506262 L 624.2857142857143,206.91402913324328 L 626.0439560439561,213.14805043565758 L 627.8021978021978,209.38921188026626 L 629.5604395604396,218.09275082815475 L 631.3186813186813,212.56087619700477 L 633.0769230769231,218.97579928837644 L 634.8351648351648,216.97754313532675 L 636.5934065934066,217.41839660095212 L 638.3516483516484,221.2077109020736 L 640.1098901098901,215.98279933293173 L 641.8681318681319,223.29205158223672 L 643.6263736263736,216.61671088469413 L 645.3846153846154,222.97701840160016 L 647.1428571428571,219.85491228163025 L 648.9010989010989,133.36527102015495 L 650.6593406593406,155.477545578027 L 652.4175824175824,164.98110828312142 L 654.1758241758241,183.47935830198293 L 655.9340659340659,185.49182803063803 L 657.6923076923076,198.3147104963739 L 659.4505494505494,200.2748841975113 L 661.2087912087912,204.97912238340018 L 662.967032967033,210.83307607542304 L 664.7252747252747,208.15293044906085 L 666.4835164835165,216.85286496960123 L 668.2417582417582,211.23992133070638 L 670,218.34790610462403 L 670,218.34790610462403 L 668.2417582417582,218.0813566756021 L 666.4835164835165,217.77873441119348 L 664.7252747252747,217.3830466585538 L 662.967032967033,216.79129340383042 L 661.2087912087912,216.124903840749 L 659.4505494505494,215.11256129947702 L 657.6923076923076,213.92622900303692 L 655.9340659340659,212.2745070225721 L 654.1758241758241,210.1903384833525 L 652.4175824175824,207.49333059404245 L 650.6593406593406,203.94853031928236 L 648.9010989010989,206.95549765184478 L 647.1428571428571,219.85491228163025 L 645.3846153846154,222.97701840160016 L 643.6263736263736,216.61671088469413 L 641.8681318681319,223.29205158223672 L 640.1098901098901,215.98279933293173 L 638.3516483516484,221.2077109020736 L 636.5934065934066,217.41839660095212 L 634.8351648351648,216.97754313532675 L 633.0769230769231,218.97579928837644 L 631.3186813186813,212.56087619700477 L 629.5604395604396,218.09275082815475 L 627.8021978021978,209.38921188026626 L 626.0439560439561,213.14805043565758 L 624.2857142857143,209.36576755351842 L 622.5274725274726,209.07727055594103 L 620.7692307692308,208.63879171556064 L 619.010989010989,207.76954041221694 L 617.2527472527472,206.56102166579743 L 615.4945054945055,204.83683309245907 L 613.7362637362637,202.4457196600805 L 611.978021978022,199.34749273500904 L 610.2197802197802,202.42187676934216 L 608.4615384615385,218.69429645637987 L 606.7032967032967,213.5157644464109 L 604.945054945055,219.8101736798027 L 603.1868131868132,212.3525463215736 L 601.4285714285714,218.243323368228 L 599.6703296703297,213.02895752715486 L 597.9120879120878,213.76251158765712 L 596.1538461538462,214.94829093757332 L 594.3956043956043,209.64178599931404 L 592.6373626373627,215.30816015921687 L 590.8791208791208,207.23569078391412 L 589.1208791208792,212.54297868959833 L 587.3626373626373,206.78068514797434 L 585.6043956043957,206.8753095088556 L 583.8461538461538,206.46143118460253 L 582.0879120879122,205.43423883311505 L 580.3296703296703,205.1468688124008 L 578.5714285714286,204.61374252493144 L 576.8131868131868,203.80431213015513 L 575.054945054945,202.7550258849962 L 573.2967032967033,201.2182318543595 L 571.5384615384615,199.32844409370773 L 569.7802197802198,196.73071103050881 L 568.021978021978,193.46722042945493 L 566.2637362637363,189.42445986943 L 564.5054945054945,208.71816882380043 L 562.7472527472528,203.14697990061939 L 560.989010989011,204.90764250653825 L 559.2307692307692,205.07607955568628 L 557.4725274725274,200.7605312347394 L 555.7142857142857,205.473185919004 L 553.9560439560439,197.61538700740448 L 552.1978021978022,203.56667702986235 L 550.4395604395604,197.3903810940909 L 548.6813186813187,199.04860688439155 L 546.9230769230769,198.3113369723036 L 545.1648351648352,195.16170402140696 L 543.4065934065934,197.90395258904937 L 541.6483516483516,195.08230046979378 L 539.8901098901099,194.8238446743072 L 538.131868131868,194.4724371695337 L 536.3736263736264,193.8557872228565 L 534.6153846153845,193.15851929811313 L 532.8571428571429,192.10374613027935 L 531.098901098901,190.85463411108114 L 529.3406593406594,189.19235603120677 L 527.5824175824175,187.08763679454887 L 525.8241758241759,184.47230215855842 L 524.065934065934,181.05887663980764 L 522.3076923076924,176.8670498184061 L 520.5494505494505,187.0934391828671 L 518.7912087912088,191.66980003480367 L 517.032967032967,184.10877838228907 L 515.2747252747253,190.42506262804793 L 513.5164835164835,183.77433687737292 L 511.75824175824175,186.68113610316144 L 510,185.2629974464775 L 508.24175824175825,182.09771533951155 L 506.4835164835165,186.40756479487 L 504.72527472527474,180.28625320842113 L 502.967032967033,184.50840549075917 L 501.20879120879124,180.41621421446428 L 499.45054945054943,180.34344358832917 L 497.6923076923077,180.22395742344463 L 495.9340659340659,179.94781006801333 L 494.1758241758242,179.69762302619603 L 492.4175824175824,179.2909132185244 L 490.65934065934067,178.81202559274954 L 488.9010989010989,178.2590709706492 L 487.14285714285717,177.5056641276416 L 485.3846153846154,176.7196310818477 L 483.62637362637366,175.6396208182481 L 481.8681318681319,174.45850184204576 L 480.10989010989016,172.94186286789136 L 478.35164835164835,171.1287432335862 L 476.5934065934066,168.93357232095042 L 474.83516483516485,166.14907437091034 L 473.0769230769231,162.8183685936874 L 471.31868131868134,158.5326498888761 L 469.5604395604396,170.32386344685204 L 467.80219780219784,163.304736152907 L 466.0439560439561,169.69289149928596 L 464.28571428571433,162.37031807026818 L 462.5274725274726,166.4436590292308 L 460.76923076923083,163.6353158751558 L 459.01098901098896,161.88800024517025 L 457.2527472527472,165.11855743067002 L 455.49450549450546,160.20881576660588 L 453.7362637362637,164.6906657997992 L 451.97802197802196,160.35595588371228 L 450.2197802197802,161.06203351101874 L 448.46153846153845,160.20330149019895 L 446.7032967032967,159.9630461931414 L 444.94505494505495,159.78314959559066 L 443.1868131868132,159.45794667454223 L 441.42857142857144,159.12007493227748 L 439.67032967032964,158.72807086693393 L 437.9120879120879,158.21044575109235 L 436.15384615384613,157.71604383460433 L 434.3956043956044,157.01528750424285 L 432.6373626373626,156.2990485068171 L 430.8791208791209,155.32906114075473 L 429.1208791208791,154.24435082319638 L 427.3626373626374,152.95460791237628 L 425.6043956043956,151.3527813581757 L 423.84615384615387,149.51841873598693 L 422.0879120879121,147.15015308170484 L 420.32967032967036,144.37154508186958 L 418.57142857142856,140.81972457794296 L 416.8131868131868,136.45942328531254 L 415.05494505494505,134.1533589314847 L 413.2967032967033,136.0756249987892 L 411.53846153846155,134.06375613768228 L 409.7802197802198,133.4640997335173 L 408.02197802197804,132.5839450514128 L 406.2637362637363,131.11910947525575 L 404.50549450549454,129.12258802089653 L 402.7472527472528,126.37871466637431 L 400.98901098901104,123.40244110370628 L 399.23076923076917,128.63237201437153 L 397.4725274725274,141.5997937477923 L 395.71428571428567,142.95370836678848 L 393.9560439560439,137.36851915878734 L 392.19780219780216,143.43322453013042 L 390.4395604395604,135.66134889105115 L 388.68131868131866,141.08532556931826 L 386.9230769230769,136.2528758910322 L 385.16483516483515,136.45920651588486 L 383.4065934065934,137.4010469296233 L 381.64835164835165,131.43608434298864 L 379.89010989010984,136.52145010739264 L 378.1318681318681,128.0426540934787 L 376.37362637362634,131.77254763777248 L 374.6153846153846,128.17456749818564 L 372.85714285714283,127.84922579854931 L 371.0989010989011,127.38250986427907 L 369.34065934065933,126.48960149761918 L 367.5824175824176,125.28686597229985 L 365.8241758241758,123.63329558892244 L 364.0659340659341,126.16031768036876 L 362.3076923076923,129.81756820789428 L 360.54945054945057,135.02525343029885 L 358.79120879120876,136.1129441991351 L 357.032967032967,131.7487311681133 L 355.27472527472526,137.806316284621 L 353.5164835164835,130.97435234508612 L 351.75824175824175,136.98759820758772 L 350,131.97764122198967 L 348.24175824175825,134.0152299877495 L 346.4835164835165,134.83644548234784 L 344.7252747252747,130.85827235305487 L 342.96703296703294,136.82337338822728 L 341.2087912087912,129.65802303036736 L 339.45054945054943,136.34028948133277 L 337.6923076923077,131.16374993585893 L 335.9340659340659,133.13457256957153 L 334.1758241758242,133.54756169101066 L 332.4175824175824,129.78565970739822 L 330.65934065934067,135.41160153407415 L 328.9010989010989,129.1947409247037 L 327.14285714285717,134.58494010667425 L 325.3846153846154,129.5292774475009 L 323.6263736263736,131.02265654424315 L 321.86813186813185,130.49661095313257 L 320.1098901098901,129.55239893195937 L 318.35164835164835,130.67858348621877 L 316.5934065934066,129.24047021896178 L 314.83516483516485,128.88644009294234 L 313.0769230769231,128.42961354706657 L 311.31868131868134,127.68328935972788 L 309.5604395604396,126.80593170163623 L 307.80219780219784,126.21509154232517 L 306.0439560439561,128.02880346557157 L 304.2857142857143,130.74713380496488 L 302.5274725274725,134.58029120130155 L 300.7692307692308,136.84549379945176 L 299.010989010989,137.04290041503722 L 297.25274725274727,137.1160825924668 L 295.4945054945055,137.30045663734666 L 293.7362637362637,139.11830418127929 L 291.97802197802196,137.49604886320913 L 290.2197802197802,139.9776151695237 L 288.46153846153845,137.63152138865632 L 286.7032967032967,138.37427650594543 L 284.94505494505495,137.84526866287808 L 283.1868131868132,137.77434588886803 L 281.42857142857144,140.7417670202367 L 279.6703296703297,137.7453958764068 L 277.91208791208794,141.62286763839668 L 276.1538461538462,137.6561231776889 L 274.3956043956044,139.80210949044306 L 272.6373626373626,138.64121287666225 L 270.8791208791209,137.5143737315762 L 269.1208791208791,141.19015655690856 L 267.3626373626374,137.36867695077416 L 265.6043956043956,140.95937373849864 L 263.8461538461538,137.3423347543614 L 262.08791208791206,137.4968637632607 L 260.3296703296703,137.65876307326423 L 258.57142857142856,138.1108178742315 L 256.8131868131868,138.68848995110034 L 255.05494505494508,139.66510868920733 L 253.2967032967033,141.04978839464144 L 251.53846153846155,142.9950143682073 L 249.7802197802198,145.79172523609938 L 248.02197802197804,149.50915277853898 L 246.2637362637363,151.9289719087966 L 244.50549450549448,152.22429901836506 L 242.74725274725273,152.58287594710544 L 240.98901098901098,152.8869650176336 L 239.23076923076923,153.15014248908318 L 237.47252747252747,153.45684570382952 L 235.71428571428572,153.64862434907496 L 233.95604395604394,153.95482542037635 L 232.1978021978022,154.12786594012994 L 230.43956043956044,154.36865673208104 L 228.6813186813187,155.81669008206654 L 226.92307692307693,154.71303984699512 L 225.16483516483518,154.9286065249832 L 223.4065934065934,155.0429265160787 L 221.64835164835165,155.28850447338093 L 219.8901098901099,155.44319532099684 L 218.13186813186815,155.7328900718162 L 216.3736263736264,156.0483000844725 L 214.61538461538458,156.46452133010683 L 212.85714285714283,157.0926396294389 L 211.09890109890108,157.83857600227572 L 209.34065934065933,159.00051054658837 L 207.58241758241758,160.44651653609156 L 205.82417582417582,162.52558167803016 L 204.06593406593404,165.27034675526372 L 202.3076923076923,168.96316774893268 L 200.54945054945054,171.40136400262685 L 198.7912087912088,171.8921426350172 L 197.03296703296704,172.4864354366548 L 195.27472527472528,172.94539650728134 L 193.5164835164835,173.48437811903324 L 191.75824175824175,173.94688803312056 L 190,174.39416897415325 L 188.24175824175825,174.8651631503551 L 186.48351648351647,175.22091542476204 L 184.72527472527472,175.66591122649552 L 182.96703296703296,175.96097694096153 L 181.2087912087912,176.34083097147737 L 179.45054945054946,176.64479703173106 L 177.6923076923077,176.93618381505848 L 175.93406593406593,177.24483268228667 L 174.17582417582418,177.4455371165251 L 172.41758241758242,177.74178378595155 L 170.65934065934067,177.9025094414323 L 168.90109890109892,178.15996005401522 L 167.14285714285714,179.17086236954336 L 165.3846153846154,178.57600234397674 L 163.62637362637363,178.8685791434786 L 161.86813186813185,179.1367094425491 L 160.1098901098901,179.60649083042452 L 158.35164835164835,180.08674581314912 L 156.5934065934066,180.86267199841583 L 154.83516483516485,181.82774165055136 L 153.0769230769231,183.17498364023004 L 151.3186813186813,185.03480129511527 L 149.56043956043956,187.46384151407227 L 147.8021978021978,190.85979396116795 L 146.04395604395603,192.92749602376784 L 144.28571428571428,193.3986743319465 L 142.52747252747253,193.7673233131448 L 140.76923076923077,194.13932742046012 L 139.01098901098902,194.505966761899 L 137.25274725274724,194.7699914962241 L 135.4945054945055,195.1083188756479 L 133.73626373626374,195.29010838515657 L 131.97802197802196,195.5470379433599 L 130.2197802197802,197.3136416606788 L 128.46153846153845,195.80908519338612 L 126.7032967032967,198.28272198055646 L 124.94505494505495,195.8897516412949 L 123.1868131868132,196.63664914177605 L 121.42857142857142,197.97364564336047 L 119.67032967032966,195.7812244896008 L 117.91208791208791,201.24782844528883 L 116.15384615384615,195.41028037290025 L 114.3956043956044,201.80689294778756 L 112.63736263736264,196.85453358725428 L 110.87912087912088,199.71342946209873 L 109.12087912087912,200.17007640774028 L 107.36263736263736,196.63877311769778 L 105.6043956043956,202.05947683318993 L 103.84615384615385,194.4400951395363 L 102.08791208791209,200.37400757104515 L 100.32967032967034,193.47154125739107 L 98.57142857142857,194.47437346348346 L 96.81318681318682,192.68596319515686 L 95.05494505494505,192.33411427224758 L 93.2967032967033,192.9587048917598 L 91.53846153846155,194.18974047479455 L 89.78021978021978,196.15049418466072 L 88.02197802197801,204.1447548726535 L 86.26373626373626,207.38096160609885 L 84.50549450549451,206.48030729256635 L 82.74725274725274,203.1250361783108 L 80.98901098901098,207.51913450166492 L 79.23076923076923,199.36611772825236 L 77.47252747252747,204.57384163166762 L 75.71428571428571,196.1560475708173 L 73.95604395604396,196.43820152561764 L 72.19780219780219,195.16474745329919 L 70.43956043956044,194.56591925955595 L 68.68131868131869,193.604936977902 L 66.92307692307693,193.57328424074308 L 65.16483516483517,196.22198132262605 L 63.40659340659341,200.24359672950746 L 61.64835164835165,206.22724819657168 L 59.89010989010989,209.84766196548892 L 58.13186813186813,210.39160801353717 L 56.37362637362637,211.11728603880752 L 54.61538461538461,212.3012844277216 L 52.857142857142854,213.98802359290315 L 51.098901098901095,216.33558218079986 L 49.34065934065934,219.06834672044852 L 47.582417582417584,217.9618549042166 L 45.824175824175825,217.7593032657665 L 44.065934065934066,221.2658433807293 L 42.30769230769231,217.6287923315278 L 40.54945054945055,222.41494359618952 L 38.79120879120879,217.39623246646508 L 37.032967032967036,220.90985385213472 L 35.27472527472528,219.36596784245722 L 33.51648351648352,218.15421442234518 L 31.75824175824176,222.56306640690087 L 30,216.42872766893163 Z" fill="rgba(0,163,255,0.28)" stroke="none"></path>
+        <path id="lineQRight" d="M 30,216.42872766893163 L 31.75824175824176,222.56306640690087 L 33.51648351648352,218.15421442234518 L 35.27472527472528,219.36596784245722 L 37.032967032967036,220.90985385213472 L 38.79120879120879,216.18459791933174 L 40.54945054945055,222.41494359618952 L 42.30769230769231,215.05757189951623 L 44.065934065934066,221.2658433807293 L 45.824175824175825,216.48613954112477 L 47.582417582417584,217.9618549042166 L 49.34065934065934,219.06834672044852 L 51.098901098901095,178.00218121707434 L 52.857142857142854,192.06742080061287 L 54.61538461538461,190.9289153136856 L 56.37362637362637,202.10036317071564 L 58.13186813186813,200.7827948996899 L 59.89010989010989,205.4951931794314 L 61.64835164835165,117.65576358041949 L 63.40659340659341,135.2346936910114 L 65.16483516483517,158.00942225116546 L 66.92307692307693,163.802618210541 L 68.68131868131869,180.46268849143635 L 70.43956043956044,183.0429558502374 L 72.19780219780219,191.3177872232077 L 73.95604395604396,196.43820152561764 L 75.71428571428571,196.1560475708173 L 77.47252747252747,204.57384163166762 L 79.23076923076923,199.36611772825236 L 80.98901098901098,207.51913450166492 L 82.74725274725274,203.1250361783108 L 84.50549450549451,206.48030729256635 L 86.26373626373626,207.38096160609885 L 88.02197802197801,204.1447548726535 L 89.78021978021978,169.08006028446295 L 91.53846153846155,170.9341624884276 L 93.2967032967033,184.61770291356794 L 95.05494505494505,184.2104291604398 L 96.81318681318682,191.77885928562634 L 98.57142857142857,194.47437346348346 L 100.32967032967034,193.47154125739107 L 102.08791208791209,200.37400757104515 L 103.84615384615385,194.4400951395363 L 105.6043956043956,202.05947683318993 L 107.36263736263736,196.63877311769778 L 109.12087912087912,200.17007640774028 L 110.87912087912088,199.71342946209873 L 112.63736263736264,196.85453358725428 L 114.3956043956044,201.80689294778756 L 116.15384615384615,194.62707699685467 L 117.91208791208791,201.24782844528883 L 119.67032967032966,194.78930656840865 L 121.42857142857142,197.97364564336047 L 123.1868131868132,196.63664914177605 L 124.94505494505495,193.97341926707998 L 126.7032967032967,198.28272198055646 L 128.46153846153845,190.90478590679749 L 130.2197802197802,197.3136416606788 L 131.97802197802196,190.46136416657632 L 133.73626373626374,193.78125683472138 L 135.4945054945055,191.95123968202753 L 137.25274725274724,189.2433346179667 L 139.01098901098902,193.25598879247946 L 140.76923076923077,185.97889562628092 L 142.52747252747253,192.3796496862313 L 144.28571428571428,185.32435744143626 L 146.04395604395603,188.90823633769313 L 147.8021978021978,141.80803404051215 L 149.56043956043956,149.35282195927127 L 151.3186813186813,160.80045523002008 L 153.0769230769231,159.67400989660393 L 154.83516483516485,170.74950432575872 L 156.5934065934066,167.1707882517298 L 158.35164835164835,173.86319080465597 L 160.1098901098901,173.50350128231952 L 161.86813186813185,173.18197670185168 L 163.62637362637363,177.9413008746996 L 165.3846153846154,171.99380942554149 L 167.14285714285714,179.17086236954336 L 168.90109890109892,172.42496417867312 L 170.65934065934067,177.02960626047948 L 172.41758241758242,174.48939514289827 L 174.17582417582418,173.09426124429876 L 175.93406593406593,176.44469474239435 L 177.6923076923077,169.81433416276036 L 179.45054945054946,176.28771924529133 L 181.2087912087912,168.89611321140688 L 182.96703296703296,173.65610791779147 L 184.72527472527472,170.39742691170505 L 186.48351648351647,169.06784082839278 L 188.24175824175825,171.88726270361306 L 190,165.28321889838125 L 191.75824175824175,171.5776272890538 L 193.5164835164835,163.98255106819158 L 195.27472527472528,168.6133621898246 L 197.03296703296704,165.03846894136313 L 198.7912087912088,164.0865938882771 L 200.54945054945054,166.61026118468158 L 202.3076923076923,111.1739000553944 L 204.06593406593404,128.27720894463232 L 205.82417582417582,129.0697491729998 L 207.58241758241758,140.53967706469788 L 209.34065934065933,141.79319628740012 L 211.09890109890108,145.2229036241055 L 212.85714285714283,150.56261177146501 L 214.61538461538458,146.87284617189053 L 216.3736263736264,154.9569632714069 L 218.13186813186815,148.72870322670457 L 219.8901098901099,155.01188356174447 L 221.64835164835165,151.74941781049154 L 223.4065934065934,152.27884560821047 L 225.16483516483518,154.75847432806694 L 226.92307692307693,149.35029397555098 L 228.6813186813187,155.81669008206654 L 230.43956043956044,148.36550334452647 L 232.1978021978022,153.95072233427217 L 233.95604395604394,149.69059568589273 L 235.71428571428572,150.0536932534895 L 237.47252747252747,152.12945823811464 L 239.23076923076923,146.60548077630872 L 240.98901098901098,152.67673829653546 L 242.74725274725273,144.98814985798123 L 244.50549450549448,150.61555060315257 L 246.2637362637363,145.95765784508475 L 248.02197802197804,93.3717758323055 L 249.7802197802198,106.5151285930501 L 251.53846153846155,110.48936540202601 L 253.2967032967033,123.62797070596648 L 255.05494505494508,121.54681393840636 L 256.8131868131868,131.74023709048828 L 258.57142857142856,130.2321540952094 L 260.3296703296703,133.93468696079367 L 262.08791208791206,137.0655242523078 L 263.8461538461538,133.80742970356562 L 265.6043956043956,140.95937373849864 L 267.3626373626374,134.3517804528904 L 269.1208791208791,141.19015655690856 L 270.8791208791209,136.68820545756228 L 272.6373626373626,138.64121287666225 L 274.3956043956044,139.80210949044306 L 276.1538461538462,135.59087990216358 L 277.91208791208794,141.62286763839668 L 279.6703296703297,134.31109541983153 L 281.42857142857144,140.7417670202367 L 283.1868131868132,135.92610967916585 L 284.94505494505495,137.84526866287808 L 286.7032967032967,138.37427650594543 L 288.46153846153845,134.26593635446932 L 290.2197802197802,139.9776151695237 L 291.97802197802196,132.61585633851791 L 293.7362637362637,139.11830418127929 L 295.4945054945055,133.67159277159823 L 297.25274725274727,136.0126793062983 L 299.010989010989,136.26796114718036 L 300.7692307692308,132.55366326728142 L 302.5274725274725,80.73192171428272 L 304.2857142857143,86.21113011934227 L 306.0439560439561,102.79432844009926 L 307.80219780219784,104.89762720447376 L 309.5604395604396,113.65712305944876 L 311.31868131868134,118.31325144422962 L 313.0769230769231,118.64399732087202 L 314.83516483516485,126.94684164165812 L 316.5934065934066,122.09329543574763 L 318.35164835164835,130.67858348621877 L 320.1098901098901,126.28007376006022 L 321.86813186813185,130.49661095313257 L 323.6263736263736,131.02265654424315 L 325.3846153846154,128.7631841868499 L 327.14285714285717,134.58494010667425 L 328.9010989010989,128.08814336126443 L 330.65934065934067,135.41160153407415 L 332.4175824175824,129.78565970739822 L 334.1758241758242,133.54756169101066 L 335.9340659340659,133.13457256957153 L 337.6923076923077,131.16374993585893 L 339.45054945054943,136.34028948133277 L 341.2087912087912,129.65802303036736 L 342.96703296703294,136.82337338822728 L 344.7252747252747,130.85827235305487 L 346.4835164835165,134.83644548234784 L 348.24175824175825,134.0152299877495 L 350,131.97764122198967 L 351.75824175824175,136.98759820758772 L 353.5164835164835,130.51957815713536 L 355.27472527472526,137.806316284621 L 357.032967032967,131.7487311681133 L 358.79120879120876,136.1129441991351 L 360.54945054945057,135.02525343029885 L 362.3076923076923,71.82754076366089 L 364.0659340659341,90.28091491811367 L 365.8241758241758,94.65246467072208 L 367.5824175824176,110.30367804876099 L 369.34065934065933,110.60257760462775 L 371.0989010989011,120.35155234633336 L 372.85714285714283,122.90114100355926 L 374.6153846153846,124.77221533584314 L 376.37362637362634,131.77254763777248 L 378.1318681318681,127.61896163624084 L 379.89010989010984,136.52145010739264 L 381.64835164835165,131.43608434298864 L 383.4065934065934,137.4010469296233 L 385.16483516483515,136.45920651588486 L 386.9230769230769,136.2528758910322 L 388.68131868131866,141.08532556931826 L 390.4395604395604,135.66134889105115 L 392.19780219780216,143.43322453013042 L 393.9560439560439,137.36851915878734 L 395.71428571428567,142.95370836678848 L 397.4725274725274,141.5997937477923 L 399.23076923076917,46.296296296296305 L 400.98901098901104,71.50362344803972 L 402.7472527472528,82.38776523822395 L 404.50549450549454,102.68745468297638 L 406.2637362637363,106.31019215128967 L 408.02197802197804,119.79541592068159 L 409.7802197802198,123.66199202356617 L 411.53846153846155,128.47468280739878 L 413.2967032967033,136.0756249987892 L 415.05494505494505,133.70893310423423 L 416.8131868131868,77.71486403098194 L 418.57142857142856,87.64988398809237 L 420.32967032967036,106.37799273760396 L 422.0879120879121,113.82610009686474 L 423.84615384615387,122.05698659425454 L 425.6043956043956,131.73223953039619 L 427.3626373626374,131.4616015156733 L 429.1208791208791,142.63395584218392 L 430.8791208791209,139.09855797110336 L 432.6373626373626,147.63320928086762 L 434.3956043956044,147.29765912959726 L 436.15384615384613,149.44759306330567 L 437.9120879120879,153.78924733253152 L 439.67032967032964,149.86355797889422 L 441.42857142857144,157.92315014316674 L 443.1868131868132,151.9828300788571 L 444.94505494505495,158.91139121769976 L 446.7032967032967,156.21745856722913 L 448.46153846153845,157.7823364916353 L 450.2197802197802,161.06203351101874 L 451.97802197802196,157.26799494586209 L 453.7362637362637,164.6906657997992 L 455.49450549450546,158.30286545635536 L 457.2527472527472,165.11855743067002 L 459.01098901098896,161.88800024517025 L 460.76923076923083,163.6353158751558 L 462.5274725274726,166.4436590292308 L 464.28571428571433,162.37031807026818 L 466.0439560439561,169.69289149928596 L 467.80219780219784,163.304736152907 L 469.5604395604396,170.32386344685204 L 471.31868131868134,96.8774023091928 L 473.0769230769231,114.47350274987988 L 474.83516483516485,129.00582526599572 L 476.5934065934066,134.6080407081702 L 478.35164835164835,149.1115547553817 L 480.10989010989016,148.4223140655966 L 481.8681318681319,160.05098364104418 L 483.62637362637366,159.73175196338968 L 485.3846153846154,164.90723650431642 L 487.14285714285717,169.14321052979565 L 488.9010989010989,167.2840822646339 L 490.65934065934067,175.5945123315229 L 492.4175824175824,170.216977418196 L 494.1758241758242,178.33267376295203 L 495.9340659340659,174.8912919246136 L 497.6923076923077,178.1926934441078 L 499.45054945054943,180.34344358832917 L 501.20879120879124,177.4289239065103 L 502.967032967033,184.50840549075917 L 504.72527472527474,178.33524022055855 L 506.4835164835165,186.40756479487 L 508.24175824175825,182.09771533951155 L 510,185.2629974464775 L 511.75824175824175,186.68113610316144 L 513.5164835164835,183.77433687737292 L 515.2747252747253,190.42506262804793 L 517.032967032967,184.10877838228907 L 518.7912087912088,191.66980003480367 L 520.5494505494505,187.0934391828671 L 522.3076923076924,116.45161142464201 L 524.065934065934,133.88409328426465 L 525.8241758241759,144.03583053283114 L 527.5824175824175,160.39718609652198 L 529.3406593406594,161.86167965501392 L 531.098901098901,175.52017310383184 L 532.8571428571429,175.3776653114411 L 534.6153846153845,182.81208880921747 L 536.3736263736264,186.3056743100061 L 538.131868131868,186.19520145100245 L 539.8901098901099,194.08162110365163 L 541.6483516483516,189.19082528962724 L 543.4065934065934,197.90395258904937 L 545.1648351648352,193.62075504416353 L 546.9230769230769,198.3113369723036 L 548.6813186813187,199.04860688439155 L 550.4395604395604,197.3903810940909 L 552.1978021978022,203.56667702986235 L 553.9560439560439,197.61538700740448 L 555.7142857142857,205.473185919004 L 557.4725274725274,200.7605312347394 L 559.2307692307692,205.07607955568628 L 560.989010989011,204.90764250653825 L 562.7472527472528,203.14697990061939 L 564.5054945054945,208.71816882380043 L 566.2637362637363,124.29567228864383 L 568.021978021978,149.27438204703475 L 569.7802197802198,157.16062398587906 L 571.5384615384615,172.22338251623174 L 573.2967032967033,179.81874090844008 L 575.054945054945,184.7101367112403 L 576.8131868131868,194.91752101149856 L 578.5714285714286,192.72515351099622 L 580.3296703296703,203.35188311462187 L 582.0879120879122,199.8533939992281 L 583.8461538461538,206.46143118460253 L 585.6043956043957,206.8753095088556 L 587.3626373626373,206.78068514797434 L 589.1208791208792,212.54297868959833 L 590.8791208791208,207.23569078391412 L 592.6373626373627,215.30816015921687 L 594.3956043956043,209.64178599931404 L 596.1538461538462,214.94829093757332 L 597.9120879120878,213.76251158765712 L 599.6703296703297,213.02895752715486 L 601.4285714285714,218.243323368228 L 603.1868131868132,212.3525463215736 L 604.945054945055,219.8101736798027 L 606.7032967032967,213.5157644464109 L 608.4615384615385,218.69429645637987 L 610.2197802197802,134.36249338395953 L 611.978021978022,151.95320979803785 L 613.7362637362637,170.31884485355113 L 615.4945054945055,175.59179646793845 L 617.2527472527472,191.55188490796712 L 619.010989010989,191.76002934527992 L 620.7692307692308,202.33751933000934 L 622.5274725274726,204.12425270506262 L 624.2857142857143,206.91402913324328 L 626.0439560439561,213.14805043565758 L 627.8021978021978,209.38921188026626 L 629.5604395604396,218.09275082815475 L 631.3186813186813,212.56087619700477 L 633.0769230769231,218.97579928837644 L 634.8351648351648,216.97754313532675 L 636.5934065934066,217.41839660095212 L 638.3516483516484,221.2077109020736 L 640.1098901098901,215.98279933293173 L 641.8681318681319,223.29205158223672 L 643.6263736263736,216.61671088469413 L 645.3846153846154,222.97701840160016 L 647.1428571428571,219.85491228163025 L 648.9010989010989,133.36527102015495 L 650.6593406593406,155.477545578027 L 652.4175824175824,164.98110828312142 L 654.1758241758241,183.47935830198293 L 655.9340659340659,185.49182803063803 L 657.6923076923076,198.3147104963739 L 659.4505494505494,200.2748841975113 L 661.2087912087912,204.97912238340018 L 662.967032967033,210.83307607542304 L 664.7252747252747,208.15293044906085 L 666.4835164835165,216.85286496960123 L 668.2417582417582,211.23992133070638 L 670,218.34790610462403" fill="none" stroke="#00DDFF" stroke-width="2.2"></path>
+        <path id="lineBase" d="M 30,216.42872766893163 L 31.75824175824176,222.56306640690087 L 33.51648351648352,218.15421442234518 L 35.27472527472528,219.36596784245722 L 37.032967032967036,220.90985385213472 L 38.79120879120879,217.39623246646508 L 40.54945054945055,222.41494359618952 L 42.30769230769231,217.6287923315278 L 44.065934065934066,221.2658433807293 L 45.824175824175825,217.7593032657665 L 47.582417582417584,217.9618549042166 L 49.34065934065934,219.06834672044852 L 51.098901098901095,216.33558218079986 L 52.857142857142854,213.98802359290315 L 54.61538461538461,212.3012844277216 L 56.37362637362637,211.11728603880752 L 58.13186813186813,210.39160801353717 L 59.89010989010989,209.84766196548892 L 61.64835164835165,206.22724819657168 L 63.40659340659341,200.24359672950746 L 65.16483516483517,196.22198132262605 L 66.92307692307693,193.57328424074308 L 68.68131868131869,193.604936977902 L 70.43956043956044,194.56591925955595 L 72.19780219780219,195.16474745329919 L 73.95604395604396,196.43820152561764 L 75.71428571428571,196.1560475708173 L 77.47252747252747,204.57384163166762 L 79.23076923076923,199.36611772825236 L 80.98901098901098,207.51913450166492 L 82.74725274725274,203.1250361783108 L 84.50549450549451,206.48030729256635 L 86.26373626373626,207.38096160609885 L 88.02197802197801,204.1447548726535 L 89.78021978021978,196.15049418466072 L 91.53846153846155,194.18974047479455 L 93.2967032967033,192.9587048917598 L 95.05494505494505,192.33411427224758 L 96.81318681318682,192.68596319515686 L 98.57142857142857,194.47437346348346 L 100.32967032967034,193.47154125739107 L 102.08791208791209,200.37400757104515 L 103.84615384615385,194.4400951395363 L 105.6043956043956,202.05947683318993 L 107.36263736263736,196.63877311769778 L 109.12087912087912,200.17007640774028 L 110.87912087912088,199.71342946209873 L 112.63736263736264,196.85453358725428 L 114.3956043956044,201.80689294778756 L 116.15384615384615,195.41028037290025 L 117.91208791208791,201.24782844528883 L 119.67032967032966,195.7812244896008 L 121.42857142857142,197.97364564336047 L 123.1868131868132,196.63664914177605 L 124.94505494505495,195.8897516412949 L 126.7032967032967,198.28272198055646 L 128.46153846153845,195.80908519338612 L 130.2197802197802,197.3136416606788 L 131.97802197802196,195.5470379433599 L 133.73626373626374,195.29010838515657 L 135.4945054945055,195.1083188756479 L 137.25274725274724,194.7699914962241 L 139.01098901098902,194.505966761899 L 140.76923076923077,194.13932742046012 L 142.52747252747253,193.7673233131448 L 144.28571428571428,193.3986743319465 L 146.04395604395603,192.92749602376784 L 147.8021978021978,190.85979396116795 L 149.56043956043956,187.46384151407227 L 151.3186813186813,185.03480129511527 L 153.0769230769231,183.17498364023004 L 154.83516483516485,181.82774165055136 L 156.5934065934066,180.86267199841583 L 158.35164835164835,180.08674581314912 L 160.1098901098901,179.60649083042452 L 161.86813186813185,179.1367094425491 L 163.62637362637363,178.8685791434786 L 165.3846153846154,178.57600234397674 L 167.14285714285714,179.17086236954336 L 168.90109890109892,178.15996005401522 L 170.65934065934067,177.9025094414323 L 172.41758241758242,177.74178378595155 L 174.17582417582418,177.4455371165251 L 175.93406593406593,177.24483268228667 L 177.6923076923077,176.93618381505848 L 179.45054945054946,176.64479703173106 L 181.2087912087912,176.34083097147737 L 182.96703296703296,175.96097694096153 L 184.72527472527472,175.66591122649552 L 186.48351648351647,175.22091542476204 L 188.24175824175825,174.8651631503551 L 190,174.39416897415325 L 191.75824175824175,173.94688803312056 L 193.5164835164835,173.48437811903324 L 195.27472527472528,172.94539650728134 L 197.03296703296704,172.4864354366548 L 198.7912087912088,171.8921426350172 L 200.54945054945054,171.40136400262685 L 202.3076923076923,168.96316774893268 L 204.06593406593404,165.27034675526372 L 205.82417582417582,162.52558167803016 L 207.58241758241758,160.44651653609156 L 209.34065934065933,159.00051054658837 L 211.09890109890108,157.83857600227572 L 212.85714285714283,157.0926396294389 L 214.61538461538458,156.46452133010683 L 216.3736263736264,156.0483000844725 L 218.13186813186815,155.7328900718162 L 219.8901098901099,155.44319532099684 L 221.64835164835165,155.28850447338093 L 223.4065934065934,155.0429265160787 L 225.16483516483518,154.9286065249832 L 226.92307692307693,154.71303984699512 L 228.6813186813187,155.81669008206654 L 230.43956043956044,154.36865673208104 L 232.1978021978022,154.12786594012994 L 233.95604395604394,153.95482542037635 L 235.71428571428572,153.64862434907496 L 237.47252747252747,153.45684570382952 L 239.23076923076923,153.15014248908318 L 240.98901098901098,152.8869650176336 L 242.74725274725273,152.58287594710544 L 244.50549450549448,152.22429901836506 L 246.2637362637363,151.9289719087966 L 248.02197802197804,149.50915277853898 L 249.7802197802198,145.79172523609938 L 251.53846153846155,142.9950143682073 L 253.2967032967033,141.04978839464144 L 255.05494505494508,139.66510868920733 L 256.8131868131868,138.68848995110034 L 258.57142857142856,138.1108178742315 L 260.3296703296703,137.65876307326423 L 262.08791208791206,137.4968637632607 L 263.8461538461538,137.3423347543614 L 265.6043956043956,140.95937373849864 L 267.3626373626374,137.36867695077416 L 269.1208791208791,141.19015655690856 L 270.8791208791209,137.5143737315762 L 272.6373626373626,138.64121287666225 L 274.3956043956044,139.80210949044306 L 276.1538461538462,137.6561231776889 L 277.91208791208794,141.62286763839668 L 279.6703296703297,137.7453958764068 L 281.42857142857144,140.7417670202367 L 283.1868131868132,137.77434588886803 L 284.94505494505495,137.84526866287808 L 286.7032967032967,138.37427650594543 L 288.46153846153845,137.63152138865632 L 290.2197802197802,139.9776151695237 L 291.97802197802196,137.49604886320913 L 293.7362637362637,139.11830418127929 L 295.4945054945055,137.30045663734666 L 297.25274725274727,137.1160825924668 L 299.010989010989,137.04290041503722 L 300.7692307692308,136.84549379945176 L 302.5274725274725,134.58029120130155 L 304.2857142857143,130.74713380496488 L 306.0439560439561,128.02880346557157 L 307.80219780219784,126.21509154232517 L 309.5604395604396,126.80593170163623 L 311.31868131868134,127.68328935972788 L 313.0769230769231,128.42961354706657 L 314.83516483516485,128.88644009294234 L 316.5934065934066,129.24047021896178 L 318.35164835164835,130.67858348621877 L 320.1098901098901,129.55239893195937 L 321.86813186813185,130.49661095313257 L 323.6263736263736,131.02265654424315 L 325.3846153846154,129.5292774475009 L 327.14285714285717,134.58494010667425 L 328.9010989010989,129.1947409247037 L 330.65934065934067,135.41160153407415 L 332.4175824175824,129.78565970739822 L 334.1758241758242,133.54756169101066 L 335.9340659340659,133.13457256957153 L 337.6923076923077,131.16374993585893 L 339.45054945054943,136.34028948133277 L 341.2087912087912,129.65802303036736 L 342.96703296703294,136.82337338822728 L 344.7252747252747,130.85827235305487 L 346.4835164835165,134.83644548234784 L 348.24175824175825,134.0152299877495 L 350,131.97764122198967 L 351.75824175824175,136.98759820758772 L 353.5164835164835,130.97435234508612 L 355.27472527472526,137.806316284621 L 357.032967032967,131.7487311681133 L 358.79120879120876,136.1129441991351 L 360.54945054945057,135.02525343029885 L 362.3076923076923,129.81756820789428 L 364.0659340659341,126.16031768036876 L 365.8241758241758,123.63329558892244 L 367.5824175824176,125.28686597229985 L 369.34065934065933,126.48960149761918 L 371.0989010989011,127.38250986427907 L 372.85714285714283,127.84922579854931 L 374.6153846153846,128.17456749818564 L 376.37362637362634,131.77254763777248 L 378.1318681318681,128.0426540934787 L 379.89010989010984,136.52145010739264 L 381.64835164835165,131.43608434298864 L 383.4065934065934,137.4010469296233 L 385.16483516483515,136.45920651588486 L 386.9230769230769,136.2528758910322 L 388.68131868131866,141.08532556931826 L 390.4395604395604,135.66134889105115 L 392.19780219780216,143.43322453013042 L 393.9560439560439,137.36851915878734 L 395.71428571428567,142.95370836678848 L 397.4725274725274,141.5997937477923 L 399.23076923076917,128.63237201437153 L 400.98901098901104,123.40244110370628 L 402.7472527472528,126.37871466637431 L 404.50549450549454,129.12258802089653 L 406.2637362637363,131.11910947525575 L 408.02197802197804,132.5839450514128 L 409.7802197802198,133.4640997335173 L 411.53846153846155,134.06375613768228 L 413.2967032967033,136.0756249987892 L 415.05494505494505,134.1533589314847 L 416.8131868131868,136.45942328531254 L 418.57142857142856,140.81972457794296 L 420.32967032967036,144.37154508186958 L 422.0879120879121,147.15015308170484 L 423.84615384615387,149.51841873598693 L 425.6043956043956,151.3527813581757 L 427.3626373626374,152.95460791237628 L 429.1208791208791,154.24435082319638 L 430.8791208791209,155.32906114075473 L 432.6373626373626,156.2990485068171 L 434.3956043956044,157.01528750424285 L 436.15384615384613,157.71604383460433 L 437.9120879120879,158.21044575109235 L 439.67032967032964,158.72807086693393 L 441.42857142857144,159.12007493227748 L 443.1868131868132,159.45794667454223 L 444.94505494505495,159.78314959559066 L 446.7032967032967,159.9630461931414 L 448.46153846153845,160.20330149019895 L 450.2197802197802,161.06203351101874 L 451.97802197802196,160.35595588371228 L 453.7362637362637,164.6906657997992 L 455.49450549450546,160.20881576660588 L 457.2527472527472,165.11855743067002 L 459.01098901098896,161.88800024517025 L 460.76923076923083,163.6353158751558 L 462.5274725274726,166.4436590292308 L 464.28571428571433,162.37031807026818 L 466.0439560439561,169.69289149928596 L 467.80219780219784,163.304736152907 L 469.5604395604396,170.32386344685204 L 471.31868131868134,158.5326498888761 L 473.0769230769231,162.8183685936874 L 474.83516483516485,166.14907437091034 L 476.5934065934066,168.93357232095042 L 478.35164835164835,171.1287432335862 L 480.10989010989016,172.94186286789136 L 481.8681318681319,174.45850184204576 L 483.62637362637366,175.6396208182481 L 485.3846153846154,176.7196310818477 L 487.14285714285717,177.5056641276416 L 488.9010989010989,178.2590709706492 L 490.65934065934067,178.81202559274954 L 492.4175824175824,179.2909132185244 L 494.1758241758242,179.69762302619603 L 495.9340659340659,179.94781006801333 L 497.6923076923077,180.22395742344463 L 499.45054945054943,180.34344358832917 L 501.20879120879124,180.41621421446428 L 502.967032967033,184.50840549075917 L 504.72527472527474,180.28625320842113 L 506.4835164835165,186.40756479487 L 508.24175824175825,182.09771533951155 L 510,185.2629974464775 L 511.75824175824175,186.68113610316144 L 513.5164835164835,183.77433687737292 L 515.2747252747253,190.42506262804793 L 517.032967032967,184.10877838228907 L 518.7912087912088,191.66980003480367 L 520.5494505494505,187.0934391828671 L 522.3076923076924,176.8670498184061 L 524.065934065934,181.05887663980764 L 525.8241758241759,184.47230215855842 L 527.5824175824175,187.08763679454887 L 529.3406593406594,189.19235603120677 L 531.098901098901,190.85463411108114 L 532.8571428571429,192.10374613027935 L 534.6153846153845,193.15851929811313 L 536.3736263736264,193.8557872228565 L 538.131868131868,194.4724371695337 L 539.8901098901099,194.8238446743072 L 541.6483516483516,195.08230046979378 L 543.4065934065934,197.90395258904937 L 545.1648351648352,195.16170402140696 L 546.9230769230769,198.3113369723036 L 548.6813186813187,199.04860688439155 L 550.4395604395604,197.3903810940909 L 552.1978021978022,203.56667702986235 L 553.9560439560439,197.61538700740448 L 555.7142857142857,205.473185919004 L 557.4725274725274,200.7605312347394 L 559.2307692307692,205.07607955568628 L 560.989010989011,204.90764250653825 L 562.7472527472528,203.14697990061939 L 564.5054945054945,208.71816882380043 L 566.2637362637363,189.42445986943 L 568.021978021978,193.46722042945493 L 569.7802197802198,196.73071103050881 L 571.5384615384615,199.32844409370773 L 573.2967032967033,201.2182318543595 L 575.054945054945,202.7550258849962 L 576.8131868131868,203.80431213015513 L 578.5714285714286,204.61374252493144 L 580.3296703296703,205.1468688124008 L 582.0879120879122,205.43423883311505 L 583.8461538461538,206.46143118460253 L 585.6043956043957,206.8753095088556 L 587.3626373626373,206.78068514797434 L 589.1208791208792,212.54297868959833 L 590.8791208791208,207.23569078391412 L 592.6373626373627,215.30816015921687 L 594.3956043956043,209.64178599931404 L 596.1538461538462,214.94829093757332 L 597.9120879120878,213.76251158765712 L 599.6703296703297,213.02895752715486 L 601.4285714285714,218.243323368228 L 603.1868131868132,212.3525463215736 L 604.945054945055,219.8101736798027 L 606.7032967032967,213.5157644464109 L 608.4615384615385,218.69429645637987 L 610.2197802197802,202.42187676934216 L 611.978021978022,199.34749273500904 L 613.7362637362637,202.4457196600805 L 615.4945054945055,204.83683309245907 L 617.2527472527472,206.56102166579743 L 619.010989010989,207.76954041221694 L 620.7692307692308,208.63879171556064 L 622.5274725274726,209.07727055594103 L 624.2857142857143,209.36576755351842 L 626.0439560439561,213.14805043565758 L 627.8021978021978,209.38921188026626 L 629.5604395604396,218.09275082815475 L 631.3186813186813,212.56087619700477 L 633.0769230769231,218.97579928837644 L 634.8351648351648,216.97754313532675 L 636.5934065934066,217.41839660095212 L 638.3516483516484,221.2077109020736 L 640.1098901098901,215.98279933293173 L 641.8681318681319,223.29205158223672 L 643.6263736263736,216.61671088469413 L 645.3846153846154,222.97701840160016 L 647.1428571428571,219.85491228163025 L 648.9010989010989,206.95549765184478 L 650.6593406593406,203.94853031928236 L 652.4175824175824,207.49333059404245 L 654.1758241758241,210.1903384833525 L 655.9340659340659,212.2745070225721 L 657.6923076923076,213.92622900303692 L 659.4505494505494,215.11256129947702 L 661.2087912087912,216.124903840749 L 662.967032967033,216.79129340383042 L 664.7252747252747,217.3830466585538 L 666.4835164835165,217.77873441119348 L 668.2417582417582,218.0813566756021 L 670,218.34790610462403" fill="none" stroke="#34d399" stroke-width="1.2" stroke-dasharray="5 3"></path>
         <text x="16" y="22" font-family="Poppins,sans-serif" font-size="12" fill="#34d399" font-weight="600">Separated — Baseflow + Quickflow</text>
         <text x="16" y="270" font-family="Poppins,sans-serif" font-size="11" fill="#334466">Day of year →</text>
       </svg>
     </div>
-    <div class="compare-divider" id="cmpDivider"></div>
-    <div class="compare-handle" id="cmpHandle">↔</div>
+    <div class="compare-divider" id="cmpDivider" style="left: 50%;"></div>
+    <div class="compare-handle" id="cmpHandle" style="left: 50%;">↔</div>
     <div class="compare-label left">Before</div>
     <div class="compare-label right">After</div>
-  </div>
+  <div class="aihydro-compare-handle" style="left: 50%;"></div><input type="range" min="0" max="100" class="aihydro-compare-range"></div>
 
   <p style="font-size:13px;color:var(--muted);">
     Synthetic data (α = 0.925, BFI ≈ 0.55). The real split depends on the actual gauge record — Module 5 fetches live USGS data you can run through this filter.
@@ -434,7 +1175,7 @@ print(f"Mean Q = {Q.mean():.2f} m³/s  |  Mean base = {base.mean():.2f} m³/s")<
 </div>
 
 <!-- §5 QUIZ -->
-<div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
+<div id="sec-quiz" class="wide card aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
   <h2>5 · Checkpoint</h2>
   <p>Three questions — pass all three to mark this module complete.</p>
 
@@ -466,13 +1207,13 @@ print(f"Mean Q = {Q.mean():.2f} m³/s  |  Mean base = {base.mean():.2f} m³/s")<
       <div class="aihydro-quiz-feedback" data-fb="2">Snowmelt is a large quickflow pulse — it tends to lower BFI, not raise it.</div>
     </div>
 
-    <button class="aihydro-quiz-submit" type="button" id="quizSubmit">Check answers</button>
+    <button class="aihydro-quiz-submit" type="button" id="quizSubmit" data-aq-wired="1">Check answers</button>
     <span id="quizScore" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--muted);margin-left:14px;"></span>
   </div>
 </div>
 
 <!-- §6 PROVENANCE -->
-<div id="sec-prov" class="wide card refs" data-aihydro-editable="prose">
+<div id="sec-prov" class="wide card refs aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
   <h2>Sources &amp; Further Reading</h2>
   <ol>
     <li><em>Lyne, V. &amp; Hollick, M. (1979).</em> Stochastic time-variable rainfall-runoff modelling. <em>Inst. Eng. Australia Nat. Conf. Publ.</em> 79/10, 89–93. — Original filter formulation.</li>
@@ -482,13 +1223,25 @@ print(f"Mean Q = {Q.mean():.2f} m³/s  |  Mean base = {base.mean():.2f} m³/s")<
   <dl class="provenance">
     <div class="prov-item"><dt>Author</dt><dd>Mohammad Galib · Purdue University</dd></div>
     <div class="prov-item"><dt>License</dt><dd>CC-BY-4.0 — free to reuse with attribution</dd></div>
-    <div class="prov-item"><dt>Module ID</dt><dd><code>baseflow-separation</code> · v0.1.0</dd></div>
+    <div class="prov-item"><dt>Module ID</dt><dd><code>baseflow-separation</code> · v0.1.1</dd></div>
     <div class="prov-item"><dt>Course</dt><dd>Introduction to Hydrology · <code>intro-hydro-2026</code></dd></div>
     <div class="prov-item"><dt>Data</dt><dd>Synthetic hydrograph (NumPy random seed 42); no real gauge data</dd></div>
     <div class="prov-item"><dt>Dependencies</dt><dd>numpy, matplotlib (kernel cell); compare wipe is pure DOM</dd></div>
   </dl>
 </div>
 
+  <!-- Made with AI-Hydro -->
+  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+    <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
+      <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+        <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
+      </svg>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+    </span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+  </div>
 </main>
 <script>
 (function () {
@@ -779,5 +1532,70 @@ print(f"Mean Q = {Q.mean():.2f} m³/s  |  Mean base = {base.mean():.2f} m³/s")<
   });
 })();
 </script>
-</body>
-</html>
+<script>(function(){
+  function invalidateLeafletMaps() {
+    // NEVER do bare Object.keys(window) + window[k]: VS Code webviews expose
+    // cross-origin nested Window proxies on window; reading properties throws
+    // SecurityError before we can typeof-check them.
+    Object.keys(window).forEach(function(k) {
+      var v;
+      try {
+        v = window[k];
+      } catch (_) {
+        return;
+      }
+      if (!v || typeof v !== 'object') return;
+      try {
+        if (typeof v.invalidateSize === 'function') {
+          v.invalidateSize(true);
+        }
+      } catch (_) {}
+    });
+  }
+  function normalizeLeaflet() {
+    try {
+      var maps = Array.prototype.slice.call(document.querySelectorAll('.folium-map'));
+      if (!maps.length) return;
+      document.documentElement.style.width = '100%';
+      document.documentElement.style.height = '100%';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      maps.forEach(function(el) {
+        el.style.width = '100vw';
+        el.style.height = '100vh';
+        el.style.minHeight = '100vh';
+      });
+      invalidateLeafletMaps();
+    } catch (e) {
+      try { console.error('AI-Hydro Leaflet normalizer failed', e); } catch (_) {}
+    }
+  }
+  window.__aihydroNormalizeLeaflet = normalizeLeaflet;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', normalizeLeaflet);
+  } else {
+    normalizeLeaflet();
+  }
+  window.addEventListener('load', normalizeLeaflet);
+  setTimeout(normalizeLeaflet, 50);
+  setTimeout(normalizeLeaflet, 250);
+  setTimeout(normalizeLeaflet, 1000);
+  setTimeout(normalizeLeaflet, 2500);
+})();</script>
+
+  <script>
+  (function(){
+    var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
+                    (typeof window.aihydro !== 'undefined') ||
+                    (typeof window.acquireVsCodeApi === 'function');
+    if (inPreview) return;
+    document.querySelectorAll('.aihydro-run').forEach(function(btn){
+      btn.disabled = true;
+      btn.innerHTML = '🔒 Open in AI-Hydro to run';
+      btn.style.opacity = '0.55';
+      btn.style.cursor = 'not-allowed';
+    });
+  })();
+</script>
+
+</body></html>

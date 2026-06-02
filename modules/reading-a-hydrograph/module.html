@@ -236,18 +236,8 @@ select:focus { outline:1px solid var(--cyan); }
 }
 .toggle-btn.on { border-color:var(--cyan); background:rgba(0,221,255,0.12); color:var(--cyan); }
 
-/* ── Code cells ──────────────────────────────────────── */
-.aihydro-cell { border:1px solid rgba(0,221,255,0.22); border-radius:18px; background:rgba(2,6,23,0.55); padding:18px 20px; margin:16px 0; }
-.cell-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-.cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,221,255,0.12); color:var(--cyan); padding:3px 10px; border-radius:6px; }
-.cell-desc { font-size:13px; color:var(--muted); flex:1; }
 .run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.04em; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
 .run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
-.aihydro-source { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; overflow-x:auto; background:rgba(0,0,0,0.45); border-radius:10px; padding:14px; margin-bottom:12px; color:var(--text); border:1px solid rgba(125,211,252,0.08); max-height:340px; }
-.aihydro-output { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; min-height:2em; background:rgba(0,0,0,0.30); border-radius:10px; padding:12px; color:var(--sub); overflow:auto; max-height:420px; }
-.aihydro-output:empty::before { content:'(no output yet)'; color:var(--muted); font-style:italic; }
-.aihydro-output-images { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-.aihydro-output-images img { max-width:100%; border-radius:8px; }
 
 /* ── Quiz ────────────────────────────────────────────── */
 .quiz-q { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text); font-size:16px; margin-bottom:14px; }
@@ -627,9 +617,9 @@ select:focus { outline:1px solid var(--cyan); }
   </div>
 
   <div class="aihydro-cell" data-aihydro-cell-id="hydrograph-camels" data-language="python">
-    <div class="cell-header">
-      <span class="cell-lang">python</span>
-      <span class="cell-desc">CAMELS-shape annual hydrograph + Lyne–Hollick baseflow</span>
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">python</span>
+      <span class="aihydro-cell-desc">CAMELS-shape annual hydrograph + Lyne–Hollick baseflow</span>
       <button class="run-btn aihydro-run" type="button">Run ▶</button>
     </div>
     <pre class="aihydro-source" id="pySource"></pre>
@@ -683,6 +673,18 @@ select:focus { outline:1px solid var(--cyan); }
   <div class="prov-item"><dt>Environment</dt><dd>Python (numpy, matplotlib) via AI-Hydro preview kernel.</dd></div>
 </div>
 
+  <!-- Made with AI-Hydro -->
+  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+    <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
+      <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+        <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
+      </svg>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+    </span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+  </div>
 </main>
 
 <script>
@@ -1381,7 +1383,6 @@ select:focus { outline:1px solid var(--cyan); }
       'ax2.invert_yaxis()',
       '',
       'plt.tight_layout()',
-      'plt.show()',
       '',
       'print(f"Gauge      : {GAUGE}")',
       'print(f"Profile    : {PROFILE}")',
@@ -1497,5 +1498,20 @@ select:focus { outline:1px solid var(--cyan); }
 })();
 </script>
 
+  <script>
+  /* Standalone-browser fallback — disable Run buttons outside AI-Hydro preview */
+  (function(){
+    var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
+                    (typeof window.aihydro !== 'undefined') ||
+                    (typeof window.acquireVsCodeApi === 'function');
+    if (inPreview) return;
+    document.querySelectorAll('.aihydro-run').forEach(function(btn){
+      btn.disabled = true;
+      btn.innerHTML = '🔒 Open in AI-Hydro to run';
+      btn.style.opacity = '0.55';
+      btn.style.cursor = 'not-allowed';
+    });
+  })();
+</script>
 </body>
 </html>
