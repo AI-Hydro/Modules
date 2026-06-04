@@ -4,9 +4,17 @@
 	"authors": [
 		{
 			"name": "Mohammad Galib",
-			"affiliation": "Purdue University"
+			"github": "mgalib",
+			"affiliation": "Purdue University",
+			"profileUrl": "https://github.com/mgalib",
+			"roles": ["author", "maintainer"]
 		}
 	],
+	"authorUrl": "https://github.com/mgalib",
+	"trustLevel": "official",
+	"citation": "Galib, M. (2026). Introduction to Hydrology — an interactive AI-Hydro course. AI-Hydro Learning Hub.",
+	"citationUrl": "https://github.com/AI-Hydro/Modules/tree/main/courses/intro-to-hydrology",
+	"topic": "Hydrology Fundamentals",
 	"version": "0.2.0",
 	"license": "CC-BY-4.0",
 	"abstract": "A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean to a full basin characterisation at your fingertips. Eight modules, each showcasing a different interactive capability of the AI-Hydro learning hub, culminating in a personalised certificate of completion.",
