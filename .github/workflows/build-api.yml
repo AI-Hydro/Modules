@@ -127,6 +127,59 @@ jobs:
               print("No reaction count changes")
           EOF
 
+      - name: Certify modules and inject into api/modules.json (Phase 3.3)
+        run: |
+          python3 - <<'EOF'
+          import json
+          from datetime import datetime, timezone
+
+          today = datetime.now(timezone.utc).date().isoformat()
+
+          def certify(module):
+              passed, failed = [], []
+              citation = module.get("citation") or {}
+              ctext = citation.get("text", "").strip() if isinstance(citation, dict) else str(citation).strip()
+              if ctext:
+                  passed.append("citation")
+              else:
+                  failed.append("citation: missing or has no text")
+              desc = module.get("description") or ""
+              if isinstance(desc, str) and desc.strip():
+                  passed.append("description")
+              else:
+                  failed.append("description: missing or empty")
+              tags = module.get("tags") or []
+              if isinstance(tags, list) and len(tags) > 0:
+                  passed.append("tags")
+              else:
+                  failed.append("tags: missing or empty list")
+              mins = module.get("estimatedMinutes") or 0
+              if isinstance(mins, int) and mins > 0:
+                  passed.append("estimatedMinutes")
+              else:
+                  failed.append("estimatedMinutes: missing or not a positive integer")
+              ok = len(failed) == 0
+              return {"certified": ok, "certified_at": today if ok else None,
+                      "checks_passed": passed, "checks_failed": failed}
+
+          with open("api/modules.json") as f:
+              modules = json.load(f)
+
+          n_ok = 0
+          for module in modules:
+              cert = certify(module)
+              module["certification"] = cert
+              if cert["certified"]:
+                  n_ok += 1
+                  print(f"  PASS  {module.get('moduleId', '?')}")
+              else:
+                  print(f"  FAIL  {module.get('moduleId', '?')}: {cert['checks_failed']}")
+
+          with open("api/modules.json", "w") as f:
+              json.dump(modules, f, indent=2)
+          print(f"\n{n_ok}/{len(modules)} modules certified")
+          EOF
+
       - name: Commit updated API
         run: |
           git config user.name "github-actions[bot]"
