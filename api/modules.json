@@ -34,10 +34,21 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/baseflow-separation",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   },
   {
     "moduleId": "capstone-basin-story",
@@ -80,10 +91,21 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/capstone-basin-story",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   },
   {
     "moduleId": "course-certificate",
@@ -112,10 +134,21 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/course-certificate",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-02",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   },
   {
     "moduleId": "dem-to-twi",
@@ -154,10 +187,21 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-05-18",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   },
   {
     "moduleId": "reading-a-hydrograph",
@@ -194,10 +238,21 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/reading-a-hydrograph",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-05-18",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   },
   {
     "moduleId": "real-streamflow-data",
@@ -237,10 +292,21 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/real-streamflow-data",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   },
   {
     "moduleId": "water-cycle-in-motion",
@@ -279,10 +345,21 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/water-cycle-in-motion",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   },
   {
     "moduleId": "watershed-runoff",
@@ -314,9 +391,20 @@
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/watershed-runoff",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-10-01",
+    "updatedAt": "2026-10-02",
     "downloadCount": 0,
     "githubReactions": 0,
-    "discussionUrl": ""
+    "discussionUrl": "",
+    "certification": {
+      "certified": true,
+      "certified_at": "2026-10-02",
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": []
+    }
   }
 ]
