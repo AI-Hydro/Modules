@@ -1,0 +1,18 @@
+{
+  "pet-two-ways": {
+    "mode": "headless",
+    "source_sha256": "a78746926531188941a68888ed330f0b9c9e648d53acbf8632ae9eca70bda10c",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  },
+  "budyko-camels": {
+    "mode": "headless",
+    "source_sha256": "f4b959afa078612c041a9e493350375f536389509038b94e85a9c690d2878e1e",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  }
+}
