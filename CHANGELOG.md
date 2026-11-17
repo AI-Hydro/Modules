@@ -21,6 +21,9 @@ Owner-approved pilot of docs/vision-2040/findings/threejs-studio-feasibility-202
 - `img:` marker accepts only id, class, width, height, alt and data-* attributes.
 - estimatedMinutes 40 → 50; course `estimatedHours` 7 → 8 (430 min), the lesson's course abstract mentions the Fish River scene; course-certificate 0.1.3 → 0.1.4 ("~8 Hours").
 
+### Course intro-to-hydrology 0.4.0 → 0.4.1
+- `estimatedHours` 7 → 8 (watershed-runoff 40 → 50 min, course total 430 min); the watershed-runoff abstract mentions the real Fish River 3-D scene.
+
 ### course-certificate 0.1.3 → 0.1.4
 - Hours text "~7 Hours" → "~8 Hours" (course total 430 min). Wording, signature block and completion check unchanged.
 
