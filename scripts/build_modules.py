@@ -18,6 +18,9 @@ Marker forms (inside module.html):
       <script type="application/json" id="<blob>"> built from modules/<id>/data
   /*@@BEGIN css:shared/quiz.css@@*/ ... /*@@END css:shared/quiz.css@@*/
       raw copy of a shared stylesheet (same as js, for CSS)
+  <!--@@BEGIN img:<name>@@--> ... <!--@@END img:<name>@@-->
+      an <img> built from modules/<id>/data/<name>.png (inlined as a data: URI) and the attributes in
+      modules/<id>/data/<name>.attrs.json (alt text, id, class, size)
   <!--@@BEGIN manifest:module@@--> ... <!--@@END manifest:module@@-->
       the embedded <script type="application/vnd.aihydro.module+json"> generated from manifest.json
   <!--@@BEGIN static:<cell-id>@@--> ... <!--@@END static:<cell-id>@@-->
@@ -93,6 +96,15 @@ def build_blob(module_dir: Path, name: str) -> str:
     return blob_script(name, blob)
 
 
+def img_tag(module_dir: Path, name: str) -> str:
+    """<img> from data/<name>.png plus data/<name>.attrs.json (an empty attribute value makes a bare attribute)."""
+    data = module_dir / "data"
+    attrs = json.loads((data / f"{name}.attrs.json").read_text(encoding="utf-8"))
+    b64 = base64.b64encode((data / f"{name}.png").read_bytes()).decode("ascii")
+    parts = [k if v == "" else f'{k}="{html.escape(str(v), quote=True)}"' for k, v in attrs.items()]
+    return "<img " + " ".join(parts) + f' src="data:image/png;base64,{b64}">'
+
+
 def embedded_manifest(man: dict) -> dict:
     """The embedded block, in the field names the AI-Hydro preview reads, derived from manifest.json.
 
@@ -166,6 +178,8 @@ def render(kind: str, arg: str, module_dir: Path) -> str:
         return f"\n  var {toks[1]} = {json.dumps(src)};\n"
     if kind == "json":
         return build_blob(module_dir, toks[0])
+    if kind == "img":
+        return img_tag(module_dir, toks[0])
     raise SystemExit(f"unknown marker kind {kind}")
 
 

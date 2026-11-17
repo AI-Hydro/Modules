@@ -1,0 +1,135 @@
+{
+  "artifacts": [
+    {
+      "bytes": 41885,
+      "path": "docs/vision-2040/evidence/agu26-demo-1/live/workspace/watershed_01013500.geojson",
+      "role": "polygon",
+      "sha256": "60c713d4d3e23c15c5d882a7603dde0032c36f487026abc36aec41c611addc0a"
+    },
+    {
+      "bytes": 4744,
+      "path": "docs/vision-2040/evidence/agu26-demo-1/live/records/records/watershed.c1ba6d010c79.json",
+      "role": "record",
+      "sha256": "9ad3a489773ec02730d1b133015880162167248c01ea5d00de493a5ba98cfa92"
+    },
+    {
+      "bytes": 25760394,
+      "path": "docs/vision-2040/evidence/agu26-demo-1/live/home/.aihydro/cache/data/6455bad6e713c991ee268efd.nc",
+      "role": "dem",
+      "sha256": "1858528d4116a87e26a0bd975bd9ba978159890551d650e2f2d9fd7591d1a1f4"
+    },
+    {
+      "bytes": 21179,
+      "path": "docs/vision-2040/evidence/agu26-demo-1/live/home/.aihydro/cache/data/6455bad6e713c991ee268efd.manifest.json",
+      "role": "manifest",
+      "sha256": "d2d069c41e3e0587bbb38063f96e25735795439e606e82a0d695f760c104bdd0"
+    }
+  ],
+  "basin": {
+    "area_km2_basin_ref": 2258.516395489994,
+    "basin_ref_id": "aihydro:basin:sha256:7d668536474282bdef5eb810f69e6d96b0f5d39dcfc8b05ac1666b1c49331d5a",
+    "gauge_id": "01013500",
+    "geometry_digest": "sha256:c19f8fcefce76767074c28d4cefcdf657030cfca31bf5d1cbbc8a5f6eb6756c6",
+    "minted_by": {
+      "tool": "aihydro_watershed.identity.mint_basin_ref",
+      "version": "0.4.5"
+    }
+  },
+  "checks": [
+    {
+      "name": "inputs sha256",
+      "ok": true
+    },
+    {
+      "name": "payload area within 1% of basin_ref",
+      "ok": true,
+      "value": -0.0003322736516292446
+    }
+  ],
+  "dem_manifest": {
+    "citation": "European Space Agency and Airbus (2022). Copernicus Global Digital Elevation Model. https://doi.org/10.5270/ESA-c5d3d65",
+    "data_sha256": "1858528d4116a87e26a0bd975bd9ba978159890551d650e2f2d9fd7591d1a1f4",
+    "fetched_at": "2026-11-12T07:53:52.596329+00:00",
+    "geom_id": "sha256:c19f8fcefce76767074c28d4cefcdf657030cfca31bf5d1cbbc8a5f6eb6756c6",
+    "license": "Copernicus DEM License (open use with attribution)",
+    "product": "GLO30",
+    "source": "gee"
+  },
+  "environment": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.6",
+    "pillow": "12.1.1",
+    "pyproj": "3.7.2",
+    "pysheds": "0.5",
+    "python": "3.13.2",
+    "rasterio": "1.5.0",
+    "scipy": "1.17.1",
+    "shapely": "2.1.2",
+    "xarray": "2026.2.0"
+  },
+  "note": "Real-basin 3-D scene for the watershed-runoff lesson: Copernicus GLO-30 DEM of the Fish River basin (USGS 01013500), masked to the delineated polygon, so the scene is an island: there is no terrain outside the divide. Channels are DEM-derived (pysheds D8) at the stated threshold, not mapped rivers; lakes are flat in the DEM. Vertical exaggeration is printed in the lesson. No provenance is printed on the poster. generated_at is omitted so that a rebuild is byte-identical.",
+  "outputs": [
+    {
+      "bytes": 564,
+      "file": "fish-river-poster.attrs.json",
+      "sha256": "7a2a1a2e5599de6dbb670dee42c4674de006861d3b2dba6e93406d674ee634aa"
+    },
+    {
+      "bytes": 41697,
+      "file": "fish-river-poster.png",
+      "sha256": "8ed8f655643821a0960b175efb2bbfce01ac558370ada614589beb6d5170b490"
+    },
+    {
+      "bytes": 31817,
+      "file": "fish-river-scene.json",
+      "sha256": "baf6f0dd632d1f7ac694c3148dc3546228e750f205da4224396b3c32454eed4d"
+    }
+  ],
+  "parameters": {
+    "block_mean_factor": 17,
+    "channels": {
+      "channel_cells": 3071,
+      "dem_cell_m": 90.0,
+      "max_accumulation_cells": 280974,
+      "polylines": 51,
+      "simplify": "Douglas-Peucker, 120 m",
+      "threshold_cells": 3086.41975308642,
+      "threshold_km2": 25.0,
+      "tool": "pysheds 0.5 (fill_pits, fill_depressions, resolve_flats, flowdir D8, accumulation)",
+      "vertices_after_simplify": 363
+    },
+    "components_before": 1,
+    "crs": "EPSG:5070",
+    "disconnected_cells_dropped": 0,
+    "grid": [
+      153,
+      116
+    ],
+    "height_quantization": "Uint16, little-endian, row-major, terrain cells only; value = zmin + q*(zmax-zmin)/65535",
+    "mesh_cell_m": 510.0,
+    "min_cover_fraction": 0.5,
+    "outlet_rule": "lowest terrain cell touching the mask edge within 3 km of the gauge",
+    "outline": {
+      "area_km2_exact_polygon_in_5070": 2258.5163954900077,
+      "area_km2_from_payload": 2257.76595,
+      "simplify": "Douglas-Peucker, 120 m",
+      "unit_m": 10
+    },
+    "poster": {
+      "palette_colours": 80,
+      "projection": "plan view",
+      "px_per_cell": 3
+    },
+    "terrain_cells": 8677,
+    "vertical_exaggeration": 10,
+    "warp_cell_m": 30.0,
+    "warp_resampling": "bilinear (GDAL via rasterio)",
+    "zmax_m": 555.7701,
+    "zmin_m": 171.1551
+  },
+  "schema": "hydrofigs.provenance/2",
+  "script": "tools/build_scene3d.py",
+  "script_sha256": "6a6add3a0d8a3cb1afaa7778d138e2efe39ac683e3a04e30b7023733654f1a92",
+  "synthetic": false,
+  "synthetic_label": null
+}

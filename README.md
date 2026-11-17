@@ -25,7 +25,7 @@ The table is generated from `modules/*/manifest.json` by `python scripts/gen_doc
 | [Catching the Flow: Real Streamflow Data](modules/real-streamflow-data/) | Streamflow | Intro | 45 min | 0.4.0 |
 | [Runoff Generation: Infiltration Excess and Saturation Excess](modules/runoff-generation/) | Runoff generation | Intro | 40 min | 0.1.0 |
 | [The Water Cycle in Motion](modules/water-cycle-in-motion/) | Hydrology fundamentals | Intro | 30 min | 0.3.0 |
-| [The Watershed: Where Rain Becomes Runoff](modules/watershed-runoff/) | Watershed hydrology | Intro | 40 min | 0.3.0 |
+| [The Watershed: Where Rain Becomes Runoff](modules/watershed-runoff/) | Watershed hydrology | Intro | 40 min | 0.4.0 |
 <!-- END modules-table -->
 
 ## Contribute a module

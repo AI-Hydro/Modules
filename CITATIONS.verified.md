@@ -85,6 +85,14 @@ runoff-generation notes (gate run 2026-11-17, `verify_citation.py --doi <DOI>`; 
 - **Claims are kept to what the titles support:** Horton (infiltration in the hydrologic cycle; the infiltration-excess attribution), Dunne & Black (partial-area contributions to storm runoff; the saturation-excess attribution), Green & Ampt and Mein & Larson (infiltration models; the Mein & Larson ponding-time formula for a steady rain), Merz et al. and Blume et al. (event runoff coefficients), Cosby et al. (named only as one of the sources the CAMELS attribute documentation lists for soil_conductivity; read from `camels_attributes_v2.0.pdf`), Thornton et al. (credit for the Daymet forcing). No result from these papers is quoted.
 - **Flagged for human review:** volume, issue and page numbers in the lesson's reference list were written from index records and memory; the gate does not check them (the start pages of the AGU papers agree with their DOI suffixes).
 
+### watershed-runoff (real-basin scene, 2026-11-17)
+
+| Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
+|---|---|---|---|---|---|
+| European Space Agency & Airbus (2022) | 10.5270/ESA-c5d3d65 | PASS | 2 (crossref, openalex) | Copernicus DEM (dataset; OpenAlex lists no venue, Crossref lists "Copernicus DEM") / 2022 | watershed-runoff |
+
+Command: `verify_citation.py --doi 10.5270/ESA-c5d3d65` (2026-11-17; Semantic Scholar did not match, `doi_agreement` true). The entry is a dataset, so the gate shows existence and DOI/title/year/authors only. Credit line and licence wording on the page are those of the DEM's own manifest (`citation` and `license` fields of the AI-Hydro data record): "Copernicus DEM License (open use with attribution)". The fuller Copernicus notice text (copyright holders) is not in that manifest and is not reproduced; owner to confirm whether the licence requires it.
+
 ### Wave 3 references without a DOI: owner decision pending
 
 Each is shown on its page in a block marked "Reference without DOI — pending owner decision" (the same treatment as NEH-4 above). None of them can be gate-verified; the owner decides whether they stay.
