@@ -145,10 +145,13 @@ def process(mod: str, check: bool) -> list[str]:
     index = json.loads(index_path.read_text()) if index_path.exists() else {}
     problems = []
     new_index = {}
-    for cell in cells_of(mod):
+    cells = cells_of(mod)
+    if not cells:
+        return problems
+    for cell in cells:
         cid, digest = cell["id"], sha(cell["source"])
         special = SPECIAL.get((mod, cid))
-        key_digest = digest if not special or special[0] != "text" else sha(special[1])
+        key_digest = digest if not special or special[0] != "text" else sha(special[1] + "\n" + cell["source"])
         prev = index.get(cid, {})
         have = (sdir / f"{cid}.txt").exists() or (sdir / f"{cid}.png").exists()
         if check:

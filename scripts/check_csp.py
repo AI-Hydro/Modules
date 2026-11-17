@@ -29,7 +29,7 @@ ALLOWED_HOSTS = {"fonts.googleapis.com", "fonts.gstatic.com"}
 HOST = re.compile(r"(?:https?:)?//([^/\"')\s?#]+)")
 
 TAGS_BANNED = [
-    (re.compile(r"<script\b[^>]*\bsrc\s*=", re.I), "external <script src>"),
+    (re.compile(r"<script\b[^>]*\bsrc\s*=", re.I), "external <script src>"),     # banned whatever the type
     (re.compile(r"<(iframe|embed|object|base)\b", re.I), "<{0}> element"),
     (re.compile(r"<meta\b[^>]*http-equiv", re.I), "<meta http-equiv>"),
     (re.compile(r"<form\b[^>]*\baction\s*=\s*[\"']?(?:https?:)?//", re.I), "<form> posting to another host"),
@@ -43,6 +43,14 @@ JS_BANNED = [
     (re.compile(r"\bnew\s+Function\s*\("), "new Function()"),
     (re.compile(r"\bdocument\.write\s*\("), "document.write()"),
 ]
+# checked on the raw script text, before string literals are blanked: the URL is the point
+JS_RAW_BANNED = [
+    (re.compile(r"\bcreateElement\s*\(\s*[\"']script[\"']\s*\)"), "createElement('script')"),
+    (re.compile(r"\.(?:src|href)\s*=\s*[\"'`]\s*(?:https?:)?//"), "assignment of an external URL to .src/.href"),
+    (re.compile(r"setAttribute\(\s*[\"'](?:src|href)[\"']\s*,\s*[\"'`]\s*(?:https?:)?//"), "setAttribute src/href to an external URL"),
+    (re.compile(r"(?<![\w.$])import\s*\(\s*[\"'`]\s*(?:https?:)?//"), "dynamic import() of an external URL"),
+]
+INERT_TYPE = re.compile(r"\btype\s*=\s*[\"']?application/(?:vnd\.aihydro\.module\+)?json[\"']?(?=[\s>]|$)", re.I)
 
 
 def strip_inert(html: str) -> tuple[str, list[str]]:
@@ -53,10 +61,10 @@ def strip_inert(html: str) -> tuple[str, list[str]]:
 
     def grab(m: re.Match) -> str:
         attrs = m["attrs"]
-        if "json" in attrs:
-            return ""
+        if INERT_TYPE.search(attrs) and not re.search(r"\bsrc\s*=", attrs, re.I):
+            return ""                                   # a JSON data block with no src
         scripts.append(m["body"])
-        return "<script></script>" if "src" not in attrs else m[0]
+        return m[0] if re.search(r"\bsrc\s*=", attrs, re.I) else "<script></script>"
 
     html = re.sub(r"<script(?P<attrs>[^>]*)>(?P<body>.*?)</script>", grab, html, flags=re.S)
     return html, scripts
@@ -71,11 +79,11 @@ def scan(path: Path) -> list[str]:
         m = rx.search(markup)
         if m:
             errs.append(f"{mod}: {what.format(*(m.groups() or ('',)))}")
-    for m in re.finditer(r"<link\b[^>]*\bhref\s*=\s*[\"']([^\"']+)", markup, re.I):
+    for m in re.finditer(r"<link\b[^>]*\bhref\s*=\s*[\"']?([^\"'\s>]+)", markup, re.I):
         h = HOST.match(m[1])
         if h and h[1] not in ALLOWED_HOSTS:
             errs.append(f"{mod}: <link> to {h[1]}")
-    for m in re.finditer(r"<(?:img|source|video|audio|track|input)\b[^>]*\bsrc\s*=\s*[\"'](https?:)?//([^\"'/]+)", markup, re.I):
+    for m in re.finditer(r"<(?:img|source|video|audio|track|input)\b[^>]*\bsrc\s*=\s*[\"']?(https?:)?//([^\"'/\s>]+)", markup, re.I):
         errs.append(f"{mod}: media loaded from {m[2]} (use a data: URL)")
     css = "\n".join(re.findall(r"<style[^>]*>(.*?)</style>", markup, re.S)) + "\n" + "\n".join(re.findall(r"style\s*=\s*\"([^\"]*)\"", markup))
     for m in re.finditer(r"(?:url\(\s*[\"']?|@import\s+[\"']?)((?:https?:)?//[^\"')\s]+)", css):
@@ -84,6 +92,9 @@ def scan(path: Path) -> list[str]:
             errs.append(f"{mod}: CSS reference to {h[1]}")
     js = "\n".join(scripts)
     js = re.sub(r"/\*.*?\*/", "", js, flags=re.S)
+    for rx, what in JS_RAW_BANNED:
+        if rx.search(js):
+            errs.append(f"{mod}: {what} in page script")
     js = re.sub(r"(?m)^\s*//.*$", "", js)
     js = re.sub(r"\"(?:[^\"\\\n]|\\.)*\"|'(?:[^'\\\n]|\\.)*'", '""', js)      # string literals (python sources, messages)
     for rx, what in JS_BANNED:

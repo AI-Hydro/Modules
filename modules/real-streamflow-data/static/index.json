@@ -9,6 +9,6 @@
   },
   "streamflow-nwis": {
     "mode": "text",
-    "source_sha256": "08ea156f7dde186617451154f540ee3cb12ea1f933fd1508f0592dbb6cf19c84"
+    "source_sha256": "0eb3a98a5a85bd43f40c00ec87996ad134b559cc973a1627737458be2fecdbdb"
   }
 }

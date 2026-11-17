@@ -59,6 +59,20 @@ test('whenReady: the poll gives up after about 10 s when no bridge ever arrives'
   assert.equal(counts.cleared, 1);
 });
 
+test('whenReady: after the time-out a later call re-arms ONE poll, so a late bridge is still picked up', async () => {
+  const { win, counts, timers } = makeWindow(false);
+  win.n = 0;
+  vm.runInContext('whenReady(function () { n++; })', win);
+  for (let i = 0; i < 200; i++) timers[0]();            /* gives up */
+  assert.equal(counts.cleared, 1);
+  for (let i = 0; i < 50; i++) vm.runInContext('whenReady(function () { n++; })', win);
+  assert.equal(counts.set, 2, 'one new poll, not fifty');
+  win.aihydro = {};
+  timers[1]();
+  await Promise.resolve(); await Promise.resolve();
+  assert.equal(win.n, 51, 'the callback queued before the time-out runs too');
+});
+
 for (const id of fs.readdirSync(`${H.ROOT}/modules`).filter((d) => fs.existsSync(`${H.ROOT}/modules/${d}/module.html`))) {
   test(`${id}: loading the page without the bridge leaves at most one polling timer`, () => {
     const { counters } = run(H.moduleText(id));

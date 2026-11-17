@@ -70,7 +70,8 @@ for (const id of ids) {
     assert.ok(!/\son(click|change|input|keydown|mouse\w+|load)=/.test(t), 'inline event-handler attribute found');
     for (const m of t.matchAll(/<div[^>]*\sdata-scroll="([^"]+)"/g)) assert.ok(t.includes(`id="${m[1]}"`), `data-scroll target ${m[1]} exists`);
   });
-  test(`${id}: has a polite live region for dynamic readouts and honours reduced motion CSS`, () => {
+  test(`${id}: has a polite live region for dynamic readouts and honours reduced motion CSS`, (tc) => {
+    if (id === 'course-certificate') return tc.skip('no quiz; its name preview is deliberately not live (one keystroke = one announcement)');
     assert.ok(/aria-live="polite"/.test(t) || /aria-live['"],\s*['"]polite/.test(t) || /HydroA11y\.live\(/.test(t));
     assert.ok(/prefers-reduced-motion: reduce/.test(t));
   });
@@ -97,3 +98,28 @@ test('the watershed canvas can be driven from the keyboard and gives a text read
   assert.ok(/Cell \[18, 17\]|Cell \[18,/.test(els.flowMsg.textContent) || /cells/.test(els.flowMsg.textContent), 'selection is described in text: ' + els.flowMsg.textContent);
   assert.ok(els.statPath.textContent.length > 0);
 });
+
+const QUIZ_ROOTS = { 'baseflow-separation': 'bfQuiz', 'reading-a-hydrograph': 'm3-quiz', 'watershed-runoff': 'watershedQuiz',
+  'water-cycle-in-motion': 'cycleQuiz', 'real-streamflow-data': 'm5-quiz', 'capstone-basin-story': 'm7-quiz', 'dem-to-twi': 'm6-quiz' };
+
+for (const [mod, rootId] of Object.entries(QUIZ_ROOTS)) {
+  test(`${mod}: before any attempt the checkpoint DOM holds no answer, explanation, mark or answer attribute`, () => {
+    const { els, ctx } = run(H.moduleText(mod));
+    const items = vm.runInContext('HydroQuiz.instances', ctx);
+    const api = Object.values(items)[0];
+    const root = els[rootId];
+    assert.ok(root && root.children.length, 'quiz rendered');
+    let text = '';
+    (function walk(n) {
+      text += ' ' + (n.textContent || '');
+      for (const k of Object.keys(n.attrs || {})) {
+        assert.ok(!/answer|correct|solution/i.test(k) && !/answer|correct|solution/i.test(String(n.attrs[k])), `${k}=${n.attrs[k]}`);
+      }
+      if (n.checked) assert.fail('a radio is pre-checked');
+      (n.children || []).forEach(walk);
+    })(root);
+    for (const it of api.describe()) {
+      assert.ok(it.explain && !text.includes(it.explain), `explanation of ${it.id} is not in the DOM`);
+    }
+  });
+}

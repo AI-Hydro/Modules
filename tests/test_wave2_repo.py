@@ -177,12 +177,30 @@ def test_csp_check_passes_on_the_modules():
     ('<script>fetch("/x");</script>', "fetch()"),
     ('<script>var x = new XMLHttpRequest();</script>', "XMLHttpRequest"),
     ('<script>eval("1")</script>', "eval()"),
+    ('<script src="https://evil.example/json.js"></script>', "external <script src>"),
+    ('<script type="application/json" src="https://evil.example/d.json"></script>', "external <script src>"),
+    ('<script type="text/javascript" src=//evil.example/x.js></script>', "external <script src>"),
+    ('<link rel=stylesheet href=//evil.example/x.css>', "evil.example"),
+    ('<link rel=stylesheet href=https://evil.example/x.css>', "evil.example"),
+    ('<img src=https://e.example/a.png>', "e.example"),
+    ('<script>var s = document.createElement("script"); s.src = "https://evil.example/x.js";</script>', "createElement('script')"),
+    ('<script>var i = new Image(); i.src = "https://evil.example/p.png";</script>', "external URL to .src/.href"),
+    ('<script>el.setAttribute("src", "https://evil.example/a");</script>', "setAttribute src/href"),
+    ('<script>import("https://evil.example/m.js");</script>', "dynamic import()"),
 ])
 def test_csp_check_flags_what_the_preview_would_block(tmp_path, snippet, expect):
     d = tmp_path / "bad"; d.mkdir()
     (d / "module.html").write_text(f"<html><head>{snippet}</head><body></body></html>")
     errs = check_csp.scan(d / "module.html")
     assert any(expect in e for e in errs), errs
+
+
+def test_csp_check_still_allows_inert_json_blocks_and_data_urls(tmp_path):
+    d = tmp_path / "ok2"; d.mkdir()
+    (d / "module.html").write_text('<html><body><script type="application/vnd.aihydro.module+json">{"a":"https://x.org"}</script>'
+                                   '<script type="application/json" id="b">{"u":"https://y.org"}</script>'
+                                   '<img src="data:image/png;base64,AAAA"><script>img.src = "data:image/png;base64,AAAA";</script></body></html>')
+    assert check_csp.scan(d / "module.html") == []
 
 
 def test_csp_check_allows_the_fonts_hosts_and_ignores_code_cell_text(tmp_path):

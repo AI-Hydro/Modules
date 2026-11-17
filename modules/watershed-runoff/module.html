@@ -560,17 +560,17 @@ ax.legend(); plt.tight_layout()</pre>
  * Single source of truth: shared/ready.js (inlined by scripts/build_modules.py).
  */
 function aihydroReady() {
-  if (!window.__aihydroReadyPromise) {
-    window.__aihydroReadyPromise = new Promise(function (resolve) {
-      if (window.aihydro) { resolve(window.aihydro); return; }
-      var tries = 0;
-      var t = setInterval(function () {
-        if (window.aihydro) { clearInterval(t); resolve(window.aihydro); }
-        else if (++tries >= 200) { clearInterval(t); }
-      }, 50);
-    });
+  var st = window.__aihydroReadyState || (window.__aihydroReadyState = {});
+  if (!st.promise) st.promise = new Promise(function (resolve) { st.resolve = resolve; });
+  if (window.aihydro) { st.resolve(window.aihydro); return st.promise; }
+  if (!st.timer) {                       /* at most one poll; a later call re-arms it after a time-out */
+    var tries = 0;
+    st.timer = setInterval(function () {
+      if (window.aihydro) { clearInterval(st.timer); st.timer = null; st.resolve(window.aihydro); }
+      else if (++tries >= 200) { clearInterval(st.timer); st.timer = null; }
+    }, 50);
   }
-  return window.__aihydroReadyPromise;
+  return st.promise;
 }
 function whenReady(fn) {
   aihydroReady().then(function () { fn(); });
