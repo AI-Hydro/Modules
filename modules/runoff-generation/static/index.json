@@ -1,0 +1,18 @@
+{
+  "column-hillslope": {
+    "mode": "headless",
+    "source_sha256": "2a1243b569ffa960e46159159638babb9547735f43e5be9342d6936512f178b2",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  },
+  "event-runoff-ratios": {
+    "mode": "headless",
+    "source_sha256": "d99b7a8dd3ccfc79abf6070e59efdef4559c1f437352422ec2e6277e08b58bd6",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  }
+}

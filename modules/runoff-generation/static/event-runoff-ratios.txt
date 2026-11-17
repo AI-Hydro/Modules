@@ -1,0 +1,14 @@
+Gauge          : 14305500  Siletz River at Siletz, OR
+Flow file      : basin_dataset_public_v1p2/usgs_streamflow/17/14305500_streamflow_qc.txt  (sha256 72cdcb7065640c4a...)
+Rain file      : basin_dataset_public_v1p2/basin_mean_forcing/daymet/17/14305500_lump_cida_forcing_leap.txt  (sha256 d341282b3d05ba9b...)
+Period         : 1995-10-01 + 1827 days (water years 1996-2000); 2 days flagged A:e
+Totals         : P 14791 mm, Q 15741 mm, Q/P = 1.064  (CAMELS runoff_ratio 0.990 is a 1989-2009 value: context, not a 1:1 check)
+Events         : N = 32 (day with P >= 10 mm after 2 days < 1 mm; window <= 10 days or to the next event)
+Median RC      : 0.493;  events with RC > 1: 4;  windows with an A:e day: 1
+Antecedent 7 d : median 12.35 mm; wetter-week events (n=16) median RC 0.727, drier-week (n=16) 0.188
+Rank corr.     : rho(antecedent rain, RC) = 0.61
+Start >=  5.0 mm: N =  70, median RC 0.447
+Start >= 10.0 mm: N =  32, median RC 0.493
+Start >= 20.0 mm: N =   3, median RC 0.488
+Largest day    : 118.19 mm on 1998-11-25 = 4.92 mm/h over 24 h; CAMELS soil_conductivity 1.178 cm/hr = 11.78 mm/h (below)
+A daily total cannot show a short burst, so it cannot tell infiltration excess from other routes.
