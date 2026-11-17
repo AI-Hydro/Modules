@@ -99,7 +99,6 @@ def dump(obj) -> bytes:
 
 # ---- inputs -----------------------------------------------------------------------------------------
 def load_inputs(evidence: Path):
-    import xarray as xr
     paths = {k: evidence / v for k, v in FILES.items()}
     shas = {k: sha256_file(p) for k, p in paths.items()}
     if shas["polygon"] != EXPECT_POLYGON_SHA:
@@ -114,6 +113,7 @@ def load_inputs(evidence: Path):
     if ref["geometry_digest"] != EXPECT_GEOM_DIGEST or man["geom_id"] != ref["geometry_digest"]:
         raise SystemExit("the DEM manifest geom_id and the watershed record geometry_digest disagree")
     poly = json.loads(paths["polygon"].read_text(encoding="utf-8"))
+    import xarray as xr  # imported after the sha256 checks, so wrong inputs are refused without it
     ds = xr.open_dataset(paths["dem"])
     dem = ds["dem"].values.astype("float32")
     lon, lat = ds["x"].values.astype("float64"), ds["y"].values.astype("float64")

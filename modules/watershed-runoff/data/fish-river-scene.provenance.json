@@ -131,7 +131,7 @@
   },
   "schema": "hydrofigs.provenance/2",
   "script": "tools/build_scene3d.py",
-  "script_sha256": "9b15f7cf892b85363709665b3b02e80a70581cc4ab4c77cc885741b1bae895d7",
+  "script_sha256": "8d6d09fc880e7852a32546a8a24142baaaefda2c396f1765c1f3d2479c422fa0",
   "synthetic": false,
   "synthetic_label": null
 }
