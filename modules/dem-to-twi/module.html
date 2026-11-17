@@ -14,13 +14,14 @@
 {
   "id": "dem-to-twi",
   "title": "The Shape of the Land: DEM to TWI",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "terrain-analysis",
   "level": "intro",
   "estimated_minutes": 55,
   "requires": { "executable": true, "python": ["numpy", "matplotlib"] },
+  "citation": { "text": "Beven, K. J. & Kirkby, M. J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrological Sciences Bulletin, 24(1), 43-69. doi:10.1080/02626667909491834" },
   "ai_hydro_preview_min_version": "0.2"
 }
 </script>
@@ -404,21 +405,21 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <div id="sec-map" class="wide card" data-aihydro-editable="prose">
   <h2>2 · A real catchment: USGS gauge 01031500</h2>
   <p>
-    The Piscataquis River drainage in central Maine — a CAMELS benchmark catchment.
-    Toggle <strong>TWI (qualitative)</strong> in the layers control to see a simulated wetness pattern
-    overlaid on the watershed. Click the gauge marker for metadata.
+    The Piscataquis River near Dover-Foxcroft, Maine — a CAMELS catchment of 769 km² (area_gages2) whose gauge sits at 45.17501° N, 69.3147° W.
+    The map shows the gauge and the catchment boundary only; <strong>no TWI is drawn on it</strong> because computing one needs a DEM that this module does not bundle.
+    Click the gauge marker for metadata.
   </p>
   <!-- AI-Hydro standardised map contract (Phase 2).
        The bridge adapter auto-initialises Leaflet, styles, and controls.
-       Custom overlays (TWI canvas) are added via _aihydroMap after ready. -->
+       No custom overlay is added: the map shows only the gauge and the boundary. -->
   <div class="map-shell">
     <div class="aihydro-map"
          data-aihydro-map-id="watershed-01031500"
          data-basemap="carto-dark"
-         data-marker-lat="45.265"
-         data-marker-lng="-69.55"
+         data-marker-lat="45.17501"
+         data-marker-lng="-69.3147"
          data-gauge-id="01031500"
-         data-marker-label="USGS 01031500 — Piscataquis River at Medford, ME"
+         data-marker-label="USGS 01031500 — Piscataquis River near Dover-Foxcroft, ME (CAMELS gauge location)"
          data-style-color="#00DDFF"
          data-style-fill="#00A3FF"
          data-style-fill-opacity="0.08"
@@ -442,9 +443,9 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <div id="sec-dem" class="wide card" data-aihydro-editable="prose">
   <h2>3 · Flow direction — click any cell</h2>
   <p>
-    A 5×5 synthetic DEM. Each cell routes water to its lowest 8-neighbour (D8 algorithm).
+    A 5×5 SYNTHETIC DEM (10 m cells assumed). Each cell routes water to the neighbour with the steepest <em>drop per unit distance</em> (D8; diagonals are √2 farther), computed in code from the elevations.
     <strong>Click any cell</strong> to trace its flow path to the outlet, highlight its upstream
-    contributing cells, and compute an approximate TWI.
+    contributing cells, and see its TWI (a = number of cells draining through it × cell size).
   </p>
   <div class="viz-wrap">
     <svg id="demSvg" viewBox="0 0 260 268" width="100%" style="max-width:360px;display:block;margin:0 auto;" role="img" aria-label="Interactive 5×5 DEM — click any cell to trace flow path">
@@ -457,39 +458,8 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
         </marker>
       </defs>
 
-      <!-- Static cell backgrounds -->
-      <g id="demCells">
-        <!-- Row 0 -->
-        <g style="cursor:pointer" onclick="window.clickDemCell(0,0)"><rect x="5"   y="5"   width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="30"  y="33"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">92</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(0,1)"><rect x="55"  y="5"   width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="80"  y="33"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">90</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(0,2)"><rect x="105" y="5"   width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="130" y="33"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">88</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(0,3)"><rect x="155" y="5"   width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="180" y="33"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">86</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(0,4)"><rect x="205" y="5"   width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="230" y="33"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">85</text></g>
-        <!-- Row 1 -->
-        <g style="cursor:pointer" onclick="window.clickDemCell(1,0)"><rect x="5"   y="55"  width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="30"  y="83"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">85</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(1,1)"><rect x="55"  y="55"  width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="80"  y="83"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">82</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(1,2)"><rect x="105" y="55"  width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="130" y="83"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">79</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(1,3)"><rect x="155" y="55"  width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="180" y="83"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">78</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(1,4)"><rect x="205" y="55"  width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="230" y="83"  text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">79</text></g>
-        <!-- Row 2 -->
-        <g style="cursor:pointer" onclick="window.clickDemCell(2,0)"><rect x="5"   y="105" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="30"  y="133" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">78</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(2,1)"><rect x="55"  y="105" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="80"  y="133" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">75</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(2,2)"><rect x="105" y="105" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="130" y="133" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">72</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(2,3)"><rect x="155" y="105" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="180" y="133" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">73</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(2,4)"><rect x="205" y="105" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="230" y="133" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">76</text></g>
-        <!-- Row 3 -->
-        <g style="cursor:pointer" onclick="window.clickDemCell(3,0)"><rect x="5"   y="155" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="30"  y="183" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">74</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(3,1)"><rect x="55"  y="155" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="80"  y="183" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">71</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(3,2)"><rect x="105" y="155" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="130" y="183" text-anchor="middle" fill="#00FFFF" font-size="11" font-family="JetBrains Mono,monospace" font-weight="700">68</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(3,3)"><rect x="155" y="155" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="180" y="183" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">70</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(3,4)"><rect x="205" y="155" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="230" y="183" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">72</text></g>
-        <!-- Row 4 -->
-        <g style="cursor:pointer" onclick="window.clickDemCell(4,0)"><rect x="5"   y="205" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="30"  y="233" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">72</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(4,1)"><rect x="55"  y="205" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="80"  y="233" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">69</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(4,2)"><rect x="105" y="205" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="130" y="233" text-anchor="middle" fill="#00FFFF" font-size="11" font-family="JetBrains Mono,monospace" font-weight="700">66</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(4,3)"><rect x="155" y="205" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="180" y="233" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">68</text></g>
-        <g style="cursor:pointer" onclick="window.clickDemCell(4,4)"><rect x="205" y="205" width="50" height="50" fill="#0f0f1e" stroke="rgba(125,211,252,0.3)" stroke-width=".7" rx="2"/><text x="230" y="233" text-anchor="middle" fill="#fff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">71</text></g>
-      </g>
+      <!-- Cells are generated by JS from the DEM array (no hand-typed values) -->
+      <g id="demCells"></g>
 
       <!-- Dynamic highlight overlay (populated by JS) -->
       <g id="demHighlight" pointer-events="none"></g>
@@ -506,7 +476,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
   <p style="font-size:13px;color:var(--muted);margin-top:10px;">
     <span style="color:#60a5fa;">■</span> upstream contributors &nbsp;
     <span style="color:rgba(0,221,255,0.9);">■</span> flow path to outlet &nbsp;
-    <span style="color:#00FFFF;">■</span> outlet cell (66 m, row 4 col 2)
+    <span style="color:#00FFFF;">■</span> outlet cell (lowest edge cell, 66 m, row 4 col 2)
   </p>
 </div>
 
@@ -520,21 +490,15 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
     <summary>Why <em>ln()</em> — not just <em>a</em> / tan(β)?</summary>
     <div class="reveal-body">
       <p>
-        The raw ratio <code>a / tan(β)</code> spans roughly 4 orders of magnitude across a real catchment —
-        a valley floor might have <code>a/tan(β) ≈ 40,000</code> while a steep ridge has <code>≈ 5</code>.
-        Plotting those values linearly produces a map where virtually every cell looks the same shade and only
-        the valley floor is visible.
+        The raw ratio <code>a / tan(β)</code> spans orders of magnitude across a catchment, so a linear map shows little except the valley floor;
+        the §6 cell prints the actual range for its grid. Taking the natural log compresses that range and has a physical basis: Beven &amp; Kirkby (1979)
+        obtained the index from a steady-state, topography-driven soil-moisture model (under their assumptions about how transmissivity varies with depth),
+        in which the logarithm arises from the algebra rather than as a cosmetic choice.
       </p>
       <p>
-        Taking the natural log compresses the range to roughly 2–14 (a 12-unit spread), where gradients are
-        perceptible everywhere on the hillslope. It also has a physical basis: Beven &amp; Kirkby (1979)
-        derived TWI directly from the steady-state soil-moisture deficit equation — the <em>ln</em> falls
-        out of the algebra, it is not a cosmetic choice.
-      </p>
-      <p>
-        A practical bonus: at very low slopes (<code>tan(β) → 0</code>, common in flat valley floors),
-        <code>a / tan(β)</code> diverges to infinity; <code>ln</code> keeps the index finite and
-        interpretable with a small epsilon floor.
+        At very low slopes (<code>tan(β) → 0</code>, flat valley floors), <code>a / tan(β)</code> diverges. A <strong>slope floor</strong> keeps the index finite, but it is a choice:
+        this module uses tan β ≥ 0.001 (about 0.06°). For a = 100 m²/m the floor gives TWI = ln(100/0.001) = 11.5, whereas a floor of 10<sup>−6</sup> would give 18.4 — so the largest TWI values of
+        a map are set by the floor, not by the hydrology.
       </p>
     </div>
   </details>
@@ -544,21 +508,17 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
     <div class="reveal-body">
       <p>
         <strong>D8</strong> (O'Callaghan &amp; Mark, 1984) routes 100% of each cell's flow to the single
-        steepest of its 8 cardinal/diagonal neighbours. It is fast and deterministic, but forces flow into
-        only 8 discrete directions — producing "stair-step" channel artefacts and overestimating
-        channelisation on smooth hillslopes.
+        neighbour with the steepest drop per unit distance. It is fast and deterministic, but forces flow into
+        only 8 discrete directions — producing "stair-step" channel artefacts and concentrating flow on smooth hillslopes.
       </p>
       <p>
         <strong>D∞</strong> (Tarboton, 1997) computes the steepest downslope direction as a continuous
         angle, then splits flow proportionally between the two neighbours bounding that angle.
-        This allows any of 2π possible directions, producing smoother contributing-area fields and
-        more realistic distributed wetness patterns — but at higher computational cost.
+        This allows any direction and gives smoother contributing-area fields, at higher computational cost.
       </p>
       <p>
-        For channel network extraction D8 is usually preferred (discrete routing matches the physics);
-        for spatially continuous TWI fields, D∞ reduces artefacts. The AI-Hydro
-        <code>compute_twi</code> tool defaults to <code>method="d8"</code> but accepts
-        <code>method="dinf"</code>.
+        For channel network extraction D8 is a common choice; for spatially continuous wetness fields a dispersing algorithm such as D∞ is often preferred.
+        This module uses D8 throughout so that every number can be reproduced by hand.
       </p>
     </div>
   </details>
@@ -567,20 +527,14 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
     <summary>Resolution dependence — why you must report DEM resolution</summary>
     <div class="reveal-body">
       <p>
-        Specific contributing area is <code>a = A_upslope / w</code> where <code>w</code> is the contour
-        width (≈ cell size in raster DEMs). At coarser resolution each cell accumulates the same physical
-        drainage area but <code>w</code> is larger — so <code>a</code> is proportionally larger, and
-        TWI inflates.
+        Specific contributing area is <code>a = A_upslope / w</code>, where <code>A_upslope</code> is the number of cells draining through a cell times the cell area
+        and <code>w</code> is the flow width (taken here as the cell size). With D8 on a raster, <code>a = (cells draining) × cell size</code>, so the same ground drains a
+        different number of cells at a different resolution, and the local slope also changes as the surface is averaged. Both terms of TWI therefore move.
       </p>
       <p>
-        Sørensen et al. (2006) [3] quantified this: mean TWI varied by 1–2 units between 25 m and 200 m
-        grids of the same catchments — a shift large enough to change wetness-class assignments. This
-        means TWI values from different studies are not directly comparable unless computed at the same resolution.
-      </p>
-      <p>
-        Practical guidance: 30 m (SRTM, 3DEP-30) is the standard for continental-scale CAMELS comparisons;
-        10 m (3DEP-10) for sub-catchment studies. Always cite the source DEM and its resolution when
-        reporting TWI statistics.
+        The §6 cell shows this on one synthetic surface: block-averaging the 30 m DEM to 60 m changes the mean TWI. The direction and size of the change belong to that surface;
+        Sørensen et al. (2006) compared TWI calculation methods against field observations, which is the evidence to read before choosing one.
+        Always cite the source DEM, its resolution, the routing method and the slope floor when reporting TWI statistics.
       </p>
     </div>
   </details>
@@ -611,7 +565,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <div id="sec-calc" class="grid2">
   <div class="card">
     <h2>4 · Live TWI calculator</h2>
-    <p>Adjust the inputs — TWI and the distribution histogram update instantly <span style="color:var(--muted);">[1,2]</span>.</p>
+    <p>Adjust the inputs — TWI and the distribution histogram update instantly <span style="color:var(--muted);">[1,2]</span>. Slope is floored at tan β = 0.001.</p>
 
     <div class="param-block">
       <label for="p-area">Contributing area, <em>a</em> <span id="m-area">120</span> m²/m</label>
@@ -651,21 +605,16 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
       <code style="color:#f59e0b;">β</code> = local slope (radians)
     </p>
 
-    <h3 style="margin-top:14px;">Synthetic catchment distribution</h3>
+    <h3 style="margin-top:14px;">SYNTHETIC hillslope distribution</h3>
     <p style="font-size:13px;color:var(--muted);margin-bottom:8px;">
-      16×16 synthetic hillslope (same as the Python heatmap below). Marker shows your current value.
+      The 20×20 SYNTHETIC hillslope TWI computed by the D8 pipeline in §6 (30 m cells). Marker shows your current value; dashed lines are the terciles.
     </p>
     <svg id="histSvg" viewBox="0 0 360 120" style="width:100%;height:auto;"></svg>
 
-    <table class="cls-table" style="margin-top:10px;">
-      <thead><tr><th>TWI</th><th>Class</th></tr></thead>
-      <tbody>
-        <tr><td>&lt; 5</td>   <td>Dry — ridge / steep hillslope</td></tr>
-        <tr><td>5 – 8</td>    <td>Moderate — mid-slope</td></tr>
-        <tr><td>8 – 11</td>   <td>Wet — lower hillslope / hollow</td></tr>
-        <tr><td>&gt; 11</td>  <td>Very wet — riparian / saturated</td></tr>
-      </tbody>
-    </table>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px;">
+      Classes are <strong>relative</strong>: lower / middle / upper third of this grid's TWI values (<span id="tercLo">—</span> and <span id="tercHi">—</span>).
+      Fixed class thresholds are not given because TWI values depend on DEM resolution, routing method and the slope floor.
+    </p>
   </div>
 </div>
 
@@ -679,7 +628,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
   <div class="aihydro-cell" data-aihydro-cell-id="twi-point" data-language="python">
     <div class="aihydro-cell-header">
       <span class="aihydro-cell-lang">python</span>
-      <span class="aihydro-cell-desc">Point TWI — slider values injected via source rewriting</span>
+      <span class="aihydro-cell-desc">Point TWI with slope floor — slider values injected via source rewriting</span>
       <button class="run-btn aihydro-run" type="button">Run ▶</button>
     </div>
     <pre class="aihydro-source" id="pyPointSource"></pre>
@@ -691,16 +640,21 @@ input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-rad
 <!--  6 · MATPLOTLIB HEATMAP                                    -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div id="sec-heatmap" class="wide card" data-aihydro-editable="prose">
-  <h2>6 · Synthetic catchment TWI heatmap</h2>
-  <p>A 16×16 synthetic hillslope — contributing area peaks in the central valley, slope tapers downhill. Run to see where wetness concentrates.</p>
+  <h2>6 · Compute TWI from a DEM — fill, D8, accumulation, slope, TWI</h2>
+  <p>
+    This cell is the whole pipeline, with no invented area or slope grids: it starts from a 20×20 <strong>SYNTHETIC</strong> hillslope DEM (30 m cells assumed),
+    fills depressions (priority-flood), assigns D8 directions by drop/distance, accumulates flow, computes slope along the flow direction and then
+    <code>TWI = ln(a / tan β)</code>. It repeats the computation after block-averaging the DEM to 60 m cells, to show that the mean TWI depends on resolution.
+  </p>
 
   <div class="aihydro-cell" data-aihydro-cell-id="twi-grid" data-language="python">
     <div class="aihydro-cell-header">
       <span class="aihydro-cell-lang">python</span>
-      <span class="aihydro-cell-desc">matplotlib TWI heatmap + distribution</span>
+      <span class="aihydro-cell-desc">DEM → fill → D8 → accumulation → slope → TWI (SYNTHETIC DEM)</span>
       <button class="run-btn aihydro-run" type="button">Run ▶</button>
     </div>
-    <pre class="aihydro-source">import numpy as np
+    <pre class="aihydro-source">import math
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.rcParams.update({
@@ -710,28 +664,140 @@ mpl.rcParams.update({
     'axes.edgecolor':'#334155',
 })
 
-n = 16
-y_idx, x_idx = np.mgrid[0:n, 0:n]
-area_grid  = 50 + 200 * np.exp(-((x_idx - n/2)**2) / 18) * (1 + y_idx / n)
-slope_grid = 18 - 12 * (y_idx / n) + 4 * np.abs(x_idx - n/2) / n
-twi_grid   = np.log(area_grid / np.maximum(np.tan(np.deg2rad(slope_grid)), 1e-6))
+<!--@@BEGIN pypre:shared/d8.py@@--># D8 terrain routing: priority-flood fill, steepest-descent direction
+# (drop / distance), flow accumulation, slope and TWI.  Twin of shared/d8.js.
+# Priority-flood with epsilon (Barnes, Lehman &amp; Mulla, 2014), seeded only at the
+# outlet so every cell has a strictly descending path to it.
+import heapq, math
+D8_DIRS = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]  # N NE E SE S SW W NW
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 3.6))
-im = ax1.imshow(twi_grid, cmap='GnBu', origin='lower')
-ax1.set_title('TWI grid', fontsize=11)
-ax1.set_xlabel('x'); ax1.set_ylabel('y (↑ downslope)')
-cb = fig.colorbar(im, ax=ax1, fraction=0.046); cb.set_label('TWI')
 
-ax2.hist(twi_grid.ravel(), bins=20, color='#00A3FF', edgecolor='#0a0a15', alpha=0.85)
-ax2.axvline(twi_grid.mean(), color='#00FFFF', linewidth=1.5, linestyle='--')
-ax2.text(twi_grid.mean()+0.1, ax2.get_ylim()[1]*0.9,
-         f'mean={twi_grid.mean():.1f}', color='#00FFFF', fontsize=9)
-ax2.set_title('TWI distribution', fontsize=11)
-ax2.set_xlabel('TWI'); ax2.set_ylabel('count')
+def d8_lowest_edge(dem):
+    R, C = len(dem), len(dem[0])
+    best = None
+    for r in range(R):
+        for c in range(C):
+            if r in (0, R - 1) or c in (0, C - 1):
+                if best is None or dem[r][c] &lt; dem[best[0]][best[1]]:
+                    best = (r, c)
+    return best
 
+
+def d8_fill(dem, outlet, epsilon=None):
+    R, C = len(dem), len(dem[0])
+    flat = [float(dem[r][c]) for r in range(R) for c in range(C)]
+    eps = epsilon if epsilon is not None else 1e-5 * ((max(flat) - min(flat)) or 1.0)
+    out, seen, heap, counter = flat[:], [False] * (R * C), [], 0
+    o = outlet[0] * C + outlet[1]
+    seen[o] = True
+    heapq.heappush(heap, (out[o], counter, o)); counter += 1
+    while heap:
+        _, _, idx = heapq.heappop(heap)
+        er, ec = divmod(idx, C)
+        for dr, dc in D8_DIRS:
+            nr, nc = er + dr, ec + dc
+            if nr &lt; 0 or nc &lt; 0 or nr &gt;= R or nc &gt;= C:
+                continue
+            ni = nr * C + nc
+            if seen[ni]:
+                continue
+            seen[ni] = True
+            if out[ni] &lt;= out[idx] + eps:
+                out[ni] = out[idx] + eps
+            heapq.heappush(heap, (out[ni], counter, ni)); counter += 1
+    return out
+
+
+def d8_directions(filled, R, C, cell, outlet):
+    o = outlet[0] * C + outlet[1]
+    rec = [-1] * (R * C)
+    for r in range(R):
+        for c in range(C):
+            i = r * C + c
+            if i == o:
+                continue
+            best, bi = 0.0, -1
+            for dr, dc in D8_DIRS:
+                nr, nc = r + dr, c + dc
+                if nr &lt; 0 or nc &lt; 0 or nr &gt;= R or nc &gt;= C:
+                    continue
+                dist = cell * math.sqrt(2) if (dr and dc) else cell
+                g = (filled[i] - filled[nr * C + nc]) / dist
+                if g &gt; best:
+                    best, bi = g, nr * C + nc
+            rec[i] = bi
+    return rec
+
+
+def d8_accumulation(filled, rec):
+    order = sorted(range(len(filled)), key=lambda i: (-filled[i], i))
+    acc = [1] * len(filled)
+    for i in order:
+        if rec[i] &gt;= 0:
+            acc[rec[i]] += acc[i]
+    return acc
+
+
+def d8_route(dem, cell, outlet=None, tan_floor=1e-3, epsilon=None):
+    R, C = len(dem), len(dem[0])
+    outlet = outlet or d8_lowest_edge(dem)
+    filled = d8_fill(dem, outlet, epsilon)
+    rec = d8_directions(filled, R, C, cell, outlet)
+    acc = d8_accumulation(filled, rec)
+    tanb, twi = [], []
+    for i in range(R * C):
+        if rec[i] &lt; 0:
+            t = tan_floor
+        else:
+            r, c = divmod(i, C); nr, nc = divmod(rec[i], C)
+            dist = cell * math.sqrt(2) if (r != nr and c != nc) else cell
+            t = max((filled[i] - filled[rec[i]]) / dist, tan_floor)
+        tanb.append(t)
+        twi.append(math.log(acc[i] * cell / t))  # a = A/w = acc*cell^2/cell
+    return dict(R=R, C=C, cell=cell, outlet=outlet, filled=filled, rec=rec,
+                acc=acc, tan_beta=tanb, twi=twi, tan_floor=tan_floor)
+
+
+def d8_path(rec, start):
+    path, i = [start], start
+    for _ in range(len(rec)):
+        if rec[i] &lt; 0:
+            break
+        i = rec[i]; path.append(i)
+    return path<!--@@END pypre:shared/d8.py@@-->
+
+# ─── SYNTHETIC 20x20 hillslope, 30 m cells (assumed) ───
+n = 20
+dem = [[100 + 3.0*(n-1-r) + 1.5*abs(c - ((n-1)/2 + 2*math.sin(2*math.pi*r/n)))
+        + 4.5*math.sin(2.3*r + 0.5)*math.cos(1.9*c) for c in range(n)] for r in range(n)]
+
+res = d8_route(dem, 30.0, tan_floor=1e-3)          # fill, D8, accumulation, slope floor 0.001, TWI
+twi = np.array(res["twi"]).reshape(n, n)
+acc = np.array(res["acc"]).reshape(n, n)
+raised = sum(1 for i in range(n*n) if res["filled"][i] - dem[i//n][i % n] > 1e-3)
+t1, t2 = np.percentile(twi, 100/3), np.percentile(twi, 200/3)
+ratio = np.array(res["acc"]) * 30.0 / np.array(res["tan_beta"])      # a / tan(beta)
+
+# ─── same surface at 60 m: average 2x2 blocks, then repeat ───
+coarse = [[(dem[2*r][2*c] + dem[2*r+1][2*c] + dem[2*r][2*c+1] + dem[2*r+1][2*c+1]) / 4
+           for c in range(n//2)] for r in range(n//2)]
+res2 = d8_route(coarse, 60.0, tan_floor=1e-3)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3.8))
+im = ax1.imshow(twi, cmap='GnBu', origin='upper')
+ax1.set_title('TWI (SYNTHETIC hillslope, 30 m)', fontsize=10)
+fig.colorbar(im, ax=ax1, fraction=0.046).set_label('TWI')
+ax2.hist(twi.ravel(), bins=20, color='#00A3FF', edgecolor='#0a0a15', alpha=0.85)
+ax2.axvline(twi.mean(), color='#00FFFF', linewidth=1.5, linestyle='--')
+ax2.set_title('TWI distribution', fontsize=10); ax2.set_xlabel('TWI'); ax2.set_ylabel('count')
 plt.tight_layout()
-print(f"Grid mean TWI = {twi_grid.mean():.2f},  std = {twi_grid.std():.2f}")
-print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre>
+
+print(f"Cells: {n*n};  raised by depression filling (> 1 mm): {raised};  outlet (row, col): {res['outlet']}")
+print(f"a/tan(beta) spans {ratio.min():.0f} to {ratio.max():.0f} m  ->  TWI {twi.min():.2f} to {twi.max():.2f}")
+print(f"Mean TWI at 30 m : {twi.mean():.3f}   (std {twi.std():.3f})")
+print(f"Mean TWI at 60 m : {np.mean(res2['twi']):.3f}   (same surface, 2x2 block mean)")
+print(f"Terciles of the 30 m grid: {t1:.2f} | {t2:.2f}   (relative classes, no fixed thresholds)")
+print(f"Wettest cell: TWI {twi.max():.2f} with {int(acc.max())} cells draining through it")</pre>
     <div class="aihydro-output" aria-live="polite"></div>
   </div>
 </div>
@@ -743,7 +809,7 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
   <h2>7 · DEM vs TWI — drag the wipe</h2>
   <p>
     The left half shows the <strong>elevation surface</strong> (grey = high, dark = low).
-    The right half shows the <strong>TWI surface</strong> (cyan = wet, brown = dry).
+    The right half shows <strong>TWI by tercile of this 5×5 grid</strong>, computed from the D8 pipeline (red = lowest third, amber = middle, green = upper third, cyan = outlet).
     <strong>Drag the divider</strong> left and right to compare — notice how the wettest cells
     are not always the lowest ones (a valley with steep walls can stay dry; a flat lowland gets very wet).
   </p>
@@ -764,9 +830,9 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
 
   <div class="callout tip" style="margin-top:12px;">
     <span class="callout-label">What to notice</span>
-    The outlet cell (bottom-centre) has very high TWI because all 24 other cells drain through it.
-    Ridge cells (top corners) have low TWI despite being at high elevation — they have almost
-    no contributing area. This is the core insight of topography-driven hydrology.
+    The outlet cell (bottom-centre) has the highest TWI (12.43) because all 24 other cells drain through it (and its slope is set to the floor).
+    Ridge cells (top corners, TWI 2.65 and 2.81) have low TWI — they have almost
+    no contributing area. Wetness is about convergence and gentle slope, not elevation alone.
   </div>
 </div>
 
@@ -810,7 +876,7 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       </p>
       <div class="quiz-choices" role="radiogroup" aria-label="Question 2 choices">
         <button class="quiz-btn" type="button" data-index="0"
-          data-feedback="Correct — the outlet's contributing area (a) is 25× larger while slope is the same, so ln(a/tan β) is much larger at the outlet.">
+          data-feedback="Correct — the outlet's contributing area (a) is 25/4 = 6.25 times larger (25 cells against 4 including the cell itself) while slope is the same, so ln(a/tan β) is larger by ln 6.25 = 1.83.">
           The outlet — because it accumulates flow from all upstream cells
         </button>
         <button class="quiz-btn" type="button" data-index="1"
@@ -827,21 +893,21 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
 
     <div class="quiz-question quiz-block" data-answer="2">
       <p class="quiz-q">
-        You compute TWI at 10 m resolution and again at 100 m resolution for the same catchment.
-        Which result will typically show <em>higher mean TWI</em>?
+        The §6 cell computes the same synthetic hillslope at 30 m and again after averaging to 60 m cells, and reports mean TWI 6.65 at 30 m and 7.58 at 60 m.
+        What is the correct reading of this result?
       </p>
       <div class="quiz-choices" role="radiogroup" aria-label="Question 3 choices">
         <button class="quiz-btn" type="button" data-index="0"
-          data-feedback="10 m resolution preserves steep local slopes that appear flat when averaged to 100 m — finer grids usually produce lower mean TWI.">
-          10 m — finer resolution captures more topographic detail
+          data-feedback="The two means differ by 0.93 TWI units, so resolution clearly matters even on identical terrain.">
+          Resolution does not matter — it is the same landscape
         </button>
         <button class="quiz-btn" type="button" data-index="1"
-          data-feedback="At the same resolution, mean TWI should be similar. The difference lies in how slope is smoothed between resolutions.">
-          They produce the same mean TWI — only spatial patterns change
+          data-feedback="Not proven: this is one synthetic surface. The cell shows that the mean changes, not that it always rises.">
+          Coarser grids always give a higher mean TWI, so the 60 m value is simply more accurate
         </button>
         <button class="quiz-btn" type="button" data-index="2"
-          data-feedback="Correct — coarser cells average out steep local slopes, so tan(β) is smaller and TWI = ln(a/tan β) is larger. Sørensen et al. (2006) quantified this.">
-          100 m — coarser cells average slope, making tan(β) smaller and TWI larger
+          data-feedback="Correct — averaging changes both the number of cells draining through a point and the slope, so the mean TWI shifts (here by +0.93). TWI values are only comparable at the same resolution, routing method and slope floor.">
+          The mean changed by 0.93 on this surface, so TWI values are comparable only at matching DEM resolution and method
         </button>
       </div>
       <div class="quiz-feedback"></div>
@@ -859,14 +925,11 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     <span class="callout-label">In the AI-Hydro chat</span>
     Ask: <em>"Compute TWI for USGS gauge 01031500 and overlay it on the map."</em><br><br>
     The agent runs the full pipeline — DEM fetch → fill-sinks → D8 routing → flow accumulation →
-    slope → TWI — and returns a georeferenced raster. The simulated overlay you saw above is qualitative;
-    the agent produces the real thing.
+    slope → TWI — and returns a georeferenced raster. This module does not compute a TWI value for 01031500; the numbers above all come from synthetic DEMs.
   </div>
   <div class="callout tip" style="margin-top:12px;">
     <span class="callout-label">Next step</span>
-    The mean TWI ≈ 8 for USGS 01031500 (Maine headwater) flags it as a wet, humid forested basin
-    where saturated-excess overland flow dominates. You'll revisit that interpretation in the
-    <strong>Module 7 Capstone</strong> when you characterise a full basin end-to-end.
+    In the <strong>Module 7 Capstone</strong> you will run this same pipeline on a synthetic hillslope alongside the real streamflow signatures of four CAMELS gauges.
   </div>
 </div>
 
@@ -901,13 +964,19 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       <a href="https://doi.org/10.5194/hess-21-5293-2017" target="_blank" rel="noreferrer">DOI: 10.5194/hess-21-5293-2017</a>
     </li>
     <li>
-      Bartos, M. (2020). <em>pysheds</em>: simple and fast watershed delineation in Python.
-      <a href="https://github.com/mdbartos/pysheds" target="_blank" rel="noreferrer">github.com/mdbartos/pysheds</a>
-    </li>
-    <li>
       Tarboton, D.G. (1997). A new method for the determination of flow directions and upslope areas in grid digital elevation models.
       <em>Water Resources Research</em>, 33(2), 309–319.
       <a href="https://doi.org/10.1029/96WR03137" target="_blank" rel="noreferrer">DOI: 10.1029/96WR03137</a>
+    </li>
+    <li>
+      O'Callaghan, J.F. &amp; Mark, D.M. (1984). The extraction of drainage networks from digital elevation data.
+      <em>Computer Vision, Graphics, and Image Processing</em>, 28(3), 323–344.
+      <a href="https://doi.org/10.1016/S0734-189X(84)80011-0" target="_blank" rel="noreferrer">DOI: 10.1016/S0734-189X(84)80011-0</a>
+    </li>
+    <li>
+      Barnes, R., Lehman, C. &amp; Mulla, D. (2014). Priority-flood: an optimal depression-filling and watershed-labeling algorithm for digital elevation models.
+      <em>Computers &amp; Geosciences</em>, 62, 117–127.
+      <a href="https://doi.org/10.1016/j.cageo.2013.04.024" target="_blank" rel="noreferrer">DOI: 10.1016/j.cageo.2013.04.024</a>
     </li>
   </ol>
 </div>
@@ -916,11 +985,11 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
 <!--  PROVENANCE                                                -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div class="provenance">
-  <div class="prov-item"><dt>Module</dt><dd>dem-to-twi · v0.2.0 · CC-BY-4.0</dd></div>
+  <div class="prov-item"><dt>Module</dt><dd>dem-to-twi · v0.3.0 · CC-BY-4.0</dd></div>
   <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
-  <div class="prov-item"><dt>Synthetic data</dt><dd>5×5 DEM and 16×16 hillslope grid, hand-crafted for instruction.</dd></div>
-  <div class="prov-item"><dt>Real watershed</dt><dd>USGS 01031500 — boundary from the AI-Hydro delineation pipeline.</dd></div>
-  <div class="prov-item"><dt>TWI overlay</dt><dd>Qualitative simulation; run <code>compute_twi</code> in the agent for the real raster.</dd></div>
+  <div class="prov-item"><dt>SYNTHETIC data</dt><dd>The 5×5 DEM (10 m cells assumed) and the 20×20 hillslope (30 m cells assumed) are teaching surfaces; every TWI, direction and accumulation on this page is computed from them by the shared D8 code.</dd></div>
+  <div class="prov-item"><dt>Real catchment</dt><dd>USGS 01031500 — gauge name, coordinates (45.17501, −69.3147) and area from CAMELS-US v1.2 (<code>data/camels_gauges.json</code>, sha256 in <code>data/PROVENANCE.json</code>). No TWI is drawn on the real map.</dd></div>
+  <div class="prov-item"><dt>Method choices</dt><dd>D8 by drop/distance; priority-flood fill; slope floor tan β ≥ 0.001; relative (tercile) wetness classes.</dd></div>
   <div class="prov-item"><dt>Environment</dt><dd>Python (numpy, matplotlib) via AI-Hydro preview kernel; Leaflet 1.9.4.</dd></div>
 </div>
 
@@ -948,22 +1017,156 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
   }
 
-  /* ── Pre-compute the synthetic 16×16 TWI grid (matches the Python heatmap cell).
-        Used for the live histogram so it shows real grid data, not a fixed Gaussian. */
-  var SYNTH_TWI = (function () {
-    var n = 16, vals = [];
-    for (var yi = 0; yi < n; yi++) {
-      for (var xi = 0; xi < n; xi++) {
-        var a = 50 + 200 * Math.exp(-(Math.pow(xi - n / 2, 2)) / 18) * (1 + yi / n);
-        var s = 18 - 12 * (yi / n) + 4 * Math.abs(xi - n / 2) / n;
-        var tanB = Math.max(Math.tan(s * Math.PI / 180), 1e-6);
-        vals.push(Math.log(a / tanB));
+  /* One D8 implementation (shared/d8.js): priority-flood fill, drop/distance directions,
+     accumulation, slope and TWI. Nothing in this module is hand-typed any more. */
+/*@@BEGIN js:shared/d8.js@@*/
+/* D8 terrain routing on a regular grid: priority-flood fill, steepest-descent
+ * flow direction (drop / distance), flow accumulation, slope and TWI.
+ *
+ *   dem      : array of rows (dem[row][col]), elevations in metres
+ *   cell     : cell size in metres
+ *   outlet   : {r, c}; defaults to the lowest cell on the grid edge
+ *
+ * Fill follows Barnes, Lehman & Mulla (2014) "Priority-flood" with epsilon
+ * increments, seeded ONLY at the outlet so that every cell has a strictly
+ * descending path to it. Ties break by insertion order (deterministic; the
+ * Python twin shared/d8.py uses the identical rule).
+ * Single source of truth: shared/d8.js (twin: d8.py).
+ */
+var D8_DIRS = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]]; /* N NE E SE S SW W NW */
+
+function d8LowestEdge(dem) {
+  var R = dem.length, C = dem[0].length, best = null, r, c;
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    if (r !== 0 && c !== 0 && r !== R - 1 && c !== C - 1) continue;
+    if (best === null || dem[r][c] < dem[best.r][best.c]) best = { r: r, c: c };
+  }
+  return best;
+}
+
+function d8Fill(dem, outlet, epsilon) {
+  var R = dem.length, C = dem[0].length, N = R * C;
+  var lo = Infinity, hi = -Infinity, r, c, k;
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    if (dem[r][c] < lo) lo = dem[r][c];
+    if (dem[r][c] > hi) hi = dem[r][c];
+  }
+  var eps = epsilon === undefined ? 1e-5 * ((hi - lo) || 1) : epsilon;
+  var out = new Array(N), seen = new Uint8Array(N);
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) out[r * C + c] = dem[r][c];
+  var heap = [], counter = 0;
+  function less(a, b) { return a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]); }
+  function push(e) {
+    var i = heap.length; heap.push(e);
+    while (i > 0) { var p = (i - 1) >> 1; if (less(heap[i], heap[p])) { var t = heap[i]; heap[i] = heap[p]; heap[p] = t; i = p; } else break; }
+  }
+  function pop() {
+    var top = heap[0], last = heap.pop();
+    if (heap.length) {
+      heap[0] = last; var i = 0;
+      for (;;) {
+        var l = 2 * i + 1, rr = l + 1, m = i;
+        if (l < heap.length && less(heap[l], heap[m])) m = l;
+        if (rr < heap.length && less(heap[rr], heap[m])) m = rr;
+        if (m === i) break;
+        var t = heap[i]; heap[i] = heap[m]; heap[m] = t; i = m;
       }
     }
-    return vals;
-  })();
+    return top;
+  }
+  var o = outlet.r * C + outlet.c;
+  seen[o] = 1; push([out[o], counter++, o]);
+  while (heap.length) {
+    var e = pop(), idx = e[2], er = (idx / C) | 0, ec = idx % C;
+    for (k = 0; k < 8; k++) {
+      var nr = er + D8_DIRS[k][0], nc = ec + D8_DIRS[k][1];
+      if (nr < 0 || nc < 0 || nr >= R || nc >= C) continue;
+      var ni = nr * C + nc;
+      if (seen[ni]) continue;
+      seen[ni] = 1;
+      if (out[ni] <= out[idx] + eps) out[ni] = out[idx] + eps;
+      push([out[ni], counter++, ni]);
+    }
+  }
+  return out; /* flat row-major */
+}
 
-  /* ── D8 flow routing tables for the 5×5 synthetic DEM ───────────── */
+/* receiver index per cell (-1 for the outlet), steepest drop/distance */
+function d8Directions(filled, R, C, cell, outlet) {
+  var rec = new Array(R * C), o = outlet.r * C + outlet.c, r, c, k;
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    var i = r * C + c;
+    if (i === o) { rec[i] = -1; continue; }
+    var best = 0, bi = -1;
+    for (k = 0; k < 8; k++) {
+      var nr = r + D8_DIRS[k][0], nc = c + D8_DIRS[k][1];
+      if (nr < 0 || nc < 0 || nr >= R || nc >= C) continue;
+      var dist = (D8_DIRS[k][0] !== 0 && D8_DIRS[k][1] !== 0) ? cell * Math.SQRT2 : cell;
+      var g = (filled[i] - filled[nr * C + nc]) / dist;
+      if (g > best) { best = g; bi = nr * C + nc; }
+    }
+    rec[i] = bi;
+  }
+  return rec;
+}
+
+/* number of cells draining through each cell (the cell itself included) */
+function d8Accumulation(filled, rec) {
+  var N = filled.length, order = [], i;
+  for (i = 0; i < N; i++) order.push(i);
+  order.sort(function (a, b) { return filled[b] - filled[a] || a - b; });
+  var acc = new Array(N).fill(1);
+  for (var j = 0; j < N; j++) { i = order[j]; if (rec[i] >= 0) acc[rec[i]] += acc[i]; }
+  return acc;
+}
+
+/* tan(beta): steepest downslope gradient, floored (see TAN_FLOOR note) */
+function d8TanBeta(filled, rec, R, C, cell, floor) {
+  var t = new Array(R * C);
+  for (var i = 0; i < R * C; i++) {
+    if (rec[i] < 0) { t[i] = floor; continue; }
+    var r = (i / C) | 0, c = i % C, nr = (rec[i] / C) | 0, nc = rec[i] % C;
+    var dist = (r !== nr && c !== nc) ? cell * Math.SQRT2 : cell;
+    t[i] = Math.max((filled[i] - filled[rec[i]]) / dist, floor);
+  }
+  return t;
+}
+
+function d8Route(dem, cell, opts) {
+  opts = opts || {};
+  var R = dem.length, C = dem[0].length;
+  var outlet = opts.outlet || d8LowestEdge(dem);
+  var floor = opts.tanFloor === undefined ? 1e-3 : opts.tanFloor;
+  var filled = d8Fill(dem, outlet, opts.epsilon);
+  var rec = d8Directions(filled, R, C, cell, outlet);
+  var acc = d8Accumulation(filled, rec);
+  var tanb = d8TanBeta(filled, rec, R, C, cell, floor);
+  var twi = new Array(R * C);
+  for (var i = 0; i < R * C; i++) twi[i] = Math.log((acc[i] * cell) / tanb[i]); /* a = A/w = acc*cell^2/cell */
+  return { R: R, C: C, cell: cell, outlet: outlet, filled: filled, rec: rec, acc: acc, tanBeta: tanb, twi: twi, tanFloor: floor };
+}
+
+/* path from a cell to the outlet (guarded: cannot loop forever) */
+function d8Path(rec, start, maxSteps) {
+  var path = [start], i = start, guard = maxSteps || rec.length;
+  while (rec[i] >= 0 && guard-- > 0) { i = rec[i]; path.push(i); }
+  return path;
+}
+
+/* cells whose D8 path passes through target (target included) */
+function d8Upstream(rec, target) {
+  var N = rec.length, kids = new Array(N), i;
+  for (i = 0; i < N; i++) kids[i] = [];
+  for (i = 0; i < N; i++) if (rec[i] >= 0) kids[rec[i]].push(i);
+  var out = [target], stack = [target];
+  while (stack.length) { var u = stack.pop(); for (var j = 0; j < kids[u].length; j++) { out.push(kids[u][j]); stack.push(kids[u][j]); } }
+  return out;
+}
+/*@@END js:shared/d8.js@@*/
+
+  /*@@CORE-BEGIN@@*/
+  var CELL = 10;               /* assumed cell size of the 5×5 teaching DEM, metres */
+  var TAN_FLOOR = 0.001;       /* minimum tan(beta); see the "slope floor" note in §4 */
   var DEM_EL = [
     [92, 90, 88, 86, 85],
     [85, 82, 79, 78, 79],
@@ -971,37 +1174,77 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     [74, 71, 68, 70, 72],
     [72, 69, 66, 68, 71]
   ];
-  /* FLOW_TO[r][c] = [next_r, next_c] or null (outlet at row 4, col 2) */
-  var FLOW_TO = [
-    [[1,1],[1,2],[1,3],[1,3],[1,3]],
-    [[2,1],[2,2],[2,2],[2,2],[2,3]],
-    [[3,1],[3,2],[3,2],[3,2],[3,3]],
-    [[4,1],[4,2],[4,2],[4,2],[4,3]],
-    [[4,1],[4,2],null,[4,2],[4,3]]
-  ];
+  var ROUTE = d8Route(DEM_EL, CELL, { tanFloor: TAN_FLOOR });   /* outlet = lowest edge cell (4,2) */
+  var OUT_R = ROUTE.outlet.r, OUT_C = ROUTE.outlet.c;
+  /* FLOW_TO[r][c] = [next_r, next_c] or null (outlet) — COMPUTED from the DEM, drop / distance */
+  var FLOW_TO = DEM_EL.map(function (row, r) {
+    return row.map(function (_, c) {
+      var k = ROUTE.rec[r * 5 + c];
+      return k < 0 ? null : [(k / 5) | 0, k % 5];
+    });
+  });
+
+  /* SYNTHETIC 20×20 hillslope (30 m cells assumed) used by the histogram and §6 */
+  function hillslopeDEM() {
+    var n = 20, d = [], r, c;
+    for (r = 0; r < n; r++) {
+      var row = [], axis = (n - 1) / 2 + 2 * Math.sin(2 * Math.PI * r / n);
+      for (c = 0; c < n; c++)
+        row.push(100 + 3.0 * (n - 1 - r) + 1.5 * Math.abs(c - axis) + 4.5 * Math.sin(2.3 * r + 0.5) * Math.cos(1.9 * c));
+      d.push(row);
+    }
+    return d;
+  }
+  var HILL = d8Route(hillslopeDEM(), 30, { tanFloor: TAN_FLOOR });
+  var SYNTH_TWI = HILL.twi;
+  function percentile(arr, p) {
+    var s = arr.slice().sort(function (a, b) { return a - b; });
+    var k = (s.length - 1) * p / 100, f = Math.floor(k), c = Math.ceil(k);
+    return s[f] + (s[c] - s[f]) * (k - f);
+  }
+  var T1 = percentile(SYNTH_TWI, 100 / 3), T2 = percentile(SYNTH_TWI, 200 / 3);
+  /* classes are RELATIVE to this grid: absolute TWI thresholds depend on DEM resolution and method */
+  function relClass(twi) {
+    return twi > T2 ? { t: 'Upper third (wettest)', c: '#00FFFF' }
+         : twi > T1 ? { t: 'Middle third',          c: '#34d399' }
+         :            { t: 'Lower third (driest)',  c: '#f59e0b' };
+  }
+  /* ── PYTHON SOURCE REWRITING (point TWI) ───────────────────────── */
+  function buildPointTwiSource(area, slope) {
+    return [
+      'import math',
+      '',
+      'area_in  = ' + area + '    # specific contributing area a = A_upslope / w  (m²/m)',
+      'slope_in = ' + slope + '    # local slope (degrees)',
+      'TAN_FLOOR = ' + TAN_FLOOR + '   # minimum tan(beta); flat cells would otherwise give TWI -> infinity',
+      'T1, T2 = ' + T1.toFixed(2) + ', ' + T2.toFixed(2) + '   # terciles of the §6 hillslope TWI grid (relative classes)',
+      'tan_raw  = math.tan(math.radians(slope_in))',
+      'tan_beta = max(tan_raw, TAN_FLOOR)',
+      'twi      = math.log(area_in / tan_beta)',
+      '',
+      'print(f"Inputs   →  area = {area_in} m²/m,  slope = {slope_in}°")',
+      'print(f"tan(β)   →  {tan_raw:.4f}  (used: {tan_beta:.4f}, floor {TAN_FLOOR})")',
+      'print(f"a/tan(β) →  {area_in / tan_beta:.2f} m")',
+      'print(f"TWI      →  {twi:.3f}")',
+      'print(f"Floor effect: with a floor of 1e-6 a perfectly flat cell would read {math.log(area_in / 1e-6):.1f}; with {TAN_FLOOR} it reads {math.log(area_in / TAN_FLOOR):.1f}")',
+      '',
+      'if twi > T2:',
+      '    print("Class    →  upper third of the hillslope grid (wettest)")',
+      'elif twi > T1:',
+      '    print("Class    →  middle third")',
+      'else:',
+      '    print("Class    →  lower third (driest)")'
+    ].join('\n');
+  }
+  /*@@CORE-END@@*/
 
   function cellCtr(r, c) { return { x: 30 + c * 50, y: 30 + r * 50 }; }
 
   function getFlowPath(r, c) {
-    var path = [[r, c]];
-    while (FLOW_TO[r][c] !== null) {
-      var nxt = FLOW_TO[r][c]; r = nxt[0]; c = nxt[1]; path.push([r, c]);
-    }
-    return path;
+    return d8Path(ROUTE.rec, r * 5 + c).map(function (k) { return [(k / 5) | 0, k % 5]; });
   }
-
   function findUpstream(tr, tc) {
-    var res = [];
-    for (var r = 0; r < 5; r++) {
-      for (var c = 0; c < 5; c++) {
-        if (r === tr && c === tc) continue;
-        var path = getFlowPath(r, c);
-        for (var i = 0; i < path.length; i++) {
-          if (path[i][0] === tr && path[i][1] === tc) { res.push([r, c]); break; }
-        }
-      }
-    }
-    return res;
+    return d8Upstream(ROUTE.rec, tr * 5 + tc).slice(1).map(function (k) { return [(k / 5) | 0, k % 5]; });
   }
 
   function mkSvg(tag, attrs) {
@@ -1010,7 +1253,25 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     return el;
   }
 
-  /* Called by inline onclick on each SVG cell group */
+  /* Build the 5×5 clickable cells from DEM_EL (no hand-typed elevations in the markup) */
+  (function buildCells() {
+    var g = document.getElementById('demCells');
+    if (!g) return;
+    for (var r = 0; r < 5; r++) for (var c = 0; c < 5; c++) {
+      var grp = mkSvg('g', { style: 'cursor:pointer', tabindex: '0', role: 'button', 'aria-label': 'cell row ' + r + ' column ' + c + ', elevation ' + DEM_EL[r][c] + ' m' });
+      grp.appendChild(mkSvg('rect', { x: 5 + c * 50, y: 5 + r * 50, width: 50, height: 50, fill: '#0f0f1e', stroke: 'rgba(125,211,252,0.3)', 'stroke-width': '.7', rx: 2 }));
+      var isOut = (r === OUT_R && c === OUT_C);
+      var tx = mkSvg('text', { x: 30 + c * 50, y: 33 + r * 50, 'text-anchor': 'middle', fill: isOut ? '#00FFFF' : '#fff', 'font-size': 11, 'font-family': 'JetBrains Mono,monospace', 'font-weight': isOut ? 700 : 600 });
+      tx.textContent = DEM_EL[r][c];
+      grp.appendChild(tx);
+      (function (rr, cc) {
+        grp.addEventListener('click', function () { window.clickDemCell(rr, cc); });
+        grp.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.clickDemCell(rr, cc); } });
+      })(r, c);
+      g.appendChild(grp);
+    }
+  })();
+
   window.clickDemCell = function (r, c) {
     var overlay = document.getElementById('demHighlight');
     overlay.innerHTML = '';
@@ -1022,7 +1283,6 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       return ft && ft[0] === r && ft[1] === c;
     });
 
-    /* Upstream contributors — muted blue fill */
     upstream.forEach(function (cell) {
       overlay.appendChild(mkSvg('rect', {
         x: 5 + cell[1] * 50, y: 5 + cell[0] * 50, width: 50, height: 50,
@@ -1030,10 +1290,9 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       }));
     });
 
-    /* Downstream path — cyan gradient */
     downPath.forEach(function (cell, i) {
       var isStart  = i === 0;
-      var isOutlet = cell[0] === 4 && cell[1] === 2;
+      var isOutlet = cell[0] === OUT_R && cell[1] === OUT_C;
       var fill = isStart  ? 'rgba(0,221,255,0.42)' :
                  isOutlet ? 'rgba(0,255,255,0.30)' : 'rgba(0,163,255,0.20)';
       overlay.appendChild(mkSvg('rect', {
@@ -1042,7 +1301,6 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       }));
     });
 
-    /* Arrows along the downstream path */
     for (var i = 0; i < downPath.length - 1; i++) {
       var fc = cellCtr(downPath[i][0], downPath[i][1]);
       var tc2 = cellCtr(downPath[i + 1][0], downPath[i + 1][1]);
@@ -1053,7 +1311,6 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       }));
     }
 
-    /* Dashed arrows from direct upstream neighbours → clicked cell */
     directUp.forEach(function (cell) {
       var fc2 = cellCtr(cell[0], cell[1]);
       var tc3 = cellCtr(r, c);
@@ -1064,68 +1321,29 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       }));
     });
 
-    /* Approximate TWI for this cell */
-    var isOutlet = (r === 4 && c === 2);
-    var infoEl = document.getElementById('demInfo');
-
-    if (isOutlet) {
+    var k = r * 5 + c, infoEl = document.getElementById('demInfo');
+    var ups = upstream.length, acc = ROUTE.acc[k];
+    var slopeDeg = Math.atan(ROUTE.tanBeta[k]) * 180 / Math.PI;
+    var twiVal = ROUTE.twi[k];
+    if (k === OUT_R * 5 + OUT_C) {
       infoEl.innerHTML = '<span style="color:#00FFFF"><strong>Outlet (pour point)</strong></span>' +
-        ' · elev ' + DEM_EL[r][c] + ' m · all 24 other cells drain here · TWI = ∞';
+        ' · elev ' + DEM_EL[r][c] + ' m · all ' + ups + ' other cells drain here · it has no downslope cell, so its slope is set to the floor tan β = ' +
+        TAN_FLOOR + ' and TWI = ' + twiVal.toFixed(2);
       return;
     }
-
-    var ups = upstream.length;
-    var CELL = 10; /* assumed 10 m cell size */
-    var nr = FLOW_TO[r][c][0], nc2 = FLOW_TO[r][c][1];
-    var elDiff = DEM_EL[r][c] - DEM_EL[nr][nc2];
-    var diag = (r !== nr && c !== nc2);
-    var dist = diag ? CELL * Math.SQRT2 : CELL;
-    var slopeRad = Math.max(Math.atan(elDiff / dist), 0.001);
-    var slopeDeg = slopeRad * 180 / Math.PI;
-    var area_sp = (ups + 1) * CELL;
-    var twiVal = Math.log(area_sp / Math.tan(slopeRad));
-
-    var cls = twiVal > 11 ? ['Very wet', '#00FFFF']
-            : twiVal > 8  ? ['Wet',      '#34d399']
-            : twiVal > 5  ? ['Moderate', '#f59e0b']
-            :                ['Dry',      '#f87171'];
-
-    var stepsToOutlet = downPath.length - 1;
+    var ft = FLOW_TO[r][c];
+    var drop = DEM_EL[r][c] - DEM_EL[ft[0]][ft[1]];
+    var diag = (r !== ft[0] && c !== ft[1]);
+    var cls = relClass(twiVal);
     infoEl.innerHTML =
-      'Cell (' + r + ',' + c + ') · elev ' + DEM_EL[r][c] + ' m · ' +
-      '<span style="color:#60a5fa">' + ups + ' upstream cell' + (ups !== 1 ? 's' : '') + '</span> · ' +
+      'Cell (' + r + ',' + c + ') · elev ' + DEM_EL[r][c] + ' m → (' + ft[0] + ',' + ft[1] + ') drop ' + drop + ' m over ' +
+      (diag ? '14.1' : '10') + ' m · ' +
+      '<span style="color:#60a5fa">' + ups + ' upstream cell' + (ups !== 1 ? 's' : '') + '</span> (a = ' + (acc * CELL) + ' m²/m) · ' +
       'slope ' + slopeDeg.toFixed(1) + '° · ' +
-      'TWI ≈ <strong style="color:' + cls[1] + '">' + twiVal.toFixed(2) + '</strong>' +
-      ' → <span style="color:' + cls[1] + '">' + cls[0] + '</span> · ' +
-      stepsToOutlet + ' step' + (stepsToOutlet > 1 ? 's' : '') + ' to outlet';
+      'TWI = <strong style="color:' + cls.c + '">' + twiVal.toFixed(2) + '</strong>' +
+      ' → <span style="color:' + cls.c + '">' + cls.t + ' of the §6 hillslope distribution</span> · ' +
+      (downPath.length - 1) + ' step' + (downPath.length - 1 > 1 ? 's' : '') + ' to outlet';
   };
-
-  /* ── PYTHON SOURCE REWRITING (rainfall-runoff pattern) ──────────── */
-  function buildPointTwiSource(area, slope) {
-    return [
-      'import math',
-      '',
-      'area_in  = ' + area,
-      'slope_in = ' + slope,
-      'slope_rad = math.radians(slope_in)',
-      'tan_beta  = math.tan(slope_rad)',
-      'twi       = math.log(area_in / max(tan_beta, 1e-6))',
-      '',
-      'print(f"Inputs   →  area = {area_in} m²/m,  slope = {slope_in}°")',
-      'print(f"tan(β)   →  {tan_beta:.4f}")',
-      'print(f"a/tan(β) →  {area_in / tan_beta:.2f} m")',
-      'print(f"TWI      →  {twi:.3f}")',
-      '',
-      'if twi > 11:',
-      '    print("Class    →  Very wet  (riparian / saturated zone)")',
-      'elif twi > 8:',
-      '    print("Class    →  Wet       (lower hillslope / hollow)")',
-      'elif twi > 5:',
-      '    print("Class    →  Moderate  (mid-slope transitional)")',
-      'else:',
-      '    print("Class    →  Dry       (ridge / steep hillslope)")'
-    ].join('\n');
-  }
 
   /* ── LIVE CALCULATOR ─────────────────────────────────────────────── */
   function updateLive() {
@@ -1134,7 +1352,7 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     document.getElementById('m-area').textContent  = a;
     document.getElementById('m-slope').textContent = s;
 
-    var tanB  = Math.tan(s * Math.PI / 180);
+    var tanB  = Math.max(Math.tan(s * Math.PI / 180), TAN_FLOOR);
     var ratio = a / tanB;
     var twi   = Math.log(ratio);
 
@@ -1142,10 +1360,7 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     document.getElementById('liveTan').textContent   = tanB.toFixed(4);
     document.getElementById('liveRatio').textContent = ratio.toFixed(1);
 
-    var cls = twi > 11 ? { t: 'Very wet', c: '#00FFFF' }
-            : twi > 8  ? { t: 'Wet',      c: '#34d399' }
-            : twi > 5  ? { t: 'Moderate', c: '#f59e0b' }
-            :             { t: 'Dry',      c: '#f87171' };
+    var cls = relClass(twi);
     var el = document.getElementById('twiCls');
     el.textContent = cls.t;
     el.style.color = cls.c;
@@ -1154,7 +1369,7 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     drawHistogram(twi);
   }
 
-  /* ── HISTOGRAM from actual synthetic grid values ─────────────────── */
+  /* ── HISTOGRAM from the grid computed by the D8 pipeline (not a fixed Gaussian) ── */
   function drawHistogram(currentTwi) {
     var svg = document.getElementById('histSvg');
     var W = 360, H = 120, padL = 28, padR = 8, padT = 14, padB = 22;
@@ -1177,14 +1392,18 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
       var x = padL + i * ((W - padL - padR) / bins);
       var y = H - padB - h;
       var xMid = xMin + (i + 0.5) * binW;
-      var col = xMid > 8 ? '#00A3FF' : xMid > 5 ? '#60a5fa' : '#334155';
+      var col = xMid > T2 ? '#00A3FF' : xMid > T1 ? '#60a5fa' : '#334155';
       parts.push('<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="2" fill="' + col + '" opacity="0.85"/>');
     });
 
     parts.push('<line x1="' + padL + '" y1="' + (H - padB) + '" x2="' + (W - padR) + '" y2="' + (H - padB) + '" stroke="#334155" stroke-width="1"/>');
-    [0, 5, 8, 11, 15, 18].forEach(function (t) {
+    [0, 3, 6, 9, 12, 15, 18].forEach(function (t) {
       var x = padL + ((t - xMin) / (xMax - xMin)) * (W - padL - padR);
       parts.push('<text x="' + x + '" y="' + (H - 6) + '" fill="#94a3b8" font-size="9" font-family="JetBrains Mono" text-anchor="middle">' + t + '</text>');
+    });
+    [T1, T2].forEach(function (t) {
+      var x = padL + ((t - xMin) / (xMax - xMin)) * (W - padL - padR);
+      parts.push('<line x1="' + x + '" y1="' + padT + '" x2="' + x + '" y2="' + (H - padB) + '" stroke="#64748b" stroke-width="1" stroke-dasharray="3 3"/>');
     });
 
     var cx = padL + ((Math.max(xMin, Math.min(xMax, currentTwi)) - xMin) / (xMax - xMin)) * (W - padL - padR);
@@ -1195,118 +1414,27 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     svg.innerHTML = parts.join('');
   }
 
-  /* ── QUIZ ────────────────────────────────────────────────────────── */
-  window.quizAnswer = function (btn, correct, message) {
-    document.querySelectorAll('.quiz-btn').forEach(function (b) { b.className = 'quiz-btn'; });
-    btn.className = 'quiz-btn ' + (correct ? 'correct' : 'incorrect');
-    var fb = document.getElementById('quizFeedback');
-    fb.style.cssText = 'margin-top:12px;padding:12px 15px;border-radius:12px;font-size:14px;' +
-      'background:' + (correct
-        ? 'rgba(52,211,153,0.12);border:1px solid #34d399;color:#d1fae5;'
-        : 'rgba(248,113,113,0.10);border:1px solid #f87171;color:#fee2e2;');
-    fb.textContent = (correct ? '✓ ' : '✗ ') + message;
-  };
-
   /* ── WORKFLOW SCROLL ─────────────────────────────────────────────── */
   window.scrollToSection = function (id) {
     var el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  /* ── SYNTHETIC TWI CANVAS for Leaflet overlay ────────────────────── */
-  function makeTwiCanvas() {
-    var sz = 256;
-    var canvas = document.createElement('canvas');
-    canvas.width = sz; canvas.height = sz;
-    var ctx = canvas.getContext('2d');
-    var img = ctx.createImageData(sz, sz);
-    var d = img.data;
-
-    for (var py = 0; py < sz; py++) {
-      for (var px = 0; px < sz; px++) {
-        /* nx: W→E (0→1), ny: N→S (0→1). Top of canvas = north. */
-        var nx = px / (sz - 1), ny = py / (sz - 1);
-
-        /* Meandering central valley axis */
-        var ax = 0.48 + 0.10 * Math.sin(ny * Math.PI * 2);
-        var dAxis = Math.abs(nx - ax);
-
-        /* Wetness: peaks in valley (low dAxis), increases southward (high ny) */
-        var wet = Math.max(0, 1 - dAxis * 4.0) * (0.2 + 0.8 * ny);
-        /* Secondary west sub-tributary */
-        wet = Math.max(wet, Math.max(0, 1 - Math.abs(nx - 0.22) * 9) * (0.08 + 0.5 * ny));
-        wet = Math.min(1, wet);
-
-        var r, g, b, a;
-        if (wet < 0.35) {
-          var t = wet / 0.35;
-          r = Math.round(90 + 40 * t); g = Math.round(75 + 65 * t); b = Math.round(55 + 115 * t);
-          a = Math.round(50 + 70 * t);
-        } else {
-          var t2 = (wet - 0.35) / 0.65;
-          r = Math.round(130 - 130 * t2); g = Math.round(140 + 80 * t2); b = Math.round(170 + 85 * t2);
-          a = Math.round(120 + 100 * t2);
-        }
-
-        var idx = (py * sz + px) * 4;
-        d[idx] = r; d[idx + 1] = g; d[idx + 2] = b; d[idx + 3] = a;
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    return canvas.toDataURL('image/png');
-  }
-
-  /* ── LEAFLET MAP — TWI overlay (post-init hook) ──────────────────── */
-  /* The AI-Hydro Bridge adapter initialises the basemap, GeoJSON boundary,
-     and gauge marker automatically from data-aihydro-map attributes.
-     This post-init hook adds the qualitative TWI image overlay + legend,
-     which are specific to this module and not part of the standard contract. */
-  function addTwiOverlayWhenReady() {
-    var mapEl = document.querySelector('.aihydro-map[data-aihydro-map-id="watershed-01031500"]');
-    if (!mapEl) return;
-    var map = mapEl._aihydroMap;
-    var L = window.L;
-    if (!map || !L) { setTimeout(addTwiOverlayWhenReady, 150); return; }
-
-    var twiOverlay = L.imageOverlay(makeTwiCanvas(), [[45.07, -69.77], [45.45, -69.31]], {
-      opacity: 0.70, interactive: false
-    });
-
-    /* TWI legend */
-    var legend = L.control({ position: 'bottomright' });
-    legend.onAdd = function () {
-      var div = L.DomUtil.create('div');
-      div.innerHTML =
-        '<div style="background:rgba(10,10,21,0.88);border:1px solid rgba(125,211,252,0.2);border-radius:10px;padding:8px 12px;font-family:Poppins,sans-serif;font-size:11px;color:#94a3b8;">' +
-        '<div style="font-weight:700;color:#7dd3fc;margin-bottom:5px;">TWI overlay</div>' +
-        '<div><span style="display:inline-block;width:12px;height:10px;background:#00DDFF;border-radius:2px;margin-right:6px;"></span>Very wet (valley)</div>' +
-        '<div style="margin-top:3px;"><span style="display:inline-block;width:12px;height:10px;background:rgb(140,155,170);border-radius:2px;margin-right:6px;"></span>Dry (ridge)</div>' +
-        '<div style="margin-top:5px;font-size:9px;opacity:0.6;">qualitative · enable via ↗ layers</div>' +
-        '</div>';
-      return div;
-    };
-    legend.addTo(map);
-
-    /* Attach to layer control if it exists, otherwise just add it */
-    /* For simplicity: just add the overlay directly */
-    twiOverlay.addTo(map);
-  }
-
   /* ── INIT ────────────────────────────────────────────────────────── */
   ['p-area', 'p-slope'].forEach(function (id) {
     document.getElementById(id).addEventListener('input', updateLive);
   });
+  document.getElementById('tercLo').textContent = T1.toFixed(2);
+  document.getElementById('tercHi').textContent = T2.toFixed(2);
   updateLive();
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       window.clickDemCell(0, 0);
-      setTimeout(addTwiOverlayWhenReady, 500);
       initCompare();
     });
   } else {
     window.clickDemCell(0, 0);
-    setTimeout(addTwiOverlayWhenReady, 500);
     initCompare();
   }
 
@@ -1378,10 +1506,10 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
         scene.add(mesh);
 
         /* Mark outlet cell with a cyan sphere */
-        var outletEl = dem[4][2];
-        var ox = (2 / (cols - 1) - 0.5) * scaleXZ * cols;
+        var outletEl = dem[OUT_R][OUT_C];
+        var ox = (OUT_C / (cols - 1) - 0.5) * scaleXZ * cols;
         var oy = ((outletEl - elMin) / (elMax - elMin || 1)) * scaleY + 0.15;
-        var oz = (4 / (rows - 1) - 0.5) * scaleXZ * rows;
+        var oz = (OUT_R / (rows - 1) - 0.5) * scaleXZ * rows;
         var sphere = new THREE.Mesh(
           new THREE.SphereGeometry(0.12, 8, 8),
           new THREE.MeshBasicMaterial({ color: 0x00ffff })
@@ -1427,35 +1555,24 @@ print(f"Dry (<5): {(twi_grid<5).sum()}  |  Wet (>8): {(twi_grid>8).sum()}")</pre
     var wrap      = document.getElementById('twi-compare');
     if (!demCanvas || !twiCanvas || !divider || !wrap) return;
 
-    /* Compute TWI for each cell */
-    var CELL = 10;
-    function cellTwi(r, c) {
-      if (FLOW_TO[r][c] === null) return 14; /* outlet: very high */
-      /* Gather upstream count (reuse findUpstream) */
-      var ups = findUpstream(r, c).length;
-      var nr = FLOW_TO[r][c][0], nc = FLOW_TO[r][c][1];
-      var elDiff = DEM_EL[r][c] - DEM_EL[nr][nc];
-      var diag = (r !== nr && c !== nc);
-      var dist = diag ? CELL * Math.SQRT2 : CELL;
-      var slopeRad = Math.max(Math.atan(elDiff / dist), 0.001);
-      var area_sp = (ups + 1) * CELL;
-      return Math.log(area_sp / Math.tan(slopeRad));
-    }
+    /* TWI of each cell comes from the D8 pipeline (ROUTE); classes are the grid's own terciles */
+    function cellTwi(r, c) { return ROUTE.twi[r * 5 + c]; }
+    var G1 = percentile(ROUTE.twi, 100 / 3), G2 = percentile(ROUTE.twi, 200 / 3);
 
     /* Elevation color: dark blue (low) → gray → white (high) */
-    var elMin = 66, elMax = 92;
+    var elMin = Math.min.apply(null, DEM_EL[0].concat(DEM_EL[1], DEM_EL[2], DEM_EL[3], DEM_EL[4])), elMax = 92;
     function demColor(r, c) {
       var t = (DEM_EL[r][c] - elMin) / (elMax - elMin);
       var v = Math.round(60 + t * 170);
       return 'rgb(' + v + ',' + v + ',' + (v + 20) + ')';
     }
 
-    /* TWI color: brown (dry <5) → amber (5-8) → cyan (wet >8) */
+    /* TWI color by tercile of this 5×5 grid: red (lowest third) → amber → green → cyan (the outlet) */
     function twiColor(r, c) {
       var twi = cellTwi(r, c);
-      if (twi > 10)  return 'rgba(0,221,255,0.85)';
-      if (twi > 8)   return 'rgba(52,211,153,0.80)';
-      if (twi > 5)   return 'rgba(245,158,11,0.75)';
+      if (r === OUT_R && c === OUT_C) return 'rgba(0,221,255,0.85)';
+      if (twi > G2)  return 'rgba(52,211,153,0.80)';
+      if (twi > G1)  return 'rgba(245,158,11,0.75)';
       return 'rgba(239,68,68,0.65)';
     }
 
