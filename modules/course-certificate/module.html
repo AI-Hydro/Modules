@@ -12,7 +12,7 @@
 {
   "id": "course-certificate",
   "title": "Congratulations: Course Complete",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "course-completion",
@@ -379,7 +379,7 @@ a:hover { border-bottom-color:var(--cyan); }
 
   <h1>You did it. <span class="gradient-text">Course complete.</span></h1>
   <p class="hero-sub">
-    All seven modules done — from a Manim water-cycle animation to a full basin
+    All seven learning modules done — from a Manim water-cycle animation to a full basin
     characterisation. Enter your name below to generate your certificate.
   </p>
   <div class="instruction">
@@ -408,6 +408,7 @@ a:hover { border-bottom-color:var(--cyan); }
       🖨 Print / Save as PDF
     </button>
     <span class="print-hint">Opens browser print dialog → choose "<strong>Save as PDF</strong>"</span>
+    <button class="print-btn" type="button" id="openBrowserBtn" hidden title="Open this page in your system browser">🌐 Open in browser</button>
   </div>
   <div class="share-btns">
     <span class="share-label">Share</span>
@@ -458,7 +459,7 @@ a:hover { border-bottom-color:var(--cyan); }
       <span class="cert-course-icon">💧</span>
       Introduction to Hydrology
     </div>
-    <div class="cert-course-sub">AI-Hydro Interactive Course · 7 Modules · ~5 Hours</div>
+    <div class="cert-course-sub">AI-Hydro Interactive Course · 7 Learning Modules · ~5 Hours</div>
   </div>
 
   <!-- Module checklist -->
@@ -497,7 +498,7 @@ a:hover { border-bottom-color:var(--cyan); }
 <div class="wide card provenance" style="margin-top:14px;">
   <div class="prov-item">
     <dt>Module</dt>
-    <dd><code>course-certificate</code> · v0.1.0 · CC-BY-4.0</dd>
+    <dd><code>course-certificate</code> · v0.1.1 · CC-BY-4.0</dd>
   </div>
   <div class="prov-item">
     <dt>Author</dt>
@@ -560,7 +561,14 @@ a:hover { border-bottom-color:var(--cyan); }
   }
 
   /* ── Share & Print handlers (VS Code webview safe) ─── */
-  var vscodeApi = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null;
+  /* acquireVsCodeApi may be called only once per webview: acquire here and share via window */
+  var vscodeApi = (function () {
+    if (window.__aihydroVsCodeApi !== undefined) return window.__aihydroVsCodeApi;
+    var api = null;
+    try { api = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null; } catch (e) { api = null; }
+    window.__aihydroVsCodeApi = api;
+    return api;
+  })();
 
   window._aihydroOpenShare = function (platform) {
     var url;
@@ -594,6 +602,16 @@ a:hover { border-bottom-color:var(--cyan); }
   if (printBtn) {
     printBtn.addEventListener('click', window._aihydroPrint);
   }
+  /* "Open in browser" is now an explicit button (it used to fire on load); shown only inside the VS Code webview */
+  var browserBtn = document.getElementById('openBrowserBtn');
+  if (browserBtn) {
+    if (vscodeApi) {
+      browserBtn.hidden = false;
+      browserBtn.addEventListener('click', function () {
+        vscodeApi.postMessage({ command: 'openInBrowser', url: window.location.href });
+      });
+    }
+  }
   var liBtn = document.getElementById('shareLinkedIn');
   if (liBtn) {
     liBtn.addEventListener('click', function(e) { e.preventDefault(); window._aihydroOpenShare('linkedin'); });
@@ -622,16 +640,5 @@ a:hover { border-bottom-color:var(--cyan); }
   })();
 </script>
 
-  <script>
-  /* Auto-open certificate in external browser on first load inside AI-Hydro preview */
-  (function(){
-    if (sessionStorage.getItem('aihydro_cert_opened_browser')) return;
-    var api = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null;
-    if (!api) return;  /* not inside VS Code webview — nothing to do */
-    sessionStorage.setItem('aihydro_cert_opened_browser', '1');
-    /* Post to extension: open current file:// URL in system browser */
-    api.postMessage({ command: 'openInBrowser', url: window.location.href });
-  })();
-</script>
 </body>
 </html>
