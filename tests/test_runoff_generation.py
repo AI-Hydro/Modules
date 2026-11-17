@@ -443,6 +443,28 @@ def test_stated_model_constants_match_the_core():
         assert stated in T
 
 
+def test_numbers_in_toggle_label_and_figure_alt_text_are_the_computed_ones():
+    consts = run_js("{HILL:HILL,EV:EV}")
+    h = consts["HILL"]
+    assert f"every deficit {h['DROP']} mm smaller (not below {h['FLOOR']} mm)" in T
+    assert (h["DMIN"], h["DMAX"], h["I"]) == (4, 80, 8)
+    alt = json.loads((MODULES / MOD / "static" / "alt.json").read_text())
+    r = ga(25, 2, 60)
+    assert "25 millimetres per hour for 2 hours" in alt["column-hillslope"] and f"at {r['tp'] * 60:.0f} minutes" in alt["column-hillslope"]
+    end_cap = f_cap(r["F"])
+    assert f"to about {end_cap:.0f} millimetres per hour" in alt["column-hillslope"]
+    assert f"stacking to {r['P']:.0f} millimetres" in alt["column-hillslope"] and "60 millimetre deficit" in alt["column-hillslope"]
+    hr = run_js("hillRun(30,false)")
+    assert "30 millimetre storm" in alt["column-hillslope"] and f"last {hr['satCount']} columns" in alt["column-hillslope"]
+    assert f"from {h['DMAX']} millimetres at the ridge to {h['DMIN']} at the stream" in alt["column-hillslope"]
+    s = js_events("14305500")
+    rcs = [e["rc"] for e in s["events"]]
+    a = alt["event-runoff-ratios"]
+    assert f"{s['n']} rain events" in a and f"{s['medianRC']:.3f}" in a
+    assert min(rcs) >= 0 and round(max(rcs), 1) == 1.5 and "about 0 to about 1.5" in a
+    assert s["nEst"] == 1 and "the one event whose window includes an estimated-flow day" in a
+
+
 def test_status_labels_and_no_gauge_ids_in_synthetic_sections():
     assert "SYNTHETIC" in T
     sec = T[T.index('id="sec-intro"'):T.index('id="sec-real"')]
