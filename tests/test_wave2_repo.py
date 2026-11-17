@@ -117,7 +117,10 @@ def test_courses_json_is_generated_from_course_json():
     api = json.loads((ROOT / "api/courses.json").read_text())[0]
     assert api["courseId"] == cj["courseId"] and api["version"] == cj["version"] and api["abstract"] == cj["abstract"]
     assert [m["moduleId"] for m in api["modules"]] == [m["id"] for m in cj["modules"]]
-    assert api["modules"][2]["prerequisites"] == ["water-cycle-in-motion"]
+    by_id = {m["moduleId"]: m for m in api["modules"]}      # by id, not position: lessons get inserted
+    assert by_id["baseflow-separation"]["prerequisites"] == ["reading-a-hydrograph"]
+    for m in cj["modules"]:
+        assert by_id[m["id"]].get("prerequisites", []) == m.get("prerequisites", []), m["id"]
 
 
 def test_api_dates_come_from_git_not_from_today(monkeypatch):
@@ -260,3 +263,40 @@ def test_no_red_green_twi_map_remains():
     t = module_text("dem-to-twi")
     assert "239,68,68" not in t and "52,211,153,0.80" not in t         # the old red / amber / green canvas colours
     assert "HydroCmap.css(" in t and "viridis" in t.lower()
+
+
+# ── generic data blobs (Wave 3 phase A) ──────────────────────────────────────────────────────
+def test_generic_json_blob_is_inlined_minified_with_script_close_escaped(tmp_path):
+    d = tmp_path / "tmp-module"
+    (d / "data").mkdir(parents=True)
+    payload = {"a": [1, 2.5, None], "s": "x</script>y", "nested": {"k": "é"}}
+    (d / "data" / "my-blob.json").write_text(json.dumps(payload, indent=2))
+    (d / "module.html").write_text("<p><!--@@BEGIN json:my-blob@@-->old<!--@@END json:my-blob@@--></p>")
+    out = build_modules.process(d / "module.html")
+    m = re.search(r'<script type="application/json" id="my-blob">(.*?)</script>', out, re.S)
+    assert m and "</" not in m[1] and "<\\/script>" in m[1]
+    assert json.loads(m[1].replace("<\\/", "</")) == payload
+    assert ", " not in m[1] and ": " not in m[1].replace("<\\/script>y", "")   # separators are compact
+    assert build_modules.process(d / "module.html") == out                      # idempotent
+    assert build_modules.build_blob(d, "my-blob") == m[0]
+
+
+def test_unknown_blob_without_a_data_file_still_fails_loudly(tmp_path):
+    d = tmp_path / "tmp-module2"
+    (d / "data").mkdir(parents=True)
+    (d / "data" / "camels_gauges.json").write_text("{}")
+    (d / "data" / "PROVENANCE.json").write_text("{}")
+    with pytest.raises(SystemExit):
+        build_modules.build_blob(d, "no-such-blob")
+
+
+def test_extractor_registry_has_one_noop_stub_per_new_lesson():
+    import extract_camels
+    assert set(extract_camels.LESSON_EXTRACTORS) == {"precipitation-point-to-basin", "evapotranspiration-budyko",
+                                                     "runoff-generation"}
+    src = (ROOT / "scripts/extract_camels.py").read_text().splitlines()
+    for mod in extract_camels.LESSON_EXTRACTORS:
+        fn = "extract_" + mod.replace("-", "_")
+        b = next(i for i, l in enumerate(src) if l.startswith(f"# ==== BEGIN {fn} "))
+        e = next(i for i, l in enumerate(src) if l.startswith(f"# ==== END {fn} "))
+        assert b < e

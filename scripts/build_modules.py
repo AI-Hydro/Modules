@@ -60,8 +60,19 @@ def read_series(csv_path: Path, with_precip: bool) -> dict:
     return out
 
 
+def blob_script(name: str, blob) -> str:
+    # '</' must not appear inside an HTML script element
+    text = json.dumps(blob, separators=(",", ":")).replace("</", "<\\/")
+    return f'<script type="application/json" id="{name}">{text}</script>'
+
+
 def build_blob(module_dir: Path, name: str) -> str:
     data = module_dir / "data"
+    # Generic rule: <!--@@BEGIN json:NAME@@--> inlines modules/<id>/data/NAME.json verbatim (minified)
+    # as <script type="application/json" id="NAME">. The three CAMELS blobs below have no such file.
+    generic = data / f"{name}.json"
+    if generic.exists():
+        return blob_script(name, json.loads(generic.read_text(encoding="utf-8")))
     meta = json.loads((data / "camels_gauges.json").read_text())
     prov = json.loads((data / "PROVENANCE.json").read_text()).get("series", {})
     if name == "camels-meta":
@@ -79,9 +90,7 @@ def build_blob(module_dir: Path, name: str) -> str:
                 "units": {"q": "cfs (daily mean)", **({"prcp": "mm/day"} if wy else {})}}
     else:
         raise SystemExit(f"unknown blob {name}")
-    # '</' must not appear inside an HTML script element
-    text = json.dumps(blob, separators=(",", ":")).replace("</", "<\\/")
-    return f'<script type="application/json" id="{name}">{text}</script>'
+    return blob_script(name, blob)
 
 
 def embedded_manifest(man: dict) -> dict:

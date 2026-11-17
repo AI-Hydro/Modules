@@ -20,3 +20,10 @@ Verification (no network): `/opt/miniconda3/bin/python -s -E -m pytest tests`, `
 `build_modules.py --check`, `render_static_outputs.py --check`, `gen_docs.py --check`, `validate_manifests.py`, `check_csp.py`, `build_api.py --check`.
 Rendering was also checked by hand in a browser pane over a local static server (quiz states, keyboard sliders, DEM grid, canvas cursor, fallbacks).
 Not done: a check inside the installed AI-Hydro build (the quiz completion message depends on `location.ancestorOrigins`); Wave 3 of the audit.
+
+## 2026-11-17 — Wave 3: three new lessons
+
+Merged the three lesson packets (precipitation-point-to-basin, evapotranspiration-budyko, runoff-generation) into `feat/modules-wave3-lessons` after the phase-A generic data-blob and per-lesson extractor work; the combined extraction reproduces every bundled `data/` directory byte for byte (`extract_camels.py --extracted-on 2026-11-17`, `git diff --exit-code modules/*/data`).
+Phase B: course 0.4.0 (eleven modules, ten learning modules plus the certificate, estimatedHours 7), certificate 0.1.3 (counts), renumbered cross-references, DOI scan fixed for SICI-style DOIs, tests tightened (module set equals course set; SYNTHETIC labelling covers the new lessons), generated README/course page/API rebuilt.
+Verification (no network): `build_modules.py --check`, `render_static_outputs.py --check`, `gen_docs.py --check`, `validate_manifests.py`, `check_csp.py`, `build_api.py --check`, `/opt/miniconda3/bin/python -s -E -m pytest tests -q` (with and without `CAMELS_ROOT`), `node --test tests/js/*.test.js`.
+Not done: rendering the three new lessons inside the installed AI-Hydro build; owner decisions on the references without DOI (FAO-56, Budyko 1974, NEH-4).

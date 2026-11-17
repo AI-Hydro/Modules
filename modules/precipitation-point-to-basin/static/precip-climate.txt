@@ -1,0 +1,11 @@
+Basin           : 02472000  Leaf River near Collins, MS
+Source file     : basin_dataset_public_v1p2/basin_mean_forcing/daymet/03/02472000_lump_cida_forcing_leap.txt  (sha256 6f16ae5fd04addd2...)
+Daily record    : 1995-10-01 + 1827 days (water years 1996-2000; Daymet basin mean)
+Mean P, 20 WY   : 4.1584 mm/day   CAMELS p_mean 4.1584   |difference| 0.000000
+Wet days (>=1mm): 26.5 % of days
+High-P days     : 23.2 per year (>= 5 x the 5-year mean of 3.749 mm/day); CAMELS high_prec_freq 23.2 (1989-2009)
+  by water year : 23, 28, 30, 19, 16 days
+Longest dry spell: 26 days (each under 1 mm)
+Largest daily P : 70.06 mm on 1997-12-24
+Snow fraction   : 0.007 (days with mean temperature below 0 C, WY1996-2000); CAMELS frac_snow 0.006 (1989-2009)
+Seasonal share  : DJF 29.5 %   JJA 23.8 %  (20 water years)

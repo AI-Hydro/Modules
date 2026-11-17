@@ -353,7 +353,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     In <strong>Module 1</strong> you traced the <em>infiltration</em> arrow — water soaking into the ground.
     This module asks: where on the landscape does that happen preferentially?
     The answer is the Topographic Wetness Index: terrain geometry predicts soil moisture.
-    The flow paths you delineated in <strong>Module 2</strong> feed directly into the accumulation step here.
+    The flow paths you delineated in <strong>Module 5</strong> feed directly into the accumulation step here.
   </div>
 </div>
 
@@ -609,7 +609,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   <p id="dem3dDesc" class="hydro-sr-only">Elevations fall from the north-west corner (92 metres) to the south edge, where the lowest edge cell (66 metres, row 4 column 2) is the outlet. The grid of numbers in section 3 lists every elevation.</p>
   <p id="dem3dHelp" style="font-size:13px; color:var(--muted); margin-top:8px;">
     Reduced-motion mode: 3D scene renders as static once pointer leaves.
-    The same pipeline runs in <code>scene3d</code> for the TWI heatmap in the Capstone (Module 7).
+    The same pipeline runs in <code>scene3d</code> for the TWI heatmap in the Capstone (Module 10).
   </p>
 </div>
 
@@ -882,7 +882,7 @@ Wettest cell: TWI 16.30 with 400 cells draining through it</pre><div class="aihy
        style="position:relative; height:300px; border-radius:16px; overflow:hidden; cursor:ew-resize; user-select:none; border:1px solid rgba(125,211,252,0.2);">
     <canvas id="compDemCanvas" style="position:absolute;inset:0;width:100%;height:100%;" role="img" aria-label="Elevation of the 5 by 5 grid as shaded cells with the elevation in metres written in each cell"></canvas>
     <canvas id="compTwiCanvas" style="position:absolute;inset:0;width:100%;height:100%;" role="img" aria-label="TWI of the 5 by 5 grid as colour-scale cells with the TWI value written in each cell and the outlet outlined"></canvas>
-    <!-- manual drag wipe overlay (same pattern as M4) -->
+    <!-- manual drag wipe overlay (same pattern as M7) -->
     <div id="compDivider" style="position:absolute;top:0;bottom:0;width:3px;background:rgba(255,255,255,0.8);left:50%;transform:translateX(-50%);cursor:ew-resize;z-index:10;">
       <div id="compHandle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;font-size:14px;color:#0a0a15;"><span aria-hidden="true">⇔</span></div>
     </div>
@@ -926,7 +926,7 @@ Wettest cell: TWI 16.30 with 400 cells draining through it</pre><div class="aihy
   </div>
   <div class="callout tip" style="margin-top:12px;">
     <span class="callout-label">Next step</span>
-    In the <strong>Module 7 Capstone</strong> you will run this same pipeline on a synthetic hillslope alongside the real streamflow signatures of four CAMELS gauges.
+    In the <strong>Module 10 Capstone</strong> you will run this same pipeline on a synthetic hillslope alongside the real streamflow signatures of four CAMELS gauges.
   </div>
 </div>
 

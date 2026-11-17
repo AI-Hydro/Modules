@@ -25,6 +25,76 @@ The gate confirms that a work exists and the DOI/title/year/authors are consiste
 | Cunnane (1978) | 10.1016/0022-1694(78)90017-3 | PASS | 3 (crossref, openalex, semantic_scholar) | Unbiased plotting positions — A review / Journal of Hydrology / 1978 | real-streamflow-data |
 | Trenberth et al. (2007) | 10.1175/JHM600.1 | PASS | 3 (crossref, openalex, semantic_scholar) | Estimates of the Global Water Budget and Its Annual Cycle Using Observational and Model Data / Journal of Hydrometeorology / 2007 | water-cycle-in-motion |
 
+## Wave 3 lessons (2026-11-17)
+
+One table per lesson (same columns as the table above, so the repository scan `test_every_doi_in_the_modules_passed_the_gate` reads all of them). Each row is a DOI that passes `verify_citation.py --doi <DOI>`; a DOI that fails is removed from the page together with its claim.
+
+### precipitation-point-to-basin
+
+| Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
+|---|---|---|---|---|---|
+| Thiessen (1911) | 10.1175/1520-0493(1911)39<1082b:PAFLA>2.0.CO;2 | PASS | 3 (crossref, openalex, semantic_scholar) | PRECIPITATION AVERAGES FOR LARGE AREAS / Monthly Weather Review / 1911 | precipitation-point-to-basin |
+| Shepard (1968) | 10.1145/800186.810616 | PASS | 3 (crossref, openalex, semantic_scholar) | A two-dimensional interpolation function for irregularly-spaced data / Proceedings of the 1968 23rd ACM national conference (OpenAlex: ACM National Meeting) / 1968 | precipitation-point-to-basin |
+| Thornton et al. (1997) | 10.1016/S0022-1694(96)03128-9 | PASS | 3 (crossref, openalex, semantic_scholar) | Generating surfaces of daily meteorological variables over large regions of complex terrain / Journal of Hydrology / 1997 | precipitation-point-to-basin |
+| Jennings et al. (2018) | 10.1038/s41467-018-03629-7 | PASS | 3 (crossref, openalex, semantic_scholar) | Spatial variation of the rain–snow temperature threshold across the Northern Hemisphere / Nature Communications / 2018 | precipitation-point-to-basin |
+
+### evapotranspiration-budyko
+
+| Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
+|---|---|---|---|---|---|
+| Priestley & Taylor (1972) | 10.1175/1520-0493(1972)100<0081:OTAOSH>2.3.CO;2 | PASS | 3 (crossref, openalex, semantic_scholar) | On the Assessment of Surface Heat Flux and Evaporation Using Large-Scale Parameters / Monthly Weather Review / 1972 | evapotranspiration-budyko |
+| Hargreaves & Samani (1985) | 10.13031/2013.26773 | PASS | 3 (crossref, openalex, semantic_scholar) | Reference Crop Evapotranspiration from Temperature / Applied Engineering in Agriculture / 1985 | evapotranspiration-budyko |
+| Zhang et al. (2004) | 10.1029/2003WR002710 | PASS | 3 (crossref, openalex, semantic_scholar) | A rational function approach for estimating mean annual evapotranspiration / Water Resources Research / 2004 | evapotranspiration-budyko |
+| Zhang, Dawes & Walker (2001) | 10.1029/2000WR900325 | PASS | 3 (crossref, openalex, semantic_scholar) | Response of mean annual evapotranspiration to vegetation changes at catchment scale / Water Resources Research / 2001 | evapotranspiration-budyko |
+| Thornton, Running & White (1997) | 10.1016/S0022-1694(96)03128-9 | PASS | 3 (crossref, openalex, semantic_scholar) | Generating surfaces of daily meteorological variables over large regions of complex terrain / Journal of Hydrology / 1997 | evapotranspiration-budyko |
+
+Newman et al. (2015) and Addor et al. (2017) are cited by the lesson as data credits; both already pass (see the table above; their "Used in" cells are not edited here). Gate run for this lesson on 2026-11-17: `verify_citation.py --doi <DOI>` for each of the five rows plus Newman and Addor, all `gate_pass: true`.
+
+Notes for human review (evapotranspiration-budyko):
+
+- The gate confirms existence and DOI/title/year/author consistency only. Volume and page numbers are not given in the lesson's reference list for these five works for that reason.
+- Priestley & Taylor (1972): the DOI contains `<` and `>`. The page shows it as written (`&lt;`/`&gt;` markup) and links it with `<`/`>` percent-encoded; the repository scan normalises HTML entities and percent-encoding and matches the whole DOI. Attribution wording: α = 1.26 is described as "the value associated with Priestley & Taylor (1972) for a wet surface"; written from the index record, not from the full text.
+- Zhang et al. (2004): used for "the Fu form of the Budyko curve with the parameter written ω". Web records say Fu's model is the starting point of that paper; the full text was not read. Fu (1981) itself is deliberately not cited.
+- Zhang, Dawes & Walker (2001): title-level claim only (mean annual evapotranspiration responds to vegetation).
+- Thornton et al. (1997): cited only as the Daymet reference.
+- CAMELS `pet_mean`: described as Priestley–Taylor with α "calibrated for each catchment", the wording of the CAMELS attributes table (camels_attributes_v2.0.pdf, "estimated by N15 using Priestley-Taylor formulation calibrated for each catchment"), next to the Addor et al. (2017) citation.
+
+Books and handbooks without a DOI used by this lesson (marked on the page "Reference without DOI — pending owner decision"; not index-verifiable; owner to decide whether they stay):
+
+| Reference | Used for |
+|---|---|
+| Allen, R. G., Pereira, L. S., Raes, D. & Smith, M. (1998). *Crop evapotranspiration: guidelines for computing crop water requirements.* FAO Irrigation and Drainage Paper 56. FAO, Rome | Ra geometry, net-radiation, Δ and γ expressions (written from the handbook's standard formulas) |
+| Budyko, M. I. (1974). *Climate and Life.* Academic Press, New York | the two limits and the idea of Budyko space |
+
+### runoff-generation
+
+| Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
+|---|---|---|---|---|---|
+| Horton (1933) | 10.1029/TR014i001p00446 | PASS | 3 (crossref, openalex, semantic_scholar) | The Rôle of infiltration in the hydrologic cycle / Transactions American Geophysical Union / 1933 | runoff-generation |
+| Dunne & Black (1970) | 10.1029/WR006i005p01296 | PASS | 3 (crossref, openalex, semantic_scholar) | Partial Area Contributions to Storm Runoff in a Small New England Watershed / Water Resources Research / 1970 | runoff-generation |
+| Green & Ampt (1911) | 10.1017/S0021859600001441 | PASS | 3 (crossref, openalex, semantic_scholar) | Studies on Soil Phyics. (index spelling of the title) / The Journal of Agricultural Science / 1911 | runoff-generation |
+| Mein & Larson (1973) | 10.1029/WR009i002p00384 | PASS | 3 (crossref, openalex, semantic_scholar) | Modeling infiltration during a steady rain / Water Resources Research / 1973 | runoff-generation |
+| Merz, Blöschl & Parajka (2006) | 10.1016/j.jhydrol.2006.06.008 | PASS | 3 (crossref, openalex, semantic_scholar) | Spatio-temporal variability of event runoff coefficients / Journal of Hydrology / 2006 | runoff-generation |
+| Blume, Zehe & Bronstert (2007) | 10.1623/hysj.52.5.843 | PASS | 3 (crossref, openalex, semantic_scholar) | Rainfall—runoff response, event-based runoff coefficients and hydrograph separation / Hydrological Sciences Journal / 2007 | runoff-generation |
+| Cosby et al. (1984) | 10.1029/WR020i006p00682 | PASS | 3 (crossref, openalex, semantic_scholar) | A Statistical Exploration of the Relationships of Soil Moisture Characteristics to the Physical Properties of Soils / Water Resources Research / 1984 | runoff-generation |
+| Thornton, Running & White (1997) | 10.1016/S0022-1694(96)03128-9 | PASS | 3 (crossref, openalex, semantic_scholar) | Generating surfaces of daily meteorological variables over large regions of complex terrain / Journal of Hydrology / 1997 | runoff-generation |
+
+runoff-generation notes (gate run 2026-11-17, `verify_citation.py --doi <DOI>`; Newman et al. 2015, Addor et al. 2017, Beven & Kirkby 1979, Nathan & McMahon 1990 and Ladson et al. 2013 are in the main table above):
+
+- **Rejected DOI.** The plan listed `10.1016/j.jhydrol.2006.03.006` for Merz et al. (2006). The gate passes that DOI (3 indexes) but it resolves to a different paper, Arp et al., *Surface-water hydrodynamics and regimes of a small mountain stream–lake ecosystem* (J. Hydrol. 2006). It is not cited anywhere. The title search for *Spatio-temporal variability of event runoff coefficients* (Merz) returned `10.1016/j.jhydrol.2006.06.008`, which passes with 3 indexes and matching authors, and is the DOI used.
+- **Claims are kept to what the titles support:** Horton (infiltration in the hydrologic cycle; the infiltration-excess attribution), Dunne & Black (partial-area contributions to storm runoff; the saturation-excess attribution), Green & Ampt and Mein & Larson (infiltration models; the Mein & Larson ponding-time formula for a steady rain), Merz et al. and Blume et al. (event runoff coefficients), Cosby et al. (named only as one of the sources the CAMELS attribute documentation lists for soil_conductivity; read from `camels_attributes_v2.0.pdf`), Thornton et al. (credit for the Daymet forcing). No result from these papers is quoted.
+- **Flagged for human review:** volume, issue and page numbers in the lesson's reference list were written from index records and memory; the gate does not check them (the start pages of the AGU papers agree with their DOI suffixes).
+
+### Wave 3 references without a DOI: owner decision pending
+
+Each is shown on its page in a block marked "Reference without DOI — pending owner decision" (the same treatment as NEH-4 above). None of them can be gate-verified; the owner decides whether they stay.
+
+| Reference | Lesson | Used for |
+|---|---|---|
+| USDA-SCS (1972), *National Engineering Handbook, Section 4: Hydrology* (NEH-4) | watershed-runoff (existing) | curve-number definitions |
+| Allen, R. G., Pereira, L. S., Raes, D. & Smith, M. (1998), FAO Irrigation and Drainage Paper 56 | evapotranspiration-budyko | extraterrestrial radiation, net radiation, Δ and γ expressions |
+| Budyko, M. I. (1974), *Climate and Life*, Academic Press | evapotranspiration-budyko | the two limits and the idea of Budyko space |
+
 ## Failed the gate (removed, together with the claims that depended on them)
 
 | Reference | Gate result | Action |

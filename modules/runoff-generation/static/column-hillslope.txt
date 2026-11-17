@@ -1,0 +1,15 @@
+SYNTHETIC column: Ks = 10.0 mm/h, psi*dtheta = 30.0 mm
+storm            : i = 25.0 mm/h for 2.00 h -> P = 50.00 mm; deficit D = 60.0 mm
+ponding time     : tp = 48.00 min at F = 20.00 mm
+store filled at  : not during this storm
+stored F         : 43.598 mm
+R_IE             : 6.402 mm
+R_SE             : 0.000 mm
+mass balance     : P - (F + R_IE + R_SE) = 0.000000000 mm
+mechanism        : infiltration excess
+
+SYNTHETIC hillslope, 20 columns, storm 30 mm at 8 mm/h (< Ks = 10 mm/h), default start
+deficit ridge -> stream: 80.0 mm -> 4.0 mm
+saturated columns      : 10 of 20  (saturated fraction 0.50)
+mean R_IE              : 0.00 mm   (zero: Ks is never exceeded)
+mean R_SE              : 7.90 mm   (26.3% of the rain)

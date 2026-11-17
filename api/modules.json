@@ -31,7 +31,7 @@
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 4,
+    "courseOrder": 7,
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/baseflow-separation/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/baseflow-separation",
     "author": "Mohammad Galib, Purdue University",
@@ -87,7 +87,7 @@
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 7,
+    "courseOrder": 10,
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/capstone-basin-story/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/capstone-basin-story",
     "author": "Mohammad Galib, Purdue University",
@@ -112,7 +112,7 @@
     "moduleId": "course-certificate",
     "title": "Congratulations: Course Complete",
     "description": "Collect your name, preview a branded certificate of completion, and print or save it as a permanent record of finishing the Introduction to Hydrology course.",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "license": "CC-BY-4.0",
     "topic": "course-completion",
     "level": "intro",
@@ -131,7 +131,7 @@
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 8,
+    "courseOrder": 11,
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/course-certificate/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/course-certificate",
     "author": "Mohammad Galib, Purdue University",
@@ -185,11 +185,119 @@
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 6,
+    "courseOrder": 9,
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/dem-to-twi/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-05-18",
+    "downloadCount": 0,
+    "githubReactions": 0,
+    "discussionUrl": "",
+    "updatedAt": "2026-11-17",
+    "certification": {
+      "metadata_complete": true,
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": [],
+      "scientific_review": null
+    }
+  },
+  {
+    "moduleId": "evapotranspiration-budyko",
+    "title": "The Return Flow: Evapotranspiration and the Budyko Curve",
+    "description": "Compute potential evapotranspiration two ways (Hargreaves\u2013Samani and Priestley\u2013Taylor) from real Daymet weather, reproduce the tabulated CAMELS pet_mean as a check, derive long-term actual evapotranspiration from P \u2212 Q, and place 670 CAMELS basins in Budyko space with a Fu curve whose \u03c9 you fit yourself.",
+    "version": "0.1.0",
+    "license": "CC-BY-4.0",
+    "topic": "evapotranspiration",
+    "level": "intro",
+    "estimatedMinutes": 40,
+    "tags": [
+      "evapotranspiration",
+      "PET",
+      "Hargreaves-Samani",
+      "Priestley-Taylor",
+      "Budyko",
+      "Fu-curve",
+      "aridity",
+      "water-balance",
+      "CAMELS"
+    ],
+    "requires": {
+      "executable": true,
+      "python": [
+        "numpy",
+        "matplotlib"
+      ]
+    },
+    "citation": {
+      "text": "Zhang, L., Hickel, K., Dawes, W. R., Chiew, F. H. S., Western, A. W. & Briggs, P. R. (2004). A rational function approach for estimating mean annual evapotranspiration. Water Resources Research.",
+      "doi": "10.1029/2003WR002710"
+    },
+    "isFeatured": false,
+    "courseId": "intro-hydro-2026",
+    "courseOrder": 3,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/evapotranspiration-budyko/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/evapotranspiration-budyko",
+    "author": "Mohammad Galib, Purdue University",
+    "createdAt": "2026-11-17",
+    "downloadCount": 0,
+    "githubReactions": 0,
+    "discussionUrl": "",
+    "updatedAt": "2026-11-17",
+    "certification": {
+      "metadata_complete": true,
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": [],
+      "scientific_review": null
+    }
+  },
+  {
+    "moduleId": "precipitation-point-to-basin",
+    "title": "Rain and Snow: From Gauge to Basin",
+    "description": "From a rain gauge to a basin average: build the arithmetic, Thiessen and inverse-distance estimates on a synthetic storm field you can inspect completely, then use real CAMELS-US Daymet precipitation for four basins to see how hard, how often and when it falls, test a rain-snow temperature threshold, and reproduce two CAMELS climate attributes with a live Python cell.",
+    "version": "0.1.0",
+    "license": "CC-BY-4.0",
+    "topic": "precipitation",
+    "level": "intro",
+    "estimatedMinutes": 35,
+    "tags": [
+      "precipitation",
+      "areal-precipitation",
+      "Thiessen-polygons",
+      "inverse-distance-weighting",
+      "intensity",
+      "seasonality",
+      "snow-fraction",
+      "CAMELS",
+      "Daymet"
+    ],
+    "requires": {
+      "executable": true,
+      "python": [
+        "numpy",
+        "matplotlib"
+      ]
+    },
+    "citation": {
+      "text": "Newman, A. J. et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA. Hydrology and Earth System Sciences, 19, 209-223.",
+      "doi": "10.5194/hess-19-209-2015"
+    },
+    "isFeatured": false,
+    "courseId": "intro-hydro-2026",
+    "courseOrder": 2,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/precipitation-point-to-basin/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/precipitation-point-to-basin",
+    "author": "Mohammad Galib, Purdue University",
+    "createdAt": "2026-11-17",
     "downloadCount": 0,
     "githubReactions": 0,
     "discussionUrl": "",
@@ -238,7 +346,7 @@
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 3,
+    "courseOrder": 6,
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/reading-a-hydrograph/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/reading-a-hydrograph",
     "author": "Mohammad Galib, Purdue University",
@@ -295,11 +403,63 @@
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 5,
+    "courseOrder": 8,
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/real-streamflow-data/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/real-streamflow-data",
     "author": "Mohammad Galib, Purdue University",
     "createdAt": "2026-06-01",
+    "downloadCount": 0,
+    "githubReactions": 0,
+    "discussionUrl": "",
+    "updatedAt": "2026-11-17",
+    "certification": {
+      "metadata_complete": true,
+      "checks_passed": [
+        "citation",
+        "description",
+        "tags",
+        "estimatedMinutes"
+      ],
+      "checks_failed": [],
+      "scientific_review": null
+    }
+  },
+  {
+    "moduleId": "runoff-generation",
+    "title": "Runoff Generation: Infiltration Excess and Saturation Excess",
+    "description": "Two ways rain becomes runoff. Compute Green\u2013Ampt ponding and infiltration on a SYNTHETIC soil column with a finite storage deficit, map which mechanism wins over rain intensity and deficit, watch the saturated area of a SYNTHETIC hillslope grow with storm depth, then compute event runoff coefficients from real CAMELS-US daily rain and flow for three basins and see why daily data cannot identify the mechanism.",
+    "version": "0.1.0",
+    "license": "CC-BY-4.0",
+    "topic": "runoff-generation",
+    "level": "intro",
+    "estimatedMinutes": 40,
+    "tags": [
+      "runoff-generation",
+      "infiltration-excess",
+      "saturation-excess",
+      "Green-Ampt",
+      "variable-source-area",
+      "event-runoff-coefficient",
+      "CAMELS"
+    ],
+    "requires": {
+      "executable": true,
+      "python": [
+        "numpy",
+        "matplotlib"
+      ]
+    },
+    "citation": {
+      "text": "Dunne, T. & Black, R.D. (1970). Partial area contributions to storm runoff in a small New England watershed. Water Resources Research, 6(5), 1296\u20131311.",
+      "doi": "10.1029/WR006i005p01296"
+    },
+    "isFeatured": false,
+    "courseId": "intro-hydro-2026",
+    "courseOrder": 4,
+    "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/runoff-generation/module.html",
+    "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/runoff-generation",
+    "author": "Mohammad Galib, Purdue University",
+    "createdAt": "2026-11-17",
     "downloadCount": 0,
     "githubReactions": 0,
     "discussionUrl": "",
@@ -401,7 +561,7 @@
     },
     "isFeatured": true,
     "courseId": "intro-hydro-2026",
-    "courseOrder": 2,
+    "courseOrder": 5,
     "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/watershed-runoff/module.html",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/watershed-runoff",
     "author": "Mohammad Galib, Purdue University",

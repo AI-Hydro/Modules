@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rain and Snow: From Gauge to Basin — AI-Hydro Interactive Module</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+<!--@@BEGIN manifest:module@@--><script type="application/vnd.aihydro.module+json">
+{
+  "id": "precipitation-point-to-basin",
+  "title": "Rain and Snow: From Gauge to Basin",
+  "version": "0.1.0",
+  "authors": [
+    {
+      "name": "Mohammad Galib",
+      "affiliation": "Purdue University"
+    }
+  ],
+  "license": "CC-BY-4.0",
+  "topic": "precipitation",
+  "level": "intro",
+  "estimated_minutes": 35,
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "Newman, A. J. et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA. Hydrology and Earth System Sciences, 19, 209-223.",
+    "doi": "10.5194/hess-19-209-2015"
+  },
+  "ai_hydro_preview_min_version": "0.2"
+}
+</script><!--@@END manifest:module@@-->
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:#00A3FF;  --cyan:#00DDFF;  --bright:#00FFFF;
+  --bg:#0a0a15;    --navy:#1a1a2e;  --mid:#0f0f1e;
+  --text:#FFFFFF;  --sub:#7dd3fc;   --muted:#94a3b8;
+  --border:rgba(125,211,252,0.15);
+  --shadow:0 24px 64px rgba(0,0,0,0.55);
+  --rising:#f59e0b;  --peak:#00FFFF;  --falling:#a78bfa;  --base:#34d399;
+}
+
+body {
+  font-family:'Nunito',system-ui,sans-serif; font-size:16px; line-height:1.65;
+  color:var(--sub);
+  background:
+    radial-gradient(ellipse at 10% 0%,   rgba(0,163,255,0.18) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 100%, rgba(0,221,255,0.10) 0%, transparent 40%),
+    var(--bg);
+  min-height:100vh;
+}
+main { max-width:1160px; margin:0 auto; padding:32px 24px 80px; }
+
+h1 { font-family:'Quicksand',sans-serif; font-weight:700; color:var(--text);
+     font-size:clamp(34px,5vw,56px); line-height:1.05; letter-spacing:-0.03em; }
+h2 { font-family:'Poppins',sans-serif; font-weight:600; color:var(--text);
+     font-size:22px; letter-spacing:-0.01em; margin-bottom:10px; }
+h3 { font-family:'Poppins',sans-serif; font-weight:500; color:var(--sub);
+     font-size:13px; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
+p  { color:var(--sub); margin-bottom:12px; }
+strong { color:var(--text); }
+code { font-family:'JetBrains Mono',monospace; font-size:0.88em;
+       background:rgba(0,221,255,0.10); padding:2px 7px; border-radius:5px; color:var(--cyan); }
+a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,255,0.3); }
+a:hover { border-bottom-color:var(--cyan); }
+
+.card {
+  background:rgba(26,26,46,0.82);
+  border:1px solid var(--border); border-radius:24px;
+  padding:26px 28px; box-shadow:var(--shadow);
+  backdrop-filter:blur(4px);
+}
+.card.glow { box-shadow:var(--shadow),0 0 0 1px rgba(0,221,255,0.18),inset 0 0 40px rgba(0,163,255,0.04); }
+.wide  { margin:20px 0; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:20px 0; }
+@media(max-width:860px){ .grid2{ grid-template-columns:1fr; } }
+
+/* ── Hero ────────────────────────────────────────────── */
+.hero {
+  border:1px solid rgba(0,221,255,0.25);
+  border-radius:28px; padding:36px 38px; margin-bottom:22px;
+  background:linear-gradient(135deg,rgba(0,163,255,0.09) 0%,rgba(0,221,255,0.04) 100%);
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 0% 50%,rgba(0,221,255,0.09),transparent 60%);
+  pointer-events:none;
+}
+.brand-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; position:relative; z-index:1; }
+.brand-logo { width:42px; height:42px; flex-shrink:0; }
+@keyframes aihydro-pulse {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 8px rgba(0,163,255,0.40)); }
+  50%      { transform: scale(1.04); filter: drop-shadow(0 0 14px rgba(0,221,255,0.65)); }
+}
+.brand-logo { animation: aihydro-pulse 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .brand-logo { animation: none; } }
+.brand-name {
+  font-family:'Quicksand',sans-serif; font-weight:700; font-size:22px; letter-spacing:0.02em;
+  background:linear-gradient(135deg,#00A3FF,#00FFFF);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.brand-tag {
+  font-family:'Poppins',sans-serif; font-size:11px; font-weight:600;
+  color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;
+  padding-left:14px; border-left:1px solid var(--border);
+}
+.gradient-text { background:linear-gradient(135deg,#00A3FF,#00FFFF); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero-sub { font-size:17px; color:var(--sub); max-width:640px; margin:12px 0 18px; position:relative; z-index:1; }
+.instruction {
+  display:inline-flex; gap:10px; align-items:flex-start;
+  background:rgba(0,221,255,0.07); border:1px solid rgba(0,221,255,0.20);
+  border-radius:14px; padding:12px 16px; color:var(--muted); font-size:14px; position:relative; z-index:1;
+}
+.instruction::before { content:'💡'; flex-shrink:0; }
+
+/* ── Workflow strip ──────────────────────────────────── */
+.workflow-strip {
+  display:grid; grid-template-columns:repeat(7,1fr); gap:0;
+  margin:20px 0; position:relative;
+}
+.workflow-strip::before {
+  content:''; position:absolute; top:28px;
+  left:calc(100%/14); right:calc(100%/14); height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan)); z-index:0;
+}
+.wf-node {
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  position:relative; z-index:1; padding:0 4px;
+  cursor:pointer;
+}
+.wf-icon {
+  width:56px; height:56px; border-radius:50%;
+  border:2px solid var(--border); background:var(--navy);
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+  box-shadow:0 0 0 4px rgba(0,163,255,0.08);
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.wf-node:hover .wf-icon { transform:scale(1.12); box-shadow:0 0 20px rgba(0,221,255,0.35); }
+.wf-label { font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:var(--sub); text-align:center; letter-spacing:0.03em; }
+@media(max-width:700px){ .workflow-strip{ grid-template-columns:repeat(4,1fr); gap:16px; }
+  .workflow-strip::before{ display:none; } }
+
+/* ── Callouts ────────────────────────────────────────── */
+.callout {
+  border-left:3px solid var(--cyan); background:rgba(0,221,255,0.06);
+  padding:13px 16px; border-radius:0 12px 12px 0; margin:14px 0; font-size:15px;
+}
+.callout.agent { border-color:var(--blue); background:rgba(0,163,255,0.07); }
+.callout.tip   { border-color:#34d399;     background:rgba(52,211,153,0.07); }
+.callout-label { font-family:'Poppins',sans-serif; font-size:11px; font-weight:700;
+                 text-transform:uppercase; letter-spacing:0.07em; display:block; margin-bottom:5px; color:var(--cyan); }
+.callout.agent .callout-label { color:var(--blue); }
+.callout.tip   .callout-label { color:#34d399; }
+
+/* ── Plot ────────────────────────────────────────────── */
+.plot-wrap { background:var(--mid); border:1px solid var(--border); border-radius:18px; padding:16px; position:relative; }
+.plot-wrap svg { display:block; width:100%; height:auto; }
+.legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:10px; font-size:12px; }
+.legend-item { display:flex; align-items:center; gap:6px; color:var(--muted); }
+.legend-swatch { width:14px; height:3px; border-radius:2px; }
+
+/* ── Parameter panel ─────────────────────────────────── */
+.param-block { margin:14px 0; }
+.param-block label {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:'Poppins',sans-serif; font-size:12px; font-weight:600;
+  color:var(--sub); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;
+}
+.param-block label span { font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--cyan); font-weight:700; text-transform:none; }
+input[type=range] { width:100%; accent-color:var(--cyan); height:4px; border-radius:4px; cursor:pointer; }
+select { font-family:'Poppins',sans-serif; font-size:13px; background:var(--navy); color:var(--sub);
+  border:1px solid var(--border); border-radius:8px; padding:6px 10px; cursor:pointer; }
+select:focus { outline:1px solid var(--cyan); }
+
+/* ── Tangle (draggable number in prose, à la Bret Victor) ─ */
+.tangle {
+  display:inline-block; cursor:ew-resize;
+  font-family:'JetBrains Mono',monospace; font-weight:700;
+  color:var(--cyan); padding:0 4px; border-radius:4px;
+  border-bottom:1.5px dashed rgba(0,221,255,0.45);
+  background:rgba(0,221,255,0.06);
+  user-select:none; transition:background 0.15s,border-color 0.15s;
+}
+.tangle:hover { background:rgba(0,221,255,0.14); border-bottom-color:var(--cyan); }
+.tangle.dragging { background:rgba(0,221,255,0.22); border-bottom-color:var(--bright); color:var(--bright); }
+.tangle::after { content:'⇔'; font-size:0.7em; opacity:0.5; margin-left:3px; }
+
+/* ── Toggle ──────────────────────────────────────────── */
+.toggle-row { display:flex; align-items:center; gap:14px; margin:12px 0; }
+.toggle-btn {
+  font-family:'Poppins',sans-serif; font-size:12px; font-weight:600;
+  background:rgba(15,15,30,0.6); color:var(--sub);
+  border:1px solid var(--border); border-radius:999px; padding:6px 14px; cursor:pointer;
+  transition:border-color 0.15s,background 0.15s,color 0.15s;
+}
+.toggle-btn.on { border-color:var(--cyan); background:rgba(0,221,255,0.12); color:var(--cyan); }
+
+.run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.04em; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
+.run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
+
+/* ── References ──────────────────────────────────────── */
+.refs ol { counter-reset:r; padding:0; list-style:none; }
+.refs li { counter-increment:r; padding-left:36px; position:relative; margin-bottom:12px; font-size:14px; color:var(--sub); line-height:1.55; }
+.refs li::before { content:counter(r); position:absolute; left:0; top:0; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center; }
+.refs em { color:var(--text); font-style:italic; }
+
+/* ── Provenance ──────────────────────────────────────── */
+.provenance { border-top:1px solid var(--border); margin-top:32px; padding:22px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:16px 32px; }
+.prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
+.prov-item dd { font-size:13px; color:var(--sub); }
+@media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
+/* ── precipitation lesson additions ──────────────────── */
+.badge-syn,.badge-real{display:inline-block;font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-radius:999px;padding:2px 10px;margin-left:8px;vertical-align:middle;color:#0a0a15;}
+.badge-syn{background:#fbbf24;}
+.badge-real{background:#34d399;}
+.toggle-btn[aria-pressed="true"]::before{content:'● ';}
+.toggle-btn[aria-pressed="false"]::before{content:'○ ';}
+.toggle-btn{min-height:32px;}
+.field-wrap{position:relative;max-width:440px;margin:0 auto;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--mid);}
+.field-wrap canvas{display:block;width:100%;height:auto;}
+.field-wrap svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.cbar{flex:0 0 140px;height:10px;border-radius:5px;border:1px solid var(--border);}
+fieldset.radio-set{border:1px solid var(--border);border-radius:12px;padding:8px 14px;margin:12px 0;}
+fieldset.radio-set legend{font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--sub);padding:0 6px;}
+.radio-opt{display:flex;align-items:center;gap:8px;padding:4px 0;color:var(--sub);cursor:pointer;font-size:14px;}
+.radio-opt input{accent-color:var(--cyan);width:16px;height:16px;}
+#arealReadout,#snowReadout{white-space:pre-line;}
+.table-wrap{overflow-x:auto;}
+table.data{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--sub);}
+table.data caption{text-align:left;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:var(--muted);padding:4px 0 8px;letter-spacing:0.03em;}
+table.data th,table.data td{padding:6px 10px;border-bottom:1px solid var(--border);text-align:right;}
+table.data th:first-child,table.data td:first-child{text-align:left;}
+table.data thead th{font-family:'Poppins',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:700;}
+table.data tbody th{font-weight:600;color:var(--text);}
+table.data tr.sel,table.data tr.best{background:rgba(0,221,255,0.08);}
+table.data tr.sum th,table.data tr.sum td{border-top:2px solid var(--border);color:var(--text);}
+.basin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0;}
+.basin-card{font:inherit;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;background:rgba(15,15,30,0.7);color:var(--sub);border:1px solid var(--border);border-radius:16px;padding:14px 16px;transition:border-color 0.15s,background 0.15s;}
+.basin-card:hover{border-color:rgba(0,221,255,0.45);}
+.basin-card[aria-pressed="true"]{border:2px solid var(--cyan);background:rgba(0,221,255,0.10);padding:13px 15px;}
+.basin-card[aria-pressed="true"] .bc-name::before{content:'✓ ';color:var(--cyan);}
+.bc-name{font-family:'Poppins',sans-serif;font-weight:600;color:var(--text);font-size:14px;}
+.bc-facts{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);}
+/* code cells (the AI-Hydro preview supplies its own; these keep the page readable on its own) */
+.aihydro-static-note{font-family:'Poppins',sans-serif;font-size:11px;color:var(--muted);margin-bottom:8px;}
+.aihydro-static-figure img{max-width:100%;height:auto;border-radius:8px;display:block;margin-top:10px;}
+.aihydro-cell{border:1px solid rgba(0,221,255,0.22);border-radius:18px;background:rgba(2,6,23,0.55);padding:18px 20px;margin:16px 0;}
+.aihydro-cell-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.aihydro-cell-lang{font-family:'Poppins',sans-serif;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;background:rgba(0,221,255,0.12);color:var(--cyan);padding:3px 10px;border-radius:6px;}
+.aihydro-cell-desc{font-size:13px;color:var(--muted);flex:1;}
+.aihydro-source{font-family:'JetBrains Mono',monospace;font-size:12.5px;white-space:pre;overflow:auto;background:rgba(0,0,0,0.45);border-radius:10px;padding:14px;margin-bottom:12px;color:var(--text);border:1px solid rgba(125,211,252,0.08);max-height:380px;}
+.aihydro-output{font-family:'JetBrains Mono',monospace;font-size:13px;white-space:pre-wrap;min-height:2em;background:rgba(0,0,0,0.30);border-radius:10px;padding:12px;color:var(--sub);overflow:auto;max-height:640px;}
+.aihydro-stdout{white-space:pre-wrap;margin:0;font:inherit;}
+
+.plot-wrap{overflow-x:auto;}
+#exceedSvg,#monthSvg,#snowSvg{min-width:640px;}/*@@BEGIN css:shared/a11y.css@@*/
+/* Shared accessibility styles (inlined by scripts/build_modules.py). */
+.hydro-sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline:3px solid #00FFFF; outline-offset:2px; border-radius:6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+/*@@END css:shared/a11y.css@@*/
+/*@@BEGIN css:shared/quiz.css@@*/
+/* HydroQuiz styles (inlined by scripts/build_modules.py). Colours fall back to the AI-Hydro palette. */
+.hq { margin:0; }
+.hq-list { list-style:none; padding:0; margin:0; }
+.hq-item { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border,rgba(125,211,252,0.15)); }
+.hq-item:last-child { border-bottom:none; }
+.hq-fieldset { border:0; min-width:0; }
+.hq-prompt { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text,#fff); font-size:16px; line-height:1.5; margin-bottom:12px; padding:0; }
+.hq-options { display:flex; flex-direction:column; gap:8px; }
+.hq-opt { display:flex; align-items:flex-start; gap:10px; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border,rgba(125,211,252,0.15)); background:rgba(15,15,30,0.7); color:var(--sub,#7dd3fc); cursor:pointer; }
+.hq-opt:hover { border-color:var(--cyan,#00DDFF); color:var(--text,#fff); }
+.hq-opt input { margin-top:4px; accent-color:var(--cyan,#00DDFF); flex:0 0 auto; }
+.hq-opt:has(input:checked) { border-color:var(--cyan,#00DDFF); background:rgba(0,221,255,0.10); color:var(--text,#fff); }
+.hq-numeric { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.hq-numlabel { font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--sub,#7dd3fc); }
+.hq-input { width:10em; font-family:'JetBrains Mono',monospace; font-size:15px; padding:9px 12px; border-radius:10px; border:1px solid var(--border,rgba(125,211,252,0.35)); background:rgba(2,6,23,0.7); color:var(--text,#fff); }
+.hq-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.hq-check, .hq-reveal { font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; border-radius:999px; padding:9px 22px; cursor:pointer; }
+.hq-check { background:linear-gradient(135deg,#00A3FF,#00DDFF); color:#0a0a15; border:none; }
+.hq-reveal { background:transparent; color:var(--cyan,#00DDFF); border:1px solid var(--cyan,#00DDFF); }
+.hq-feedback { margin-top:10px; font-size:14px; line-height:1.55; min-height:1.2em; color:var(--muted,#94a3b8); }
+.hq-item[data-state="correct"] .hq-feedback { color:#86efac; border-left:4px solid #34d399; padding-left:12px; }
+.hq-item[data-state="incorrect"] .hq-feedback { color:#fca5a5; border-left:4px dashed #f87171; padding-left:12px; }
+.hq-item[data-state="revealed"] .hq-feedback { color:#e2e8f0; border-left:4px double #94a3b8; padding-left:12px; }
+.hq-summary { margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--muted,#94a3b8); }
+.hq-summary[data-complete="1"] { color:#86efac; }
+[hidden] { display:none !important; }
+/*@@END css:shared/quiz.css@@*/
+</style>
+</head>
+<body>
+<main>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  HERO                                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="brand-row">
+        <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI-Hydro logo">
+      <defs>
+        <linearGradient id="aihydroG" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"  stop-color="#00A3FF"/>
+          <stop offset="100%" stop-color="#00DDFF"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroG)"/>
+      <ellipse cx="20" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
+      <ellipse cx="80" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
+      <ellipse cx="40" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
+      <ellipse cx="60" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
+      <path d="M 38 62 Q 50 68 62 62" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="14" r="4" fill="url(#aihydroG)"/>
+    </svg>
+    <span class="brand-name">AI-Hydro</span>
+    <span class="brand-tag">Interactive Module · Precipitation</span>
+  </div>
+
+  <h1>Rain and Snow: <span class="gradient-text">From Gauge to Basin</span></h1>
+  <p class="hero-sub">
+    A rain gauge measures a point; a basin is an area. Turn six <strong>SYNTHETIC</strong> gauges into a basin average three ways,
+    then use real Daymet precipitation for four CAMELS-US basins to see how hard, how often and when it falls, and where rain turns to snow.
+  </p>
+  <div class="instruction">
+    Switch gauges on and off and slide the weighting power · Pick a basin card to change the real data · Slide the rain/snow threshold · Click the tour nodes to jump
+  </div>
+  <div class="callout tip" style="margin-top:14px;">
+    <span class="callout-label">Follow the arrow — precipitation</span>
+    In <strong>Module 1</strong> you wrote the budget P = ET + R + ΔS. This lesson stays on the <em>P</em> term: how it is measured,
+    how a basin average is built from a handful of gauges, and what real records say about intensity, season and phase.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  WORKFLOW STRIP                                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="wide card" style="padding:22px 24px;">
+  <h3 style="margin-bottom:16px;">The seven-step tour — click to jump</h3>
+  <div class="workflow-strip">
+    <div class="wf-node" data-scroll="sec-gauge" title="A gauge is a point">
+      <div class="wf-icon" aria-hidden="true">📍</div><span class="wf-label">Gauge</span>
+    </div>
+    <div class="wf-node" data-scroll="sec-areal" title="From points to an area">
+      <div class="wf-icon" aria-hidden="true">🗺️</div><span class="wf-label">Basin mean</span>
+    </div>
+    <div class="wf-node" data-scroll="sec-storms" title="How hard and how often">
+      <div class="wf-icon" aria-hidden="true">⛈️</div><span class="wf-label">Intensity</span>
+    </div>
+    <div class="wf-node" data-scroll="sec-seasons" title="When it falls">
+      <div class="wf-icon" aria-hidden="true">📅</div><span class="wf-label">Seasons</span>
+    </div>
+    <div class="wf-node" data-scroll="sec-snow" title="Rain or snow">
+      <div class="wf-icon" aria-hidden="true">❄️</div><span class="wf-label">Rain or snow</span>
+    </div>
+    <div class="wf-node" data-scroll="sec-check" title="Reproduction check and Python cell">
+      <div class="wf-icon" aria-hidden="true">🐍</div><span class="wf-label">Reproduce</span>
+    </div>
+    <div class="wf-node" data-scroll="sec-quiz" title="Checkpoint">
+      <div class="wf-icon" aria-hidden="true">✓</div><span class="wf-label">Check</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  1 · A GAUGE IS A POINT                                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-gauge" class="wide card glow" data-aihydro-editable="prose">
+  <h2>1 · A gauge is a point</h2>
+  <p>
+    A rain gauge is a funnel above a collecting tube. It reports the depth that fell on the funnel's opening, and nothing else.
+    A hydrologist wants the depth over a whole basin. This lesson is about that jump from a point to an area, and then about what the area average tells you.
+  </p>
+  <div class="plot-wrap">
+    <svg viewBox="0 0 640 170" role="img" aria-label="Left: a rain gauge, a funnel above a tube, labelled one point. Right: a basin outline with four gauge dots, labelled one area. A dashed arrow asks how the points stand for the area.">
+      <g stroke="#7dd3fc" stroke-width="2" fill="rgba(0,163,255,0.18)" stroke-linejoin="round">
+        <path d="M70,30 L130,30 L112,70 L88,70 Z"/><rect x="88" y="70" width="24" height="60"/>
+      </g>
+      <text x="100" y="152" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#FFFFFF" font-weight="600">one point: a funnel</text>
+      <path d="M190,85 H395" stroke="#00DDFF" stroke-width="2.5" stroke-dasharray="7 5" fill="none"/><path d="M400,85 l-12,-7 v14 z" fill="#00DDFF"/>
+      <text x="295" y="72" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#FFFFFF" font-weight="600">how do points stand for the area?</text>
+      <path d="M440,80 L470,26 L530,12 L590,24 L618,64 L610,120 L560,150 L490,142 L452,118 Z" fill="rgba(0,163,255,0.14)" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="6 4"/>
+      <g fill="#FFFFFF" stroke="#0a0a15" stroke-width="1.5"><circle cx="500" cy="52" r="6"/><circle cx="574" cy="50" r="6"/><circle cx="540" cy="98" r="6"/><circle cx="484" cy="112" r="6"/></g>
+      <text x="530" y="166" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#FFFFFF" font-weight="600">one area</text>
+    </svg>
+  </div>
+  <p id="gaugeRatio" style="margin-top:14px;" aria-live="polite">—</p>
+  <div class="callout">
+    <span class="callout-label">Why this matters</span>
+    Every basin-average precipitation is an <em>inference</em> from points (or from radar and satellite products, which have their own limits).
+    How good it is depends on where the gauges sit relative to the rain; the next section tests that on a field you can inspect completely.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  2 · POINTS TO AREA (SYNTHETIC)                             -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-areal" class="wide card" data-aihydro-editable="prose">
+  <h2>2 · From points to an area <span class="badge-syn">SYNTHETIC</span></h2>
+  <p>
+    <strong>Everything in this section is made up.</strong> A 60 × 60 grid of 1 km cells holds a storm total: 5 mm of background, an eastward orographic gradient of 0.30 mm per km,
+    and one Gaussian storm cell (30 mm at its peak, σ = 4.5 km) over a made-up basin. Six gauges, G1 to G6, sit on fixed cells. Because we built the field,
+    we know the <em>true</em> basin mean; a real basin never offers that answer key, which is why §3 to §6 use records.
+  </p>
+  <div class="grid2" style="margin:14px 0 0;">
+    <div>
+      <h3>Three ways to average the gauges</h3>
+      <p style="font-size:14px;">
+        <strong>Arithmetic mean</strong>: add the readings and divide by the number of gauges, P̄ = (1/n) Σ Pᵢ. It ignores where the gauges are.<br>
+        <strong>Thiessen polygons</strong> (Thiessen, 1911) <span style="color:var(--muted);">[1]</span>: every cell belongs to its nearest gauge, and each gauge's <em>weight</em> is the share of the basin area that is closest to it,
+        P̄ = Σ wᵢ Pᵢ with wᵢ = Aᵢ / A.<br>
+        <strong>Inverse-distance weighting</strong> (Shepard, 1968) <span style="color:var(--muted);">[2]</span>: the value in every cell is a weighted mean of the gauges, with weights proportional to 1 / dᵖ, and the basin mean is the average of all the cell values.
+        In the limit of a very large power p the nearest gauge takes everything (the Thiessen map); as p shrinks towards 0 every gauge gets the same weight (the arithmetic mean).
+      </p>
+      <h3 style="margin-top:16px;">Gauges in use (toggle buttons)</h3>
+      <div class="toggle-row" id="gaugeToggles" role="group" aria-label="Gauges used for the estimates; at least one stays on" style="flex-wrap:wrap;">
+        <button id="gb-G1" class="toggle-btn on" type="button" aria-pressed="true">G1</button>
+        <button id="gb-G2" class="toggle-btn on" type="button" aria-pressed="true">G2</button>
+        <button id="gb-G3" class="toggle-btn on" type="button" aria-pressed="true">G3</button>
+        <button id="gb-G4" class="toggle-btn on" type="button" aria-pressed="true">G4</button>
+        <button id="gb-G5" class="toggle-btn on" type="button" aria-pressed="true">G5</button>
+        <button id="gb-G6" class="toggle-btn on" type="button" aria-pressed="true">G6</button>
+      </div>
+      <p style="font-size:13px;color:var(--muted);">
+        IDW power, drag or use the arrow keys:
+        <span class="tangle" id="t-idwp" data-label="Inverse-distance weighting power p" data-min="1" data-max="4" data-step="0.5" data-value="2" data-format="f1"></span>
+      </p>
+      <div class="param-block">
+        <label for="idwSlider">IDW power, p <span id="idwVal">2.0</span></label>
+        <input id="idwSlider" type="range" min="1" max="4" step="0.5" value="2">
+      </div>
+      <fieldset class="radio-set">
+        <legend>Map shows</legend>
+        <label class="radio-opt"><input type="radio" name="mapMode" id="mapTrue" value="true"><span>The true field</span></label>
+        <label class="radio-opt"><input type="radio" name="mapMode" id="mapThiessen" value="thiessen" checked><span>Thiessen regions</span></label>
+        <label class="radio-opt"><input type="radio" name="mapMode" id="mapIdw" value="idw"><span>The IDW surface</span></label>
+      </fieldset>
+    </div>
+    <div>
+      <div class="field-wrap">
+        <canvas id="fieldCanvas" width="300" height="300" role="img" aria-label="Map of the SYNTHETIC 60 by 60 km field with the basin outline and six gauge sites. The table below gives every gauge reading, weight and estimate in text."></canvas>
+        <svg id="fieldOverlay" viewBox="0 0 60 60" aria-hidden="true" focusable="false"></svg>
+      </div>
+      <div class="legend" style="align-items:center;">
+        <span id="legLo" style="font-family:'JetBrains Mono',monospace;color:var(--muted);">—</span>
+        <span class="cbar" id="cbar"></span>
+        <span id="legHi" style="font-family:'JetBrains Mono',monospace;color:var(--muted);">—</span>
+        <span style="color:var(--muted);">mm per storm · white lines separate Thiessen regions</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:16px;">
+    <span class="callout-label">Live estimates</span>
+    <div id="arealReadout" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);line-height:1.7;">—</div>
+  </div>
+
+  <div class="table-wrap" tabindex="0" style="margin-top:12px;">
+    <table class="data" id="arealTable">
+      <caption>Gauge readings and Thiessen weights for the gauges that are on</caption>
+      <thead><tr><th scope="col">Gauge</th><th scope="col">Reading (mm)</th><th scope="col">Thiessen weight</th><th scope="col">Weight × reading (mm)</th></tr></thead>
+      <tbody id="arealRows"></tbody>
+    </table>
+  </div>
+  <div class="table-wrap" tabindex="0" style="margin-top:12px;">
+    <table class="data">
+      <caption>Basin-mean estimates against the true mean</caption>
+      <thead><tr><th scope="col">Method</th><th scope="col">Estimate (mm)</th><th scope="col">Estimate − true mean (mm)</th></tr></thead>
+      <tbody id="methodRows"></tbody>
+    </table>
+  </div>
+  <p id="arealNote" style="margin-top:12px;font-size:14px;" aria-live="polite">—</p>
+
+  <div class="callout agent">
+    <span class="callout-label">AI-Hydro agent action</span>
+    For a real basin, ask: <em>"Delineate the watershed for a USGS gauge of my choice, then fetch its daily forcing for a five-year period."</em>
+    The agent runs <code>delineate_watershed</code> and <code>fetch_forcing_data</code>, which return basin-averaged daily precipitation.
+  </div>
+
+  <div class="aihydro-cell" data-aihydro-cell-id="areal-precip" data-language="python">
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">python</span>
+      <span class="aihydro-cell-desc">SYNTHETIC field: true mean, arithmetic mean, Thiessen weights and IDW for the gauges that are on</span>
+      <button class="run-btn aihydro-run" type="button">Run ▶</button>
+    </div>
+    <pre class="aihydro-source" id="arealSource" tabindex="0"></pre>
+    <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:areal-precip@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">SYNTHETIC field: 60 x 60 cells of 1 km; basin = 1942 cells (1942 km2)
+Gauges used    : G1, G2, G3, G4, G5, G6 (6 of 6);  IDW power p = 2
+True mean      : 16.35 mm   (known only because the field is synthetic)
+Arithmetic     : 17.89 mm   difference from true +1.53 mm
+Thiessen       : 18.86 mm   difference from true +2.51 mm
+IDW            : 18.34 mm   difference from true +1.99 mm
+  G1: reading  19.0 mm   Thiessen weight 0.117
+  G2: reading  20.2 mm   Thiessen weight 0.111
+  G3: reading  18.4 mm   Thiessen weight 0.182
+  G4: reading  30.5 mm   Thiessen weight 0.257
+  G5: reading  10.6 mm   Thiessen weight 0.167
+  G6: reading   8.8 mm   Thiessen weight 0.166</pre><div class="aihydro-static-figure"><img alt="One map of a synthetic 60 by 60 kilometre storm field over a made-up nine-sided basin, drawn in viridis colours: low values (about 7 millimetres, purple) on the west side rising eastward, with one bright storm cell of about 45 millimetres near the centre. Six gauge sites G1 to G6 are white dots, each with a white label giving its Thiessen weight, and dashed white lines mark the boundaries of the six Thiessen regions. Weights: G4 is the largest at 0.26, then G3 0.18, G5 0.17, G6 0.17, G1 0.12 and G2 0.11." src="data:image/png;base64,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"></div></div><!--@@END static:areal-precip@@--></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  3 · HOW HARD, HOW OFTEN (REAL)                             -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-storms" class="wide card" data-aihydro-editable="prose">
+  <h2>3 · How hard, how often <span class="badge-real">REAL</span></h2>
+  <p>
+    Now real basin-mean daily precipitation: Daymet values averaged over each CAMELS-US basin <span style="color:var(--muted);">[3,4,5]</span>, for water years 1996 to 2000
+    (1 October 1995 to 30 September 2000, 1827 days). Pick a basin; §3 to §6 follow your choice. Three definitions are used throughout:
+    a <strong>wet day</strong> has at least 1 mm; a <strong>high-precipitation day</strong> has at least five times the record's mean daily precipitation;
+    a <strong>dry spell</strong> is a run of consecutive days each under 1 mm.
+  </p>
+  <div class="basin-grid" id="basinCards" role="group" aria-label="Choose a basin; the real-data sections follow this choice">
+    <button class="basin-card" id="bc-01013500" type="button" aria-pressed="false" data-gauge="01013500"><span class="bc-name" id="bcn-01013500">—</span><span class="bc-facts" id="bcf-01013500">—</span></button>
+    <button class="basin-card" id="bc-02472000" type="button" aria-pressed="true" data-gauge="02472000"><span class="bc-name" id="bcn-02472000">—</span><span class="bc-facts" id="bcf-02472000">—</span></button>
+    <button class="basin-card" id="bc-09484000" type="button" aria-pressed="false" data-gauge="09484000"><span class="bc-name" id="bcn-09484000">—</span><span class="bc-facts" id="bcf-09484000">—</span></button>
+    <button class="basin-card" id="bc-14305500" type="button" aria-pressed="false" data-gauge="14305500"><span class="bc-name" id="bcn-14305500">—</span><span class="bc-facts" id="bcf-14305500">—</span></button>
+  </div>
+
+  <h3 style="margin-top:20px;">Exceedance of daily precipitation, wet days only</h3>
+  <p style="font-size:14px;">
+    Each curve ranks one basin's wet days from largest to smallest and plots the depth against the share of <em>all</em> days (wet and dry) that reach it (rank / (n + 1)). Both axes are logarithmic.
+    The selected basin is the thick solid line; the horizontal lines are the 1 mm wet-day threshold and the selected basin's high-precipitation threshold.
+  </p>
+  <div class="plot-wrap" tabindex="0">
+    <svg id="exceedSvg" viewBox="0 0 720 330" role="img" aria-label="Exceedance curves of daily precipitation for four basins."></svg>
+  </div>
+  <div class="table-wrap" tabindex="0" style="margin-top:12px;">
+    <table class="data" id="statsTable">
+      <caption>Daily precipitation statistics, water years 1996–2000</caption>
+      <thead><tr><th scope="col">Basin</th><th scope="col">Mean P (mm/day)</th><th scope="col">Wet days (≥ 1 mm)</th><th scope="col">High-P days per year</th><th scope="col">Longest dry spell (days)</th><th scope="col">Largest day (mm, date)</th></tr></thead>
+      <tbody id="statsRows"></tbody>
+    </table>
+  </div>
+  <p id="stormNote" style="margin-top:12px;font-size:14px;" aria-live="polite">—</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  4 · WHEN IT FALLS                                          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-seasons" class="wide card" data-aihydro-editable="prose">
+  <h2>4 · When it falls <span class="badge-real">REAL</span></h2>
+  <p>
+    Monthly totals for 20 water years (October 1989 to September 2009, 240 months), averaged by calendar month for <strong id="seasonBasin">—</strong>.
+    Bars for December to February (<strong>DJF</strong>) are hatched with diagonal lines and bars for June to August (<strong>JJA</strong>) are dotted, so the seasons do not depend on colour; each bar carries its value.
+  </p>
+  <div class="plot-wrap" tabindex="0">
+    <svg id="monthSvg" viewBox="0 0 720 300" role="img" aria-label="Mean monthly precipitation for the selected basin."></svg>
+  </div>
+  <div class="table-wrap" tabindex="0" style="margin-top:12px;">
+    <table class="data" id="seasonTable">
+      <caption>Share of the 20-year precipitation total that fell in each season</caption>
+      <thead><tr><th scope="col">Basin</th><th scope="col">Mean annual P (mm)</th><th scope="col">DJF share</th><th scope="col">JJA share</th></tr></thead>
+      <tbody id="seasonRows"></tbody>
+    </table>
+  </div>
+  <p id="seasonNote" style="margin-top:12px;font-size:14px;" aria-live="polite">—</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  5 · RAIN OR SNOW                                           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-snow" class="wide card" data-aihydro-editable="prose">
+  <h2>5 · Rain or snow? <span class="badge-real">REAL</span></h2>
+  <p>
+    A gauge total does not say whether the water arrived as rain or snow, but a thermometer helps. The simplest rule treats a day's precipitation as snow when the day's mean temperature,
+    (T<sub>max</sub> + T<sub>min</sub>) / 2 from Daymet, is below a threshold. The threshold is a modelling choice, not a constant of nature: Jennings et al. (2018) <span style="color:var(--muted);">[6]</span> map how the rain–snow temperature threshold varies across the Northern Hemisphere.
+    Move it for <strong id="snowBasin">—</strong> and watch the snow fraction of the five-year precipitation depth respond.
+  </p>
+  <p style="font-size:13px;color:var(--muted);">
+    Snow threshold, drag or use the arrow keys:
+    <span class="tangle" id="t-snowT" data-label="Rain-snow temperature threshold in degrees Celsius" data-min="-2" data-max="3" data-step="0.5" data-value="0" data-format="f1" data-suffix=" °C"></span>
+  </p>
+  <div class="param-block" style="max-width:480px;">
+    <label for="snowSlider">Threshold <span id="snowVal">0.0 °C</span></label>
+    <input id="snowSlider" type="range" min="-2" max="3" step="0.5" value="0">
+  </div>
+  <div class="plot-wrap" tabindex="0">
+    <svg id="snowSvg" viewBox="0 0 720 280" role="img" aria-label="Snow fraction of the selected basin against the threshold temperature."></svg>
+  </div>
+  <div class="callout" style="margin-top:14px;">
+    <span class="callout-label">Live readout</span>
+    <div id="snowReadout" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);line-height:1.7;">—</div>
+  </div>
+  <div class="table-wrap" tabindex="0" style="margin-top:12px;">
+    <table class="data">
+      <caption>Snow fraction at the chosen threshold, all four basins</caption>
+      <thead><tr><th scope="col">Basin</th><th scope="col">Snow fraction, WY1996–2000</th><th scope="col">CAMELS frac_snow (reference, 1989–2009)</th></tr></thead>
+      <tbody id="snowRows"></tbody>
+    </table>
+  </div>
+  <p style="font-size:14px;margin-top:12px;">
+    <strong>Period note.</strong> The CAMELS <code>frac_snow</code> value is listed beside the computation as a reference. It covers 1989-10-01 to 2009-09-30, twenty water years, whereas the snow fractions here use the five water years 1996 to 2000, so the two need not match even at the same threshold.
+    A daily mean temperature also cannot see a day that starts cold and ends warm.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  6 · REPRODUCTION CHECK + PYTHON                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-check" class="wide card glow" data-aihydro-editable="prose">
+  <h2>6 · Reproduction check, then the Python cell <span class="badge-real">REAL</span></h2>
+  <p>
+    Two CAMELS attributes can be recomputed from the bundled records. This is a reproduction check: when the inputs, period and rule match, the number comes back; when they do not, the difference is the period or the rule.
+  </p>
+  <div class="table-wrap" tabindex="0">
+    <table class="data">
+      <caption>Mean daily precipitation, recomputed from 20 water years of monthly totals against CAMELS p_mean</caption>
+      <thead><tr><th scope="col">Basin</th><th scope="col">Recomputed (mm/day)</th><th scope="col">CAMELS p_mean (mm/day)</th><th scope="col">|difference|</th></tr></thead>
+      <tbody id="pmeanRows"></tbody>
+    </table>
+  </div>
+  <div class="table-wrap" tabindex="0" style="margin-top:12px;">
+    <table class="data">
+      <caption>High-precipitation days per year over five water years against CAMELS high_prec_freq (twenty water years)</caption>
+      <thead><tr><th scope="col">Basin</th><th scope="col">Recomputed, 5 years (days/yr)</th><th scope="col">Single water years (days)</th><th scope="col">CAMELS high_prec_freq (days/yr)</th><th scope="col">|difference|</th></tr></thead>
+      <tbody id="highRows"></tbody>
+    </table>
+  </div>
+  <p id="reproNote" style="margin-top:12px;font-size:14px;" aria-live="polite">—</p>
+  <p>
+    The cell below runs the same calculations in Python for the basin you selected in §3, with the snow threshold from §5. <strong>Its source regenerates each time you change the basin or the threshold</strong>, and the printed numbers are the ones above.
+  </p>
+  <div class="aihydro-cell" data-aihydro-cell-id="precip-climate" data-language="python">
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">python</span>
+      <span class="aihydro-cell-desc">Real CAMELS-US basin precipitation: reproduction check, wet days, high-P days, dry spell, snow fraction, seasons</span>
+      <button class="run-btn aihydro-run" type="button">Run ▶</button>
+    </div>
+    <pre class="aihydro-source" id="climSource" tabindex="0"></pre>
+    <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:precip-climate@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">Basin           : 02472000  Leaf River near Collins, MS
+Source file     : basin_dataset_public_v1p2/basin_mean_forcing/daymet/03/02472000_lump_cida_forcing_leap.txt  (sha256 6f16ae5fd04addd2...)
+Daily record    : 1995-10-01 + 1827 days (water years 1996-2000; Daymet basin mean)
+Mean P, 20 WY   : 4.1584 mm/day   CAMELS p_mean 4.1584   |difference| 0.000000
+Wet days (&gt;=1mm): 26.5 % of days
+High-P days     : 23.2 per year (&gt;= 5 x the 5-year mean of 3.749 mm/day); CAMELS high_prec_freq 23.2 (1989-2009)
+  by water year : 23, 28, 30, 19, 16 days
+Longest dry spell: 26 days (each under 1 mm)
+Largest daily P : 70.06 mm on 1997-12-24
+Snow fraction   : 0.007 (days with mean temperature below 0 C, WY1996-2000); CAMELS frac_snow 0.006 (1989-2009)
+Seasonal share  : DJF 29.5 %   JJA 23.8 %  (20 water years)</pre><div class="aihydro-static-figure"><img alt="Two panels for the Leaf River near Collins, Mississippi. Left: bar chart of mean monthly precipitation for October to September over water years 1990 to 2009, between about 90 millimetres in October and a peak of about 163 millimetres in January; the December to February bars are hatched with diagonal lines and the June to August bars are dotted, at about 117, 124 and 121 millimetres. Right: a log-log exceedance curve of daily precipitation on wet days, running from the largest day of about 70 millimetres at the left down to 1 millimetre where about 26 percent of all days exceed it, with a dashed horizontal line at the high-precipitation threshold of five times the mean (about 19 millimetres) and a dotted line at 1 millimetre." src="data:image/png;base64,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"></div></div><!--@@END static:precip-climate@@--></div>
+  </div>
+  <div class="callout agent">
+    <span class="callout-label">AI-Hydro agent action</span>
+    For another period, ask: <em>"Fetch daily forcing for my watershed for 2001-10-01 to 2006-09-30 and tell me the wet-day frequency."</em> The agent runs <code>fetch_forcing_data</code>.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  7 · CHECKPOINT                                             -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
+  <h2>7 · Checkpoint</h2>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">Answer every item correctly to mark this module complete. Wrong answers can be changed and checked again; the numeric answers and the computed choices come from this page's own model and data.</p>
+  <div id="p1-quiz"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  REFERENCES                                                -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="wide card refs">
+  <h2>References</h2>
+  <ol>
+    <li>
+      Thiessen, A.H. (1911). Precipitation averages for large areas.
+      <em>Monthly Weather Review</em>, 39.
+      <a href="https://doi.org/10.1175/1520-0493(1911)39%3C1082b:PAFLA%3E2.0.CO;2" target="_blank" rel="noreferrer">DOI: 10.1175/1520-0493(1911)39&lt;1082b:PAFLA&gt;2.0.CO;2</a>
+    </li>
+    <li>
+      Shepard, D. (1968). A two-dimensional interpolation function for irregularly-spaced data.
+      <em>Proceedings of the 1968 23rd ACM National Conference</em>.
+      <a href="https://doi.org/10.1145/800186.810616" target="_blank" rel="noreferrer">DOI: 10.1145/800186.810616</a>
+    </li>
+    <li>
+      Thornton, P.E., Running, S.W. &amp; White, M.A. (1997). Generating surfaces of daily meteorological variables over large regions of complex terrain.
+      <em>Journal of Hydrology</em>.
+      <a href="https://doi.org/10.1016/S0022-1694(96)03128-9" target="_blank" rel="noreferrer">DOI: 10.1016/S0022-1694(96)03128-9</a>
+    </li>
+    <li>
+      Newman, A.J. et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA.
+      <em>Hydrology and Earth System Sciences</em>, 19, 209–223.
+      <a href="https://doi.org/10.5194/hess-19-209-2015" target="_blank" rel="noreferrer">DOI: 10.5194/hess-19-209-2015</a>
+    </li>
+    <li>
+      Addor, N., Newman, A.J., Mizukami, N. &amp; Clark, M.P. (2017).
+      The CAMELS data set: catchment attributes and meteorology for large-sample studies.
+      <em>Hydrology and Earth System Sciences</em>, 21, 5293–5313.
+      <a href="https://doi.org/10.5194/hess-21-5293-2017" target="_blank" rel="noreferrer">DOI: 10.5194/hess-21-5293-2017</a>
+    </li>
+    <li>
+      Jennings, K.S., Winchell, T.S., Livneh, B. &amp; Molotch, N.P. (2018). Spatial variation of the rain–snow temperature threshold across the Northern Hemisphere.
+      <em>Nature Communications</em>, 9.
+      <a href="https://doi.org/10.1038/s41467-018-03629-7" target="_blank" rel="noreferrer">DOI: 10.1038/s41467-018-03629-7</a>
+    </li>
+  </ol>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  PROVENANCE                                                -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<dl id="sec-prov" class="provenance">
+  <div class="prov-item"><dt>Module</dt><dd>precipitation-point-to-basin · v0.1.0 · CC-BY-4.0</dd></div>
+  <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
+  <div class="prov-item"><dt>SYNTHETIC parts</dt><dd>§2 only: the 60 × 60 km field, the basin outline and the six gauge sites G1 to G6 are a teaching model, not observations, and carry no station numbers.</dd></div>
+  <div class="prov-item"><dt>Real data (§3 to §6)</dt><dd>CAMELS-US v1.2 Daymet basin-mean forcing for four gauges: daily precipitation and temperature (on days with precipitation), water years 1996 to 2000; monthly totals, water years 1990 to 2009; and the camels_clim attributes p_mean, frac_snow and high_prec_freq. Source members and sha256: <code>data/PROVENANCE.json</code>.</dd></div>
+  <div class="prov-item"><dt>Definitions</dt><dd>Wet day ≥ 1 mm; high-precipitation day ≥ 5 × the record's mean daily precipitation (exact integer test); dry spell = days under 1 mm in a row; snow day = daily mean temperature below the threshold. The lesson's own, for this record.</dd></div>
+  <div class="prov-item"><dt>Environment</dt><dd>Python (numpy, matplotlib) via AI-Hydro preview kernel.</dd></div>
+</dl>
+
+  <!-- Made with AI-Hydro -->
+  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+    <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
+      <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+        <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
+      </svg>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+    </span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+  </div>
+</main>
+
+<!--@@BEGIN json:precip-data@@--><script type="application/json" id="precip-data">{"source":"CAMELS-US v1.2 (Newman et al. 2015; Addor et al. 2017); Daymet basin means (Thornton et al. 1997)","daily_start":"1995-10-01","daily_n":1827,"monthly_first_wy":1990,"monthly_last_wy":2009,"monthly_days":[31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,29,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,29,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,29,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,29,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,29,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30],"basins":{"01013500":{"gauge_id":"01013500","name":"Fish River near Fort Kent, ME","camels_name":"Fish River near Fort Kent, Maine","huc_02":"01","lat":47.23739,"lon":-68.58264,"area_km2":2252.7,"elev_mean_m":250.31,"camels":{"p_mean_mm_day":3.126679,"frac_snow":0.31344,"high_prec_freq_days_per_year":12.95,"high_prec_dur_days":1.348958,"low_prec_freq_days_per_year":202.2},"source_member":"basin_dataset_public_v1p2/basin_mean_forcing/daymet/01/01013500_lump_cida_forcing_leap.txt","source_sha256":"2dd0c986e2ae6016cfbbfc907a1c32789fc4c04f5ee0a002373712f79ab6592d","prcp_hundredths_mm":[0,0,0,236,195,379,829,888,326,147,379,372,0,307,1192,214,174,8,0,0,457,1377,0,16,57,0,769,3754,2498,0,0,0,735,1201,520,118,0,1297,2076,0,0,326,910,403,143,2113,1178,0,0,0,262,523,322,203,29,0,0,257,722,271,0,486,231,89,216,48,451,277,0,421,873,0,0,0,9,209,0,0,0,0,533,647,5,0,0,352,590,392,0,0,0,23,0,0,0,0,0,0,0,0,0,291,56,0,775,623,440,22,367,0,307,1522,0,54,0,825,1888,0,1858,3346,0,579,265,0,0,0,0,0,0,0,360,961,697,273,395,0,0,0,58,686,361,0,0,470,872,792,690,1848,446,0,240,330,0,57,698,58,0,0,0,166,502,0,0,0,0,0,6,163,0,0,0,180,576,245,113,0,0,139,43,0,0,0,0,0,344,286,0,0,3,0,0,379,892,1182,0,0,2,143,145,1114,259,2,373,1213,195,612,853,467,698,875,0,0,38,651,287,0,84,0,0,0,0,0,21,885,1764,1308,0,0,0,0,0,1419,1087,376,478,348,253,0,0,0,35,493,747,2,0,0,0,339,970,973,27,116,0,0,0,5,1952,1305,405,45,251,99,0,0,7,791,368,495,1063,909,72,0,0,0,126,0,222,1368,1136,1214,763,843,649,984,33,1,9,1916,382,1358,0,0,630,2795,974,0,0,280,31,0,171,61,0,0,0,336,302,0,0,0,0,0,0,831,695,0,0,0,0,0,59,398,816,976,0,503,454,621,811,540,669,30,0,0,124,17,2,0,0,0,0,0,0,46,1362,1378,306,5,93,2501,2951,106,0,0,0,0,0,0,2,328,0,0,0,311,710,211,128,372,420,0,0,0,0,358,816,1048,1233,0,477,871,28,0,0,0,0,0,0,300,1000,316,260,0,0,1100,1099,18,504,13,40,9,34,0,0,229,305,839,940,0,7,0,0,0,0,0,0,579,1013,539,46,15,54,0,2,71,0,0,0,1237,1853,1036,0,0,0,30,1005,705,0,0,12,0,0,42,0,377,410,484,1028,0,0,17,887,999,0,227,37,486,537,512,0,3,130,93,1163,1936,302,0,0,1762,2121,157,215,0,2,793,1264,0,0,288,183,31,790,53,861,488,0,669,603,18,499,674,201,0,0,899,753,0,0,0,0,0,0,14,227,857,0,0,253,778,793,587,1381,844,0,0,223,505,449,0,286,9,0,236,1029,1033,0,0,438,279,31,0,39,542,0,4,0,0,0,0,0,0,0,20,658,0,0,350,601,0,0,0,0,0,0,186,212,0,0,0,0,0,448,326,0,0,0,20,0,0,0,16,59,0,0,0,0,130,1954,193,272,594,403,739,4,21,917,1074,0,0,0,14,271,859,403,2069,3273,361,0,638,354,345,381,149,1031,693,0,0,0,38,366,0,0,0,0,0,0,0,0,0,0,78,0,690,1159,0,0,0,0,1400,21,21,880,1104,0,3,1723,1487,0,0,641,0,0,445,1670,1430,0,0,0,926,693,0,0,0,0,0,28,1040,522,330,11,0,0,0,0,0,0,672,1938,432,0,0,204,205,161,0,0,0,0,0,0,0,287,1637,53,717,172,1036,496,0,0,0,537,1246,1083,512,69,0,470,909,754,832,328,7,0,505,0,0,0,273,0,234,228,0,15,8,34,0,29,0,294,0,811,822,0,406,474,138,0,7,0,434,1455,217,100,0,0,327,325,0,0,0,48,0,0,0,0,0,0,0,0,0,0,282,186,204,0,0,0,952,1126,404,0,0,89,1082,468,62,1104,0,0,0,411,467,167,174,0,0,0,0,0,0,0,0,93,0,27,574,106,210,568,52,0,0,375,1016,0,0,440,1530,1208,124,13,0,0,0,0,12,0,0,0,0,81,0,0,0,0,363,316,1005,290,0,0,942,557,0,164,164,193,348,919,794,1560,1616,837,45,0,319,319,0,0,0,0,104,158,77,0,19,1600,647,0,0,0,101,580,205,0,0,0,0,0,0,0,0,0,0,0,945,413,0,0,0,0,0,1288,628,205,0,0,1,1785,1384,301,251,644,322,1,13,0,0,66,123,1789,1470,41,0,0,138,181,0,0,0,0,384,50,970,538,0,0,756,940,231,97,253,763,804,918,929,171,0,0,39,0,0,0,0,0,0,0,0,0,1009,97,0,805,585,0,0,559,517,153,151,12,0,0,0,364,529,174,42,113,375,405,563,92,0,0,0,0,0,0,0,0,0,0,785,1490,1059,389,202,294,0,0,144,35,189,463,0,644,480,547,362,68,0,0,0,11,22,80,479,1170,409,620,166,352,121,0,0,0,0,0,676,160,0,63,1522,2190,613,0,650,2064,4,0,0,381,2315,1514,787,290,17,0,749,906,284,0,0,38,0,0,0,0,0,0,653,1290,175,40,0,0,16,0,0,0,0,0,0,254,1523,1326,0,0,0,70,174,474,50,0,128,0,0,367,1546,1619,452,196,169,200,107,87,0,665,724,0,71,0,1120,1844,714,64,396,356,0,562,207,0,76,318,483,675,1250,0,0,0,0,818,438,344,520,1399,794,0,0,2,0,27,776,210,228,413,143,0,0,276,164,0,0,9,134,70,73,3,18,100,0,0,651,536,681,830,0,558,136,31,0,0,0,0,0,0,1156,495,191,85,475,26,0,0,392,677,168,0,0,160,0,528,1579,0,0,689,477,146,7,171,100,844,411,201,21,0,0,0,0,13,0,0,561,437,49,134,424,1003,0,1,0,0,0,0,165,703,208,0,0,1386,1479,0,71,0,0,1410,853,0,278,387,209,1745,1386,5,440,906,0,0,0,518,468,7,0,0,0,0,0,0,0,219,1216,0,0,0,0,0,0,139,0,369,106,0,0,0,42,962,40,0,0,0,0,0,63,413,86,0,812,415,329,675,4,0,457,46,0,607,987,131,267,0,1063,966,0,218,832,0,0,420,642,0,0,0,0,0,1,0,0,0,0,238,1146,0,0,88,356,204,0,0,0,57,267,174,21,0,0,0,66,0,0,0,0,0,249,118,0,0,0,0,0,0,0,0,0,0,0,564,1219,0,0,0,0,0,0,0,0,0,591,0,0,146,511,1559,1171,601,0,0,0,0,235,644,288,147,0,142,508,681,1101,0,0,0,0,0,419,0,0,676,14,0,0,0,158,319,304,601,0,1426,1489,959,0,621,242,365,0,0,483,421,0,988,1108,264,0,0,99,260,0,403,163,0,2,568,0,0,366,1628,676,348,570,45,0,544,0,9,868,1303,1538,285,788,381,10,0,692,960,2136,0,0,90,319,2,0,0,0,0,0,0,0,0,45,0,0,0,0,0,0,0,0,0,182,1588,1927,1952,4975,0,0,0,264,1054,3833,1454,0,0,796,1335,601,334,622,0,0,0,0,1,854,287,104,88,0,120,0,0,419,588,752,0,118,1660,1274,419,276,610,165,56,127,0,1644,1951,42,0,0,0,0,0,124,348,0,1277,897,0,226,0,0,0,0,0,0,181,1176,1037,872,470,0,0,0,254,122,119,27,0,1288,2063,879,0,0,0,0,0,0,0,302,840,354,0,268,1460,860,478,16,0,223,145,0,0,337,1537,0,0,0,0,0,73,0,195,354,0,0,398,749,411,341,0,143,185,273,0,1353,0,0,0,0,901,860,0,0,0,455,525,0,245,709,1153,331,228,0,0,647,935,107,0,0,0,0,22,0,0,0,655,424,36,2734,1859,369,135,0,0,0,0,0,461,1,0,0,0,761,716,0,662,1080,666,263,142,0,0,475,218,0,1230,801,0,0,248,165,0,0,0,0,0,0,0,0,224,0,463,710,328,76,0,0,95,960,607,0,0,788,1251,716,0,559,214,5,475,1431,0,0,0,76,0,923,1696,2665,438,0,281,314,121,125,523,300,0,0,190,0,925,322,587,765,1802,992,0,808,0,0,0,1223,1659,0,0,0,13,1013,1253,529,315,55,0,0,0,0,565,1114,0,0,0,0,331,559,0,0,0,0,0,0,0,0,0,0,0,1476,924,266,0,374,2304,0,0,668,1047,317,0,330,1600,955,558,294,1008,305,388,369,132,0,0,0,7,115,1302,1478,0,0,1398,2067,95,0,0,0,0,0,0,0,0,579,493,550,0,0,22,521,1344,971,0,0,0,0,392,1036,1237,0,0,844,1087,0,0,1452,176,0,192,0,0,62,0,28,0,0,0,0,0,0,0,0,0,0,114,523,0,376,899,123,110,0,0,2,0,298,1530,0,0,0,0,0,0],"tmean_halfdeg_bin_on_wet_days":[15,15,11,15,21,18,18,16,20,26,25,12,8,9,19,25,14,17,8,16,15,-5,2,2,-5,3,4,1,12,-1,-5,4,7,-5,-3,-1,-6,-12,-19,-18,-24,-26,-19,-29,-23,-23,-21,-22,-34,-24,-35,-28,-22,-9,-1,-13,-10,-5,-32,-31,-27,-23,-26,-34,-44,-21,10,-7,-25,-1,-11,-17,-8,-31,-31,-18,-4,-11,-26,-29,-33,-24,-28,3,8,5,4,2,-4,-11,-23,-23,-16,-22,-26,-26,4,-9,-1,-1,2,-2,2,-10,3,-9,4,0,-2,-1,0,2,5,4,6,7,14,17,16,18,12,4,11,17,9,13,15,18,20,15,4,2,27,21,25,27,25,15,19,20,19,19,36,36,33,31,26,44,43,40,33,27,30,27,26,18,21,24,26,23,26,38,40,37,33,32,28,32,33,35,33,34,36,39,40,40,36,30,25,35,36,36,34,35,32,42,36,30,34,31,26,32,34,36,32,33,29,26,26,29,36,25,25,27,29,25,25,23,19,21,11,13,20,26,20,14,22,22,21,18,13,5,9,12,3,11,11,11,13,8,5,-1,2,1,-2,-4,-7,3,20,30,17,-4,0,0,-1,-2,-6,-19,-18,-18,-10,8,5,-12,-3,-3,-11,-2,1,6,2,-9,-11,-5,-10,-21,-16,-6,-20,-13,-34,-26,-22,-15,-13,-16,-19,-14,-20,-20,-21,-9,-32,-37,-29,-28,-16,-38,-25,-17,-32,-32,-53,-45,-23,-15,-22,-17,-29,-38,-18,-35,-8,-15,-16,-13,-26,-29,-8,-8,-1,-14,-20,-16,-23,-31,-12,-20,-28,-15,-29,-20,-5,5,5,8,7,0,-3,4,10,10,8,5,7,18,17,6,8,7,12,11,4,13,19,19,14,18,10,11,16,14,13,13,12,16,12,28,33,33,30,29,31,26,30,36,32,26,29,35,44,42,37,34,32,29,36,42,40,31,25,44,42,33,38,40,31,40,29,24,25,25,29,34,27,27,30,30,28,30,31,33,33,31,35,28,29,25,25,28,32,32,24,25,25,12,14,8,11,9,18,23,13,8,15,21,23,7,1,-6,-4,-2,-1,6,16,20,12,10,2,4,3,-4,-5,-21,-15,-17,-12,-12,-25,-12,-11,-9,-5,-5,-18,-23,-16,-21,-26,-22,-12,-12,-19,-22,-30,-10,-12,-33,-24,-21,-20,-16,-12,-13,-25,-28,-8,-7,-12,-46,-27,-16,-25,-15,-13,-5,-7,-6,-5,-6,-13,-8,-1,1,4,5,3,-2,-5,-17,-9,1,6,-13,-24,-12,-12,-18,-14,-17,-6,9,12,12,9,7,2,0,-2,-4,1,15,11,10,5,11,3,0,0,6,21,21,28,30,32,31,30,25,22,32,23,16,19,26,28,34,29,14,20,19,13,16,20,21,33,34,32,32,30,34,33,34,37,39,42,36,29,37,31,28,37,33,29,38,35,28,31,32,41,48,47,42,36,36,38,35,32,35,48,43,28,35,30,32,23,29,33,34,34,36,32,33,34,29,29,32,33,31,25,22,20,19,21,21,25,24,15,21,24,27,27,28,26,18,19,21,13,9,3,11,15,14,16,16,11,11,22,11,7,5,3,9,9,7,7,6,8,3,4,2,0,4,-6,-13,-6,-8,-15,-9,-1,6,-10,-3,-11,1,1,-10,-9,-8,-9,-1,-10,-12,-10,-9,-15,-25,-21,-19,-9,-32,-20,-21,-41,-35,-18,-42,-23,-27,-39,-41,-51,-36,-15,-10,-11,0,-21,-1,-7,-20,-13,-18,-11,-2,-17,-16,-15,-23,-14,-11,-3,5,-4,2,-6,-27,-27,-18,-7,2,1,-4,-7,-8,-5,2,2,11,-7,-4,6,4,5,1,0,2,6,8,11,10,33,20,30,27,29,25,22,19,43,36,28,27,30,35,35,25,37,27,25,39,42,39,40,43,38,36,41,39,40,32,30,28,25,30,39,40,46,39,28,37,39,39,38,39,38,41,46,28,28,31,32,31,27,24,23,31,34,35,33,33,26,41,44,44,41,42,38,32,31,25,20,25,23,22,26,24,28,20,16,17,10,4,10,15,16,8,11,4,7,15,10,0,2,6,9,8,1,8,11,19,13,7,-9,0,2,-1,-9,9,9,12,9,1,12,7,8,4,-3,-2,0,0,1,-3,-8,-6,-21,-11,-21,-31,-29,-15,-8,-11,-12,-19,-19,-18,-10,-45,-31,-39,-39,-35,-29,-18,-24,-33,-19,-13,-18,-29,-32,-31,-34,-25,-17,-21,-27,-18,0,12,0,0,0,-3,-5,-5,0,-10,-15,-15,0,-10,7,7,8,5,4,9,9,6,5,12,4,-4,-6,-5,4,4,9,5,2,3,-1,4,3,9,12,5,9,23,24,28,17,6,6,10,21,20,10,25,16,16,18,19,16,22,20,20,23,32,37,36,34,39,33,32,31,39,36,30,27,28,26,27,32,27,27,34,33,32,30,32,31,31,36,39,37,34,35,35,33,35,36,32,28,26,32,31,36,31,34,31,30,25,23,19,18,34,18,18],"monthly_hundredths_mm":[6131,12072,5559,9566,5752,4411,6815,9038,9145,6463,14184,10971,21508,14833,12468,6279,2965,12643,7361,10367,3381,6339,20899,11534,16203,5291,5373,11158,6313,5641,7258,4474,14456,17372,11232,7617,10292,5050,4247,5651,6231,4621,10900,10348,11154,7872,10307,15190,11666,10101,11132,10236,3866,6337,10956,11413,18120,13028,8259,8879,2699,11032,6860,14524,6480,6118,5574,8949,4677,12666,6452,6739,14574,13609,5852,13218,9479,2946,10075,10238,10192,15946,8182,10312,10348,4735,11921,14424,9438,5555,3544,15269,9207,10137,11708,6174,4171,5654,8272,10769,7201,9770,6749,7244,8415,14960,8671,11732,7537,7346,6076,11548,3655,8872,2984,6362,10111,9620,9970,20918,11678,11236,7442,9907,9215,7751,13740,13274,9628,12718,10958,4003,8564,6250,11708,2457,6645,4910,3396,5395,10175,14363,4552,10915,8476,5542,3849,5601,7438,6213,7644,10746,9186,13470,3754,10675,7497,9199,5974,1269,8085,7006,4179,8426,9230,17292,14277,10670,17595,12094,12657,3783,2545,4630,8212,7585,12335,14634,17719,9686,7119,8809,12196,5014,5016,11054,16270,10014,8296,10133,13145,16451,21338,17262,18132,11415,6996,3512,4696,12297,12756,13498,7304,9894,19205,12163,8058,6301,4253,10754,10213,6237,10466,13601,11404,6765,12106,17727,9496,9710,12276,12599,9975,5885,18611,13666,14968,11945,12072,11303,13156,6018,5706,6431,8620,10237,9758,17256,8908,6132]},"02472000":{"gauge_id":"02472000","name":"Leaf River near Collins, MS","camels_name":"LEAF RIVER NR COLLINS, MS","huc_02":"03","lat":31.70694,"lon":-89.40694,"area_km2":1927.13,"elev_mean_m":123.24,"camels":{"p_mean_mm_day":4.158402,"frac_snow":0.006015,"high_prec_freq_days_per_year":23.2,"high_prec_dur_days":1.211488,"low_prec_freq_days_per_year":259.85},"source_member":"basin_dataset_public_v1p2/basin_mean_forcing/daymet/03/02472000_lump_cida_forcing_leap.txt","source_sha256":"6f16ae5fd04addd2c0fa4718ec6584e05b390cab8e949ad5be7b6f3782b3c27d","prcp_hundredths_mm":[0,0,5458,1870,1506,0,0,0,0,0,0,0,0,2166,0,0,0,0,0,0,0,0,0,1,0,0,689,2088,0,0,389,414,1097,1911,0,0,520,1170,1445,0,0,5079,0,0,358,0,0,0,0,0,218,0,0,0,931,0,0,0,0,472,0,0,0,0,1699,0,912,2384,0,3031,0,0,0,0,0,0,1408,353,5294,2897,0,0,0,0,0,0,0,0,0,0,0,0,528,2243,0,0,0,308,43,0,0,0,0,1393,0,0,0,3,0,284,889,0,200,0,0,887,0,1098,5250,0,186,673,562,89,3411,806,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1810,0,0,0,0,0,0,0,887,327,27,0,0,0,0,3841,5638,0,0,0,0,0,0,0,0,0,1201,519,1403,0,0,0,0,0,4234,0,792,453,0,1445,1349,0,0,0,0,0,1192,0,0,0,0,0,0,3175,0,3627,0,0,1,130,0,97,0,2411,0,0,1584,57,0,0,800,0,0,0,0,0,0,0,0,0,0,2,289,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1280,1973,57,0,0,1314,51,0,0,0,0,1216,51,0,0,0,0,1770,2370,0,0,0,0,117,0,0,650,0,988,106,0,0,0,0,0,0,0,0,0,0,0,1611,0,727,0,0,0,823,1285,1387,129,2,0,0,0,0,0,0,1114,455,1082,903,1143,0,494,956,1284,477,0,3,543,1783,10,1126,0,0,75,413,0,0,0,0,0,0,0,0,0,0,0,0,2455,0,850,1195,3468,1014,118,176,428,95,0,0,0,0,152,137,0,0,0,0,2,1149,1041,0,0,0,870,0,0,0,0,0,1225,2207,281,0,0,0,0,0,0,0,96,0,0,0,0,0,0,0,0,0,0,27,0,0,0,0,1160,0,1409,3552,881,0,0,345,0,0,0,0,0,0,283,9,2702,0,0,0,0,0,0,0,0,0,1361,896,0,0,0,0,0,1890,0,0,0,0,951,3494,0,0,0,0,0,0,0,0,0,0,0,292,0,0,650,3291,0,0,0,0,0,0,965,30,0,1061,0,77,2148,1112,77,0,0,0,432,0,1985,716,4020,0,0,0,0,0,0,1854,0,0,0,0,0,753,899,736,123,0,0,3194,0,0,0,0,0,0,1243,78,0,0,3150,0,247,0,459,6324,7,316,0,0,0,0,0,3884,0,0,0,1821,1321,754,1356,0,168,1512,0,0,548,0,0,0,0,684,0,1499,2077,0,0,0,0,1564,639,0,0,0,0,0,1373,0,0,0,0,2,0,0,0,0,939,4656,0,0,0,0,0,5085,0,0,0,0,0,0,0,0,0,0,2319,0,0,5659,4450,4900,13,0,0,0,1186,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1793,4494,2939,1190,708,1783,2335,39,0,3077,1240,179,1581,769,0,0,0,0,156,0,0,353,1194,1055,1406,0,0,0,0,0,2540,0,0,0,0,0,1813,692,2868,1280,831,795,1852,247,0,0,0,0,5,0,0,132,0,1411,0,0,236,0,0,0,0,0,162,1588,1347,0,1406,251,0,138,0,0,2196,595,684,0,0,0,0,0,0,0,2399,88,1122,0,0,73,925,0,0,530,0,0,2716,0,0,0,0,0,0,0,0,0,0,794,0,0,0,0,0,0,0,0,774,0,0,0,0,0,0,0,0,0,0,0,0,114,6,1795,213,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3142,0,0,0,0,0,0,0,756,0,3389,0,4711,0,0,0,0,56,1102,940,0,0,0,111,0,0,0,0,0,1780,1060,20,0,0,0,0,462,0,0,2360,0,0,0,0,0,0,3605,120,0,0,0,920,0,0,0,588,165,127,0,0,0,16,768,0,0,0,0,0,2343,2516,0,7006,0,0,1640,0,485,7,0,0,0,0,0,2709,3172,6181,970,22,0,0,2427,332,287,600,488,0,0,1034,0,1,5943,80,0,0,1115,1943,0,0,0,0,2,1466,858,0,0,0,0,0,0,0,4257,0,0,0,0,1853,966,0,0,33,0,1192,449,0,0,1,3772,0,0,0,0,0,13,1168,3346,5211,0,0,0,0,0,0,0,0,3938,79,973,384,0,0,0,0,0,0,0,0,0,0,0,2574,0,639,0,0,0,0,0,116,0,0,0,0,223,315,0,1675,3298,3090,0,0,32,113,0,0,0,0,2532,533,650,0,3,155,521,0,23,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,945,552,0,0,0,0,0,0,4791,0,0,0,0,0,0,96,0,739,1058,0,0,0,0,39,0,0,0,0,0,0,0,0,0,0,1022,0,637,0,0,0,0,0,2189,2084,2821,1063,1158,134,0,0,0,0,0,139,0,0,1018,1886,947,52,0,0,0,0,0,0,0,0,0,0,1345,259,0,0,1047,280,475,399,1591,1037,94,0,0,0,57,0,0,0,0,0,0,0,0,0,1139,903,11,0,0,0,0,0,0,0,0,847,2745,1701,0,0,128,0,0,286,412,198,91,0,0,0,0,0,1518,1950,0,0,0,177,26,330,0,831,324,0,0,0,0,0,0,0,581,0,0,24,9,0,0,0,0,0,0,0,0,0,0,0,0,659,0,0,0,0,0,568,301,203,2582,0,581,1247,1541,71,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,693,137,0,2224,697,213,0,0,0,0,0,1041,0,0,465,1400,2097,0,0,0,1771,0,0,0,0,1593,322,0,0,500,623,966,284,0,0,0,0,0,0,0,0,0,0,0,0,2990,5144,0,0,0,0,0,4650,6139,3614,0,0,118,109,0,0,0,0,0,234,0,80,0,0,0,0,893,1485,127,0,329,0,15,0,0,0,1208,2810,0,0,911,0,0,467,0,0,3644,0,0,337,2893,5033,0,0,0,0,0,0,0,0,0,0,2099,231,0,0,0,668,1600,0,0,0,482,0,40,0,0,0,0,0,0,0,0,2047,0,0,0,0,0,0,0,0,0,0,7,445,0,0,0,0,0,0,0,713,688,0,0,0,0,37,1398,139,0,0,0,0,0,0,0,0,0,782,247,0,0,22,0,402,2298,878,0,0,0,0,0,0,0,49,0,0,1345,0,132,897,2392,86,0,0,0,0,0,0,339,0,232,1223,969,516,0,909,0,0,0,56,0,0,146,1078,82,0,425,1164,148,0,0,0,0,1,0,643,0,0,0,970,1047,729,1320,176,0,0,0,0,0,0,0,0,0,0,0,1164,2360,0,0,0,0,0,0,0,0,0,0,111,0,0,811,1721,203,0,0,0,0,0,0,0,0,61,1041,0,2029,745,730,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4465,829,0,0,0,0,0,0,0,1899,4646,3911,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1107,2988,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,681,0,0,0,46,0,610,0,0,0,0,0,0,0,0,568,0,0,0,92,606,0,533,3923,0,0,0,0,32,1541,250,1308,0,0,0,0,0,0,0,0,0,0,891,0,0,6088,0,0,0,0,1784,1512,0,0,0,0,0,0,0,0,0,0,0,0,747,3,0,0,0,1069,390,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,677,578,0,0,0,0,0,0,0,2286,0,0,0,0,0,0,0,0,0,0,0,0,2495,31,0,0,55,1543,462,0,3608,1337,70,95,0,0,61,1456,1157,0,160,164,0,0,2371,4340,3040,0,0,0,473,0,0,0,132,3316,0,0,0,0,0,0,0,0,0,0,1877,0,0,0,0,0,0,0,0,0,23,0,945,0,0,0,0,0,0,0,0,0,0,0,0,0,46,1941,0,0,0,0,0,0,385,0,0,0,0,0,0,0,655,891,0,0,0,0,0,0,0,177,1571,679,1534,1821,1870,1574,0,0,0,0,0,379,224,0,606,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,74,0,0,0,136,6,0,0,0,108,1066,0,0,734,1353,689,1839,172,0,0,0,0,16,632,1067,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,0,0,0,0,0,85,0,0,0,0,0,411,485,353,153,0,0,2352,101,0,0,0,0,0,0,401,1834,5,346,174,0,0,0,0,0],"tmean_halfdeg_bin_on_wet_days":[47,41,43,43,36,37,34,25,34,39,30,21,35,27,27,19,29,21,11,34,35,19,14,37,34,35,24,29,26,19,4,13,32,30,9,8,20,14,15,13,26,18,-2,-2,-13,25,34,14,9,38,26,39,35,24,33,15,24,30,33,19,37,34,31,39,47,42,39,36,28,46,38,56,49,44,48,48,47,41,49,49,52,53,51,52,56,54,53,53,52,53,54,53,49,51,51,51,53,51,50,51,53,52,52,54,54,50,49,52,53,49,47,43,41,46,48,48,53,50,45,51,50,43,47,36,30,33,39,24,28,39,46,42,39,43,27,32,33,29,34,29,31,23,15,27,6,22,38,33,35,36,35,12,6,6,13,25,31,34,26,21,37,25,15,6,9,9,13,10,41,17,25,32,30,44,32,28,39,36,33,36,26,36,34,38,36,30,34,28,32,34,32,43,46,44,46,37,42,47,46,49,49,47,46,45,39,44,47,48,45,48,48,53,52,49,50,51,52,52,54,51,52,53,51,53,54,54,56,55,56,55,54,50,49,49,52,55,54,55,52,53,49,53,52,48,41,37,35,30,40,31,34,28,26,22,19,20,16,26,35,26,21,7,21,27,5,1,28,23,21,13,7,7,33,34,35,26,14,23,26,27,25,17,19,14,23,17,11,13,18,20,21,30,24,26,21,23,20,28,23,24,36,36,31,34,39,35,24,32,37,37,37,43,39,33,28,26,26,42,40,36,37,39,36,40,52,49,46,56,56,55,55,56,54,59,56,54,53,52,53,55,55,55,55,55,55,54,56,54,52,52,53,52,54,55,55,54,51,45,43,47,52,51,53,52,54,51,48,51,49,50,48,35,42,47,42,43,24,36,38,26,24,28,34,33,33,39,23,22,24,22,17,26,3,1,17,20,8,-1,16,28,22,41,32,37,35,28,25,26,38,29,28,21,20,16,11,33,28,27,30,28,21,20,20,31,19,31,27,44,46,35,45,46,44,45,44,41,42,49,47,45,45,45,46,51,51,51,51,50,50,51,53,50,52,55,54,53,56,54,53,54,52,47,52,54,58,56,55,55,56,60,56,58,57,55,55,53,55,55,53,52,46,32,40,43,45,38,34,32,35,14,33,21,27,27,31,16,14,17,15,31,29,27,28,23,14,3,5,39,32,30,37,16,26,34,35,29,22,24,31,38,39,34,35,33,40,40,24,33,37,34,36,41,44,51,48,53,50,40,51,52,52,51,51,52,53,51,51,53,59,56,54,53,52,53,52,52,51,52,56,56,55,58,58,45,43,47,52,52,51,53,51,52,55,50],"monthly_hundredths_mm":[4376,15387,15738,29556,29356,14831,10180,18388,10196,5783,6102,4117,2525,8217,12960,18870,21255,16716,38010,25583,10794,9218,11851,10192,3664,8597,13153,16601,15050,10447,10112,4265,14188,14059,25830,7934,3569,24242,14725,22472,8103,16117,10997,12696,18929,17029,7377,6158,14336,23187,9706,22742,14530,15406,15611,6812,12950,19672,5223,5700,11909,8809,14547,10706,10218,19161,20294,13129,4143,9633,12680,7816,14167,13615,17978,14547,7330,20902,13074,3601,8633,11155,15652,7881,7470,8092,13120,14789,20960,10066,28021,22544,17604,9714,8537,3696,12054,11560,16581,27304,14849,15112,15790,2199,6723,15150,7723,10790,2302,7762,10738,26825,7408,17883,3021,7604,9089,7985,6370,9900,11563,4325,8853,12484,3541,12694,15549,3340,11981,2124,5837,6700,4130,24363,11463,19098,9650,28469,8982,6877,20030,11596,22095,16614,17672,11274,12160,13241,9236,13328,10095,4936,8360,17346,7611,25186,23465,11467,18863,6678,24752,8865,14968,8288,24434,24908,12797,7081,5977,16237,11023,12226,27340,5407,12991,13551,23959,11465,13392,3364,9979,23034,14058,9828,18094,16390,18255,6391,8350,15971,23122,7272,1,8195,11920,13890,16610,12326,7700,12180,4542,5796,6809,6202,19028,8327,16393,10827,6627,1230,8265,5724,5777,20358,9195,10597,7020,5769,13949,11868,17901,10025,11566,14816,9076,6903,23654,19939,5270,13990,20233,11562,9126,26921,8225,18053,3144,12985,10247,18602]},"09484000":{"gauge_id":"09484000","name":"Sabino Creek near Tucson, AZ","camels_name":"SABINO CREEK NEAR TUCSON, AZ.","huc_02":"15","lat":32.31674,"lon":-110.81037,"area_km2":103.65,"elev_mean_m":1332.86,"camels":{"p_mean_mm_day":1.564504,"frac_snow":0.106461,"high_prec_freq_days_per_year":27.85,"high_prec_dur_days":1.573446,"low_prec_freq_days_per_year":319.9},"source_member":"basin_dataset_public_v1p2/basin_mean_forcing/daymet/15/09484000_lump_cida_forcing_leap.txt","source_sha256":"7834096375f8aeddbeb5ecf07f0df67e0ce0bfefff8fa390b16d0d982e54d310","prcp_hundredths_mm":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,835,376,0,1156,0,0,779,1211,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,719,1234,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,597,0,0,0,0,0,0,0,0,3312,2498,0,0,0,0,0,0,0,0,0,0,300,473,0,0,0,0,0,0,0,0,0,0,0,2304,1762,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,430,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1280,0,0,0,0,0,0,0,0,0,0,0,0,828,0,0,0,0,2091,2457,0,0,0,0,0,0,0,0,0,0,1097,815,0,0,0,0,0,1252,0,0,0,0,0,0,2017,0,0,0,0,497,0,0,0,0,0,0,0,0,0,0,0,198,1085,957,1442,2399,0,0,0,1944,962,0,0,0,0,0,602,894,0,0,0,0,0,0,0,0,0,0,0,0,2661,3460,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,352,0,0,0,0,0,0,0,0,0,0,0,4371,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,612,0,0,0,0,0,1169,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1167,1566,0,2124,1468,0,0,0,0,0,1506,1580,973,0,0,0,0,0,0,0,0,0,0,337,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,402,389,179,0,0,0,0,0,0,0,0,0,0,0,0,0,1976,4222,3204,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,598,398,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,459,0,0,0,0,0,0,0,538,0,1840,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,165,678,0,0,0,0,0,1040,923,0,1507,0,0,1433,17,0,0,0,0,1332,2102,0,0,0,0,466,915,0,591,0,0,0,0,0,709,1458,0,0,0,0,54,0,0,0,683,0,0,317,426,0,0,0,0,0,394,298,1191,0,0,0,0,0,0,636,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1696,0,0,0,0,0,0,0,0,0,0,0,0,0,15,823,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,931,799,991,864,0,0,0,0,0,0,0,0,0,0,0,0,1576,0,0,0,570,1137,0,0,0,0,3952,2907,1906,0,0,0,0,0,0,0,0,0,287,10,0,1913,0,705,474,0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,917,1300,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1609,1169,0,0,647,2884,0,0,0,0,0,1499,0,1100,1960,0,1287,0,0,0,2660,2219,0,0,0,0,0,0,0,0,0,796,0,0,0,0,0,0,356,694,667,1176,0,0,0,0,0,0,0,0,2917,0,0,3543,2609,0,1460,1049,0,0,0,0,267,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1882,996,1316,2251,0,0,0,0,0,0,0,0,0,1269,2236,2596,3537,2028,0,0,0,0,0,0,0,0,555,0,531,0,0,0,0,0,0,0,0,2582,2747,282,3772,0,0,561,0,0,435,0,0,0,0,0,0,0,1113,0,0,0,0,0,0,2922,2813,1556,0,0,0,0,352,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,595,497,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3022,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2358,3042,0,0,536,0,0,592,700,427,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,317,647,0,0,0,0,0,0,0,0,158,0,0,0,0,0,2685,2910,0,1554,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,574,0,700,1406,3143,0,0,392,0,0,0,3662,3056,0,951,472,0,0,0,1490,0,2466,0,1153,2476,3284,0,0,0,0,0,0,0,680,0,0,0,1039,1081,0,0,0,291,626,0,0,0,2054,1294,0,0,209,339,0,0,3433,2813,0,0,1700,1140,0,0,0,0,0,0,0,0,197,0,0,0,0,608,612,0,0,1298,0,0,0,279,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1967,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2456,0,1014,0,0,0,0,0,0,0,0,0,1425,1955,2263,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,307,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1680,0,1814,1367,0,890,543,0,0,0,0,339,504,1604,0,0,0,0,0,0,0,3559,0,0,0,0,0,0,0,0,0,0,0,0,0,81,837,0,0,0,0,0,68,1436,0,0,0,0,472,770,513,300,9,0,0,0,0,0,0,0,0,3189,2812,0,0,278,719,426,1038,299,254,940,1261,1939,764,0,0,0,0,0,0,0,0,0,0,1029,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2076,1806,0],"tmean_halfdeg_bin_on_wet_days":[30,21,16,22,18,4,0,-3,10,5,14,13,-1,-3,7,6,43,45,43,41,43,47,44,45,54,40,42,41,43,42,44,35,37,36,34,33,37,9,16,2,21,11,-1,-14,1,1,-1,12,12,8,3,-2,-2,-3,7,-4,40,39,29,36,37,43,42,40,41,44,44,43,43,42,42,46,45,40,42,43,45,39,43,40,43,31,31,29,24,17,11,7,10,14,4,0,7,7,-3,7,5,-1,-7,-6,5,8,2,13,1,9,5,4,-2,-6,1,14,2,5,14,2,8,10,22,5,-5,7,0,7,14,50,41,36,38,48,45,43,39,34,43,44,47,39,40,41,39,44,47,36,39,41,46,33,26,18,21,11,16,8,-5,-9,18,2,23,20,-2,0,45,49,50,39,39,41,37,40,38,40,38,39,40,33,36,45,40,41,40,43,41,46,44,44,41,40,33,42,40,39,39,39,-4,10,10,11,0,-5,25,42,41,36,40,37,44,40,42,36,47,47,52,47,52,49,42,40,40,47,38,41,41,40,41,41,42,41,36,34,33,46,42,40],"monthly_hundredths_mm":[5947,638,1210,5444,9773,3090,2063,1309,903,25231,21484,3595,651,4119,9976,6706,5651,18603,0,0,207,1337,10876,1164,4079,7181,5420,6812,6769,8060,1668,8433,0,4176,17762,812,229,0,16992,27148,11166,6443,0,2347,0,3002,25508,1393,4980,6665,2777,1329,10584,8491,3967,2057,143,3713,5289,5061,7574,6296,11770,7587,8458,4022,3055,2339,0,1031,12415,4738,1211,3146,1953,597,10649,630,0,0,1280,7288,9847,10523,4723,1781,0,10721,7168,3204,996,2837,0,4313,9077,3945,2540,5161,13861,2317,17034,12758,2844,0,0,18666,12023,7643,1092,8422,2255,0,0,1122,7149,0,0,25225,15559,4134,0,0,0,1967,3470,5950,0,0,8741,5981,15983,4911,18989,6658,0,7581,4476,1846,6031,1852,2489,10533,6935,1046,4665,190,5144,2831,200,2268,0,0,0,6071,7306,6576,1696,906,7311,733,10738,3756,2362,349,0,10716,17076,6784,2008,2926,5483,3088,4369,6971,4404,0,0,9842,2492,5871,4866,1749,6444,8496,10795,1969,1462,764,285,1721,12425,0,18,0,0,0,0,5362,0,0,0,11354,3612,3810,2679,0,2192,3779,1737,2947,3216,0,0,9222,6948,3130,551,2047,11340,3008,3677,1289,765,784,1448,20062,7482,1870,1901,1949,2474,6240,3718,673,803,1555,0,7531,3226,1512]},"14305500":{"gauge_id":"14305500","name":"Siletz River at Siletz, OR","camels_name":"SILETZ RIVER AT SILETZ, OR","huc_02":"17","lat":44.71512,"lon":-123.88733,"area_km2":526.33,"elev_mean_m":276.16,"camels":{"p_mean_mm_day":6.67003,"frac_snow":0.025741,"high_prec_freq_days_per_year":14.7,"high_prec_dur_days":1.642458,"low_prec_freq_days_per_year":197.75},"source_member":"basin_dataset_public_v1p2/basin_mean_forcing/daymet/17/14305500_lump_cida_forcing_leap.txt","source_sha256":"d341282b3d05ba9b1df65fae5b71a1e901673f21fb11566569f75a3866484395","prcp_hundredths_mm":[0,53,1708,44,0,40,0,138,154,2570,4351,1058,0,0,0,1305,2180,1336,0,588,613,1,0,86,1399,2659,0,0,0,0,0,0,0,0,973,1176,1677,2555,4354,1776,1732,6356,2136,1778,222,595,37,797,1645,0,0,407,1562,1368,3957,3434,2203,3287,4667,4854,5628,3628,1969,806,1893,730,222,0,843,1848,3613,6066,4793,5131,3547,2959,356,1321,1909,370,259,0,0,0,0,0,0,862,1671,3811,2252,2296,0,0,1118,776,744,1835,3916,2271,928,562,0,0,0,2292,4191,2705,822,1755,4828,3451,3524,1134,2174,2561,1369,1194,2708,1487,793,0,0,0,0,0,1173,3870,7862,6987,8829,5560,0,0,0,0,0,0,621,2596,4465,3120,2508,1404,2022,3723,1554,481,0,0,433,0,0,0,1460,2498,1328,294,270,352,294,600,624,219,0,0,0,0,0,0,101,0,0,1132,301,299,0,0,339,490,1242,1131,1557,1777,406,0,0,0,0,0,0,193,732,1903,3087,2391,0,414,1398,1849,1391,1628,1260,1296,2931,7249,4912,901,668,23,0,0,0,0,9,421,287,0,0,0,0,0,0,0,815,1522,545,673,593,2197,2962,1663,588,1129,1608,521,0,0,0,0,242,466,187,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,596,0,0,0,0,997,974,366,0,0,83,0,0,0,0,0,231,0,0,0,0,0,0,0,0,0,0,0,0,1234,1423,719,0,0,0,0,0,0,0,0,0,0,0,0,0,689,0,16,187,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,49,49,0,0,0,0,0,0,302,2273,4318,2042,483,0,549,0,0,61,0,0,0,0,0,0,0,0,0,0,0,1073,947,0,0,0,0,84,648,824,1576,1504,1907,525,1573,3174,1827,968,844,2069,2120,3122,3051,0,0,1305,1206,0,0,0,0,351,885,560,1051,682,0,0,0,322,1694,1575,1342,658,1372,1534,5049,11448,1827,1452,1846,1264,2790,855,1447,1925,3036,828,1549,2633,2209,1945,3688,4313,2679,3739,3889,1020,2409,2119,2118,1975,7,0,0,0,0,0,1328,2496,1505,2510,4936,7452,6863,3602,1963,7313,4648,5981,5097,3940,1714,584,350,185,579,0,273,616,0,0,0,0,0,830,5603,5271,810,1352,1898,503,485,253,0,0,1056,2461,297,5147,6799,1997,0,0,0,0,0,315,0,0,0,988,1570,557,891,114,0,969,1139,2735,921,0,0,0,0,56,539,645,294,2773,4269,1552,727,1024,2682,3021,0,2777,2084,2122,1160,807,0,2264,2351,1852,1252,3585,1807,0,0,0,0,0,486,828,1177,549,84,1026,635,0,117,0,0,0,279,1062,398,0,0,0,1574,2391,1186,772,0,395,2154,4477,283,1188,2163,542,0,0,276,913,886,947,762,457,519,844,0,135,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,711,629,523,0,591,1715,1805,869,2536,1334,478,958,886,0,0,0,0,0,0,176,507,417,0,0,0,0,318,0,0,1208,2310,1055,0,0,0,0,0,300,0,309,0,0,0,0,272,0,81,897,695,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,572,679,0,0,1381,733,1388,978,723,332,0,0,0,0,0,0,0,0,0,0,0,206,0,206,293,2080,2819,3842,4998,1806,1219,0,0,0,0,0,0,1756,1259,0,0,0,1941,2996,1751,3041,3004,435,293,2141,4274,3699,1010,402,44,0,0,0,0,0,0,0,0,0,220,0,0,0,651,0,3841,5568,3280,0,0,0,621,0,1001,752,0,0,0,10,0,0,0,0,312,3037,980,4113,6151,791,932,3471,3569,1208,0,300,1858,2226,979,41,0,0,0,0,0,1540,1607,1490,692,0,0,0,1048,1717,6461,3437,757,0,1358,685,38,626,1530,0,15,583,439,0,0,14,2847,1556,812,1992,2829,2785,1508,1,0,565,3094,2425,3480,3607,2396,2126,3310,1745,1834,2239,928,1778,2246,3443,2616,1988,164,0,833,940,0,719,924,530,577,1329,1620,567,1636,912,1362,3118,2702,3331,1554,1195,569,619,1907,2104,2232,4727,1927,57,0,758,491,828,3044,2228,1506,1707,768,373,0,40,1634,1504,626,744,829,928,0,166,106,0,0,0,0,2268,4417,3503,1542,876,851,938,267,0,38,690,237,0,704,0,144,478,436,0,654,1103,1419,910,287,290,417,0,0,0,0,0,0,0,411,381,2,0,0,0,0,0,0,856,120,0,0,0,0,177,189,108,10,450,879,1147,1212,906,1185,664,585,1828,2158,23,110,972,965,47,71,0,577,390,0,0,0,0,0,0,0,0,0,609,1039,40,0,0,0,10,160,0,90,0,0,0,0,66,1233,1063,1013,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,248,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,338,1794,1699,0,0,0,0,0,697,306,0,0,0,0,78,1486,876,1222,0,0,0,691,1670,1260,735,1441,2288,901,877,208,111,0,0,0,0,0,0,277,652,0,751,859,0,0,597,530,752,682,1855,1871,1856,839,553,330,997,261,0,0,868,2178,753,99,918,2097,6204,5342,2970,2420,3264,11819,5497,1492,882,2689,2743,3487,5937,1271,577,1544,2556,1957,2522,481,522,3331,3619,2785,607,0,0,0,57,0,0,0,0,0,1480,4084,1539,6480,10491,4713,2041,2024,0,0,0,0,0,67,397,0,4,29,1014,897,480,2548,2661,2541,4302,4818,3973,3544,3867,2428,1807,82,0,80,1176,5011,3292,2639,918,890,3140,1099,1999,1565,5386,4999,2278,1177,1154,285,0,715,0,25,1999,2301,3501,2691,959,1544,3865,4216,5035,2889,2860,5107,4341,1472,1210,2798,2118,663,0,0,1028,1028,776,0,1566,2278,992,5,348,319,422,0,0,218,419,598,1444,554,1033,1171,2164,3476,1998,1393,231,309,1078,572,924,0,1,815,639,1554,0,0,0,0,0,0,0,0,200,337,0,0,0,0,465,461,702,200,319,0,1051,2426,2504,1459,414,1056,1084,538,294,58,676,383,430,658,464,487,1442,1504,124,0,0,0,0,0,0,0,0,0,0,0,5,195,0,0,0,496,522,776,386,0,0,0,0,0,0,0,0,0,4,42,0,568,0,0,774,794,0,0,0,0,2,100,267,96,102,0,0,277,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1054,400,0,0,0,0,167,121,0,0,0,0,0,0,0,0,0,0,0,0,0,0,68,333,576,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,44,13,347,0,0,0,0,0,0,0,0,0,407,741,87,619,283,0,0,0,0,0,0,0,0,0,0,0,0,0,1,855,1218,857,2061,5354,904,0,1175,0,0,286,1040,1943,2816,0,1299,1629,4367,3522,6361,1513,361,382,956,746,584,1520,2380,1633,1050,1581,4386,9142,8125,433,121,720,1233,1503,4930,890,76,1099,3387,2766,1222,2290,1332,1899,1774,2432,4410,5191,4932,1704,2525,5,0,0,0,0,0,0,0,0,0,0,0,102,1351,1676,1440,3632,781,959,689,1409,2636,1945,2074,2560,3224,1971,1152,1106,356,0,766,1325,1553,714,0,1243,1263,240,0,0,0,123,1353,2999,2120,0,88,785,458,1056,2599,569,265,655,1515,1083,1619,1133,216,0,0,0,70,529,1981,720,653,791,3000,1014,575,1159,341,637,420,1505,153,122,169,652,177,853,997,0,1112,693,522,961,481,1030,1020,544,134,770,416,0,0,0,528,474,93,0,0,0,0,0,1,0,209,0,0,0,0,0,0,1464,880,1070,441,0,0,0,0,0,637,599,521,669,143,104,1295,148,0,28,371,455,397,506,25,0,594,1406,2904,2180,571,0,0,372,0,0,0,125,0,0,0,144,0,0,498,1051,314,100,333,200,0,0,0,0,1,559,848,350,501,1209,1191,4232,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,142,303,412,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,176,263,0,0,0,0,0,0,0,0,0,0,0,0,0,716,1854,1005,0,55,0,440,601,520,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1211],"tmean_halfdeg_bin_on_wet_days":[23,26,20,24,23,22,23,22,18,26,21,17,24,17,14,17,16,18,12,13,14,18,22,15,12,19,18,22,27,26,20,23,19,18,20,22,23,19,14,14,20,22,21,15,12,9,12,6,5,6,8,14,18,19,17,14,12,11,10,12,11,12,8,9,14,18,17,17,10,9,15,19,17,16,13,14,16,12,6,6,8,10,7,2,4,5,2,3,3,4,1,2,8,16,22,24,14,23,21,19,16,11,7,3,5,3,2,2,16,14,10,13,16,21,24,21,18,12,16,10,9,10,11,8,12,9,13,16,14,24,17,15,11,13,23,16,11,11,11,11,13,15,19,17,16,15,14,16,10,10,26,27,24,22,20,22,21,17,18,18,15,16,16,18,18,19,18,25,23,23,24,26,28,22,24,25,26,26,22,25,26,25,22,21,22,24,18,31,26,28,24,20,21,18,16,11,10,14,9,10,12,16,15,16,14,15,12,15,9,8,11,13,18,22,18,14,11,11,10,8,11,10,8,9,6,13,13,11,15,15,9,12,12,6,4,10,12,8,9,12,10,10,7,8,10,5,9,6,4,7,11,14,14,11,1,11,19,15,20,17,10,5,3,4,7,13,13,5,11,17,19,14,8,4,5,3,4,10,13,17,18,13,5,9,8,7,12,13,12,11,11,8,14,11,8,5,8,8,4,4,6,9,11,11,12,7,6,5,11,14,15,19,22,16,19,10,10,11,15,9,7,11,15,14,8,14,15,19,24,18,18,18,15,17,16,13,18,16,15,15,12,15,20,19,21,21,19,19,28,31,30,33,30,24,23,27,26,28,23,23,29,25,21,22,24,26,33,33,29,26,35,30,33,32,32,30,30,30,37,29,26,28,27,24,25,25,25,27,24,27,25,25,25,20,19,18,18,17,14,14,17,19,18,19,21,23,22,23,24,18,18,16,15,13,14,16,16,16,18,15,13,12,15,17,11,9,10,6,6,10,11,8,14,14,6,8,6,4,5,7,6,10,12,14,13,6,3,5,8,10,9,4,8,11,8,10,14,12,13,18,17,12,8,9,10,15,15,16,15,13,18,14,13,11,12,14,15,18,16,13,7,9,11,14,13,12,11,10,11,12,13,11,10,8,7,8,7,7,11,15,12,7,6,6,6,9,10,11,17,22,19,20,15,22,18,21,18,18,15,7,6,11,11,10,12,11,12,12,12,14,13,10,8,10,10,23,14,13,31,27,21,15,17,16,15,16,16,15,13,15,16,20,21,19,17,21,21,16,13,16,26,18,29,28,23,28,23,25,27,25,23,23,35,31,28,25,27,23,27,22,20,20,24,20,16,19,21,22,20,17,15,16,24,21,21,16,14,15,17,16,17,16,12,10,9,9,10,11,18,19,14,12,14,12,16,17,11,13,12,16,16,10,6,7,8,10,12,8,4,3,3,6,6,4,7,12,18,16,9,6,-2,8,10,11,15,17,19,14,10,9,10,14,12,9,10,14,12,10,10,13,12,11,10,7,4,3,4,4,8,12,7,6,6,9,8,9,5,9,9,3,0,1,2,11,8,10,9,8,8,8,7,9,13,14,10,4,11,14,9,7,8,3,2,7,4,6,10,13,11,7,6,9,15,16,15,11,13,9,8,6,4,6,3,5,6,8,8,5,7,11,8,6,7,15,13,22,11,11,11,12,17,12,12,11,11,18,12,7,8,11,15,15,11,13,13,15,18,18,15,24,20,21,15,14,15,25,23,26,28,21,30,25,22,20,21,26,29,29,29,27,33,23,23,31,22,24,23,22,23,24,19,21,17,17,16,14,17,15,17,16,12,8,19,20,18,17,21,24,26,24,23,19,13,11,13,13,11,9,10,13,18,16,9,11,15,15,13,13,8,9,11,12,10,8,9,8,12,14,7,8,14,18,18,15,11,6,6,5,8,10,7,5,8,10,9,6,2,1,2,6,3,4,6,6,7,9,8,3,7,6,3,6,11,12,14,12,14,14,13,9,8,7,7,5,8,10,10,10,10,10,5,6,7,11,13,10,10,6,9,9,8,6,7,7,10,11,12,10,14,10,9,10,9,10,10,9,15,14,9,12,9,7,16,11,23,17,17,18,14,10,10,12,17,17,13,14,22,21,18,16,14,14,20,16,11,12,14,25,27,26,21,22,21,20,17,17,24,23,23,21,19,16,17,21,22,21,25,26,26,22,23,23,28,26,24,25,32,29],"monthly_hundredths_mm":[13311,19694,18560,53859,39535,13501,15701,14396,9372,1599,4759,3493,26090,33505,17473,19359,27030,27029,28711,12022,3853,1068,4724,662,9600,34116,25229,32604,25438,5639,26493,468,2377,1189,1670,9871,16763,29763,36614,25161,6761,31719,33418,18061,11455,5329,1357,161,6470,8044,38482,30320,34894,18648,13777,8156,9422,11,681,5643,28044,46323,53603,53009,27584,33034,20200,6707,10050,276,3331,10838,20283,59176,53155,49138,57208,14531,36409,16428,3076,3607,892,10126,30347,47342,85340,46103,13730,42259,22638,12096,9947,2254,6786,20484,38591,32311,24078,56087,41339,28549,7873,15629,5323,248,0,4834,16980,62761,64105,48575,66020,31491,8807,17057,4559,842,2719,404,14562,60129,44469,37541,27652,14804,8181,12574,8891,857,439,6463,16633,12105,24352,14443,12895,18684,16337,8140,9820,1232,4668,2208,14872,43252,50245,59848,22538,28359,18890,7650,7481,146,851,3575,2214,25900,60970,40809,17198,46718,28303,6095,1444,23,222,5185,14740,30853,53725,46037,26399,16197,12926,9967,7086,0,11671,12503,37256,12768,29543,28888,6244,34259,20840,18271,13286,1831,78,4476,26780,36180,57048,73579,17626,29613,12462,8256,6305,859,204,5378,6767,82571,41223,30411,47321,23174,17206,4526,4669,2342,1780,6193,25842,29228,60188,48830,21631,34287,23159,3244,7207,412,7562,661,20130,35257,42208,34539,18649,32727,15222,21870,5290,1496,2006,6982]}}}</script><!--@@END json:precip-data@@-->
+<script>
+/*@@BEGIN js:shared/a11y.js@@*/
+/* Accessibility helpers shared by every module (keyboard access, live announcements,
+ * reduced motion). Single source of truth: shared/a11y.js, inlined by scripts/build_modules.py.
+ * Pure logic (keyValue) is unit-tested under node; the DOM helpers use only the standard DOM.
+ */
+var HydroA11y = (function () {
+  'use strict';
+
+  /* True when the user asked the OS/browser for less motion. Widgets must still update;
+     they just must not animate or autoplay on their own. */
+  function reducedMotion() {
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) { return false; }
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* Round to the step grid anchored at min, trimming float noise. */
+  function snap(v, min, step) {
+    var n = Math.round((v - min) / step);
+    var out = min + n * step;
+    var decimals = (String(step).split('.')[1] || '').length;
+    return parseFloat(out.toFixed(Math.min(decimals + 2, 12)));
+  }
+
+  /* WAI-ARIA slider keys. Returns the new value, or null when the key is not handled. */
+  function keyValue(key, cur, o) {
+    var step = o.step || 1, page = o.page || step * 10, v;
+    switch (key) {
+      case 'ArrowRight': case 'ArrowUp':   v = cur + step; break;
+      case 'ArrowLeft':  case 'ArrowDown': v = cur - step; break;
+      case 'PageUp':   v = cur + page; break;
+      case 'PageDown': v = cur - page; break;
+      case 'Home': v = o.min; break;
+      case 'End':  v = o.max; break;
+      default: return null;
+    }
+    return clamp(snap(v, o.min, step), o.min, o.max);
+  }
+
+  /* One polite live region for short announcements (selected cell, new scenario, ...). */
+  function announce(msg) {
+    var el = document.getElementById('hydro-announcer');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'hydro-announcer';
+      el.className = 'hydro-sr-only';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(el);
+    }
+    el.textContent = '';
+    el.textContent = String(msg);
+  }
+
+  /* Make `el` a keyboard-operable slider.
+       o = { label, min, max, step, page, get(), set(v), text(v) }
+     get() returns the current value, set(v) applies a new one (the caller redraws), text(v)
+     is the human-readable value for screen readers. Call the returned sync() after the value
+     changes by other means (mouse drag, a paired <input type=range>). */
+  function slider(el, o) {
+    el.setAttribute('role', 'slider');
+    el.setAttribute('tabindex', '0');
+    if (o.label) el.setAttribute('aria-label', o.label);
+    el.setAttribute('aria-valuemin', String(o.min));
+    el.setAttribute('aria-valuemax', String(o.max));
+    function sync() {
+      var v = o.get();
+      el.setAttribute('aria-valuenow', String(v));
+      el.setAttribute('aria-valuetext', o.text ? o.text(v) : String(v));
+    }
+    el.addEventListener('keydown', function (ev) {
+      var nv = keyValue(ev.key, o.get(), o);
+      if (nv === null) return;
+      ev.preventDefault();
+      if (nv !== o.get()) o.set(nv);
+      sync();
+    });
+    sync();
+    return { sync: sync };
+  }
+
+  /* Make a non-button element (a card, a node) operable from the keyboard: role, tab stop, and
+     Enter/Space as well as click all call fn. */
+  function activatable(el, fn, role) {
+    if (!el.getAttribute('role')) el.setAttribute('role', role || 'button');
+    if (el.getAttribute('tabindex') === null) el.setAttribute('tabindex', '0');
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fn(ev); }
+    });
+  }
+
+  /* [data-scroll="section-id"] elements scroll to that section (replaces inline onclick). */
+  function wireScrollNav() {
+    var nodes = document.querySelectorAll('[data-scroll]');
+    for (var i = 0; i < nodes.length; i++) (function (node) {
+      activatable(node, function () {
+        var t = document.getElementById(node.getAttribute('data-scroll'));
+        if (!t) return;
+        t.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        t.setAttribute('tabindex', '-1');
+        try { t.focus({ preventScroll: true }); } catch (e) {}
+      });
+    })(nodes[i]);
+  }
+
+  /* Mark readouts as polite live regions so screen readers hear changed values. */
+  function live(ids) {
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+    });
+  }
+
+  return { reducedMotion: reducedMotion, keyValue: keyValue, snap: snap, announce: announce,
+           slider: slider, live: live, activatable: activatable, wireScrollNav: wireScrollNav };
+})();
+/*@@END js:shared/a11y.js@@*/
+/*@@BEGIN js:shared/cmap.js@@*/
+/* Perceptually uniform, colour-vision-deficiency-safe sequential colour map (viridis, 17 anchors
+ * sampled from matplotlib's viridis, CC0) plus a plain-canvas shaded-relief renderer.
+ * Replaces red-green maps: lightness rises monotonically with the value, so the map reads in
+ * greyscale and for every common form of colour blindness.
+ * Single source of truth: shared/cmap.js (inlined by scripts/build_modules.py).
+ */
+var HydroCmap = (function () {
+  'use strict';
+  var STOPS = [[68,1,84], [72,24,106], [71,45,123], [66,64,134], [59,82,139], [51,99,141], [44,114,142], [38,130,142], [33,145,140], [31,160,136], [40,174,128], [63,188,115], [94,201,98], [132,212,75], [173,220,48], [216,226,25], [253,231,37]];
+  function rgb(t) {
+    t = Math.max(0, Math.min(1, t));
+    var x = t * (STOPS.length - 1), i = Math.min(STOPS.length - 2, Math.floor(x)), f = x - i, a = STOPS[i], b = STOPS[i + 1];
+    return [Math.round(a[0] + (b[0] - a[0]) * f), Math.round(a[1] + (b[1] - a[1]) * f), Math.round(a[2] + (b[2] - a[2]) * f)];
+  }
+  function css(t) { var c = rgb(t); return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
+  /* CSS linear-gradient for a legend bar */
+  function gradient(dir) {
+    return 'linear-gradient(' + (dir || 'to right') + ', ' + STOPS.map(function (s, i) { return 'rgb(' + s.join(',') + ') ' + (100 * i / (STOPS.length - 1)).toFixed(1) + '%'; }).join(', ') + ')';
+  }
+  /* Shaded relief of a DEM (array of rows) on a 2-D canvas; cell and zUnit are in the DEM's units. */
+  function relief(canvas, dem, o) {
+    o = o || {};
+    var R = dem.length, C = dem[0].length, ctx = canvas.getContext('2d');
+    var cw = canvas.width / C, ch = canvas.height / R, cell = o.cell || 30;
+    var lo = Infinity, hi = -Infinity, r, c;
+    for (r = 0; r < R; r++) for (c = 0; c < C; c++) { if (dem[r][c] < lo) lo = dem[r][c]; if (dem[r][c] > hi) hi = dem[r][c]; }
+    var L = [-0.55, -0.55, 0.63];   /* light from the north-west, 45 degrees up */
+    for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+      var zx = (dem[r][Math.min(C - 1, c + 1)] - dem[r][Math.max(0, c - 1)]) / (2 * cell);
+      var zy = (dem[Math.min(R - 1, r + 1)][c] - dem[Math.max(0, r - 1)][c]) / (2 * cell);
+      var n = Math.sqrt(zx * zx + zy * zy + 1), shade = Math.max(0, (-zx * L[0] - zy * L[1] + L[2]) / n);
+      var base = rgb((dem[r][c] - lo) / ((hi - lo) || 1)), k = 0.35 + 0.9 * shade;
+      ctx.fillStyle = 'rgb(' + Math.min(255, Math.round(base[0] * k)) + ',' + Math.min(255, Math.round(base[1] * k)) + ',' + Math.min(255, Math.round(base[2] * k)) + ')';
+      ctx.fillRect(c * cw, r * ch, cw + 0.5, ch + 0.5);
+    }
+    if (o.streams) {
+      ctx.fillStyle = 'rgba(0,255,255,0.9)';
+      for (r = 0; r < R; r++) for (c = 0; c < C; c++) if (o.streams(r, c)) ctx.fillRect(c * cw + cw * 0.25, r * ch + ch * 0.25, cw * 0.5, ch * 0.5);
+    }
+    if (o.outlet) {
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc((o.outlet.c + 0.5) * cw, (o.outlet.r + 0.5) * ch, Math.max(3, cw * 0.5), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  return { rgb: rgb, css: css, gradient: gradient, relief: relief, STOPS: STOPS };
+})();
+/*@@END js:shared/cmap.js@@*/
+/*@@BEGIN js:shared/quiz.js@@*/
+/* HydroQuiz: the one checkpoint engine used by every module.
+ *
+ * Behaviour (the contract the tests pin):
+ *  - nothing about the answer is in the DOM before the first attempt (no pre-marked option, no
+ *    explanation text); the specification lives in the module's script, not the markup;
+ *  - every item can be answered again and again; a wrong attempt gets feedback for THAT answer but
+ *    never names the right one; after two wrong attempts a "Show explanation" button appears;
+ *  - a correct attempt shows the explanation; revealing an answer does not count as correct;
+ *  - fully keyboard operable (native radio group or text field + a Check button; Enter checks a
+ *    numeric answer) and announced through role=status live regions;
+ *  - numeric items take their answer from a function over the lesson's own data or code, so the
+ *    expected value can never be typed in by hand and drift from the lesson;
+ *  - completion goes to the AI-Hydro host as `artifact/quizComplete` with an explicit target
+ *    origin (the embedding window's origin), never '*'. If that origin cannot be determined, or
+ *    the page is standalone, nothing is posted.
+ *
+ * Item specification:
+ *   (prompt may be a function, so numbers quoted in the question come from the lesson's data too)
+ *   { id, type:'choice', prompt, options:[text,...], correct:index|function,
+ *     feedback:[text|null,...],            // shown when that option is chosen and wrong
+ *     explain:text|function }              // shown when correct (and on "Show explanation")
+ *   { id, type:'numeric', prompt, answer:number|function, tol:{abs,rel}, unit, format:function,
+ *     hint:text|function, explain:text|function(answer) }
+ *
+ * Single source of truth: shared/quiz.js (inlined by scripts/build_modules.py).
+ */
+var HydroQuiz = (function () {
+  'use strict';
+
+  var instances = {};
+  var lastReport = null;
+
+  function resolve(v, arg) { return typeof v === 'function' ? v(arg) : v; }
+
+  /* "0.74", "0,74", "1 350", "1,350", "−3", "12 mm", "45%" -> number; anything else -> null */
+  function parseNumber(text) {
+    var s = String(text == null ? '' : text).replace(/−/g, '-').replace(/[  ]/g, ' ').trim();
+    var m = /^([+-]?[0-9][0-9 ,.]*(?:e[+-]?[0-9]+)?|[+-]?\.[0-9]+)\s*(?:%|[A-Za-z°µμ\/²³·^ -]*)$/i.exec(s);
+    if (!m) return null;
+    var n = m[1].replace(/ /g, '');
+    if (n.indexOf('.') >= 0 && n.indexOf(',') >= 0) n = n.replace(/,/g, '');
+    else if (/^[+-]?[0-9]{1,3}(,[0-9]{3})+$/.test(n)) n = n.replace(/,/g, '');
+    else n = n.replace(',', '.');
+    if (!/^[+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(n)) return null;
+    var v = parseFloat(n);
+    return isFinite(v) ? v : null;
+  }
+
+  function tolerance(item, ans) {
+    var t = item.tol || {};
+    var abs = typeof t.abs === 'number' ? t.abs : 0;
+    var rel = typeof t.rel === 'number' ? t.rel : (typeof t.abs === 'number' ? 0 : 0.02);
+    return Math.max(abs, rel * Math.abs(ans));
+  }
+
+  function gradeChoice(item, idx) {
+    if (idx === null || idx === undefined || idx < 0) return { status: 'empty' };
+    return { status: idx === resolve(item.correct) ? 'correct' : 'incorrect', choice: idx };
+  }
+
+  function gradeNumeric(item, text) {
+    var v = parseNumber(text);
+    if (v === null) return { status: 'invalid' };
+    var ans = resolve(item.answer);
+    var tol = tolerance(item, ans);
+    var ok = Math.abs(v - ans) <= tol;
+    return { status: ok ? 'correct' : 'incorrect', value: v, answer: ans, tol: tol, direction: v > ans ? 'high' : 'low' };
+  }
+
+  function fmt(item, v) {
+    if (item.format) return item.format(v);
+    var s = Math.abs(v) >= 1000 ? String(Math.round(v)) : String(parseFloat(v.toPrecision(4)));
+    return s + (item.unit ? ' ' + item.unit : '');
+  }
+
+  function feedbackText(item, res) {
+    if (res.status === 'correct') {
+      var ex = item.type === 'numeric' ? resolve(item.explain, res.answer) : resolve(item.explain);
+      return '✓ Correct. ' + (ex || '');
+    }
+    if (item.type === 'numeric') {
+      var hint = resolve(item.hint, res.answer);
+      return '✗ Not quite: your value is too ' + res.direction + '. ' + (hint || 'Recompute it from the numbers in the lesson and try again.');
+    }
+    var fb = item.feedback && item.feedback[res.choice];
+    return '✗ Not quite. ' + (fb || 'Re-read the section above and try again.');
+  }
+
+  function revealText(item) {
+    if (item.type === 'numeric') {
+      var a = resolve(item.answer);
+      return 'Answer: ' + fmt(item, a) + '. ' + (resolve(item.explain, a) || '');
+    }
+    var c = resolve(item.correct);
+    return 'Answer: ' + item.options[c] + '. ' + (resolve(item.explain) || '');
+  }
+
+  /* A numeric constant read from the text of a code cell (e.g. `C = 0.35`), so an answer is
+     computed from the very numbers the learner reads in the cell. */
+  function sourceConstant(cellId, name) {
+    var pre = document.querySelector('[data-aihydro-cell-id="' + cellId + '"] .aihydro-source');
+    var m = pre && new RegExp('^\\s*' + name + '\\s*=\\s*([-+0-9._eE]+)', 'm').exec(pre.textContent);
+    if (!m) throw new Error('constant ' + name + ' not found in cell ' + cellId);
+    return parseFloat(m[1].replace(/_/g, ''));
+  }
+
+  /* The window that embeds this page, as an origin string, or null (standalone / unknown). */
+  function parentOrigin(win) {
+    win = win || window;
+    try { if (!win.parent || win.parent === win) return null; } catch (e) { return null; }
+    var o = null;
+    try { var a = win.location && win.location.ancestorOrigins; if (a && a.length) o = a[0]; } catch (e) { o = null; }
+    if (!o || o === 'null') {
+      try { o = win.document.referrer ? new URL(win.document.referrer).origin : null; } catch (e) { o = null; }
+    }
+    return o && o !== 'null' ? o : null;
+  }
+
+  /* artifact/quizComplete exactly as the AI-Hydro bridge sends it, but to a named origin. */
+  function postComplete(quizId, passed, score, total, win) {
+    win = win || window;
+    var origin = parentOrigin(win);
+    lastReport = { quizId: quizId, passed: passed, score: score, total: total, origin: origin, posted: false };
+    if (!origin) return false;
+    var base = win.__aihydroArtifact || {};
+    var msg = { source: 'aihydro-artifact' };
+    for (var k in base) msg[k] = base[k];
+    msg.type = 'artifact/quizComplete';
+    msg.quizId = quizId; msg.passed = passed; msg.score = score; msg.total = total;
+    try { win.parent.postMessage(msg, origin); lastReport.posted = true; } catch (e) { return false; }
+    return true;
+  }
+
+  function el(tag, props, kids) {
+    var e = document.createElement(tag);
+    if (props) for (var k in props) {
+      if (k === 'class') e.className = props[k];
+      else if (k === 'text') e.textContent = props[k];
+      else e.setAttribute(k, props[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function mount(root, spec) {
+    var quizId = spec.quizId;
+    var items = spec.items;
+    var rec = {};            // id -> { attempts, correct, revealed, node refs }
+    var list = el('ol', { 'class': 'hq-list' });
+    var summary = el('p', { 'class': 'hq-summary', role: 'status', 'aria-live': 'polite' });
+
+    root.setAttribute('class', 'hq');
+    root.setAttribute('data-hq-quiz', quizId);
+
+    function counts() {
+      var n = 0;
+      items.forEach(function (it) { if (rec[it.id].correct) n++; });
+      return n;
+    }
+    function updateSummary() {
+      var n = counts(), total = items.length;
+      summary.textContent = n === total
+        ? 'All ' + total + ' correct ✓ Checkpoint complete.'
+        : n + ' of ' + total + ' correct. Wrong answers can be changed and checked again.';
+      summary.setAttribute('data-complete', n === total ? '1' : '0');
+    }
+
+    items.forEach(function (it, qi) {
+      var r = rec[it.id] = { attempts: 0, correct: false, revealed: false, radios: [], input: null };
+      var uid = quizId + '-' + it.id;
+      var fb = el('div', { 'class': 'hq-feedback', id: uid + '-fb', role: 'status', 'aria-live': 'polite' });
+      var check = el('button', { 'class': 'hq-check', type: 'button', text: 'Check answer' });
+      var reveal = el('button', { 'class': 'hq-reveal', type: 'button', text: 'Show explanation', hidden: 'hidden' });
+      var legend = el('legend', { 'class': 'hq-prompt', text: (qi + 1) + ' · ' + resolve(it.prompt) });
+      var body;
+
+      if (it.type === 'numeric') {
+        var input = el('input', { 'class': 'hq-input', type: 'text', inputmode: 'decimal', autocomplete: 'off',
+                                  id: uid + '-in', 'aria-describedby': uid + '-fb' });
+        r.input = input;
+        input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); doCheck(); } });
+        body = el('div', { 'class': 'hq-numeric' }, [
+          el('label', { 'class': 'hq-numlabel', 'for': uid + '-in', text: 'Your answer' + (it.unit ? ' (' + it.unit + ')' : '') }),
+          input
+        ]);
+      } else {
+        body = el('div', { 'class': 'hq-options' });
+        it.options.forEach(function (text, oi) {
+          var radio = el('input', { type: 'radio', name: uid, value: String(oi), 'aria-describedby': uid + '-fb' });
+          r.radios.push(radio);
+          body.appendChild(el('label', { 'class': 'hq-opt' }, [radio, el('span', { text: text })]));
+        });
+      }
+
+      function selected() {
+        for (var i = 0; i < r.radios.length; i++) if (r.radios[i].checked) return i;
+        return -1;
+      }
+      function doCheck() {
+        var res = it.type === 'numeric' ? gradeNumeric(it, r.input.value) : gradeChoice(it, selected());
+        if (res.status === 'empty' || res.status === 'invalid') {
+          fb.textContent = res.status === 'empty' ? 'Choose an answer first, then check it.' : 'Enter a number (for example 0.74), then check it.';
+          item.setAttribute('data-state', 'pending');
+          return;
+        }
+        r.attempts++;
+        r.correct = res.status === 'correct';
+        item.setAttribute('data-state', r.correct ? 'correct' : 'incorrect');
+        fb.textContent = feedbackText(it, res);
+        check.textContent = 'Check again';
+        if (!r.correct && r.attempts >= 2) reveal.removeAttribute('hidden');
+        updateSummary();
+        postComplete(quizId, counts() === items.length, counts(), items.length);
+        if (spec.onChange) spec.onChange(api.state());
+      }
+      check.addEventListener('click', doCheck);
+      reveal.addEventListener('click', function () {
+        r.revealed = true;
+        item.setAttribute('data-state', r.correct ? 'correct' : 'revealed');
+        fb.textContent = revealText(it);
+      });
+      r.check = doCheck;
+
+      var fieldset = el('fieldset', { 'class': 'hq-fieldset' }, [
+        legend, body,
+        el('div', { 'class': 'hq-actions' }, [check, reveal]),
+        fb
+      ]);
+      var item = el('li', { 'class': 'hq-item', 'data-hq-item': it.id, 'data-state': '' }, [fieldset]);
+      list.appendChild(item);
+    });
+
+    root.appendChild(list);
+    root.appendChild(summary);
+    updateSummary();
+
+    var api = {
+      quizId: quizId,
+      state: function () {
+        var n = counts();
+        return { quizId: quizId, correct: n, total: items.length, passed: n === items.length,
+                 items: items.map(function (it) { return { id: it.id, attempts: rec[it.id].attempts, correct: rec[it.id].correct, revealed: rec[it.id].revealed }; }) };
+      },
+      /* test/programmatic hooks: answer an item then check it */
+      answer: function (id, value) {
+        var r = rec[id];
+        if (r.input) r.input.value = String(value);
+        else if (r.radios[value]) r.radios[value].checked = true;
+      },
+      check: function (id) { rec[id].check(); },
+      /* every item as the learner sees it plus the computed right answer, for tests that cross-check them independently */
+      describe: function () {
+        return items.map(function (it) {
+          return { id: it.id, type: it.type, prompt: resolve(it.prompt), options: it.options || null,
+                   expected: resolve(it.type === 'numeric' ? it.answer : it.correct),
+                   explain: it.type === 'numeric' ? resolve(it.explain, resolve(it.answer)) : resolve(it.explain) };
+        });
+      },
+      /* the computed right answer (index or number), for tests that cross-check it independently */
+      expected: function (id) {
+        for (var i = 0; i < items.length; i++) if (items[i].id === id) return resolve(items[i].type === 'numeric' ? items[i].answer : items[i].correct);
+        return undefined;
+      }
+    };
+    instances[quizId] = api;
+    return api;
+  }
+
+  return { mount: mount, parseNumber: parseNumber, gradeChoice: gradeChoice, gradeNumeric: gradeNumeric,
+           sourceConstant: sourceConstant, parentOrigin: parentOrigin, postComplete: postComplete, feedbackText: feedbackText,
+           revealText: revealText, tolerance: tolerance, instances: instances,
+           lastReport: function () { return lastReport; } };
+})();
+/*@@END js:shared/quiz.js@@*/
+</script>
+<script>
+(function () {
+  'use strict';
+
+  /* ──────────────────────────────────────────────────────────────────
+     CORE: the SYNTHETIC field of §2 and the arithmetic on the real records of §3–§6.
+     Pure functions, no DOM; tests/test_precipitation_point_to_basin.py runs this block under node
+     and recomputes every number independently in Python.
+     ────────────────────────────────────────────────────────────────── */
+  /*@@CORE-BEGIN@@*/
+  /* §2 · SYNTHETIC. A 60 x 60 grid of 1 km cells, a made-up basin outline and six gauge sites. Nothing here is observed. */
+  var GRID_N = 60;
+  var BASIN_POLY = [[5, 30], [12, 12], [28, 5], [46, 8], [56, 22], [54, 44], [40, 55], [22, 52], [10, 45]];
+  var FIELD = { background: 5.0, gradient: 0.30, stormAmp: 30.0, stormSigma: 4.5, stormX: 34.0, stormY: 26.0 };
+  var GAUGE_SITES = [{ id: 'G1', ix: 46, iy: 14 }, { id: 'G2', ix: 50, iy: 30 }, { id: 'G3', ix: 44, iy: 42 },
+                     { id: 'G4', ix: 30, iy: 22 }, { id: 'G5', ix: 18, iy: 44 }, { id: 'G6', ix: 12, iy: 28 }];
+  var DEFAULT_POWER = 2;
+
+  /* even-odd rule: is the point inside the basin outline? */
+  function insideBasin(x, y) {
+    var c = false, n = BASIN_POLY.length, i, x1, y1, x2, y2;
+    for (i = 0; i < n; i++) {
+      x1 = BASIN_POLY[i][0]; y1 = BASIN_POLY[i][1];
+      x2 = BASIN_POLY[(i + 1) % n][0]; y2 = BASIN_POLY[(i + 1) % n][1];
+      if ((y1 > y) !== (y2 > y) && x < x1 + (y - y1) * (x2 - x1) / (y2 - y1)) c = !c;
+    }
+    return c;
+  }
+  /* storm-total depth (mm) at a point (km): background + eastward gradient + one Gaussian storm cell */
+  function fieldAt(x, y) {
+    var dx = x - FIELD.stormX, dy = y - FIELD.stormY;
+    return FIELD.background + FIELD.gradient * x +
+           FIELD.stormAmp * Math.exp(-(dx * dx + dy * dy) / (2 * FIELD.stormSigma * FIELD.stormSigma));
+  }
+  var GRID = (function () {
+    var field = [], cells = [], lo = Infinity, hi = -Infinity, j, i, x, y, v;
+    for (j = 0; j < GRID_N; j++) for (i = 0; i < GRID_N; i++) {
+      x = i + 0.5; y = j + 0.5; v = fieldAt(x, y);
+      field.push(v);
+      if (insideBasin(x, y)) { cells.push(j * GRID_N + i); if (v < lo) lo = v; if (v > hi) hi = v; }
+    }
+    return { n: GRID_N, field: field, cells: cells, lo: lo, hi: hi };
+  })();
+  function siteReading(s) { return GRID.field[s.iy * GRID_N + s.ix]; }
+  function siteById(id) { for (var k = 0; k < GAUGE_SITES.length; k++) if (GAUGE_SITES[k].id === id) return GAUGE_SITES[k]; return null; }
+  function trueMean() {
+    var s = 0, k;
+    for (k = 0; k < GRID.cells.length; k++) s += GRID.field[GRID.cells[k]];
+    return s / GRID.cells.length;
+  }
+  /* The three basin-mean estimates for a set of gauges (ids, in G1..G6 order) and an IDW power. */
+  function arealEstimates(activeIds, power) {
+    var sites = GAUGE_SITES.filter(function (s) { return activeIds.indexOf(s.id) >= 0; });
+    var k = sites.length, readings = sites.map(siteReading), m = GRID.cells.length, c, g, a, b;
+    var owner = new Array(GRID_N * GRID_N), surface = new Array(GRID_N * GRID_N);
+    var counts = new Array(k).fill(0), idwSum = 0, truth = trueMean(), arith = 0;
+    for (g = 0; g < k; g++) arith += readings[g];
+    arith /= k;
+    for (c = 0; c < m; c++) {
+      var idx = GRID.cells[c], x = (idx % GRID_N) + 0.5, y = Math.floor(idx / GRID_N) + 0.5;
+      var best = 0, bestD2 = Infinity, num = 0, den = 0, exact = -1;
+      for (g = 0; g < k; g++) {
+        a = x - (sites[g].ix + 0.5); b = y - (sites[g].iy + 0.5);
+        var d2 = a * a + b * b, d = Math.sqrt(d2);
+        if (d2 < bestD2) { bestD2 = d2; best = g; }
+        if (d === 0) exact = g;
+        else { var lam = 1.0 / Math.pow(d, power); num += lam * readings[g]; den += lam; }
+      }
+      owner[idx] = best; counts[best]++;
+      surface[idx] = exact >= 0 ? readings[exact] : num / den;
+      idwSum += surface[idx];
+    }
+    var weights = counts.map(function (n) { return n / m; });
+    var thiessen = 0;
+    for (g = 0; g < k; g++) thiessen += weights[g] * readings[g];
+    var idw = idwSum / m;
+    var diff = { arithmetic: arith - truth, thiessen: thiessen - truth, idw: idw - truth };
+    var names = ['arithmetic', 'thiessen', 'idw'], closest = 'arithmetic', q;
+    for (q = 1; q < 3; q++) if (Math.abs(diff[names[q]]) < Math.abs(diff[closest])) closest = names[q];
+    return { ids: sites.map(function (s) { return s.id; }), readings: readings, trueMean: truth, nCells: m,
+             arithmetic: arith, thiessen: thiessen, idw: idw, weights: weights, counts: counts,
+             owner: owner, surface: surface, diff: diff, closest: closest, power: power };
+  }
+
+  /* §3–§6 · REAL records. h = daily precipitation in hundredths of a mm (integers); tb = half-degree bin floor(2 * mean temperature, C)
+     on the days with h > 0, in order; monthly = 240 monthly totals (hundredths of a mm), water-year order Oct..Sep. */
+  function sumArr(a) { var s = 0, i; for (i = 0; i < a.length; i++) s += a[i]; return s; }
+  function isoDate(startIso, k) {
+    var p = startIso.split('-');
+    return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + k)).toISOString().slice(0, 10);
+  }
+  function wetDayFraction(h) { var c = 0, i; for (i = 0; i < h.length; i++) if (h[i] >= 100) c++; return c / h.length; }
+  /* high-precipitation day: at least five times the record mean, tested in exact integer arithmetic (h * n >= 5 * total) */
+  function highPrecDays(h) { var n = h.length, t = sumArr(h), c = 0, i; for (i = 0; i < n; i++) if (h[i] * n >= 5 * t) c++; return c; }
+  function highPrecThresholdMm(h) { return 5 * sumArr(h) / 100 / h.length; }
+  /* lengths (days) of the water years inside a daily record that starts on 1 October */
+  function wyLengths(startIso, n) {
+    var out = [], k;
+    for (k = 0; k < n; k++) { if (k === 0 || isoDate(startIso, k).slice(5) === '10-01') out.push(0); out[out.length - 1]++; }
+    return out;
+  }
+  function highPrecByWY(h, startIso) {
+    var lens = wyLengths(startIso, h.length), t = sumArr(h), n = h.length, out = [], pos = 0, w, k, c;
+    for (w = 0; w < lens.length; w++) {
+      c = 0;
+      for (k = pos; k < pos + lens[w]; k++) if (h[k] * n >= 5 * t) c++;
+      out.push(c); pos += lens[w];
+    }
+    return out;
+  }
+  function longestDrySpell(h) { var run = 0, best = 0, i; for (i = 0; i < h.length; i++) { run = h[i] < 100 ? run + 1 : 0; if (run > best) best = run; } return best; }
+  function largestDay(h, startIso) { var im = 0, i; for (i = 1; i < h.length; i++) if (h[i] > h[im]) im = i; return { mm: h[im] / 100, index: im, date: isoDate(startIso, im) }; }
+  /* share of the precipitation depth that fell on days whose mean temperature was below T (a multiple of 0.5 C): mean < T is bin < 2 * T */
+  function snowFraction(h, tb, T) {
+    var snow = 0, k = 0, i;
+    for (i = 0; i < h.length; i++) if (h[i] > 0) { if (tb[k] < 2 * T) snow += h[i]; k++; }
+    return snow / sumArr(h);
+  }
+  function meanDailyFromMonthly(monthly, days) { return sumArr(monthly) / 100 / sumArr(days); }
+  function monthlyMeanMm(monthly) {
+    var out = [], m, y, s, nWY = monthly.length / 12;
+    for (m = 0; m < 12; m++) { s = 0; for (y = 0; y < nWY; y++) s += monthly[y * 12 + m]; out.push(s / 100 / nWY); }
+    return out;
+  }
+  function seasonShare(monthly, months) {
+    var s = 0, i;
+    for (i = 0; i < monthly.length; i++) if (months.indexOf(i % 12) >= 0) s += monthly[i];
+    return s / sumArr(monthly);
+  }
+  var DJF = [2, 3, 4], JJA = [8, 9, 10];    /* positions in the Oct..Sep order: Dec, Jan, Feb and Jun, Jul, Aug */
+  /* wet days ranked from largest, with their exceedance probability (% of all days): rank / (n + 1) */
+  function exceedancePoints(h, minMm) {
+    var wet = [], i, out = [];
+    for (i = 0; i < h.length; i++) if (h[i] >= 100) wet.push(h[i]);
+    wet.sort(function (a, b) { return b - a; });
+    for (i = 0; i < wet.length; i++) if (wet[i] / 100 >= minMm) out.push({ p: 100 * (i + 1) / (h.length + 1), mm: wet[i] / 100 });
+    return out;
+  }
+  /* everything §3–§6 print for one basin record b of the data blob */
+  function basinStats(b, startIso, monthlyDays, snowT) {
+    var h = b.prcp_hundredths_mm, n = h.length, hp = highPrecDays(h), ld = largestDay(h, startIso);
+    return {
+      n: n, meanP5: sumArr(h) / 100 / n, wetFrac: wetDayFraction(h), highCount: hp, highPerYear: hp / wyLengths(startIso, n).length,
+      highByWY: highPrecByWY(h, startIso), highThresholdMm: highPrecThresholdMm(h), dryMax: longestDrySpell(h),
+      maxMm: ld.mm, maxDate: ld.date, snow: snowFraction(h, b.tmean_halfdeg_bin_on_wet_days, snowT),
+      pMean20: meanDailyFromMonthly(b.monthly_hundredths_mm, monthlyDays),
+      annualMm: sumArr(b.monthly_hundredths_mm) / 100 / (b.monthly_hundredths_mm.length / 12),
+      djf: seasonShare(b.monthly_hundredths_mm, DJF), jja: seasonShare(b.monthly_hundredths_mm, JJA)
+    };
+  }
+  /*@@CORE-END@@*/
+  /*@@CORE2-BEGIN@@*/
+  /* Python source of the two cells. The text is rebuilt from the page state, so the code the learner reads is the code that runs. */
+  function wrapNums(arr, per) {
+    var lines = [], i;
+    for (i = 0; i < arr.length; i += per) lines.push('    ' + arr.slice(i, i + per).join(', ') + ',');
+    return lines.join('\n');
+  }
+  function pyNum(x) { return Number.isInteger(x) ? x.toFixed(1) : String(x); }
+  function buildArealSource(activeIds, power) {
+    var V = {
+      GAUGES: GAUGE_SITES.map(function (s) { return "'" + s.id + "': (" + s.ix + ', ' + s.iy + ')'; }).join(', '),
+      ACTIVE: '[' + activeIds.map(function (g) { return "'" + g + "'"; }).join(', ') + ']',
+      POWER: pyNum(power)
+    };
+    return [
+      "import numpy as np",
+      "import matplotlib.pyplot as plt",
+      "import matplotlib as mpl",
+      "mpl.rcParams.update({",
+      "    'figure.facecolor':'#0a0a15', 'axes.facecolor':'#0f0f1e',",
+      "    'text.color':'#7dd3fc',       'axes.labelcolor':'#7dd3fc',",
+      "    'xtick.color':'#94a3b8',      'ytick.color':'#94a3b8',",
+      "    'axes.edgecolor':'#334155',",
+      "})",
+      "",
+      "# ─── SYNTHETIC field: made up for teaching, not an observation ───",
+      "N = 60                                    # 60 x 60 cells of 1 km",
+      "POLY = [(5, 30), (12, 12), (28, 5), (46, 8), (56, 22), (54, 44), (40, 55), (22, 52), (10, 45)]   # basin outline, km",
+      "BACKGROUND, GRADIENT = 5.0, 0.30          # mm; and mm per km towards the east (orographic gradient)",
+      "STORM_AMP, STORM_SIGMA, STORM_X, STORM_Y = 30.0, 4.5, 34.0, 26.0   # one Gaussian storm cell: mm, km, km, km",
+      "GAUGES = {" + V.GAUGES + "}                    # site -> (column, row)",
+      "ACTIVE = " + V.ACTIVE + "                      # sites in use",
+      "IDW_POWER = " + V.POWER,
+      "",
+      "def inside(x, y):                         # even-odd rule: is the point inside the basin outline?",
+      "    c = False",
+      "    for i in range(len(POLY)):",
+      "        x1, y1 = POLY[i]",
+      "        x2, y2 = POLY[(i + 1) % len(POLY)]",
+      "        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):",
+      "            c = not c",
+      "    return c",
+      "",
+      "xc = np.arange(N) + 0.5",
+      "X, Y = np.meshgrid(xc, xc)                # cell centres; row 0 is the northern edge",
+      "FIELD = BACKGROUND + GRADIENT * X + STORM_AMP * np.exp(-((X - STORM_X) ** 2 + (Y - STORM_Y) ** 2) / (2 * STORM_SIGMA ** 2))",
+      "MASK = np.array([[inside(X[j, i], Y[j, i]) for i in range(N)] for j in range(N)])",
+      "",
+      "# ─── what the gauges see, and three basin means ───",
+      "names = [g for g in GAUGES if g in ACTIVE]",
+      "reading = np.array([FIELD[GAUGES[g][1], GAUGES[g][0]] for g in names])      # the field at each gauge cell",
+      "gx = np.array([GAUGES[g][0] + 0.5 for g in names])",
+      "gy = np.array([GAUGES[g][1] + 0.5 for g in names])",
+      "d = np.sqrt((X[..., None] - gx) ** 2 + (Y[..., None] - gy) ** 2)            # distance from every cell to every gauge",
+      "",
+      "true_mean = FIELD[MASK].mean()            # known only because we built the field",
+      "arith = reading.mean()                    # 1. arithmetic mean of the gauges",
+      "",
+      "owner = d.argmin(axis=2)                  # 2. Thiessen: each cell belongs to its nearest gauge",
+      "weights = np.array([(MASK & (owner == k)).sum() for k in range(len(names))]) / MASK.sum()",
+      "thiessen = float((weights * reading).sum())",
+      "",
+      "exact = d == 0                            # 3. inverse-distance weighting, weights 1 / d**p",
+      "lam = 1.0 / np.where(exact, 1.0, d) ** IDW_POWER",
+      "surface = (lam * reading).sum(axis=2) / lam.sum(axis=2)",
+      "surface = np.where(exact.any(axis=2), (exact * reading).sum(axis=2), surface)   # at a gauge: its own reading",
+      "idw = surface[MASK].mean()",
+      "",
+      "print(f\"SYNTHETIC field: {N} x {N} cells of 1 km; basin = {MASK.sum()} cells ({MASK.sum()} km2)\")",
+      "print(f\"Gauges used    : {', '.join(names)} ({len(names)} of {len(GAUGES)});  IDW power p = {IDW_POWER:g}\")",
+      "print(f\"True mean      : {true_mean:.2f} mm   (known only because the field is synthetic)\")",
+      "print(f\"Arithmetic     : {arith:.2f} mm   difference from true {arith - true_mean:+.2f} mm\")",
+      "print(f\"Thiessen       : {thiessen:.2f} mm   difference from true {thiessen - true_mean:+.2f} mm\")",
+      "print(f\"IDW            : {idw:.2f} mm   difference from true {idw - true_mean:+.2f} mm\")",
+      "for k, g in enumerate(names):",
+      "    print(f\"  {g}: reading {reading[k]:5.1f} mm   Thiessen weight {weights[k]:.3f}\")",
+      "",
+      "# ─── figure: the true field, the gauges and the Thiessen regions ──────────────",
+      "fig, ax = plt.subplots(figsize=(4.4, 3.0))",
+      "im = ax.imshow(np.where(MASK, FIELD, np.nan), extent=[0, N, N, 0], cmap=plt.get_cmap('viridis', 12))",
+      "ax.plot([p[0] for p in POLY] + [POLY[0][0]], [p[1] for p in POLY] + [POLY[0][1]], color='white', lw=1)",
+      "ax.contour(X, Y, np.ma.masked_where(~MASK, owner), levels=np.arange(len(names)) + 0.5, colors='white', linewidths=0.9, linestyles='--')",
+      "for g, (cx, cy) in GAUGES.items():",
+      "    on = g in names",
+      "    ax.plot(cx + 0.5, cy + 0.5, 'o', ms=7, mfc='white' if on else 'none', mec='white')",
+      "    right = cx > 38   # labels near the right edge go to the left of the dot so they are not clipped",
+      "    ax.text(cx - 1.5 if right else cx + 2, cy - 1.5, f\"{g} w={weights[names.index(g)]:.2f}\" if on else g + ' off', color='white', fontsize=8, fontweight='bold', ha='right' if right else 'left')",
+      "ax.set_title('True field (SYNTHETIC); dashed lines bound the Thiessen regions', fontsize=9, color='white')",
+      "ax.set_xlabel('east (km)')",
+      "ax.set_ylabel('south (km)')",
+      "fig.colorbar(im, label='precipitation (mm)')",
+      "plt.tight_layout()"
+    ].join('\n');
+  }
+  function buildClimSource(b, startIso, monthlyDays, snowT) {
+    var V = {
+      GAUGE: b.gauge_id, NAME: b.name, MEMBER: b.source_member, SHA: b.source_sha256, START: startIso, NDAYS: b.prcp_hundredths_mm.length,
+      PMEAN: b.camels.p_mean_mm_day, HPF: b.camels.high_prec_freq_days_per_year, FSNOW: b.camels.frac_snow, SNOWT: pyNum(snowT),
+      PRCP: wrapNums(b.prcp_hundredths_mm, 14), TMEAN: wrapNums(b.tmean_halfdeg_bin_on_wet_days, 20),
+      MONTHLY: wrapNums(b.monthly_hundredths_mm, 12), MDAYS: wrapNums(monthlyDays, 12)
+    };
+    return [
+      "import numpy as np",
+      "import matplotlib.pyplot as plt",
+      "import matplotlib as mpl",
+      "mpl.rcParams.update({",
+      "    'figure.facecolor':'#0a0a15', 'axes.facecolor':'#0f0f1e',",
+      "    'text.color':'#7dd3fc',       'axes.labelcolor':'#7dd3fc',",
+      "    'xtick.color':'#94a3b8',      'ytick.color':'#94a3b8',",
+      "    'axes.edgecolor':'#334155',",
+      "})",
+      "",
+      "# ─── REAL DATA: CAMELS-US v1.2 basin means (Newman et al. 2015; Addor et al. 2017) ───",
+      "# Precipitation: Daymet basin mean (Thornton et al. 1997), hundredths of a mm. Temperature, on days with precipitation:",
+      "# the half-degree bin floor(tmax + tmin) = floor(2 x mean temperature), so \"mean < T\" is \"bin < 2 * T\" for T in steps of 0.5 C.",
+      "GAUGE = \"" + V.GAUGE + "\"",
+      "NAME = \"" + V.NAME + "\"",
+      "SOURCE_MEMBER = \"" + V.MEMBER + "\"   # inside basin_timeseries_v1p2_metForcing_obsFlow.zip",
+      "SOURCE_SHA256 = \"" + V.SHA + "\"",
+      "DAILY_START = \"" + V.START + "\"      # WY1996-2000, " + V.NDAYS + " days",
+      "P_MEAN_CAMELS = " + V.PMEAN + "      # camels_clim, 1989-10-01..2009-09-30 (mm/day)",
+      "HIGH_PREC_FREQ_CAMELS = " + V.HPF + "   # camels_clim (days/yr)",
+      "FRAC_SNOW_CAMELS = " + V.FSNOW + "      # camels_clim",
+      "SNOW_T_C = " + V.SNOWT + "           # snow when the day's mean temperature is below this",
+      "assert (2 * SNOW_T_C) % 1 == 0, 'the temperature bins are half-degrees: use a multiple of 0.5'",
+      "PRCP_H = np.array([",
+      V.PRCP,
+      "])",
+      "TBIN = np.array([",
+      V.TMEAN,
+      "])",
+      "MONTHLY_H = np.array([           # monthly totals (hundredths of mm), WY1990-2009, Oct..Sep",
+      V.MONTHLY,
+      "]).reshape(20, 12)",
+      "MONTH_DAYS = np.array([",
+      V.MDAYS,
+      "]).reshape(20, 12)",
+      "",
+      "# ─── numbers ──────────────────────────────────────────────────────────────────",
+      "n = len(PRCP_H)",
+      "total_h = int(PRCP_H.sum())",
+      "p_mean_20 = MONTHLY_H.sum() / 100.0 / MONTH_DAYS.sum()           # 20-water-year mean daily precipitation, mm/day",
+      "wet_frac = float((PRCP_H >= 100).mean())                         # wet day: at least 1 mm",
+      "high = PRCP_H * n >= 5 * total_h                                 # at least 5 x the 5-year mean (exact integer test)",
+      "dates = np.datetime64(DAILY_START) + np.arange(n)",
+      "months = dates.astype('datetime64[M]')",
+      "wy_starts = np.nonzero((dates == months.astype('datetime64[D]')) & (months.astype(int) % 12 == 9))[0]",
+      "high_by_wy = [int(h.sum()) for h in np.split(high, wy_starts[1:])]",
+      "run = dry = 0",
+      "for h in PRCP_H:                                                 # longest run of days with less than 1 mm",
+      "    run = run + 1 if h < 100 else 0",
+      "    dry = max(dry, run)",
+      "imax = int(PRCP_H.argmax())",
+      "snow = PRCP_H[PRCP_H > 0][TBIN < 2 * SNOW_T_C].sum() / total_h  # share of the depth that fell on days colder than SNOW_T_C",
+      "season_djf = MONTHLY_H[:, [2, 3, 4]].sum() / MONTHLY_H.sum()",
+      "season_jja = MONTHLY_H[:, [8, 9, 10]].sum() / MONTHLY_H.sum()",
+      "",
+      "print(f\"Basin           : {GAUGE}  {NAME}\")",
+      "print(f\"Source file     : {SOURCE_MEMBER}  (sha256 {SOURCE_SHA256[:16]}...)\")",
+      "print(f\"Daily record    : {DAILY_START} + {n} days (water years 1996-2000; Daymet basin mean)\")",
+      "print(f\"Mean P, 20 WY   : {p_mean_20:.4f} mm/day   CAMELS p_mean {P_MEAN_CAMELS:.4f}   |difference| {abs(p_mean_20 - P_MEAN_CAMELS):.6f}\")",
+      "print(f\"Wet days (>=1mm): {100 * wet_frac:.1f} % of days\")",
+      "print(f\"High-P days     : {high.sum() / 5:.1f} per year (>= 5 x the 5-year mean of {total_h / 100.0 / n:.3f} mm/day);\"",
+      "      f\" CAMELS high_prec_freq {HIGH_PREC_FREQ_CAMELS:.1f} (1989-2009)\")",
+      "print(f\"  by water year : {', '.join(str(k) for k in high_by_wy)} days\")",
+      "print(f\"Longest dry spell: {dry} days (each under 1 mm)\")",
+      "print(f\"Largest daily P : {PRCP_H[imax] / 100.0:.2f} mm on {dates[imax]}\")",
+      "print(f\"Snow fraction   : {snow:.3f} (days with mean temperature below {SNOW_T_C:g} C, WY1996-2000);\"",
+      "      f\" CAMELS frac_snow {FRAC_SNOW_CAMELS:.3f} (1989-2009)\")",
+      "print(f\"Seasonal share  : DJF {100 * season_djf:.1f} %   JJA {100 * season_jja:.1f} %  (20 water years)\")",
+      "",
+      "# ─── figure: monthly regime and the exceedance curve of daily precipitation ───",
+      "fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.2, 2.6))",
+      "label = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']",
+      "mean_month = MONTHLY_H.sum(axis=0) / 100.0 / 20",
+      "bars = ax1.bar(range(12), mean_month, color='#00A3FF', edgecolor='#0a0a15')",
+      "for k in (2, 3, 4):",
+      "    bars[k].set_hatch('//')",
+      "for k in (8, 9, 10):",
+      "    bars[k].set_hatch('..')",
+      "ax1.set_xticks(range(12))",
+      "ax1.set_xticklabels(label, fontsize=7)",
+      "ax1.set_ylabel('mean monthly P (mm)')",
+      "ax1.set_title('Monthly regime, WY1990-2009 (// DJF, .. JJA)', fontsize=9, color='white')",
+      "wet = np.sort(PRCP_H[PRCP_H >= 100] / 100.0)[::-1]",
+      "ax2.loglog(100.0 * np.arange(1, len(wet) + 1) / (n + 1), wet, color='#00DDFF', lw=1.5)",
+      "ax2.axhline(1.0, color='#94a3b8', ls=':', lw=1)",
+      "ax2.axhline(5 * total_h / 100.0 / n, color='#fbbf24', ls='--', lw=1)",
+      "ax2.text(0.06, 5 * total_h / 100.0 / n * 1.15, '5 x mean', color='#fbbf24', fontsize=8)",
+      "ax2.text(0.06, 1.15, '1 mm', color='#94a3b8', fontsize=8)",
+      "ax2.set_xlabel('days exceeding (% of all days)')",
+      "ax2.set_ylabel('daily P (mm)')",
+      "ax2.set_title('Exceedance, wet days only (log-log)', fontsize=9, color='white')",
+      "plt.tight_layout()"
+    ].join('\n');
+  }
+  /*@@CORE2-END@@*/
+
+  /* ────────────── helpers ────────────── */
+  HydroA11y.wireScrollNav();
+  function $(id) { return document.getElementById(id); }
+  function f(x, d) { return x.toFixed(d); }
+  function sg(x, d) { return (x >= 0 ? '+' : '-') + Math.abs(x).toFixed(d); }
+  function pct(x, d) { return (100 * x).toFixed(d) + ' %'; }
+  function mkSvg(tag, attrs) {
+    var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+  function svgText(svg, x, y, str, o) {
+    o = o || {};
+    var t = mkSvg('text', { x: x, y: y, 'text-anchor': o.anchor || 'middle', 'font-family': o.mono ? 'JetBrains Mono,monospace' : 'Poppins,sans-serif',
+                            'font-size': o.size || 11, fill: o.fill || '#94a3b8', 'font-weight': o.bold ? '600' : '400' });
+    t.textContent = str;
+    svg.appendChild(t);
+    return t;
+  }
+
+  function line(svg, x1, y1, x2, y2, stroke, w, dash) {
+    var a = { x1: x1, y1: y1, x2: x2, y2: y2, stroke: stroke, 'stroke-width': w };
+    if (dash) a['stroke-dasharray'] = dash;
+    svg.appendChild(mkSvg('line', a));
+  }
+  function gridH(svg, padL, pw, y, label) {
+    line(svg, padL, y, padL + pw, y, 'rgba(125,211,252,0.10)', 1);
+    svgText(svg, padL - 8, y + 4, label, { anchor: 'end', mono: true, size: 10 });
+  }
+  function titleY(svg, y, str) {
+    svgText(svg, 14, y, str, { size: 11, fill: '#7dd3fc' }).setAttribute('transform', 'rotate(-90 14 ' + y + ')');
+  }
+  /* one table row; the selected basin gets a class and aria-current so the highlight is not only colour */
+  function row(id, cells) {
+    return '<tr' + (id === state.basin ? ' class="sel" aria-current="true"' : '') + '><th scope="row">' + rowName(id) + '</th><td>' + cells.join('</td><td>') + '</td></tr>';
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     TANGLE — draggable inline numbers that are also keyboard sliders (shared pattern with Reading a Hydrograph)
+     ────────────────────────────────────────────────────────────────── */
+  var tangle = (function () {
+    var listeners = {}, syncs = {};
+    function fmt(v, format) {
+      if (format === 'int') return String(Math.round(v));
+      if (format && format.indexOf('f') === 0) return v.toFixed(parseInt(format.slice(1), 10) || 1);
+      return v.toFixed(1);
+    }
+    function render(el) {
+      el.textContent = (el.dataset.prefix || '') + fmt(parseFloat(el.dataset.value), el.dataset.format || 'f1') + (el.dataset.suffix || '');
+    }
+    function attach(el) {
+      var min = parseFloat(el.dataset.min), max = parseFloat(el.dataset.max), step = parseFloat(el.dataset.step || '1');
+      var sensitivity = parseFloat(el.dataset.sensitivity || ((max - min) / 200));
+      var dragging = false, startX = 0, startV = 0;
+      function text(v) { return (el.dataset.prefix || '') + fmt(v, el.dataset.format || 'f1') + (el.dataset.suffix || ''); }
+      function setValue(v) {
+        v = Math.max(min, Math.min(max, HydroA11y.snap(v, min, step)));
+        if (parseFloat(el.dataset.value) === v) return;
+        el.dataset.value = v;
+        render(el);
+        if (syncs[el.id]) syncs[el.id]();
+        (listeners[el.id] || []).forEach(function (fn) { fn(v); });
+      }
+      render(el);
+      syncs[el.id] = HydroA11y.slider(el, {
+        label: el.dataset.label || 'Adjustable number', min: min, max: max, step: step,
+        get: function () { return parseFloat(el.dataset.value); }, set: setValue, text: text
+      }).sync;
+      el.addEventListener('mousedown', function (ev) {
+        ev.preventDefault();
+        dragging = true; startX = ev.clientX; startV = parseFloat(el.dataset.value);
+        el.classList.add('dragging');
+      });
+      window.addEventListener('mousemove', function (ev) { if (dragging) setValue(startV + (ev.clientX - startX) * sensitivity); });
+      window.addEventListener('mouseup', function () { if (dragging) { dragging = false; el.classList.remove('dragging'); } });
+    }
+    return {
+      init: function () { document.querySelectorAll('.tangle').forEach(attach); },
+      bind: function (id, fn) { (listeners[id] = listeners[id] || []).push(fn); },
+      set: function (id, v) {
+        var el = $(id);
+        if (!el) return;
+        el.dataset.value = v; render(el);
+        if (syncs[id]) syncs[id]();
+        (listeners[id] || []).forEach(function (fn) { fn(v); });
+      }
+    };
+  })();
+
+  /* ──────────────────────────────────────────────────────────────────
+     DATA: the bundled CAMELS-US extract (data/precip-data.json, provenance in data/PROVENANCE.json)
+     ────────────────────────────────────────────────────────────────── */
+  var DATA = JSON.parse($('precip-data').textContent);
+  var BASIN_IDS = ['01013500', '02472000', '09484000', '14305500'];
+  var SHORT = { '01013500': 'Fish River (ME)', '02472000': 'Leaf River (MS)', '09484000': 'Sabino Creek (AZ)', '14305500': 'Siletz River (OR)' };
+  var DASHES = { '01013500': '7 4', '02472000': '2 3', '09484000': '9 3 2 3', '14305500': '1 5' };
+  function basin(id) { return DATA.basins[id]; }
+  var STATS_CACHE = {};
+  function stats(id, snowT) {
+    var key = id + '|' + snowT;
+    return STATS_CACHE[key] || (STATS_CACHE[key] = basinStats(basin(id), DATA.daily_start, DATA.monthly_days, snowT));
+  }
+  var DEFAULT_ACTIVE = GAUGE_SITES.map(function (s) { return s.id; });
+
+  var state = { active: DEFAULT_ACTIVE.slice(), power: DEFAULT_POWER, mode: 'thiessen', basin: '02472000', snowT: 0 };
+
+  var loaded = false;        /* the bridge is told about a new source only after the first render, i.e. on a learner's change */
+  function bridgeRewrite(cellId, srcId) {
+    if (loaded && window.aihydro && window.aihydro.rewriteCell) {
+      window.aihydro.rewriteCell(cellId, function () { return $(srcId).textContent; }, false);
+    }
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     §1 · one funnel against one basin, computed
+     ────────────────────────────────────────────────────────────────── */
+  (function setupGauge() {
+    var DIAM_M = 0.20, leaf = basin('02472000');
+    var funnel = Math.PI * Math.pow(DIAM_M / 2, 2), area = leaf.area_km2 * 1e6;
+    $('gaugeRatio').textContent = 'Take a funnel 20 cm across (an illustrative size; real gauges vary). Its opening is ' + f(funnel, 4) + ' m². The ' +
+      leaf.name.split(' near')[0] + ' basin (CAMELS area_gages2) is ' + leaf.area_km2.toFixed(2) + ' km² = ' + area.toExponential(2) +
+      ' m², so one such funnel samples ' + (funnel / area).toExponential(2) + ' of it.';
+  })();
+
+  /* ──────────────────────────────────────────────────────────────────
+     §2 · points to area (SYNTHETIC)
+     ────────────────────────────────────────────────────────────────── */
+  var METHOD_LABEL = { arithmetic: 'Arithmetic mean', thiessen: 'Thiessen polygons', idw: 'Inverse-distance weighting' };
+  function pwr(p) { return String(p); }
+  function drawField(est) {
+    var cv = $('fieldCanvas'), ctx = cv.getContext('2d'), S = cv.width / GRID_N, c, idx, i, j, v, mode = state.mode;
+    ctx.fillStyle = '#0f0f1e'; ctx.fillRect(0, 0, cv.width, cv.height);
+    for (c = 0; c < GRID.cells.length; c++) {
+      idx = GRID.cells[c]; i = idx % GRID_N; j = Math.floor(idx / GRID_N);
+      v = mode === 'true' ? GRID.field[idx] : (mode === 'thiessen' ? est.readings[est.owner[idx]] : est.surface[idx]);
+      ctx.fillStyle = HydroCmap.css((v - GRID.lo) / (GRID.hi - GRID.lo));
+      ctx.fillRect(i * S, j * S, S + 0.6, S + 0.6);
+    }
+    if (mode === 'thiessen') {
+      ctx.fillStyle = '#ffffff';
+      for (c = 0; c < GRID.cells.length; c++) {
+        idx = GRID.cells[c]; i = idx % GRID_N; j = Math.floor(idx / GRID_N);
+        if (i + 1 < GRID_N && est.owner[idx + 1] !== undefined && est.owner[idx + 1] !== est.owner[idx]) ctx.fillRect((i + 1) * S - 0.6, j * S, 1.4, S);
+        if (j + 1 < GRID_N && est.owner[idx + GRID_N] !== undefined && est.owner[idx + GRID_N] !== est.owner[idx]) ctx.fillRect(i * S, (j + 1) * S - 0.6, S, 1.4);
+      }
+    }
+  }
+  function drawOverlay(est) {
+    var ov = $('fieldOverlay'), k, s, on, ci;
+    ov.innerHTML = '';
+    ov.appendChild(mkSvg('polygon', { points: BASIN_POLY.map(function (p) { return p[0] + ',' + p[1]; }).join(' '), fill: 'none', stroke: '#ffffff', 'stroke-width': '0.45' }));
+    for (k = 0; k < GAUGE_SITES.length; k++) {
+      s = GAUGE_SITES[k]; ci = est.ids.indexOf(s.id); on = ci >= 0;
+      ov.appendChild(mkSvg('circle', { cx: s.ix + 0.5, cy: s.iy + 0.5, r: 1.3, fill: on ? '#ffffff' : 'none', stroke: on ? '#0a0a15' : '#ffffff',
+                                       'stroke-width': on ? '0.4' : '0.35', 'stroke-dasharray': on ? '' : '0.9 0.7' }));
+      var label = on ? (state.mode === 'thiessen' ? s.id + ' ' + Math.round(est.weights[ci] * 100) + '%' : s.id) : s.id + ' off';
+      var east = s.ix > 40;                  /* labels on the east side go to the left of the marker so they stay inside the map */
+      var t = mkSvg('text', { x: east ? s.ix - 0.9 : s.ix + 2.2, 'text-anchor': east ? 'end' : 'start', y: s.iy - 0.6, 'font-family': 'Poppins,sans-serif', 'font-size': '2.9', 'font-weight': '700', fill: '#ffffff',
+                              stroke: '#0a0a15', 'stroke-width': '0.7', 'paint-order': 'stroke' });
+      t.textContent = label;
+      ov.appendChild(t);
+    }
+  }
+  function renderAreal() {
+    var est = arealEstimates(state.active, state.power), k, rows = '', mrows = '';
+    drawField(est); drawOverlay(est);
+    $('legLo').textContent = f(GRID.lo, 1); $('legHi').textContent = f(GRID.hi, 1);
+    $('cbar').style.background = HydroCmap.gradient('to right');
+    for (k = 0; k < est.ids.length; k++) {
+      rows += '<tr><th scope="row">' + est.ids[k] + '</th><td>' + f(est.readings[k], 1) + '</td><td>' + f(est.weights[k], 3) + '</td><td>' + f(est.weights[k] * est.readings[k], 2) + '</td></tr>';
+    }
+    rows += '<tr class="sum"><th scope="row">Thiessen mean</th><td></td><td>' + f(est.weights.reduce(function (a, b) { return a + b; }, 0), 3) + '</td><td>' + f(est.thiessen, 2) + '</td></tr>';
+    $('arealRows').innerHTML = rows;
+    ['arithmetic', 'thiessen', 'idw'].forEach(function (m) {
+      mrows += '<tr' + (est.closest === m ? ' class="best"' : '') + '><th scope="row">' + METHOD_LABEL[m] + (m === 'idw' ? ' (p = ' + pwr(state.power) + ')' : '') +
+               (est.closest === m ? ' ◀ closest' : '') + '</th><td>' + f(est[m], 2) + '</td><td>' + sg(est.diff[m], 2) + '</td></tr>';
+    });
+    mrows += '<tr class="sum"><th scope="row">True mean (SYNTHETIC answer key, ' + est.nCells + ' km²)</th><td>' + f(est.trueMean, 2) + '</td><td></td></tr>';
+    $('methodRows').innerHTML = mrows;
+    $('arealReadout').textContent = 'True mean ' + f(est.trueMean, 2) + ' mm (SYNTHETIC answer key)\n' +
+      'Arithmetic ' + f(est.arithmetic, 2) + ' mm (' + sg(est.diff.arithmetic, 2) + ')  ·  Thiessen ' + f(est.thiessen, 2) + ' mm (' + sg(est.diff.thiessen, 2) +
+      ')  ·  IDW p = ' + pwr(state.power) + ' ' + f(est.idw, 2) + ' mm (' + sg(est.diff.idw, 2) + ')\n' +
+      'Closest: ' + METHOD_LABEL[est.closest] + '. Gauges on: ' + est.ids.join(', ') + ' (' + est.ids.length + ' of ' + GAUGE_SITES.length + ').';
+    $('fieldCanvas').setAttribute('aria-label', 'Map of the SYNTHETIC field, mode ' + state.mode + '. Gauges on: ' + est.ids.join(', ') + '. True mean ' + f(est.trueMean, 2) +
+      ' mm, Thiessen ' + f(est.thiessen, 2) + ' mm. The tables below list every reading and weight.');
+    $('arealSource').textContent = buildArealSource(est.ids, state.power);
+    bridgeRewrite('areal-precip', 'arealSource');
+    return est;
+  }
+  function arealNote() {
+    var all = arealEstimates(DEFAULT_ACTIVE, DEFAULT_POWER), g4 = siteById('G4'), without = arealEstimates(DEFAULT_ACTIVE.filter(function (g) { return g !== 'G4'; }), DEFAULT_POWER);
+    var others = GAUGE_SITES.filter(function (s) { return s.id !== 'G4'; }).map(siteReading), mx = Math.max.apply(null, others);
+    var dist = Math.sqrt(Math.pow(g4.ix + 0.5 - FIELD.stormX, 2) + Math.pow(g4.iy + 0.5 - FIELD.stormY, 2));
+    $('arealNote').textContent = 'Try switching G4 off. It lies ' + f(dist, 1) + ' km from the storm cell\'s centre and reads ' + f(siteReading(g4), 1) + ' mm, against at most ' + f(mx, 1) +
+      ' mm at the other five. With all six gauges on and p = 2 the three estimates differ from the true mean by ' + sg(all.diff.arithmetic, 2) + ', ' + sg(all.diff.thiessen, 2) + ' and ' + sg(all.diff.idw, 2) +
+      ' mm (arithmetic, Thiessen, IDW); with G4 off they differ by ' + sg(without.diff.arithmetic, 2) + ', ' + sg(without.diff.thiessen, 2) + ' and ' + sg(without.diff.idw, 2) +
+      ' mm. A network, not only a formula, decides the answer.';
+  }
+  (function setupAreal() {
+    DEFAULT_ACTIVE.forEach(function (id) {
+      var btn = $('gb-' + id), s = siteById(id);
+      btn.textContent = id + ' · ' + f(siteReading(s), 1) + ' mm';
+      btn.addEventListener('click', function () {
+        var i = state.active.indexOf(id);
+        if (i >= 0 && state.active.length === 1) { HydroA11y.announce('At least one gauge must stay on.'); return; }
+        if (i >= 0) state.active.splice(i, 1);
+        else state.active = DEFAULT_ACTIVE.filter(function (g) { return state.active.indexOf(g) >= 0 || g === id; });
+        btn.setAttribute('aria-pressed', i >= 0 ? 'false' : 'true');
+        btn.classList.toggle('on', i < 0);
+        renderAreal();
+      });
+    });
+    [['mapTrue', 'true'], ['mapThiessen', 'thiessen'], ['mapIdw', 'idw']].forEach(function (p) {
+      $(p[0]).addEventListener('change', function () { if ($(p[0]).checked) { state.mode = p[1]; renderAreal(); } });
+    });
+    var slider = $('idwSlider');
+    function setPower(v) {
+      state.power = v; slider.value = v; $('idwVal').textContent = f(v, 1);
+      renderAreal();
+    }
+    slider.addEventListener('input', function () { tangle.set('t-idwp', parseFloat(slider.value)); });
+    tangle.bind('t-idwp', function (v) { if (state.power !== v) setPower(v); });
+    HydroA11y.live(['arealReadout', 'arealNote', 'gaugeRatio']);
+    arealNote();
+    renderAreal();
+  })();
+
+  /* ──────────────────────────────────────────────────────────────────
+     §3–§6 · real records (all numbers come from basinStats over the bundled extract)
+     ────────────────────────────────────────────────────────────────── */
+  function cur() { return stats(state.basin, state.snowT); }
+  function rowName(id) { return (id === state.basin ? '▶ ' : '') + SHORT[id]; }
+
+  function setupCards() {
+    BASIN_IDS.forEach(function (id) {
+      var b = basin(id), s = stats(id, 0), card = $('bc-' + id);
+      $('bcn-' + id).textContent = b.name;
+      $('bcf-' + id).textContent = 'USGS ' + id + ' · ' + b.area_km2.toFixed(0) + ' km² · mean P ' + f(s.meanP5, 2) + ' mm/day';
+      card.addEventListener('click', function () { selectBasin(id); });
+    });
+  }
+  function selectBasin(id) {
+    state.basin = id;
+    BASIN_IDS.forEach(function (g) { var c = $('bc-' + g); c.setAttribute('aria-pressed', g === id ? 'true' : 'false'); c.classList.toggle('selected', g === id); });
+    renderReal();
+    HydroA11y.announce('Basin ' + basin(id).name + ' selected.');
+  }
+
+  function drawExceed() {
+    var svg = $('exceedSvg'), W = 720, H = 330, padL = 58, padR = 18, padT = 16, padB = 70, pw = W - padL - padR, ph = H - padT - padB;
+    var xlo = Math.log10(0.05), xhi = 2, ylo = -1, yhi = 1, k, e, d = {};
+    BASIN_IDS.forEach(function (id) { d[id] = exceedancePoints(basin(id).prcp_hundredths_mm, 0.1); yhi = Math.max(yhi, Math.ceil(Math.log10(d[id][0].mm + 1e-9))); });
+    function xOf(p) { return padL + (Math.log10(p) - xlo) / (xhi - xlo) * pw; }
+    function yOf(mm) { return padT + ph - (Math.log10(mm) - ylo) / (yhi - ylo) * ph; }
+    svg.innerHTML = '';
+    [0.1, 1, 10, 100].forEach(function (p) {
+      line(svg, xOf(p), padT, xOf(p), padT + ph, 'rgba(125,211,252,0.10)', 1);
+      svgText(svg, xOf(p), padT + ph + 16, p + ' %', { mono: true, size: 10 });
+    });
+    for (e = ylo; e <= yhi; e++) {
+      gridH(svg, padL, pw, yOf(Math.pow(10, e)), String(Math.pow(10, e)));
+    }
+    svgText(svg, padL + pw / 2, padT + ph + 34, 'share of all days that reach this precipitation (log scale)', { size: 11, fill: '#7dd3fc' });
+    titleY(svg, padT + ph / 2, 'daily precipitation (mm, log scale)');
+    var s = cur();
+    /* reference lines for the selected basin */
+    line(svg, padL, yOf(1), padL + pw, yOf(1), '#94a3b8', 1.2, '2 3');
+    svgText(svg, padL + pw - 4, yOf(1) - 5, 'wet-day threshold, 1 mm', { anchor: 'end', size: 10 });
+    line(svg, padL, yOf(s.highThresholdMm), padL + pw, yOf(s.highThresholdMm), '#fbbf24', 1.4, '6 4');
+    svgText(svg, padL + pw - 4, yOf(s.highThresholdMm) - 5, 'high-P threshold, 5 x mean = ' + f(s.highThresholdMm, 1) + ' mm', { anchor: 'end', size: 10, fill: '#fbbf24' });
+    /* curves: the others first, the selected one on top */
+    BASIN_IDS.filter(function (id) { return id !== state.basin; }).concat([state.basin]).forEach(function (id) {
+      var path = '';
+      d[id].forEach(function (pt, i) { path += (i === 0 ? 'M' : 'L') + xOf(pt.p).toFixed(1) + ',' + yOf(pt.mm).toFixed(1) + ' '; });
+      var sel = id === state.basin;
+      svg.appendChild(mkSvg('path', { d: path, fill: 'none', stroke: sel ? '#00DDFF' : '#a8b8cc', 'stroke-width': sel ? 3 : 1.6, 'stroke-dasharray': sel ? '' : DASHES[id], 'stroke-linejoin': 'round' }));
+    });
+    /* wet-day share of the selected basin: the curve ends where the wet days run out */
+    var xw = xOf(100 * s.wetFrac);
+    line(svg, xw, yOf(1), xw, padT + ph, '#00DDFF', 1.2, '3 3');
+    svgText(svg, xw - 6, yOf(1) + 18, 'wet days: ' + pct(s.wetFrac, 1) + ' of all days', { size: 10, fill: '#00DDFF', anchor: 'end' });
+    /* legend */
+    BASIN_IDS.forEach(function (id, i) {
+      var lx = padL + i * 160, sel = id === state.basin;
+      line(svg, lx, H - 8, lx + 26, H - 8, sel ? '#00DDFF' : '#a8b8cc', sel ? 3 : 1.6, sel ? '' : DASHES[id]);
+      svgText(svg, lx + 31, H - 4, SHORT[id] + (sel ? ' (selected)' : ''), { anchor: 'start', size: 10, fill: sel ? '#00DDFF' : '#94a3b8' });
+    });
+    svg.setAttribute('aria-label', 'Exceedance curves of daily precipitation on log-log axes for four basins, water years 1996 to 2000. Selected basin: ' + basin(state.basin).name +
+      ', wet days ' + pct(s.wetFrac, 1) + ' of days, largest day ' + f(s.maxMm, 1) + ' mm. The table below gives the same statistics for all four basins.');
+  }
+
+  function renderStats() {
+    var rows = '', most = null, long = null, wmin = null, wmax = null;
+    BASIN_IDS.forEach(function (id) {
+      var s = stats(id, 0);
+      rows += row(id, [f(s.meanP5, 2), pct(s.wetFrac, 1), f(s.highPerYear, 1), s.dryMax, f(s.maxMm, 1) + ', ' + s.maxDate]);
+      if (!most || s.highPerYear > stats(most, 0).highPerYear) most = id;
+      if (!long || s.dryMax > stats(long, 0).dryMax) long = id;
+      if (!wmin || s.wetFrac < stats(wmin, 0).wetFrac) wmin = id;
+      if (!wmax || s.wetFrac > stats(wmax, 0).wetFrac) wmax = id;
+    });
+    $('statsRows').innerHTML = rows;
+    $('stormNote').textContent = 'The wet-day share runs from ' + pct(stats(wmin, 0).wetFrac, 1) + ' (' + SHORT[wmin] + ') to ' + pct(stats(wmax, 0).wetFrac, 1) + ' (' + SHORT[wmax] +
+      '); high-precipitation days per year peak at ' + SHORT[most] + ' (' + f(stats(most, 0).highPerYear, 1) + '); the longest dry spell is at ' + SHORT[long] + ' (' + stats(long, 0).dryMax + ' days).';
+  }
+
+  function drawMonths() {
+    var svg = $('monthSvg'), W = 720, H = 300, padL = 54, padR = 16, padT = 20, padB = 64, pw = W - padL - padR, ph = H - padT - padB;
+    var s = cur(), mm = monthlyMeanMm(basin(state.basin).monthly_hundredths_mm), mx = Math.max.apply(null, mm), top = Math.ceil(mx / 50) * 50, i;
+    var labels = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
+    function yOf(v) { return padT + ph - v / top * ph; }
+    svg.innerHTML = '<defs><pattern id="patDJF" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#00A3FF"/><line x1="0" y1="0" x2="0" y2="7" stroke="#0a0a15" stroke-width="2.6"/></pattern>' +
+      '<pattern id="patJJA" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#00A3FF"/><circle cx="3.5" cy="3.5" r="1.5" fill="#0a0a15"/></pattern></defs>';
+    for (i = 0; i <= top; i += top / 4) {
+      gridH(svg, padL, pw, yOf(i), String(Math.round(i)));
+    }
+    titleY(svg, padT + ph / 2, 'mean monthly precipitation (mm)');
+    var bw = pw / 12;
+    for (i = 0; i < 12; i++) {
+      var fill = DJF.indexOf(i) >= 0 ? 'url(#patDJF)' : (JJA.indexOf(i) >= 0 ? 'url(#patJJA)' : '#00A3FF');
+      svg.appendChild(mkSvg('rect', { x: padL + i * bw + bw * 0.12, y: yOf(mm[i]), width: bw * 0.76, height: padT + ph - yOf(mm[i]), fill: fill, stroke: '#7dd3fc', 'stroke-width': 1 }));
+      svgText(svg, padL + i * bw + bw / 2, yOf(mm[i]) - 5, String(Math.round(mm[i])), { mono: true, size: 10, fill: '#FFFFFF' });
+      svgText(svg, padL + i * bw + bw / 2, padT + ph + 16, labels[i], { size: 11 });
+    }
+    [['url(#patDJF)', 'DJF (Dec–Feb)'], ['url(#patJJA)', 'JJA (Jun–Aug)'], ['#00A3FF', 'other months']].forEach(function (it, k) {
+      var lx = padL + k * 170;
+      svg.appendChild(mkSvg('rect', { x: lx, y: H - 24, width: 18, height: 12, fill: it[0], stroke: '#7dd3fc', 'stroke-width': 1 }));
+      svgText(svg, lx + 24, H - 14, it[1], { anchor: 'start', size: 10 });
+    });
+    svg.setAttribute('aria-label', 'Bar chart of mean monthly precipitation, October to September, for ' + basin(state.basin).name + '. Wettest month ' + labels[mm.indexOf(mx)] + ' at ' + f(mx, 0) +
+      ' mm; December to February carry ' + pct(s.djf, 1) + ' of the annual total and June to August ' + pct(s.jja, 1) + '.');
+  }
+  function renderSeasons() {
+    var rows = '', bd = null, bj = null;
+    BASIN_IDS.forEach(function (id) {
+      var s = stats(id, 0);
+      rows += row(id, [f(s.annualMm, 0), pct(s.djf, 1), pct(s.jja, 1)]);
+      if (!bd || s.djf > stats(bd, 0).djf) bd = id;
+      if (!bj || s.jja > stats(bj, 0).jja) bj = id;
+    });
+    $('seasonRows').innerHTML = rows;
+    $('seasonBasin').textContent = basin(state.basin).name;
+    var s = cur();
+    $('seasonNote').textContent = basin(state.basin).name + ': DJF ' + pct(s.djf, 1) + ', JJA ' + pct(s.jja, 1) + '. Largest DJF share: ' + SHORT[bd] + ' (' + pct(stats(bd, 0).djf, 1) +
+      '); largest JJA share: ' + SHORT[bj] + ' (' + pct(stats(bj, 0).jja, 1) + ').';
+    drawMonths();
+  }
+
+  var SNOW_GRID = [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3];
+  function drawSnow() {
+    var svg = $('snowSvg'), W = 720, H = 280, padL = 58, padR = 24, padT = 22, padB = 56, pw = W - padL - padR, ph = H - padT - padB, b = basin(state.basin), i;
+    function xOf(t) { return padL + (t + 2) / 5 * pw; }
+    function yOf(v) { return padT + ph - v * ph; }
+    svg.innerHTML = '';
+    for (i = 0; i <= 4; i++) {
+      gridH(svg, padL, pw, yOf(i / 4), f(i / 4, 2));
+    }
+    SNOW_GRID.forEach(function (t) {
+      if (Number.isInteger(t)) svgText(svg, xOf(t), padT + ph + 16, (t > 0 ? '+' : '') + t + ' °C', { mono: true, size: 10 });
+    });
+    svgText(svg, padL + pw / 2, padT + ph + 38, 'rain/snow threshold: snow when the day\'s mean temperature is below it', { size: 11, fill: '#7dd3fc' });
+    titleY(svg, padT + ph / 2, 'snow fraction of precipitation');
+    /* CAMELS reference */
+    var ref = b.camels.frac_snow;
+    line(svg, padL, yOf(ref), padL + pw, yOf(ref), '#fbbf24', 1.6, '7 4');
+    svgText(svg, padL + 6, yOf(ref) - 6, 'CAMELS frac_snow, 1989–2009 (reference) = ' + f(ref, 3), { anchor: 'start', size: 10, fill: '#fbbf24' });
+    /* curve */
+    var path = '', vals = SNOW_GRID.map(function (t) { return snowFraction(b.prcp_hundredths_mm, b.tmean_halfdeg_bin_on_wet_days, t); });
+    SNOW_GRID.forEach(function (t, k) { path += (k === 0 ? 'M' : 'L') + xOf(t).toFixed(1) + ',' + yOf(vals[k]).toFixed(1) + ' '; });
+    svg.appendChild(mkSvg('path', { d: path, fill: 'none', stroke: '#00DDFF', 'stroke-width': 2.4 }));
+    SNOW_GRID.forEach(function (t, k) { svg.appendChild(mkSvg('rect', { x: xOf(t) - 3, y: yOf(vals[k]) - 3, width: 6, height: 6, fill: '#00DDFF', stroke: '#0a0a15', 'stroke-width': 1 })); });
+    /* the chosen threshold: ring + vertical guide + label */
+    var cv = snowFraction(b.prcp_hundredths_mm, b.tmean_halfdeg_bin_on_wet_days, state.snowT);
+    line(svg, xOf(state.snowT), padT, xOf(state.snowT), padT + ph, '#FFFFFF', 1, '3 3');
+    svg.appendChild(mkSvg('circle', { cx: xOf(state.snowT), cy: yOf(cv), r: 7, fill: 'none', stroke: '#FFFFFF', 'stroke-width': 2.2 }));
+    svgText(svg, xOf(state.snowT), Math.max(padT + 10, yOf(cv) - 12), f(cv, 3), { mono: true, size: 11, fill: '#FFFFFF', bold: true });
+    svg.setAttribute('aria-label', 'Snow fraction of precipitation against the rain-snow threshold from -2 to +3 degrees Celsius for ' + b.name + '. At ' + f(state.snowT, 1) + ' degrees it is ' + f(cv, 3) +
+      '; the CAMELS frac_snow reference is ' + f(ref, 3) + '. The table below lists all four basins at this threshold.');
+  }
+  function renderSnow() {
+    var b = basin(state.basin), s = cur(), rows = '';
+    $('snowBasin').textContent = b.name;
+    $('snowReadout').textContent = b.name + ', threshold ' + f(state.snowT, 1) + ' °C\n' +
+      'Snow fraction, WY1996–2000: ' + f(s.snow, 3) + ' (' + pct(s.snow, 1) + ' of the ' + f(sumArr(b.prcp_hundredths_mm) / 100, 0) + ' mm that fell)\n' +
+      'CAMELS frac_snow, 1989–2009, for reference: ' + f(b.camels.frac_snow, 3) + '   difference ' + sg(s.snow - b.camels.frac_snow, 3);
+    BASIN_IDS.forEach(function (id) {
+      var si = stats(id, state.snowT);
+      rows += row(id, [f(si.snow, 3), f(basin(id).camels.frac_snow, 3)]);
+    });
+    $('snowRows').innerHTML = rows;
+    drawSnow();
+  }
+
+  function renderRepro() {
+    var prow = '', hrow = '', dmax = 0, hmax = 0, wlo = Infinity, whi = -Infinity;
+    BASIN_IDS.forEach(function (id) {
+      var s = stats(id, 0), b = basin(id), dp = Math.abs(s.pMean20 - b.camels.p_mean_mm_day), dh = Math.abs(s.highPerYear - b.camels.high_prec_freq_days_per_year);
+      dmax = Math.max(dmax, dp); hmax = Math.max(hmax, dh);
+      s.highByWY.forEach(function (c) { wlo = Math.min(wlo, c); whi = Math.max(whi, c); });
+      prow += row(id, [f(s.pMean20, 4), f(b.camels.p_mean_mm_day, 4), f(dp, 6)]);
+      hrow += row(id, [f(s.highPerYear, 1), s.highByWY.join(', '), f(b.camels.high_prec_freq_days_per_year, 1), f(dh, 1)]);
+    });
+    $('pmeanRows').innerHTML = prow; $('highRows').innerHTML = hrow;
+    $('reproNote').textContent = 'p_mean: the recomputed values match CAMELS to within ' + dmax.toFixed(6) + ' mm/day in all four basins, so inputs and period agree. ' +
+      'High-precipitation days: the largest difference is ' + f(hmax, 1) + ' days per year. A five-year count (threshold: five times the five-year mean) meets a twenty-year attribute, and single water years here range from ' +
+      wlo + ' to ' + whi + ' days, so a five-year count is expected to scatter around a twenty-year one: the period, and so the mean that sets the threshold, differs.';
+    $('climSource').textContent = buildClimSource(basin(state.basin), DATA.daily_start, DATA.monthly_days, state.snowT);
+    bridgeRewrite('precip-climate', 'climSource');
+  }
+
+  function renderReal() {
+    drawExceed(); renderStats(); renderSeasons(); renderSnow(); renderRepro();
+  }
+
+  (function setupReal() {
+    setupCards();
+    var slider = $('snowSlider');
+    slider.addEventListener('input', function () { tangle.set('t-snowT', parseFloat(slider.value)); });
+    tangle.bind('t-snowT', function (v) {
+      if (state.snowT === v && slider.value === String(v)) return;
+      state.snowT = v; slider.value = v;
+      $('snowVal').textContent = f(v, 1) + ' °C';
+      renderSnow(); renderRepro();
+    });
+    HydroA11y.live(['stormNote', 'seasonNote', 'snowReadout', 'reproNote']);
+    renderReal();
+  })();
+
+  /* ─────────────────────────────────────────────────────────────────
+     Checkpoint — shared engine; every numeric answer and computed choice comes from this page's own model and data
+     ───────────────────────────────────────────────────────────────── */
+  var Q_NAMES = ['Arithmetic mean', 'Thiessen polygons', 'Inverse-distance weighting (p = 2)'];
+  function defaultEst() { return arealEstimates(DEFAULT_ACTIVE, DEFAULT_POWER); }
+  function bestOf(key, ids) {
+    var best = ids[0];
+    ids.forEach(function (id) { if (stats(id, 0)[key] > stats(best, 0)[key]) best = id; });
+    return best;
+  }
+  window.__p1Quiz = HydroQuiz.mount($('p1-quiz'), {
+    quizId: 'precipitation-point-to-basin-checkpoint', moduleId: 'precipitation-point-to-basin',
+    items: [
+      { id: 'q1', type: 'choice',
+        prompt: 'A convective storm cell is about 10 km across and the nearest rain gauges are 25 km apart. Why can a network with that spacing give a poor basin average for that storm?',
+        options: ['A gauge reports an intensity rather than a depth, so its totals cannot be added up',
+                  'The cell can fall between the gauges, or on just one of them, so the network sees none of it or too much of it',
+                  'Thiessen polygons are only valid for widespread, uniform rain'],
+        correct: 1,
+        feedback: ['Reread §1 and then toggle gauges in §2: what does a single gauge reading actually describe?', null,
+                   'Polygons are only geometry: they work for any field, but they cannot add information that no gauge ever recorded.'],
+        explain: function () {
+          var a = defaultEst(), w = arealEstimates(DEFAULT_ACTIVE.filter(function (g) { return g !== 'G4'; }), DEFAULT_POWER);
+          return 'In §2 the cell lies near G4. With G4 on, the three estimates differ from the true mean by ' + sg(a.diff.arithmetic, 2) + ', ' + sg(a.diff.thiessen, 2) + ' and ' + sg(a.diff.idw, 2) +
+                 ' mm; with G4 off, by ' + sg(w.diff.arithmetic, 2) + ', ' + sg(w.diff.thiessen, 2) + ' and ' + sg(w.diff.idw, 2) + ' mm.';
+        } },
+      { id: 'q2', type: 'choice',
+        prompt: function () {
+          var a = defaultEst();
+          return 'In §2, with all six gauges on and IDW power p = 2, the true basin mean is ' + f(a.trueMean, 2) + ' mm. Which method gives the estimate closest to it?';
+        },
+        options: Q_NAMES,
+        correct: function () { return ['arithmetic', 'thiessen', 'idw'].indexOf(defaultEst().closest); },
+        feedback: Q_NAMES.map(function () { return 'Compare each method\'s estimate with the true mean in the §2 table (all six gauges on, p = 2); this one is not the closest.'; }),
+        explain: function () {
+          var a = defaultEst();
+          return 'The differences from the true mean are ' + sg(a.diff.arithmetic, 2) + ' (arithmetic), ' + sg(a.diff.thiessen, 2) + ' (Thiessen) and ' + sg(a.diff.idw, 2) + ' mm (IDW). The ranking can change with the network and with p; try it.';
+        } },
+      { id: 'q3', type: 'choice',
+        prompt: 'In the Thiessen method, what is a gauge\'s weight?',
+        options: ['The share of the total rainfall that this gauge recorded',
+                  'The fraction of the basin area that lies closer to this gauge than to any other gauge',
+                  'The inverse of the distance from the basin centroid to the gauge'],
+        correct: 1,
+        feedback: ['Look at the weights table in §2 while you toggle gauges: what changes the weights, and what does not?', null,
+                   'A distance to a single point such as the centroid does not divide the basin among the gauges; Thiessen gives every cell to one gauge.'],
+        explain: 'Each cell goes to its nearest gauge, and the weight is that gauge\'s share of the cells, so the weights add to 1 and the basin mean is Σ wᵢ Pᵢ.' },
+      { id: 'q4', type: 'numeric', unit: 'mm',
+        prompt: 'With all six gauges on, what is the Thiessen estimate of the basin-mean depth? Give mm to 2 decimals.',
+        answer: function () { return defaultEst().thiessen; }, tol: { abs: 0.05 },
+        hint: 'Multiply each gauge reading by its Thiessen weight (the §2 table) and add the six products.',
+        explain: function (a) { return 'Σ wᵢ Pᵢ = ' + f(a, 2) + ' mm, against a true mean of ' + f(defaultEst().trueMean, 2) + ' mm.'; } },
+      { id: 'q5', type: 'numeric', unit: 'days/yr',
+        prompt: 'In §3 take the Leaf River. In water years 1996 to 2000, how many days per year had precipitation of at least five times the five-year mean daily precipitation? Give days per year to 1 decimal.',
+        answer: function () { return stats('02472000', 0).highPerYear; }, tol: { abs: 0.05 },
+        hint: 'The threshold is 5 × the mean of all 1827 days. Count the days at or above it, then divide by the 5 years.',
+        explain: function (a) { var s = stats('02472000', 0); return s.highCount + ' days at or above ' + f(s.highThresholdMm, 2) + ' mm, over 5 water years: ' + f(a, 1) + ' per year.'; } },
+      { id: 'q6', type: 'numeric',
+        prompt: 'What fraction of the Fish River\'s precipitation depth in water years 1996 to 2000 fell on days with a mean temperature below 0 °C? Give 3 decimals.',
+        answer: function () { return stats('01013500', 0).snow; }, tol: { abs: 0.001 },
+        hint: 'In §5 choose the Fish River and set the threshold to 0 °C, or run the §6 cell for it.',
+        explain: function (a) { return f(a, 3) + ' of the depth fell on days colder than 0 °C; the CAMELS frac_snow reference is ' + f(basin('01013500').camels.frac_snow, 3) + ' for 1989–2009, a different period.'; } },
+      { id: 'q7', type: 'choice',
+        prompt: 'Which of the four basins receives the largest share of its precipitation in December, January and February (water years 1990 to 2009)?',
+        options: BASIN_IDS.map(function (id) { return basin(id).name; }),
+        correct: function () { return BASIN_IDS.indexOf(bestOf('djf', BASIN_IDS)); },
+        feedback: BASIN_IDS.map(function () { return 'Compare the DJF-share column of the §4 table for this basin with the other three.'; }),
+        explain: function () {
+          var id = bestOf('djf', BASIN_IDS);
+          return basin(id).name + ' has the largest DJF share, ' + pct(stats(id, 0).djf, 1) + ' of its annual total.';
+        } }
+    ]
+  });
+
+  tangle.init();
+  loaded = true;
+})();
+</script>
+
+  <script>
+  /* Standalone-browser fallback — disable Run buttons outside AI-Hydro preview */
+  (function(){
+    var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
+                    (typeof window.aihydro !== 'undefined') ||
+                    (typeof window.acquireVsCodeApi === 'function');
+    if (inPreview) return;
+    document.querySelectorAll('.aihydro-run').forEach(function(btn){
+      btn.disabled = true;
+      btn.innerHTML = '🔒 Open in AI-Hydro to run';
+      btn.style.opacity = '0.55';
+      btn.style.cursor = 'not-allowed';
+    });
+  })();
+</script>
+</body>
+</html>

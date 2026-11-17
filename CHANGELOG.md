@@ -2,6 +2,46 @@
 
 All notable changes to the learning modules. Versions are per module (`manifest.json` and the manifest embedded in `module.html` carry the same number).
 
+## 2026-11-17 — Wave 3: precipitation, evapotranspiration and runoff generation
+
+Owner request, 2026-11-17: add the precipitation, evapotranspiration and runoff-generation lessons to the course. Everything in the Wave 2 changelog below is unchanged; certificate wording, signature and completion logic stay owner decisions.
+
+### Course intro-to-hydrology 0.3.0 → 0.4.0
+- Three lessons added after the water cycle: precipitation-point-to-basin (order 2), evapotranspiration-budyko (3), runoff-generation (4). Prerequisites: precipitation needs water-cycle-in-motion; evapotranspiration-budyko and runoff-generation need precipitation; watershed-runoff now needs runoff-generation. Course abstract says ten learning modules; estimatedHours 5 → 7 (420 min of lessons); new tags precipitation, evapotranspiration, Budyko, runoff-generation, infiltration.
+- `courseOrder` in the manifests: watershed-runoff 5, reading-a-hydrograph 6, baseflow-separation 7, real-streamflow-data 8, dem-to-twi 9, capstone-basin-story 10, course-certificate 11. Numbered cross-references in the older lessons ("Module 5", "M6", "Modules 5 and 7") follow the new numbers; water-cycle-in-motion says "the next nine modules".
+
+### course-certificate 0.1.2 → 0.1.3
+- Counts follow the course: "All ten learning modules done", "10 Learning Modules · ~7 Hours", "Requires completion of all 10 course modules", share text "10 modules". Institution wording, signature block and completion check are unchanged and still owner decisions.
+
+### Review fixes (same day)
+- precipitation-point-to-basin: figure alt text now describes the one map the cell draws; gauge labels near the right edge no longer clip; one quiz hint and the reproduction note reworded. runoff-generation and evapotranspiration-budyko: hints reworded to point at where to look; a neutral note of possible reasons next to events with RC above 1 and points outside the Budyko limits.
+
+### Repository
+- `test_every_doi_in_the_modules_passed_the_gate` now matches DOIs that contain `<`, `>`, `(`, `)`, `;` in full (SICI-style, e.g. Thiessen 1911, Priestley & Taylor 1972), after normalising HTML entities and percent-encoding; regression test added. The two lessons that worked around the old pattern show those DOIs as written.
+- Module set must equal the course's module set and the manifests' `courseOrder` must equal the position in `course.json`; the SYNTHETIC-label test covers the new lessons.
+
+
+### precipitation-point-to-basin new → 0.1.0
+- New lesson, "Rain and Snow: From Gauge to Basin" (topic precipitation, 35 min). A gauge is a point (a computed funnel-to-basin ratio); a SYNTHETIC 60 × 60 km storm field with six gauges G1 to G6 (toggle buttons with `aria-pressed`, IDW power slider, map radio group) compares the arithmetic mean, Thiessen polygons and inverse-distance weighting against a known true mean, with a Thiessen raster labelled by region and a weights table; four real CAMELS-US basins (basin cards) show the daily exceedance curve, wet-day share, high-precipitation days, longest dry spell and largest day for water years 1996 to 2000, the 20-water-year monthly regime with DJF and JJA shares, and the snow fraction against a rain/snow temperature threshold (−2 to +3 °C) with CAMELS `frac_snow` beside it as a reference; a reproduction check recomputes CAMELS `p_mean` from 20 years of monthly totals and `high_prec_freq` from five years of daily values and says what differs (the period).
+- Two executable cells with pre-rendered outputs and alt text: `areal-precip` (SYNTHETIC, rebuilt from the gauge set and IDW power) and `precip-climate` (REAL, rebuilt from the basin and threshold). Seven-item checkpoint (four choices, three numeric) whose answers are computed from the page's own model and data and recomputed independently in the tests.
+- Data: `data/precip-data.json` (about 37 KB; daily precipitation in integer hundredths of a mm and the half-degree temperature bin on wet days for WY1996–2000, monthly totals for WY1990–2009, four basins) with `data/PROVENANCE.json` (source member paths, sha256). Extractor: `extract_precipitation_point_to_basin` in `scripts/extract_camels.py`. The temperature is stored as the bin floor(tmax + tmin) so that "mean temperature < T" is exactly "bin < 2 T" for the 0.5 °C thresholds the lesson uses.
+- Citations (all pass the gate, see `CITATIONS.verified.md`): Thiessen 1911, Shepard 1968, Thornton et al. 1997, Jennings et al. 2018, with Newman et al. 2015 and Addor et al. 2017 for the data.
+
+### evapotranspiration-budyko new → 0.1.0
+- New lesson "The Return Flow: Evapotranspiration and the Budyko Curve" (topic evapotranspiration, ~40 min, course order 3).
+- Real data: Daymet water year 1997 (dayl, srad, tmax, tmin, vp) for four CAMELS basins, and aridity / runoff_ratio / frac_snow for 671 gauges (`data/et-budyko.json`, 64.8 KB with provenance; extractor `--only evapotranspiration-budyko`).
+- PET two ways (Hargreaves–Samani; Priestley–Taylor with the net-radiation budget shown step by step, α slider), checked against the tabulated `pet_mean` as a reproduction check with the period/method differences stated.
+- Long-term AET from E = P − Q; Budyko space with 670 basins, both limits, a Fu curve with an ω slider and an in-lesson least-squares fit; points outside the limits are read as assumptions that do not hold, not as data problems.
+- Page size is about 221 KB, over the 200 KB target and under the 250 KB cap; it was not trimmed because it carries the inlined 670-basin table, the forcing blob and two figures.
+- Two executable cells (`pet-two-ways`, `budyko-camels`) with pre-rendered outputs; seven-item checkpoint with computed answers; five DOIs gate-verified, two handbooks without DOI marked pending the owner's decision.
+
+### runoff-generation new → 0.1.0
+- New lesson, "Runoff Generation: Infiltration Excess and Saturation Excess" (course order 4, about 40 min, prerequisite: the precipitation lesson). Seven sections plus references and provenance: the two mechanisms; a SYNTHETIC Green–Ampt column (ponding time from Mein & Larson, cumulative infiltration from the implicit Green–Ampt equation, rain-intensity and duration sliders); a finite storage deficit with a mass-balance readout P = F + R_IE + R_SE; a keyboard-operable mechanism map over intensity × deficit computed by the same model (text labels plus fill and hatching in three classes); a SYNTHETIC 20-column hillslope whose saturated area grows with storm depth (wetter-start toggle); real events; and a seven-item checkpoint.
+- Real part (§6): CAMELS-US v1.2 daily USGS discharge and Daymet basin-mean rain for water years 1996–2000, three basins (Siletz, Leaf, Sabino). Events are days with at least 10 mm after two days under 1 mm, a window of up to 10 days, event rain and quickflow both summed over that same window, quickflow from the shared Lyne–Hollick filter (α = 0.925), event runoff coefficient and 7-day antecedent rain; the thresholds are stated as teaching choices and the median RC is shown for 5, 10 and 20 mm. The antecedent-wetness wording is generated from the computed medians and rank correlation, not typed. Fish River is left out with its CAMELS `frac_snow` as the stated reason. The largest daily rain (as a 24-hour mean) is set beside the CAMELS `soil_conductivity` (cm/hr) and the lesson says only what that computation shows. CAMELS `runoff_ratio` is shown as context for a different period, not as a one-to-one check.
+- Two executable cells with pre-rendered output: `column-hillslope` (the two SYNTHETIC models in one cell, kept in one to stay under the 200 KB page budget) and `event-runoff-ratios` (REAL; Lyne–Hollick inlined from `shared/lyne_hollick.py`). The JS models and the cells agree to 1e-6 and are recomputed independently in `tests/test_runoff_generation.py` (including explicit time stepping of the column, an independent event detector and the quiz answers).
+- Data: `data/runoff-events.json` (blob, about 40 KB) and `data/PROVENANCE.json` (source members and sha256), written by the `runoff-generation` extractor in `scripts/extract_camels.py`.
+- Citations (all pass the gate, see CITATIONS.verified.md): Horton 1933, Dunne & Black 1970, Green & Ampt 1911, Mein & Larson 1973, Merz et al. 2006, Blume et al. 2007, Cosby et al. 1984, Thornton et al. 1997. The DOI first planned for Merz et al. (10.1016/j.jhydrol.2006.03.006) resolves to a different paper and was replaced by 10.1016/j.jhydrol.2006.06.008.
+
 ## 2026-11-17 — Wave 2: function, accessibility, repository
 
 Source: `docs/vision-2040/findings/modules-audit-2026-11-17.md` (Wave 2). Content questions from Wave 1 are unchanged; nothing about the certificate's institution wording, signature or completion logic, NEH-4 or the course name was touched.

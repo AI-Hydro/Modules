@@ -1,0 +1,42 @@
+{
+  "moduleId": "evapotranspiration-budyko",
+  "title": "The Return Flow: Evapotranspiration and the Budyko Curve",
+  "description": "Compute potential evapotranspiration two ways (Hargreaves–Samani and Priestley–Taylor) from real Daymet weather, reproduce the tabulated CAMELS pet_mean as a check, derive long-term actual evapotranspiration from P − Q, and place 670 CAMELS basins in Budyko space with a Fu curve whose ω you fit yourself.",
+  "version": "0.1.0",
+  "license": "CC-BY-4.0",
+  "topic": "evapotranspiration",
+  "level": "intro",
+  "estimatedMinutes": 40,
+  "tags": [
+    "evapotranspiration",
+    "PET",
+    "Hargreaves-Samani",
+    "Priestley-Taylor",
+    "Budyko",
+    "Fu-curve",
+    "aridity",
+    "water-balance",
+    "CAMELS"
+  ],
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "Zhang, L., Hickel, K., Dawes, W. R., Chiew, F. H. S., Western, A. W. & Briggs, P. R. (2004). A rational function approach for estimating mean annual evapotranspiration. Water Resources Research.",
+    "doi": "10.1029/2003WR002710"
+  },
+  "isFeatured": false,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 3,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/evapotranspiration-budyko/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/evapotranspiration-budyko",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-11-17",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}

@@ -1,0 +1,12 @@
+SYNTHETIC field: 60 x 60 cells of 1 km; basin = 1942 cells (1942 km2)
+Gauges used    : G1, G2, G3, G4, G5, G6 (6 of 6);  IDW power p = 2
+True mean      : 16.35 mm   (known only because the field is synthetic)
+Arithmetic     : 17.89 mm   difference from true +1.53 mm
+Thiessen       : 18.86 mm   difference from true +2.51 mm
+IDW            : 18.34 mm   difference from true +1.99 mm
+  G1: reading  19.0 mm   Thiessen weight 0.117
+  G2: reading  20.2 mm   Thiessen weight 0.111
+  G3: reading  18.4 mm   Thiessen weight 0.182
+  G4: reading  30.5 mm   Thiessen weight 0.257
+  G5: reading  10.6 mm   Thiessen weight 0.167
+  G6: reading   8.8 mm   Thiessen weight 0.166

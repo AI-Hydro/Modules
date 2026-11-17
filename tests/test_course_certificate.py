@@ -20,15 +20,15 @@ def test_no_auto_open_on_load_and_button_exists():
 
 
 def test_module_counts_agree():
-    assert "All seven learning modules done" in T and "7 Learning Modules" in T
+    assert "All ten learning modules done" in T and "10 Learning Modules" in T
     import json
     course = json.load(open(ROOT / "courses/intro-to-hydrology/course.json"))
-    assert "Seven learning modules" in course["abstract"] and "Eight modules" not in course["abstract"]
-    assert len([m for m in course["modules"] if m["id"] != "course-certificate"]) == 7
+    assert "Ten learning modules" in course["abstract"] and "Seven learning modules" not in course["abstract"]
+    assert len([m for m in course["modules"] if m["id"] != "course-certificate"]) == 10
 
 
 def test_owner_decisions_unchanged():
-    # institution wording, signature block and "all 7 modules" prerequisite are left exactly as authored
+    # institution wording, signature block and "all 10 modules" prerequisite are left exactly as authored
     for keep in ['<div class="sig-line">Mohammad Galib</div>', '<div class="sig-line">Purdue University</div>',
-                 '<div class="sig-label">Institution</div>', "Requires completion of all 7 course modules"]:
+                 '<div class="sig-label">Institution</div>', "Requires completion of all 10 course modules"]:
         assert keep in T

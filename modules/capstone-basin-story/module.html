@@ -263,12 +263,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     with every number computed from the observed record or taken from CAMELS-US.
   </p>
   <div class="instruction">
-    Pick the basin you studied in Module 5 · Run the cells · Read the story · Export your report
+    Pick the basin you studied in Module 8 · Run the cells · Read the story · Export your report
   </div>
   <div class="callout cap" style="margin-top:14px;">
     <span class="callout-label">Capstone synthesis</span>
-    Prerequisites: <strong>M4</strong> (baseflow separation) · <strong>M5</strong> (real data) · <strong>M6</strong> (terrain/TWI).
-    Every concept from Modules 1–6 surfaces here — the six flux arrows, the watershed divide, the hydrograph limbs,
+    Prerequisites: <strong>M7</strong> (baseflow separation) · <strong>M8</strong> (real data) · <strong>M9</strong> (terrain/TWI).
+    Every concept from Modules 1–9 surfaces here — the six flux arrows, the watershed divide, the hydrograph limbs,
     the Lyne–Hollick BFI, the USGS record, and a TWI wetness map on a synthetic landscape.
   </div>
 </div>
@@ -310,8 +310,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 <div id="sec-basin" class="wide card glow" data-aihydro-editable="prose">
   <h2>1 · Choose your basin</h2>
   <p>
-    Select the basin you explored in <strong>Module 5</strong>, or pick a different one. The four gauges are the same
-    CAMELS-US basins as Module 5; the facts on each card are CAMELS attributes (1989–2009). All cells below update when you change your selection.
+    Select the basin you explored in <strong>Module 8</strong>, or pick a different one. The four gauges are the same
+    CAMELS-US basins as Module 8; the facts on each card are CAMELS attributes (1989–2009). All cells below update when you change your selection.
   </p>
 
   <div class="gauge-grid" id="gaugeCards" role="group" aria-label="Choose a basin">
@@ -460,7 +460,7 @@ Zero-flow days (not drawn on the log axis)      : 0</pre><div class="aihydro-sta
   <h2>4 · The shape of the land <span style="font-size:12px;color:#f59e0b;">(SYNTHETIC landscape)</span></h2>
   <p>
     TWI tells you where the landscape stays wet. Computing it for a real basin needs a DEM, and none is bundled with this module, so
-    this cell runs the same pipeline as Module 6 (depression filling, D8, accumulation, slope, TWI) on a <strong>SYNTHETIC</strong> 24×24 hillslope
+    this cell runs the same pipeline as Module 9 (depression filling, D8, accumulation, slope, TWI) on a <strong>SYNTHETIC</strong> 24×24 hillslope
     with a meandering valley — <em>not</em> your basin. Use it to see how the wetness distribution looks; for the real raster ask the agent to run
     <code>compute_twi</code>.
   </p>
@@ -509,15 +509,15 @@ Saturation-excess runoff is most likely in the upper-tercile cells (TWI &gt; 7.9
 
     <!-- Stage 1: Watershed -->
     <div class="tl-stage" id="tl-1">
-      <div class="tl-stage-title">🏔️ Module 2 · The Watershed</div>
+      <div class="tl-stage-title">🏔️ Module 5 · The Watershed</div>
       <p>Every drop that falls inside the <strong id="tl1-name">Fish River</strong> drainage divide (<strong id="tl1-area">—</strong> km², CAMELS) eventually passes through gauge <strong id="tl1-id">01013500</strong>. Topography routes it there via D8 flow paths.</p>
       <p>The watershed boundary is an invisible wall drawn by elevation. Flow paths converge in valleys; ridges are the divides.</p>
-      <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Key concept re-used</span>Contributing area (a) from Module 2 feeds directly into the TWI formula: TWI = ln(a/tan β).</div>
+      <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Key concept re-used</span>Contributing area (a) from Module 5 feeds directly into the TWI formula: TWI = ln(a/tan β).</div>
     </div>
 
     <!-- Stage 2: Hydrograph -->
     <div class="tl-stage" id="tl-2">
-      <div class="tl-stage-title">📈 Module 3 · Reading the Hydrograph</div>
+      <div class="tl-stage-title">📈 Module 6 · Reading the Hydrograph</div>
       <p>The five-year record you plotted is a sequence of storm and melt hydrographs. At <strong id="tl2-name">Fish River</strong> the largest daily flow is <strong id="tl2-peak">—</strong> m³/s on <span id="tl2-peakdate">—</span>, and the Richards–Baker flashiness index is <strong id="tl2-rb">—</strong>.</p>
       <p>The flashiness index is the sum of day-to-day flow changes divided by total flow: higher means more of the flow arrives in quick pulses. Compare it across the four gauges.</p>
       <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Key concept re-used</span>Rising limbs, peaks and recessions are summarised by the flashiness index and the FDC slope you computed in §3.</div>
@@ -525,23 +525,23 @@ Saturation-excess runoff is most likely in the upper-tercile cells (TWI &gt; 7.9
 
     <!-- Stage 3: Baseflow -->
     <div class="tl-stage" id="tl-3">
-      <div class="tl-stage-title">🌊 Module 4 · Baseflow Separation</div>
+      <div class="tl-stage-title">🌊 Module 7 · Baseflow Separation</div>
       <p>The Lyne–Hollick filter (α = 0.925, 3 passes) gives a BFI of <strong id="tl3-bfi">—</strong> for this five-year record: the filter classes <span id="tl3-pct">—</span>% of the discharge as baseflow. CAMELS reports <strong id="tl3-camels">—</strong> for 1989–2009.</p>
       <p>The two can differ (record period and filter details): here the five-year value is lower at all four gauges (0.557 vs 0.585, 0.393 vs 0.521, 0.271 vs 0.286, 0.326 vs 0.407). Either way, the BFI is a <em>filter output</em>, not a measured groundwater fraction.</p>
-      <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Key concept re-used</span>The same shared filter code as Module 4: each pass filters the previous pass's baseflow, with the series reflected at both ends.</div>
+      <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Key concept re-used</span>The same shared filter code as Module 7: each pass filters the previous pass's baseflow, with the series reflected at both ends.</div>
     </div>
 
     <!-- Stage 4: Real data -->
     <div class="tl-stage" id="tl-4">
-      <div class="tl-stage-title">📡 Module 5 · Real Streamflow Data</div>
-      <p>In Module 5 you worked with gauge <strong id="tl4-id">01013500</strong>. The same <strong id="tl4-days">—</strong>-day observed record is used here; <strong id="tl4-flood">—</strong> of those days exceed its own P95 threshold.</p>
+      <div class="tl-stage-title">📡 Module 8 · Real Streamflow Data</div>
+      <p>In Module 8 you worked with gauge <strong id="tl4-id">01013500</strong>. The same <strong id="tl4-days">—</strong>-day observed record is used here; <strong id="tl4-flood">—</strong> of those days exceed its own P95 threshold.</p>
       <p>The <strong>annual regime</strong> (bar chart in §2) is the most compact summary of how your basin behaves across seasons.</p>
-      <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Key concept re-used</span>The P95 flood threshold from Module 5 reappears in §2 to count flood days.</div>
+      <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Key concept re-used</span>The P95 flood threshold from Module 8 reappears in §2 to count flood days.</div>
     </div>
 
     <!-- Stage 5: TWI -->
     <div class="tl-stage" id="tl-5">
-      <div class="tl-stage-title">🌱 Module 6 · DEM → TWI</div>
+      <div class="tl-stage-title">🌱 Module 9 · DEM → TWI</div>
       <p>No DEM is bundled for the real basins, so §4 computed TWI on a <strong>SYNTHETIC</strong> hillslope: mean TWI <strong id="tl5-twi">—</strong>, with the upper tercile starting at <span id="tl5-t2">—</span>. Those cells are where saturation-excess runoff would start first on that landscape.</p>
       <p>This completes the spatial picture: the hydrograph tells you <em>when</em> flow is high; the TWI tells you <em>where</em> the landscape is likely to be saturated. For the real basin, ask the agent to run <code>compute_twi</code>.</p>
       <div class="callout cap" style="margin:8px 0 0;"><span class="callout-label">Full synthesis</span>Together — BFI + FDC + flashiness + TWI — these numbers tell a basin's water story from precipitation to sea.</div>
@@ -589,7 +589,7 @@ Saturation-excess runoff is most likely in the upper-tercile cells (TWI &gt; 7.9
 <div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
   <h2>6 · Capstone checkpoint</h2>
   <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">
-    These questions draw on the full course (Modules 1 through 6). Answer every item correctly to complete the checkpoint. Wrong answers can be changed and checked again; the numbers in the questions and the numeric answers are computed from this page's own records and cells.
+    These questions draw on the full course (Modules 1 through 9). Answer every item correctly to complete the checkpoint. Wrong answers can be changed and checked again; the numbers in the questions and the numeric answers are computed from this page's own records and cells.
   </p>
 
   <div id="m7-quiz"></div>
@@ -601,7 +601,7 @@ Saturation-excess runoff is most likely in the upper-tercile cells (TWI &gt; 7.9
 <div id="sec-next" class="wide card" data-aihydro-editable="prose">
   <h2>7 · Where to go next</h2>
   <p>
-    You've completed the AI-Hydro flagship course — the six flux arrows, the seven learning modules, and the main
+    You've completed the AI-Hydro flagship course — the six flux arrows, the ten learning modules, and the main
     interactive primitives of the platform. Here's what you can do from here:
   </p>
 
@@ -1565,7 +1565,7 @@ function d8Upstream(rec, target) {
   function buildSigsSrc(g) {
     return STYLE.concat([''], dataLines(g), [
       '',
-      '# ─── Lyne–Hollick BFI (multi-pass with reflection, same code as Module 4)',
+      '# ─── Lyne–Hollick BFI (multi-pass with reflection, same code as Module 7)',
       PY_LH,
       'ALPHA = 0.925',
       'base = np.array(lyne_hollick(Q, ALPHA))',
@@ -1843,7 +1843,7 @@ function d8Upstream(rec, target) {
   (function buildDots() {
     var container = document.getElementById('tlDots');
     if (!container) return;
-    var labels = ['M1 Cycle','M2 Watershed','M3 Hydrograph','M4 Baseflow','M5 Data','M6 Terrain'];
+    var labels = ['M1 Cycle','M5 Watershed','M6 Hydrograph','M7 Baseflow','M8 Data','M9 Terrain'];
     for (var i = 0; i < TL_N; i++) {
       var dot = document.createElement('div');
       dot.className = 'tl-dot' + (i === 0 ? ' active' : '');

@@ -15,8 +15,8 @@ sys.path.insert(0, str(SHARED))
 from d8 import d8_route  # noqa: E402
 from lyne_hollick import baseflow_index, lyne_hollick  # noqa: E402
 
-QUIZ_MODULES = ["baseflow-separation", "capstone-basin-story", "dem-to-twi", "reading-a-hydrograph",
-                "real-streamflow-data", "water-cycle-in-motion", "watershed-runoff"]
+# every lesson with a page except the certificate (it has no checkpoint)
+QUIZ_MODULES = sorted(p.parent.name for p in MODULES.glob("*/module.html") if p.parent.name != "course-certificate")
 CFS = 0.028316846592
 
 
