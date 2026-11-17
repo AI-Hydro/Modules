@@ -12,13 +12,14 @@
 {
   "id": "reading-a-hydrograph",
   "title": "Reading a Hydrograph",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "streamflow",
   "level": "intro",
   "estimated_minutes": 30,
   "requires": { "executable": true, "python": ["numpy", "matplotlib"] },
+  "citation": { "text": "Ladson, A. R., Brown, R., Neal, B. & Nathan, R. (2013). A standard approach to baseflow separation using the Lyne and Hollick filter. Australasian Journal of Water Resources, 17(1). doi:10.7158/13241583.2013.11465417" },
   "ai_hydro_preview_min_version": "0.2"
 }
 </script>
@@ -408,7 +409,7 @@ select:focus { outline:1px solid var(--cyan); }
 <div id="sec-anatomy" class="wide card" data-aihydro-editable="prose">
   <h2>2 · Anatomy of a single storm event</h2>
   <p>
-    A 96-hour event: a 4-hour pulse drives a gamma-shaped response. Hover for hourly values.
+    A 96-hour <strong>SYNTHETIC</strong> event (an illustration, not a gauge record): a 4-hour pulse drives a gamma-shaped response. Hover for hourly values.
     The dashed line is a <em>straight-line baseflow separation</em> (event start → recession inflection).
   </p>
   <div class="toggle-row">
@@ -442,16 +443,16 @@ select:focus { outline:1px solid var(--cyan); }
     <h2>3 · Baseflow separation — the Lyne–Hollick filter</h2>
     <p>
       Real baseflow isn't a straight line. The <strong>Lyne–Hollick filter</strong>
-      <span style="color:var(--muted);">[1]</span> runs three forward/backward passes of a one-parameter recursion:
+      <span style="color:var(--muted);">[1,2]</span> runs three passes (forward, backward, forward) of a one-parameter recursion, each pass filtering the baseflow left by the previous one (series reflected at both ends):
     </p>
     <div style="background:var(--mid); border:1px solid var(--border); border-radius:14px; padding:14px 16px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:2; margin:10px 0;">
       f<sub>t</sub> = α · f<sub>t−1</sub> + <span style="color:var(--cyan);">(1+α)/2</span> · (Q<sub>t</sub> − Q<sub>t−1</sub>)<br>
-      b<sub>t</sub> = Q<sub>t</sub> − max(f<sub>t</sub>, 0)
+      f<sub>t</sub> ≥ 0 &nbsp;·&nbsp; b<sub>t</sub> = max(Q<sub>t</sub> − f<sub>t</sub>, 0)
     </div>
     <p>
       Drag α inline:
       <span class="tangle" id="t-alpha" data-min="0.900" data-max="0.995" data-step="0.005" data-value="0.925" data-format="f3"></span>
-      → higher values strip more quickflow, giving a smoother, lower baseflow line.
+      → a higher α lets quickflow persist longer, so more flow is classed as quickflow and the baseflow line is lower.
       <strong>BFI</strong> = baseflow volume ÷ total volume.
     </p>
     <div class="param-block">
@@ -466,7 +467,7 @@ select:focus { outline:1px solid var(--cyan); }
   </div>
   <div class="card">
     <h2>Filtered baseflow</h2>
-    <p style="font-size:13px;color:var(--muted);">Drag the slider — both lines update at ~60 fps.</p>
+    <p style="font-size:13px;color:var(--muted);">Drag the slider — both lines update live. The filter acts on the SYNTHETIC 96-hour event (hourly time step).</p>
     <div class="plot-wrap">
       <svg id="bfiSvg" viewBox="0 0 600 280" aria-label="Baseflow filter result"></svg>
     </div>
@@ -477,8 +478,9 @@ select:focus { outline:1px solid var(--cyan); }
     </div>
     <div class="callout tip" style="margin-top:14px;">
       <span class="callout-label">Practical default</span>
-      <code>α = 0.925</code> with 3 passes (forward, backward, forward) is the published Lyne–Hollick default.
-      Move the slider above to <em>0.99</em> and see baseflow approach a near-flat line.
+      <code>α = 0.925</code> with 3 passes is the daily-data setting recommended by Nathan &amp; McMahon (1990) and standardised
+      by Ladson et al. (2013). Here the time step is one <em>hour</em>, so the daily value is only a starting point.
+      Move the slider above to <em>0.99</em> and watch the baseflow line drop.
     </div>
   </div>
 </div>
@@ -491,7 +493,8 @@ select:focus { outline:1px solid var(--cyan); }
   <p>
     Two storms on the same catchment. Drag the number:
     drop <span class="tangle" id="t-rainMult" data-min="1.0" data-max="4.0" data-step="0.1" data-value="2.0" data-format="f1" data-suffix="×"></span>
-    as much rain on the right panel as the left, and the peak grows <em>faster</em> than linearly. That's saturated soil at work.
+    as much rain on the right panel as the left, and the peak grows <em>faster</em> than linearly. In this model that comes from the
+    curve-number loss: the first part of every storm (the initial abstraction) produces no runoff.
   </p>
   <div class="param-block" style="max-width:480px;">
     <label for="rainSlider">Or use the slider <span id="rainVal">2.0×</span></label>
@@ -499,25 +502,28 @@ select:focus { outline:1px solid var(--cyan); }
   </div>
   <div class="grid2" style="margin:18px 0 0;">
     <div class="plot-wrap">
-      <h3 style="margin-bottom:10px;">Small storm (10 mm)</h3>
+      <h3 style="margin-bottom:10px;">Small storm (25 mm)</h3>
       <svg id="smallSvg" viewBox="0 0 360 220" aria-label="Small storm hydrograph"></svg>
       <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);">
-        Peak: <span id="smallPeak">—</span> m³/s · Volume: <span id="smallVol">—</span> m³ · Runoff coef: <span id="smallC">—</span>
+        Peak: <span id="smallPeak">—</span> m³/s · Quickflow volume: <span id="smallVol">—</span> m³ · Runoff: <span id="smallC">—</span>
       </div>
     </div>
     <div class="plot-wrap">
       <h3 style="margin-bottom:10px;">Large storm (<span id="largeMM">20</span> mm)</h3>
       <svg id="largeSvg" viewBox="0 0 360 220" aria-label="Large storm hydrograph"></svg>
       <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);">
-        Peak: <span id="largePeak">—</span> m³/s · Volume: <span id="largeVol">—</span> m³ · Runoff coef: <span id="largeC">—</span>
+        Peak: <span id="largePeak">—</span> m³/s · Quickflow volume: <span id="largeVol">—</span> m³ · Runoff: <span id="largeC">—</span>
       </div>
     </div>
   </div>
   <div class="callout">
-    <span class="callout-label">Non-linearity, observed</span>
-    Notice how <em>peak ratio</em> (right peak ÷ left peak) grows faster than the rainfall ratio above ~2× — that's the
-    soil-moisture saturation effect. The model here uses a simple SCS curve-number-style runoff fraction:
-    <code>Q_runoff = P · (P − Ia)² / (P − Ia + S)</code>, scaled and convolved with a gamma unit-hydrograph kernel.
+    <span class="callout-label">Non-linearity, computed</span>
+    <span id="peakRatio">—</span><br>
+    <strong>SYNTHETIC model:</strong> SCS curve number CN = 75 (USDA-SCS, 1972) gives S = 25400/CN − 254 = <span id="sMM">84.7</span> mm and an initial
+    abstraction Ia = 0.2·S = <span id="iaMM">16.9</span> mm. Runoff depth is
+    <code>Q = (P − Ia)² / (P − Ia + S)</code> for P &gt; Ia (equivalently <code>(P − Ia)² / (P + 0.8·S)</code>), else 0. That depth falls as an even
+    4-hour pulse on an assumed catchment area of <span id="areaKm2">25</span> km², is routed with a gamma unit hydrograph (volume-conserving), and sits on a constant 2.2 m³/s baseflow.
+    Real soils add moisture-dependent losses that a fixed CN does not capture.
   </div>
 </div>
 
@@ -569,19 +575,19 @@ select:focus { outline:1px solid var(--cyan); }
     </div>
 
     <div class="quiz-question quiz-block" data-answer="2">
-      <p class="quiz-q">If you double the rainfall on an already-wet catchment, what's the most likely outcome for the peak discharge?</p>
+      <p class="quiz-q">In the curve-number model of §4 (CN = 75, S = 84.7 mm, Ia = 16.9 mm) a 25 mm storm produces 0.70 mm of runoff and a 50 mm storm produces 9.29 mm. When the rainfall doubles, the runoff depth…</p>
       <div class="quiz-choices" role="radiogroup" aria-label="Question 3 choices">
         <button class="quiz-btn" type="button" data-index="0"
-          data-feedback="That would only be true if runoff response were perfectly linear — saturated soils make additional rain run off proportionally more.">
-          Peak exactly doubles — superposition holds
+          data-feedback="If runoff were proportional to rain, the 50 mm storm would give about 1.40 mm; the model gives 9.29 mm.">
+          Doubles — runoff is proportional to rainfall
         </button>
         <button class="quiz-btn" type="button" data-index="1"
-          data-feedback="Quite the opposite — once the catchment saturates, more of each marginal mm of rain becomes runoff, not less.">
-          Peak is less than double — soil absorbs the extra
+          data-feedback="The opposite: the first 16.9 mm is lost to initial abstraction in both storms, so the extra rain is a much larger share of the runoff.">
+          Less than doubles — the soil absorbs the extra rain
         </button>
         <button class="quiz-btn" type="button" data-index="2"
-          data-feedback="Right — on a saturated catchment the marginal runoff coefficient is higher, so peak grows faster than rainfall.">
-          Peak more than doubles — saturated soil sends a larger fraction to runoff
+          data-feedback="Correct — the first 16.9 mm produces nothing and the numerator grows as (P − Ia)², so doubling the rain raises runoff depth about 13-fold here (9.29 ÷ 0.70).">
+          More than doubles (about 13× here) — the loss is a fixed first slice, so extra rain is mostly runoff
         </button>
       </div>
       <div class="quiz-feedback"></div>
@@ -594,32 +600,34 @@ select:focus { outline:1px solid var(--cyan); }
 <!--  6 · PYTHON CELL — REAL DATA                               -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div id="sec-python" class="wide card" data-aihydro-editable="prose">
-  <h2>6 · Pull it together with real-shape data</h2>
+  <h2>6 · Pull it together with real data</h2>
   <p>
-    Pick a gauge. The cell synthesises a year of daily streamflow shaped to mimic that catchment's character
-    (snowmelt, flashy, or baseflow-dominated), then overlays the Lyne–Hollick baseflow.
+    Pick a gauge. The cell below holds <strong>real observations</strong> from CAMELS-US v1.2 (Newman et al., 2015; Addor et al., 2017):
+    one water year of USGS daily-mean discharge plus the Daymet basin-mean precipitation for the same days, so the rain you see is the rain that fell.
+    It overlays the Lyne–Hollick baseflow and compares it with the CAMELS-reported BFI. No numbers are synthesised or fetched.
     <strong>The source regenerates each time you change the gauge.</strong>
   </p>
   <div class="callout agent">
     <span class="callout-label">AI-Hydro agent action</span>
-    For the real CAMELS series instead of synthesised data: in chat, ask
-    <em>"Fetch streamflow for gauge 14305500 from CAMELS and compute the Lyne–Hollick BFI."</em>
+    For a longer record or another gauge: in chat, ask
+    <em>"Fetch streamflow for gauge 14305500 and compute the Lyne–Hollick BFI."</em>
     The agent runs <code>fetch_streamflow_data</code> and <code>extract_hydrological_signatures</code>.
   </div>
 
   <div style="margin:12px 0;">
     <label for="gaugeSelect" style="display:block;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Gauge profile</label>
     <select id="gaugeSelect">
-      <option value="snow">14305500 · Snowmelt-dominated (Cascades)</option>
-      <option value="flashy" selected>01031500 · Flashy forested headwater (Maine)</option>
-      <option value="base">02472000 · Baseflow-dominated coastal plain (Mississippi)</option>
+      <option value="14305500">14305500 · Siletz River at Siletz, OR</option>
+      <option value="01031500" selected>01031500 · Piscataquis River near Dover-Foxcroft, ME</option>
+      <option value="02472000">02472000 · Leaf River near Collins, MS</option>
     </select>
+    <p id="gaugeFacts" style="font-size:13px;color:var(--muted);margin-top:8px;">—</p>
   </div>
 
   <div class="aihydro-cell" data-aihydro-cell-id="hydrograph-camels" data-language="python">
     <div class="aihydro-cell-header">
       <span class="aihydro-cell-lang">python</span>
-      <span class="aihydro-cell-desc">CAMELS-shape annual hydrograph + Lyne–Hollick baseflow</span>
+      <span class="aihydro-cell-desc">Real CAMELS-US water year (observed Q + basin precipitation) + Lyne–Hollick baseflow</span>
       <button class="run-btn aihydro-run" type="button">Run ▶</button>
     </div>
     <pre class="aihydro-source" id="pySource"></pre>
@@ -634,18 +642,24 @@ select:focus { outline:1px solid var(--cyan); }
   <h2>References</h2>
   <ol>
     <li>
-      Lyne, V. &amp; Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling.
-      <em>Institute of Engineers Australia National Conference</em>, Publ. 79/10, 89–93.
-    </li>
-    <li>
       Nathan, R.J. &amp; McMahon, T.A. (1990). Evaluation of automated techniques for base flow and recession analyses.
       <em>Water Resources Research</em>, 26(7), 1465–1473.
       <a href="https://doi.org/10.1029/WR026i007p01465" target="_blank" rel="noreferrer">DOI: 10.1029/WR026i007p01465</a>
     </li>
     <li>
+      Ladson, A.R., Brown, R., Neal, B. &amp; Nathan, R. (2013). A standard approach to baseflow separation using the Lyne and Hollick filter.
+      <em>Australasian Journal of Water Resources</em>, 17(1).
+      <a href="https://doi.org/10.7158/13241583.2013.11465417" target="_blank" rel="noreferrer">DOI: 10.7158/13241583.2013.11465417</a>
+    </li>
+    <li>
       Eckhardt, K. (2005). How to construct recursive digital filters for baseflow separation.
       <em>Hydrological Processes</em>, 19(2), 507–515.
       <a href="https://doi.org/10.1002/hyp.5675" target="_blank" rel="noreferrer">DOI: 10.1002/hyp.5675</a>
+    </li>
+    <li>
+      Newman, A.J. et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA.
+      <em>Hydrology and Earth System Sciences</em>, 19, 209–223.
+      <a href="https://doi.org/10.5194/hess-19-209-2015" target="_blank" rel="noreferrer">DOI: 10.5194/hess-19-209-2015</a>
     </li>
     <li>
       Addor, N., Newman, A.J., Mizukami, N. &amp; Clark, M.P. (2017).
@@ -654,8 +668,8 @@ select:focus { outline:1px solid var(--cyan); }
       <a href="https://doi.org/10.5194/hess-21-5293-2017" target="_blank" rel="noreferrer">DOI: 10.5194/hess-21-5293-2017</a>
     </li>
     <li>
-      USDA-SCS (1972). <em>National Engineering Handbook, Section 4: Hydrology.</em>
-      Runoff curve-number method.
+      USDA-SCS (1972). <em>National Engineering Handbook, Section 4: Hydrology.</em> Runoff curve-number method
+      (handbook, no DOI; see CITATIONS.verified.md).
     </li>
   </ol>
 </div>
@@ -664,12 +678,11 @@ select:focus { outline:1px solid var(--cyan); }
 <!--  PROVENANCE                                                -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div id="sec-prov" class="provenance">
-  <div class="prov-item"><dt>Module</dt><dd>reading-a-hydrograph · v0.2.0 · CC-BY-4.0</dd></div>
+  <div class="prov-item"><dt>Module</dt><dd>reading-a-hydrograph · v0.3.0 · CC-BY-4.0</dd></div>
   <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
-  <div class="prov-item"><dt>Synthetic event</dt><dd>96-hour gamma response (shape=4, scale=6) on a 4-hour rainfall pulse, hand-tuned for instruction.</dd></div>
-  <div class="prov-item"><dt>Baseflow filter</dt><dd>Lyne–Hollick recursive digital filter (1979); 3 passes; default α = 0.925.</dd></div>
-  <div class="prov-item"><dt>Storm comparison model</dt><dd>SCS curve-number runoff fraction convolved with gamma UH.</dd></div>
-  <div class="prov-item"><dt>Annual series</dt><dd>Per-gauge seeded synthesis (snowmelt / flashy / baseflow profiles); replace with <code>fetch_streamflow_data</code> for real CAMELS.</dd></div>
+  <div class="prov-item"><dt>SYNTHETIC parts</dt><dd>§2–§4: the 96-hour event (gamma response to a 4-hour pulse) and the curve-number storm pair (CN 75, assumed 25 km² catchment) are teaching models, not observations.</dd></div>
+  <div class="prov-item"><dt>Real data (§6)</dt><dd>CAMELS-US v1.2 water year 1996-10-01 to 1997-09-30: USGS daily-mean discharge (cfs, QC flags kept) and Daymet basin-mean precipitation. Files and sha256 in <code>data/PROVENANCE.json</code>.</dd></div>
+  <div class="prov-item"><dt>Baseflow filter</dt><dd>Lyne–Hollick, 3 passes, α = 0.925 in §6, reflected 30 steps (shared with Modules 4, 5 and 7).</dd></div>
   <div class="prov-item"><dt>Environment</dt><dd>Python (numpy, matplotlib) via AI-Hydro preview kernel.</dd></div>
 </div>
 
@@ -687,6 +700,7 @@ select:focus { outline:1px solid var(--cyan); }
   </div>
 </main>
 
+<!--@@BEGIN json:camels-wy@@--><script type="application/json" id="camels-wy">{"gauges":{"14305500":{"gauge_id":"14305500","name":"Siletz River at Siletz, OR","camels_name":"SILETZ RIVER AT SILETZ, OR","huc_02":"17","lat":44.71512,"lon":-123.88733,"area_km2":526.33,"elev_mean_m":276.16,"q_mean_mm_day":6.605015,"runoff_ratio":0.990253,"baseflow_index":0.520848,"q5_mm_day":0.343979,"q95_mm_day":24.301668,"zero_q_freq_as_distributed":0.0,"hfd_mean_doy":119.65,"p_mean_mm_day":6.67003,"pet_mean_mm_day":2.172891,"aridity":0.325769,"frac_snow":0.025741,"start":"1996-10-01","end":"1997-09-30","n":365,"q_cfs":[183.0,175.0,173.0,173.0,242.0,205.0,196.0,193.0,189.0,186.0,186.0,186.0,262.0,494.0,1210.0,764.0,591.0,1590.0,2010.0,1510.0,1150.0,1780.0,1570.0,3510.0,3980.0,3050.0,2070.0,1750.0,1660.0,1370.0,1190.0,1040.0,939.0,872.0,909.0,844.0,946.0,1110.0,992.0,910.0,843.0,785.0,874.0,1230.0,1430.0,1480.0,1740.0,2110.0,2620.0,15500.0,8490.0,4770.0,3760.0,2900.0,3760.0,3550.0,2840.0,2980.0,5340.0,4440.0,4110.0,5020.0,5560.0,5580.0,7970.0,9590.0,6210.0,6570.0,10400.0,6830.0,5400.0,4720.0,4540.0,4820.0,4110.0,3250.0,2590.0,2110.0,1780.0,1530.0,1620.0,2070.0,2260.0,2460.0,5270.0,14900.0,17800.0,13100.0,7470.0,11500.0,10600.0,10700.0,11400.0,7910.0,6110.0,4500.0,3430.0,2740.0,2480.0,2080.0,1860.0,1970.0,1750.0,1580.0,1410.0,1270.0,1160.0,1080.0,2760.0,7020.0,4310.0,3400.0,3400.0,3160.0,2740.0,2300.0,1970.0,1700.0,1540.0,2170.0,1900.0,4010.0,13700.0,10200.0,5720.0,3840.0,2890.0,2320.0,1940.0,1690.0,1460.0,1290.0,1160.0,1090.0,1290.0,1150.0,1560.0,1700.0,1540.0,1540.0,1540.0,3130.0,3000.0,2480.0,2070.0,1760.0,1530.0,1350.0,1230.0,1170.0,1050.0,1860.0,3010.0,2780.0,2540.0,2370.0,3930.0,6910.0,4840.0,4840.0,4960.0,4970.0,4370.0,3530.0,2860.0,3030.0,4970.0,4730.0,3920.0,4200.0,4430.0,3440.0,2710.0,2220.0,1880.0,1610.0,1450.0,1370.0,1520.0,1270.0,1180.0,1170.0,1140.0,1060.0,1000.0,941.0,884.0,838.0,817.0,853.0,837.0,768.0,724.0,699.0,869.0,1740.0,2400.0,1950.0,1600.0,1420.0,2260.0,7160.0,4270.0,3120.0,3320.0,2950.0,2420.0,2000.0,1710.0,1580.0,1620.0,1600.0,1600.0,1480.0,1430.0,1400.0,1280.0,1200.0,1090.0,997.0,910.0,840.0,772.0,714.0,665.0,624.0,589.0,551.0,523.0,488.0,461.0,440.0,430.0,406.0,425.0,415.0,392.0,369.0,371.0,556.0,686.0,513.0,1040.0,1210.0,943.0,859.0,860.0,761.0,690.0,634.0,584.0,541.0,504.0,484.0,522.0,492.0,435.0,405.0,381.0,376.0,401.0,358.0,340.0,445.0,637.0,786.0,626.0,548.0,508.0,466.0,440.0,428.0,397.0,391.0,366.0,343.0,321.0,308.0,299.0,289.0,279.0,434.0,397.0,367.0,317.0,292.0,276.0,264.0,254.0,242.0,239.0,230.0,218.0,215.0,211.0,204.0,195.0,190.0,183.0,177.0,171.0,168.0,163.0,160.0,155.0,151.0,148.0,145.0,142.0,138.0,132.0,124.0,119.0,118.0,116.0,114.0,111.0,109.0,108.0,107.0,105.0,105.0,106.0,108.0,129.0,117.0,104.0,159.0,186.0,189.0,245.0,183.0,216.0,173.0,142.0,129.0,126.0,116.0,109.0,106.0,102.0,100.0,95.0,91.0,91.0,93.0,94.0,93.0,121.0,428.0,1140.0,3540.0,2330.0,1530.0,1030.0,786.0,640.0,547.0,478.0,437.0,564.0,616.0,492.0,442.0,433.0],"estimated_idx":[],"prcp_mm_day":[0.0,0.0,0.0,10.73,9.47,0.0,0.0,0.0,0.0,0.84,6.48,8.24,15.76,15.04,19.07,5.25,15.73,31.74,18.27,9.68,8.44,20.69,21.2,31.22,30.51,0.0,0.0,13.05,12.06,0.0,0.0,0.0,0.0,3.51,8.85,5.6,10.51,6.82,0.0,0.0,0.0,3.22,16.94,15.75,13.42,6.58,13.72,15.34,50.49,114.48,18.27,14.52,18.46,12.64,27.9,8.55,14.47,19.25,30.36,8.28,15.49,26.33,22.09,19.45,36.88,43.13,26.79,37.39,38.89,10.2,24.09,21.19,21.18,19.75,0.07,0.0,0.0,0.0,0.0,0.0,13.28,24.96,15.05,25.1,49.36,74.52,68.63,36.02,19.63,73.13,46.48,59.81,50.97,39.4,17.14,5.84,3.5,1.85,5.79,0.0,2.73,6.16,0.0,0.0,0.0,0.0,0.0,8.3,56.03,52.71,8.1,13.52,18.98,5.03,4.85,2.53,0.0,0.0,10.56,24.61,2.97,51.47,67.99,19.97,0.0,0.0,0.0,0.0,0.0,3.15,0.0,0.0,0.0,9.88,15.7,5.57,8.91,1.14,0.0,9.69,11.39,27.35,9.21,0.0,0.0,0.0,0.0,0.56,5.39,6.45,2.94,27.73,42.69,15.52,7.27,10.24,26.82,30.21,0.0,27.77,20.84,21.22,11.6,8.07,0.0,22.64,23.51,18.52,12.52,35.85,18.07,0.0,0.0,0.0,0.0,0.0,4.86,8.28,11.77,5.49,0.84,10.26,6.35,0.0,1.17,0.0,0.0,0.0,2.79,10.62,3.98,0.0,0.0,0.0,15.74,23.91,11.86,7.72,0.0,3.95,21.54,44.77,2.83,11.88,21.63,5.42,0.0,0.0,2.76,9.13,8.86,9.47,7.62,4.57,5.19,8.44,0.0,1.35,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.11,6.29,5.23,0.0,5.91,17.15,18.05,8.69,25.36,13.34,4.78,9.58,8.86,0.0,0.0,0.0,0.0,0.0,0.0,1.76,5.07,4.17,0.0,0.0,0.0,0.0,3.18,0.0,0.0,12.08,23.1,10.55,0.0,0.0,0.0,0.0,0.0,3.0,0.0,3.09,0.0,0.0,0.0,0.0,2.72,0.0,0.81,8.97,6.95,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.72,6.79,0.0,0.0,13.81,7.33,13.88,9.78,7.23,3.32,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.06,0.0,2.06,2.93,20.8,28.19,38.42,49.98,18.06,12.19,0.0,0.0,0.0,0.0,0.0,0.0,17.56,12.59,0.0,0.0,0.0],"source_member":"basin_dataset_public_v1p2/usgs_streamflow/17/14305500_streamflow_qc.txt","source_sha256":"72cdcb7065640c4a9414b277586880a06db568431f82b652a31cf2cdc5372e34"},"01031500":{"gauge_id":"01031500","name":"Piscataquis River near Dover-Foxcroft, ME","camels_name":"Piscataquis River near Dover-Foxcroft, Maine","huc_02":"01","lat":45.17501,"lon":-69.3147,"area_km2":769.05,"elev_mean_m":247.8,"q_mean_mm_day":2.030242,"runoff_ratio":0.576289,"baseflow_index":0.445091,"q5_mm_day":0.111345,"q95_mm_day":8.010503,"zero_q_freq_as_distributed":0.0,"hfd_mean_doy":181.0,"p_mean_mm_day":3.522957,"pet_mean_mm_day":2.071324,"aridity":0.58795,"frac_snow":0.291836,"start":"1996-10-01","end":"1997-09-30","n":365,"q_cfs":[255.0,206.0,180.0,149.0,132.0,118.0,108.0,101.0,198.0,515.0,526.0,429.0,334.0,295.0,253.0,214.0,189.0,170.0,157.0,148.0,138.0,237.0,736.0,559.0,506.0,404.0,329.0,313.0,388.0,361.0,434.0,450.0,388.0,344.0,304.0,282.0,271.0,257.0,313.0,765.0,2180.0,1490.0,1030.0,782.0,570.0,406.0,370.0,338.0,333.0,345.0,361.0,372.0,355.0,332.0,268.0,248.0,209.0,268.0,316.0,325.0,316.0,291.0,6700.0,8780.0,3610.0,2090.0,1460.0,1130.0,1050.0,1220.0,1010.0,828.0,730.0,642.0,600.0,590.0,571.0,624.0,1150.0,1300.0,1530.0,917.0,698.0,642.0,662.0,1910.0,1230.0,925.0,840.0,810.0,710.0,550.0,430.0,380.0,330.0,400.0,340.0,270.0,255.0,245.0,238.0,232.0,227.0,227.0,216.0,208.0,201.0,218.0,376.0,473.0,354.0,265.0,228.0,198.0,199.0,208.0,188.0,244.0,333.0,268.0,271.0,291.0,254.0,243.0,216.0,188.0,180.0,188.0,192.0,191.0,190.0,194.0,174.0,172.0,164.0,164.0,184.0,179.0,180.0,175.0,168.0,165.0,191.0,223.0,234.0,235.0,219.0,202.0,192.0,192.0,201.0,197.0,217.0,279.0,319.0,280.0,290.0,295.0,274.0,238.0,226.0,224.0,210.0,189.0,176.0,202.0,204.0,191.0,173.0,163.0,155.0,158.0,159.0,152.0,149.0,142.0,170.0,220.0,210.0,275.0,440.0,918.0,1060.0,808.0,602.0,614.0,873.0,1220.0,1650.0,2340.0,2070.0,1610.0,1310.0,1190.0,1280.0,1140.0,1040.0,1180.0,1880.0,2940.0,4310.0,4250.0,3940.0,3390.0,3660.0,3640.0,3170.0,2970.0,2780.0,2870.0,3300.0,3220.0,3140.0,3520.0,2920.0,2450.0,2030.0,1670.0,3070.0,3000.0,2280.0,2020.0,1700.0,1430.0,1260.0,1460.0,1450.0,1710.0,2650.0,1820.0,1310.0,1120.0,995.0,834.0,727.0,624.0,558.0,541.0,471.0,401.0,346.0,309.0,302.0,288.0,261.0,229.0,204.0,184.0,173.0,161.0,153.0,146.0,132.0,117.0,115.0,155.0,153.0,126.0,106.0,93.0,87.0,362.0,532.0,307.0,385.0,467.0,339.0,237.0,218.0,191.0,153.0,125.0,108.0,96.0,96.0,91.0,334.0,396.0,247.0,163.0,122.0,117.0,277.0,272.0,189.0,143.0,125.0,111.0,93.0,82.0,72.0,63.0,55.0,51.0,47.0,43.0,39.0,37.0,35.0,33.0,33.0,31.0,28.0,26.0,24.0,23.0,23.0,22.0,21.0,21.0,22.0,21.0,21.0,20.0,23.0,64.0,89.0,78.0,83.0,64.0,56.0,50.0,43.0,66.0,60.0,60.0,80.0,98.0,78.0,66.0,61.0,66.0,105.0,161.0,324.0,232.0,170.0,182.0,258.0,199.0,143.0,111.0,89.0,78.0,74.0,77.0,90.0,111.0,114.0,102.0,85.0,70.0,63.0,57.0,62.0,109.0,132.0,106.0,93.0,87.0,76.0,67.0,61.0,69.0,133.0],"estimated_idx":[44,45,46,47,48,54,55,56,57,58,59,60,61,81,82,83,84,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180],"prcp_mm_day":[0.0,0.0,4.71,0.0,0.0,0.0,0.0,0.0,17.66,8.49,6.6,0.0,0.0,2.9,1.48,0.0,0.0,0.0,0.0,0.0,0.0,14.34,7.76,2.81,1.41,0.0,0.0,1.66,7.85,0.0,8.96,0.0,0.0,2.12,0.0,0.0,1.16,1.34,5.25,8.93,15.67,2.28,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.71,0.0,0.0,0.0,0.0,0.0,3.97,15.51,0.0,0.0,0.0,7.48,37.09,42.94,0.0,0.0,0.0,0.0,28.7,7.43,0.0,0.0,0.0,0.25,1.9,1.0,1.32,1.54,10.13,4.4,11.69,0.0,0.0,0.0,9.65,14.12,0.0,0.56,0.0,2.23,3.22,2.72,0.0,0.0,6.44,1.97,2.04,11.24,0.0,0.0,0.0,10.02,14.48,0.0,0.0,0.0,0.0,0.0,21.96,0.0,0.0,0.0,0.0,0.0,0.0,0.0,13.01,8.8,0.0,7.4,12.55,0.0,1.25,8.41,0.0,0.0,0.0,10.49,9.42,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,12.02,0.0,0.0,0.0,0.0,1.51,1.0,2.54,4.68,1.1,0.0,0.0,0.0,10.07,0.0,5.98,0.0,0.0,4.06,15.48,13.21,0.0,0.0,1.96,4.5,0.0,0.0,0.0,20.25,0.0,0.0,0.99,0.0,0.0,1.44,4.4,1.64,0.0,0.0,14.09,0.0,0.06,0.0,4.12,3.99,9.85,0.0,0.0,0.0,0.0,1.13,5.23,0.0,0.0,0.0,0.0,0.0,10.54,0.0,0.0,0.0,0.0,8.16,18.66,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.44,26.1,0.0,0.0,7.8,0.0,10.65,0.0,0.0,19.84,8.71,0.0,3.01,0.38,0.0,1.33,10.63,0.0,9.34,22.38,0.0,0.0,4.54,1.3,0.25,1.35,0.0,1.8,1.75,0.0,0.0,0.0,0.0,3.24,0.57,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.15,7.08,7.95,0.0,0.0,0.0,0.0,25.13,11.42,0.0,14.75,8.5,0.0,0.0,8.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,35.2,4.29,0.0,0.0,0.0,14.55,20.18,0.01,0.0,7.22,3.9,0.0,0.0,0.0,0.0,0.39,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.36,0.0,0.0,0.0,0.0,1.63,0.0,0.0,2.23,6.1,0.0,0.0,0.0,0.0,28.38,0.0,21.0,0.0,6.31,2.29,0.0,0.0,0.0,0.0,11.05,5.71,0.0,0.0,0.28,3.57,18.01,15.5,8.82,14.72,5.81,1.03,12.46,5.1,0.0,0.0,0.0,2.12,0.0,4.01,1.7,3.37,6.64,1.0,0.0,0.0,0.0,1.92,0.0,8.13,15.01,0.0,0.0,4.59,0.0,0.0,0.0,0.0,0.0,18.46],"source_member":"basin_dataset_public_v1p2/usgs_streamflow/01/01031500_streamflow_qc.txt","source_sha256":"c574c4e8975e5d0d09708c9b7a7eab0d33301620733810115bac81b417ab8722"},"02472000":{"gauge_id":"02472000","name":"Leaf River near Collins, MS","camels_name":"LEAF RIVER NR COLLINS, MS","huc_02":"03","lat":31.70694,"lon":-89.40694,"area_km2":1927.13,"elev_mean_m":123.24,"q_mean_mm_day":1.326192,"runoff_ratio":0.318919,"baseflow_index":0.406862,"q5_mm_day":0.11045,"q95_mm_day":5.53521,"zero_q_freq_as_distributed":0.0,"hfd_mean_doy":152.95,"p_mean_mm_day":4.158402,"pet_mean_mm_day":3.167662,"aridity":0.76175,"frac_snow":0.006015,"start":"1996-10-01","end":"1997-09-30","n":365,"q_cfs":[145.0,139.0,136.0,130.0,124.0,123.0,123.0,123.0,117.0,112.0,109.0,107.0,106.0,104.0,103.0,102.0,103.0,100.0,100.0,100.0,101.0,103.0,116.0,124.0,135.0,257.0,409.0,288.0,223.0,193.0,174.0,162.0,152.0,144.0,141.0,151.0,157.0,171.0,346.0,381.0,292.0,252.0,221.0,201.0,189.0,182.0,177.0,175.0,178.0,195.0,380.0,475.0,349.0,279.0,242.0,281.0,319.0,309.0,329.0,312.0,294.0,422.0,654.0,1070.0,613.0,419.0,344.0,304.0,278.0,259.0,245.0,234.0,229.0,229.0,311.0,291.0,280.0,490.0,1090.0,1140.0,648.0,457.0,382.0,344.0,356.0,467.0,418.0,378.0,393.0,531.0,1730.0,1200.0,1020.0,735.0,593.0,507.0,451.0,412.0,432.0,1140.0,2280.0,3110.0,3510.0,2120.0,874.0,604.0,519.0,1000.0,1470.0,1330.0,807.0,606.0,515.0,494.0,786.0,1420.0,1190.0,822.0,672.0,1040.0,2130.0,2750.0,1990.0,1020.0,724.0,604.0,561.0,645.0,883.0,745.0,1990.0,3590.0,3700.0,2490.0,1380.0,4960.0,6540.0,8490.0,6610.0,3160.0,2000.0,1080.0,825.0,1160.0,3880.0,5880.0,5370.0,3030.0,3340.0,3450.0,4150.0,3690.0,3030.0,2250.0,2120.0,1970.0,1350.0,1040.0,869.0,715.0,618.0,888.0,1020.0,931.0,1840.0,2960.0,2750.0,1840.0,1260.0,923.0,1790.0,2260.0,1760.0,1040.0,746.0,599.0,687.0,1400.0,1540.0,977.0,659.0,528.0,449.0,397.0,362.0,348.0,573.0,2970.0,3950.0,3880.0,2100.0,868.0,702.0,4340.0,5370.0,5850.0,3810.0,2220.0,1220.0,739.0,606.0,527.0,472.0,445.0,686.0,711.0,581.0,2930.0,8530.0,17500.0,26500.0,25100.0,11100.0,3710.0,2280.0,1590.0,1260.0,1040.0,889.0,780.0,681.0,594.0,528.0,481.0,446.0,413.0,380.0,348.0,322.0,297.0,582.0,1430.0,2500.0,1900.0,1440.0,1480.0,1800.0,1860.0,1550.0,2420.0,2840.0,2660.0,2960.0,2480.0,1810.0,1260.0,836.0,665.0,585.0,541.0,571.0,673.0,553.0,1110.0,2960.0,1850.0,1230.0,719.0,553.0,559.0,782.0,635.0,535.0,476.0,429.0,435.0,630.0,607.0,2520.0,4550.0,3690.0,2310.0,1900.0,2440.0,2000.0,867.0,614.0,517.0,458.0,422.0,396.0,371.0,368.0,484.0,426.0,468.0,398.0,354.0,360.0,451.0,472.0,345.0,311.0,631.0,487.0,361.0,637.0,1120.0,897.0,595.0,421.0,363.0,603.0,794.0,986.0,583.0,392.0,332.0,300.0,274.0,260.0,259.0,321.0,358.0,395.0,447.0,443.0,364.0,444.0,371.0,296.0,270.0,245.0,237.0,561.0,902.0,756.0,483.0,327.0,268.0,238.0,220.0,208.0,198.0,188.0,182.0,189.0,185.0,181.0,178.0,170.0,164.0,160.0,158.0,170.0,170.0,162.0,152.0,149.0,145.0,141.0,138.0,135.0,133.0,131.0,127.0,125.0,125.0,127.0,145.0,151.0,148.0,140.0,136.0,133.0],"estimated_idx":[],"prcp_mm_day":[0.0,0.0,0.0,0.0,0.0,0.0,0.96,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.27,0.0,0.0,0.0,0.0,11.6,0.0,14.09,35.52,8.81,0.0,0.0,3.45,0.0,0.0,0.0,0.0,0.0,0.0,2.83,0.09,27.02,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,13.61,8.96,0.0,0.0,0.0,0.0,0.0,18.9,0.0,0.0,0.0,0.0,9.51,34.94,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.92,0.0,0.0,6.5,32.91,0.0,0.0,0.0,0.0,0.0,0.0,9.65,0.3,0.0,10.61,0.0,0.77,21.48,11.12,0.77,0.0,0.0,0.0,4.32,0.0,19.85,7.16,40.2,0.0,0.0,0.0,0.0,0.0,0.0,18.54,0.0,0.0,0.0,0.0,0.0,7.53,8.99,7.36,1.23,0.0,0.0,31.94,0.0,0.0,0.0,0.0,0.0,0.0,12.43,0.78,0.0,0.0,31.5,0.0,2.47,0.0,4.59,63.24,0.07,3.16,0.0,0.0,0.0,0.0,0.0,38.84,0.0,0.0,0.0,18.21,13.21,7.54,13.56,0.0,1.68,15.12,0.0,0.0,5.48,0.0,0.0,0.0,0.0,6.84,0.0,14.99,20.77,0.0,0.0,0.0,0.0,15.64,6.39,0.0,0.0,0.0,0.0,0.0,13.73,0.0,0.0,0.0,0.0,0.02,0.0,0.0,0.0,0.0,9.39,46.56,0.0,0.0,0.0,0.0,0.0,50.85,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,23.19,0.0,0.0,56.59,44.5,49.0,0.13,0.0,0.0,0.0,11.86,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,17.93,44.94,29.39,11.9,7.08,17.83,23.35,0.39,0.0,30.77,12.4,1.79,15.81,7.69,0.0,0.0,0.0,0.0,1.56,0.0,0.0,3.53,11.94,10.55,14.06,0.0,0.0,0.0,0.0,0.0,25.4,0.0,0.0,0.0,0.0,0.0,18.13,6.92,28.68,12.8,8.31,7.95,18.52,2.47,0.0,0.0,0.0,0.0,0.05,0.0,0.0,1.32,0.0,14.11,0.0,0.0,2.36,0.0,0.0,0.0,0.0,0.0,1.62,15.88,13.47,0.0,14.06,2.51,0.0,1.38,0.0,0.0,21.96,5.95,6.84,0.0,0.0,0.0,0.0,0.0,0.0,0.0,23.99,0.88,11.22,0.0,0.0,0.73,9.25,0.0,0.0,5.3,0.0,0.0,27.16,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.94,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.74,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.14,0.06,17.95,2.13,0.0,0.0,0.0,0.0],"source_member":"basin_dataset_public_v1p2/usgs_streamflow/03/02472000_streamflow_qc.txt","source_sha256":"25cba78de612952b31ea04dbd0addaaa9666992c6bf37afaa00684344c2e4b86"}},"source":"CAMELS-US v1.2 (Newman et al. 2015; Addor et al. 2017)","units":{"q":"cfs (daily mean)","prcp":"mm/day"}}</script><!--@@END json:camels-wy@@-->
 <script>
 (function () {
   'use strict';
@@ -704,6 +718,7 @@ select:focus { outline:1px solid var(--cyan); }
   /* ──────────────────────────────────────────────────────────────────
      CORE DATA: 96-hour synthetic event used by Sections 2 & 3
      ────────────────────────────────────────────────────────────────── */
+  /*@@CORE-BEGIN@@*/
   var N = 96;
   var BASEFLOW_C = 4.5;          // constant pre-event baseflow (m³/s)
   var PEAK_SCALE = 28;           // tunes peak Q magnitude
@@ -744,6 +759,32 @@ select:focus { outline:1px solid var(--cyan); }
     var responsePart = convolve(RAIN, KERNEL).map(function (v) { return v * PEAK_SCALE; });
     return responsePart.map(function (v) { return v + BASEFLOW_C; });
   })();
+
+  /* SCS curve-number storm model (SYNTHETIC catchment: CN and area are assumptions) */
+  var STORM = (function () {
+    var T = 48, BASE_Q = 2.2, CN = 75, A_KM2 = 25, P_SMALL = 25;
+    var S_MM = 25400 / CN - 254, IA_MM = 0.2 * S_MM;
+    function runoff(P) { if (P <= IA_MM) return 0; var x = P - IA_MM; return x * x / (x + S_MM); }
+    var UH = (function () {
+      var k = []; for (var t = 0; t < 36; t++) k.push(gammaResp(t, 4, 5));
+      return normalize(k);
+    })();
+    function quick(P) {
+      var depth = runoff(P), pulse = new Array(T).fill(0), i;
+      for (i = 4; i < 8; i++) pulse[i] = depth / 4;                 /* mm per hour */
+      var per_mm_h = (A_KM2 * 1e6) / 1000 / 3600;                    /* m3/s per (mm/h) */
+      return convolve(pulse, UH).slice(0, T).map(function (v) { return v * per_mm_h; });
+    }
+    function hydrograph(P) { return quick(P).map(function (v) { return v + BASE_Q; }); }
+    function stats(P) {
+      var q = quick(P), pk = 0, vol = 0, i;
+      for (i = 0; i < q.length; i++) { if (q[i] > pk) pk = q[i]; vol += q[i] * 3600; }
+      return { runoff_mm: runoff(P), peakQuick: pk, peakTotal: pk + BASE_Q, volume_m3: vol };
+    }
+    return { T: T, CN: CN, A_KM2: A_KM2, P_SMALL: P_SMALL, S_MM: S_MM, IA_MM: IA_MM,
+             runoff: runoff, quick: quick, hydrograph: hydrograph, stats: stats };
+  })();
+  /*@@CORE-END@@*/
 
   /* ────────────── helpers ────────────── */
   window.scrollToSection = function (id) {
@@ -1077,30 +1118,61 @@ select:focus { outline:1px solid var(--cyan); }
   /* ──────────────────────────────────────────────────────────────────
      SECTION 3: BFI EXPLORER — Lyne–Hollick recursive filter
      ────────────────────────────────────────────────────────────────── */
-  /* 3-pass Lyne–Hollick (1979). Each pass runs the recursive filter against the
-     ORIGINAL discharge series and tightens the baseflow lower-envelope estimate. */
-  function lyneHollickProper(Qin, alpha) {
-    var n = Qin.length;
-    var baseEst = Qin.slice();
-    for (var pass = 0; pass < 3; pass++) {
-      var fwd = (pass % 2 === 0);
-      var quick = new Array(n).fill(0);
-      if (fwd) {
-        for (var i = 1; i < n; i++)
-          quick[i] = alpha * quick[i - 1] + ((1 + alpha) / 2) * (baseEst[i] !== undefined ? (Qin[i] - Qin[i - 1]) : 0);
-      } else {
-        for (var i = n - 2; i >= 0; i--)
-          quick[i] = alpha * quick[i + 1] + ((1 + alpha) / 2) * (Qin[i] - Qin[i + 1]);
+  /* One shared Lyne–Hollick implementation (shared/lyne_hollick.js), standard multi-pass form */
+/*@@BEGIN js:shared/lyne_hollick.js@@*/
+/* Lyne–Hollick recursive digital filter, standard multi-pass form.
+ *
+ * Each pass filters the baseflow produced by the PREVIOUS pass (not the raw
+ * series), alternating forward / backward / forward (Ladson et al., 2013; the
+ * same convention as CAMELS). The series is reflected at both ends before
+ * filtering so the recursion has a spin-up and the edges are not biased.
+ *
+ *   f_t = alpha * f_{t-1} + (1 + alpha) / 2 * (Q_t - Q_{t-1})     (quickflow)
+ *   f_t = max(f_t, 0)                                              (carried on)
+ *   b_t = max(Q_t - f_t, 0)                                        (baseflow)
+ *
+ * Single source of truth: shared/lyne_hollick.js (and its twin lyne_hollick.py).
+ * scripts/build_modules.py inlines this text into every module that uses it.
+ */
+function lyneHollick(Q, alpha, passes, reflect) {
+  if (alpha === undefined) alpha = 0.925;
+  if (passes === undefined) passes = 3;
+  if (reflect === undefined) reflect = 30;
+  var n = Q.length;
+  var r = Math.max(0, Math.min(reflect, n - 1));
+  var ext = [], i;
+  for (i = r; i >= 1; i--) ext.push(Q[i]);
+  for (i = 0; i < n; i++) ext.push(Q[i]);
+  for (i = 1; i <= r; i++) ext.push(Q[n - 1 - i]);
+  var m = ext.length, cur = ext;
+  var k = (1 + alpha) / 2;
+  for (var p = 0; p < passes; p++) {
+    var b = new Array(m), f = 0;
+    if (p % 2 === 0) {
+      b[0] = cur[0];
+      for (i = 1; i < m; i++) {
+        f = alpha * f + k * (cur[i] - cur[i - 1]);
+        if (f < 0) f = 0;
+        b[i] = Math.max(cur[i] - f, 0);
       }
-      for (var i = 0; i < n; i++) {
-        var qq = Math.max(quick[i], 0);
-        var newBase = Qin[i] - qq;
-        if (newBase < baseEst[i]) baseEst[i] = newBase;
-        if (baseEst[i] < 0) baseEst[i] = 0;
+    } else {
+      b[m - 1] = cur[m - 1];
+      for (i = m - 2; i >= 0; i--) {
+        f = alpha * f + k * (cur[i] - cur[i + 1]);
+        if (f < 0) f = 0;
+        b[i] = Math.max(cur[i] - f, 0);
       }
     }
-    return baseEst;
+    cur = b;
   }
+  return cur.slice(r, r + n);
+}
+function baseflowIndex(Q, base) {
+  var sq = 0, sb = 0;
+  for (var i = 0; i < Q.length; i++) { sq += Q[i]; sb += base[i]; }
+  return sq > 0 ? sb / sq : NaN;
+}
+/*@@END js:shared/lyne_hollick.js@@*/
 
   (function setupBFI() {
     var svg = document.getElementById('bfiSvg');
@@ -1153,7 +1225,7 @@ select:focus { outline:1px solid var(--cyan); }
     function redraw() {
       var alpha = parseFloat(slider.value);
       alphaVal.textContent = alpha.toFixed(3);
-      var base = lyneHollickProper(EVENT_Q, alpha);
+      var base = lyneHollick(EVENT_Q, alpha);
       var basePathD = '';
       for (var i = 0; i < N; i++) basePathD += (i === 0 ? 'M' : 'L') + xOf(i).toFixed(1) + ',' + yOf(base[i]).toFixed(1) + ' ';
       basePath.setAttribute('d', basePathD);
@@ -1185,9 +1257,12 @@ select:focus { outline:1px solid var(--cyan); }
   })();
 
   /* ──────────────────────────────────────────────────────────────────
-     SECTION 4: STORM COMPARISON — SCS-CN runoff fraction × gamma UH
+     SECTION 4: STORM COMPARISON — SCS curve-number runoff × gamma UH
      ────────────────────────────────────────────────────────────────── */
   (function setupStorms() {
+    document.getElementById('sMM').textContent = STORM.S_MM.toFixed(1);
+    document.getElementById('iaMM').textContent = STORM.IA_MM.toFixed(1);
+    document.getElementById('areaKm2').textContent = STORM.A_KM2;
     var slider = document.getElementById('rainSlider');
     var rainVal = document.getElementById('rainVal');
     var largeMM = document.getElementById('largeMM');
@@ -1195,38 +1270,11 @@ select:focus { outline:1px solid var(--cyan); }
     var largeSvg = document.getElementById('largeSvg');
     var W = 360, H = 220, padL = 42, padR = 10, padT = 16, padB = 30;
     var plotW = W - padL - padR, plotH = H - padT - padB;
-    var T = 48; // 48 hours
-
-    /* SCS CN runoff: Q = (P - 0.2S)^2 / (P + 0.8S) for P > 0.2S
-       Use CN ≈ 75 → S = 25400/CN - 254 = 84.7 mm */
-    var S = 84.7;
-    function scsRunoff(P_mm) {
-      var Ia = 0.2 * S;
-      if (P_mm <= Ia) return 0;
-      return Math.pow(P_mm - Ia, 2) / (P_mm + 0.8 * S);
-    }
-
-    /* per-storm gamma UH and convolution */
-    var UH = (function () {
-      var k = [];
-      for (var t = 0; t < 36; t++) k.push(gammaResp(t, 4, 5));
-      return normalize(k);
-    })();
-    /* convert mm of runoff to m³/s peak via an area scaling — for visualisation only */
-    var AREA_SCALE = 0.55;
-    function buildHydrograph(P_mm) {
-      var Qrun_mm = scsRunoff(P_mm);
-      /* drop the runoff over 4-hour pulse, then convolve */
-      var rain_pulse = new Array(T).fill(0);
-      for (var i = 4; i < 8; i++) rain_pulse[i] = Qrun_mm / 4;
-      var resp = convolve(rain_pulse, UH).slice(0, T);
-      return resp.map(function (v) { return v * AREA_SCALE + 2.2; });
-    }
+    var T = STORM.T;
 
     function findMaxStorm(mult) {
-      var P_small = 10, P_large = P_small * mult;
-      var q1 = buildHydrograph(P_small);
-      var q2 = buildHydrograph(P_large);
+      var q1 = STORM.hydrograph(STORM.P_SMALL);
+      var q2 = STORM.hydrograph(STORM.P_SMALL * mult);
       return Math.max(Math.max.apply(null, q1), Math.max.apply(null, q2)) * 1.08;
     }
 
@@ -1235,12 +1283,11 @@ select:focus { outline:1px solid var(--cyan); }
       function xOf(t) { return padL + (t / (T - 1)) * plotW; }
       function yOf(qv) { return padT + plotH - (qv / maxQ) * plotH; }
       svg.innerHTML = '';
-      /* gridlines */
       for (var g = 0; g <= 3; g++) {
         var qv = maxQ * g / 3, yv = yOf(qv);
         svg.appendChild(mkSvg('line', { x1: padL, y1: yv, x2: padL + plotW, y2: yv, stroke: 'rgba(125,211,252,0.08)', 'stroke-width': '1' }));
         var lbl = mkSvg('text', { x: padL - 6, y: yv + 4, 'text-anchor': 'end', 'font-family': 'JetBrains Mono,monospace', 'font-size': '9', fill: '#94a3b8' });
-        lbl.textContent = qv.toFixed(0);
+        lbl.textContent = qv.toFixed(1);
         svg.appendChild(lbl);
       }
       for (var t = 0; t <= T; t += 12) {
@@ -1249,16 +1296,13 @@ select:focus { outline:1px solid var(--cyan); }
         lbl2.textContent = t + 'h';
         svg.appendChild(lbl2);
       }
-      /* fill under curve */
       var d = '';
       for (var i = 0; i < T; i++) d += (i === 0 ? 'M' : 'L') + xOf(i).toFixed(1) + ',' + yOf(q[i]).toFixed(1) + ' ';
       var fillD = d + 'L' + xOf(T - 1).toFixed(1) + ',' + (padT + plotH) + ' L' + xOf(0).toFixed(1) + ',' + (padT + plotH) + ' Z';
       svg.appendChild(mkSvg('path', { d: fillD, fill: color.replace('1)', '0.18)') }));
       svg.appendChild(mkSvg('path', { d: d, fill: 'none', stroke: color, 'stroke-width': '2.2' }));
-      /* peak marker */
       var iPk = 0; for (var k = 1; k < T; k++) if (q[k] > q[iPk]) iPk = k;
       svg.appendChild(mkSvg('circle', { cx: xOf(iPk), cy: yOf(q[iPk]), r: 4.5, fill: '#fff', stroke: color, 'stroke-width': '2' }));
-      /* rain marker text */
       var lbl3 = mkSvg('text', { x: padL + plotW / 2, y: padT - 2, 'text-anchor': 'middle', 'font-family': 'Poppins,sans-serif', 'font-size': '10', fill: '#94a3b8' });
       lbl3.textContent = P_mm.toFixed(1) + ' mm rainfall';
       svg.appendChild(lbl3);
@@ -1267,26 +1311,27 @@ select:focus { outline:1px solid var(--cyan); }
     function update() {
       var mult = parseFloat(slider.value);
       rainVal.textContent = mult.toFixed(1) + '×';
-      var P_small = 10, P_large = 10 * mult;
+      var P_small = STORM.P_SMALL, P_large = STORM.P_SMALL * mult;
       largeMM.textContent = P_large.toFixed(1);
-      var qSmall = buildHydrograph(P_small);
-      var qLarge = buildHydrograph(P_large);
-      drawOne(smallSvg, qSmall, P_small, 'rgba(125,211,252,1)');
-      drawOne(largeSvg, qLarge, P_large, 'rgba(0,221,255,1)');
-      /* metrics */
-      var peakS = Math.max.apply(null, qSmall);
-      var peakL = Math.max.apply(null, qLarge);
-      var volS = qSmall.reduce(function (a, b) { return a + b; }, 0) * 3600; // m³ approx (Q in m³/s × 1h)
-      var volL = qLarge.reduce(function (a, b) { return a + b; }, 0) * 3600;
-      document.getElementById('smallPeak').textContent = peakS.toFixed(1);
-      document.getElementById('largePeak').textContent = peakL.toFixed(1);
-      document.getElementById('smallVol').textContent = volS.toExponential(2);
-      document.getElementById('largeVol').textContent = volL.toExponential(2);
-      document.getElementById('smallC').textContent = (scsRunoff(P_small) / P_small).toFixed(3);
-      document.getElementById('largeC').textContent = (scsRunoff(P_large) / P_large).toFixed(3);
+      var s1 = STORM.stats(P_small), s2 = STORM.stats(P_large);
+      drawOne(smallSvg, STORM.hydrograph(P_small), P_small, 'rgba(125,211,252,1)');
+      drawOne(largeSvg, STORM.hydrograph(P_large), P_large, 'rgba(0,221,255,1)');
+      document.getElementById('smallPeak').textContent = s1.peakTotal.toFixed(1);
+      document.getElementById('largePeak').textContent = s2.peakTotal.toFixed(1);
+      document.getElementById('smallVol').textContent = s1.volume_m3.toExponential(2);
+      document.getElementById('largeVol').textContent = s2.volume_m3.toExponential(2);
+      document.getElementById('smallC').textContent = s1.runoff_mm.toFixed(2) + ' mm (' + (s1.runoff_mm / P_small).toFixed(3) + ')';
+      document.getElementById('largeC').textContent = s2.runoff_mm.toFixed(2) + ' mm (' + (s2.runoff_mm / P_large).toFixed(3) + ')';
+      /* peak ratios are only meaningful when BOTH storms produce runoff */
+      var ratioEl = document.getElementById('peakRatio');
+      if (s1.peakQuick > 0 && s2.peakQuick > 0) {
+        ratioEl.textContent = 'Quickflow peak ratio (right ÷ left) = ' + (s2.peakQuick / s1.peakQuick).toFixed(1) +
+          '× for ' + mult.toFixed(1) + '× the rainfall; runoff depth ratio = ' + (s2.runoff_mm / s1.runoff_mm).toFixed(1) + '×.';
+      } else {
+        ratioEl.textContent = 'Peak ratio not defined: at least one storm is below the initial abstraction and produces no runoff.';
+      }
     }
     slider.addEventListener('input', update);
-    /* Tangle ⇄ slider two-way sync */
     tangle.bind('t-rainMult', function (v) {
       if (parseFloat(slider.value) !== v) { slider.value = v; update(); }
     });
@@ -1297,101 +1342,90 @@ select:focus { outline:1px solid var(--cyan); }
   })();
 
   /* ──────────────────────────────────────────────────────────────────
-     SECTION 6: PYTHON CELL SOURCE — regenerated from gauge dropdown
+     SECTION 6: PYTHON CELL SOURCE — real CAMELS-US water year, regenerated
+     from the gauge dropdown (data come from the embedded camels-wy blob)
      ────────────────────────────────────────────────────────────────── */
-  var GAUGE_PROFILES = {
-    snow:   { id: '14305500', name: 'Snowmelt-dominated (Cascades)', seed: 11, snow: 1.0, flash: 0.2, base: 1.4 },
-    flashy: { id: '01031500', name: 'Flashy forested headwater (Maine)', seed: 23, snow: 0.2, flash: 1.0, base: 1.0 },
-    base:   { id: '02472000', name: 'Baseflow-dominated coastal plain (Mississippi)', seed: 7, snow: 0.0, flash: 0.3, base: 2.4 }
-  };
+  var CAMELS = JSON.parse(document.getElementById('camels-wy').textContent).gauges;
 
-  function buildPySource(profileKey) {
-    var p = GAUGE_PROFILES[profileKey];
+/*@@BEGIN pyjs:shared/lyne_hollick.py PY_LH@@*/
+  var PY_LH = "# Lyne\u2013Hollick recursive digital filter, standard multi-pass form.\n# Each pass filters the baseflow of the PREVIOUS pass (forward / backward /\n# forward; Ladson et al., 2013), with the series reflected 30 steps at both ends.\n#   f_t = alpha*f_{t-1} + (1+alpha)/2*(Q_t - Q_{t-1});  f_t = max(f_t, 0)\n#   b_t = max(Q_t - f_t, 0)\n# Single source of truth: shared/lyne_hollick.py (twin of lyne_hollick.js).\ndef lyne_hollick(Q, alpha=0.925, passes=3, reflect=30):\n    Q = [float(v) for v in Q]\n    n = len(Q)\n    r = max(0, min(reflect, n - 1))\n    cur = Q[1:r + 1][::-1] + Q + (Q[n - 1 - r:n - 1][::-1] if r else [])\n    m, k = len(cur), (1.0 + alpha) / 2.0\n    for p in range(passes):\n        b, f = [0.0] * m, 0.0\n        if p % 2 == 0:\n            b[0] = cur[0]\n            for i in range(1, m):\n                f = max(alpha * f + k * (cur[i] - cur[i - 1]), 0.0)\n                b[i] = max(cur[i] - f, 0.0)\n        else:\n            b[m - 1] = cur[m - 1]\n            for i in range(m - 2, -1, -1):\n                f = max(alpha * f + k * (cur[i] - cur[i + 1]), 0.0)\n                b[i] = max(cur[i] - f, 0.0)\n        cur = b\n    return cur[r:r + n]\n\n\ndef baseflow_index(Q, base):\n    sq = float(sum(Q))\n    return float(sum(base)) / sq if sq > 0 else float(\"nan\")";
+/*@@END pyjs:shared/lyne_hollick.py@@*/
+
+  /*@@CORE2-BEGIN@@*/
+  function wrapNums(arr, per) {
+    var lines = [];
+    for (var i = 0; i < arr.length; i += per) lines.push('    ' + arr.slice(i, i + per).join(', ') + ',');
+    return lines.join('\n');
+  }
+  function buildPySource(g) {
     return [
       'import numpy as np',
       'import matplotlib.pyplot as plt',
       'import matplotlib as mpl',
-      "mpl.rcParams.update({",
+      'mpl.rcParams.update({',
       "    'figure.facecolor':'#0a0a15', 'axes.facecolor':'#0f0f1e',",
       "    'text.color':'#7dd3fc',       'axes.labelcolor':'#7dd3fc',",
       "    'xtick.color':'#94a3b8',      'ytick.color':'#94a3b8',",
       "    'axes.edgecolor':'#334155',",
-      "})",
+      '})',
       '',
-      '# ─── Gauge profile (CAMELS-shape synthetic; replace with fetch_streamflow_data for real)',
-      'GAUGE   = "' + p.id + '"',
-      'PROFILE = "' + p.name + '"',
-      'SEED    = ' + p.seed,
-      'SNOW    = ' + p.snow + '   # snowmelt component weight',
-      'FLASH   = ' + p.flash + '   # storm-event component weight',
-      'BASE    = ' + p.base + '   # baseflow component weight',
+      '# ─── REAL DATA: CAMELS-US v1.2 (Newman et al. 2015; Addor et al. 2017)',
+      '# Observed daily mean discharge is USGS NWIS data (cfs); precipitation is the',
+      '# Daymet basin mean (mm/day). Water year ' + g.start.slice(0, 4) + '–' + g.end.slice(0, 4) + ', no missing days.',
+      'GAUGE      = "' + g.gauge_id + '"',
+      'NAME       = "' + g.name + '"',
+      'AREA_KM2   = ' + g.area_km2 + '   # CAMELS area_gages2',
+      'START      = "' + g.start + '"',
+      'SOURCE_MEMBER = "' + g.source_member + '"   # flow file inside basin_timeseries_v1p2_metForcing_obsFlow.zip',
+      'SOURCE_SHA256 = "' + g.source_sha256 + '"',
+      'BFI_CAMELS = ' + g.baseflow_index + '   # CAMELS baseflow_index, period 1989-10-01..2009-09-30',
+      'QC_ESTIMATED_DAYS = ' + g.estimated_idx.length + '   # days flagged "A:e" (approved, estimated)',
+      'Q_CFS = np.array([',
+      wrapNums(g.q_cfs, 14),
+      '])',
+      'P_MM = np.array([',
+      wrapNums(g.prcp_mm_day, 14),
+      '])',
       '',
-      'rng  = np.random.default_rng(SEED)',
-      'days = np.arange(365)',
+      '# ─── units: cfs → m³/s, and → mm/day using the catchment area',
+      'CFS_TO_M3S = 0.028316846592',
+      'Q = Q_CFS * CFS_TO_M3S',
+      'Q_MM = Q * 86400.0 / (AREA_KM2 * 1e6) * 1000.0',
+      'days = np.arange(len(Q))',
       '',
-      '# baseflow: seasonal sinusoid + slow drift',
-      'baseflow = BASE * (1.5 + 0.7*np.sin(2*np.pi*(days-80)/365))',
+      '# ─── Lyne–Hollick filter, 3 passes, α = 0.925 (same code as Module 4)',
+      PY_LH,
+      'ALPHA = 0.925',
+      'base = np.array(lyne_hollick(Q, ALPHA))',
+      'BFI = baseflow_index(Q, base)',
       '',
-      '# snowmelt: a smooth April–June pulse',
-      'snow_pulse = SNOW * 12.0 * np.exp(-((days - 145)**2) / 800.0)',
-      '',
-      '# storm events: random pulses convolved with a gamma UH',
-      'storms = np.zeros(365)',
-      'n_events = int(20 + 30*FLASH)',
-      'event_days = rng.choice(365, size=n_events, replace=False)',
-      'storms[event_days] = rng.gamma(shape=1.8, scale=3.5*FLASH, size=n_events)',
-      'uh   = np.power(np.arange(20), 3) * np.exp(-np.arange(20)/3.5)',
-      'uh   = uh / uh.sum()',
-      'qfast = np.convolve(storms, uh, mode="full")[:365] * FLASH',
-      '',
-      'Q = baseflow + snow_pulse + qfast + rng.normal(0, 0.15, 365)',
-      'Q = np.clip(Q, 0.1, None)',
-      '',
-      '# ─── Lyne–Hollick recursive digital filter (α=0.925, 3 passes)',
-      'def lyne_hollick(Q, alpha=0.925, passes=3):',
-      '    b = Q.copy()',
-      '    for pi in range(passes):',
-      '        fwd = (pi % 2 == 0)',
-      '        f = np.zeros_like(Q)',
-      '        if fwd:',
-      '            for i in range(1, len(Q)):',
-      '                f[i] = alpha*f[i-1] + (1+alpha)/2*(Q[i]-Q[i-1])',
-      '        else:',
-      '            for i in range(len(Q)-2, -1, -1):',
-      '                f[i] = alpha*f[i+1] + (1+alpha)/2*(Q[i]-Q[i+1])',
-      '        f = np.clip(f, 0, None)',
-      '        b = np.minimum(b, Q - f)',
-      '        b = np.clip(b, 0, None)',
-      '    return b',
-      '',
-      'base = lyne_hollick(Q)',
-      'BFI  = base.sum() / Q.sum()',
-      '',
-      '# ─── Plot',
+      '# ─── Plot (real data)',
       'fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 5.2), sharex=True,',
       '                                gridspec_kw={"height_ratios":[3,1]})',
       'ax1.fill_between(days, 0, Q, color="#00A3FF", alpha=0.20)',
-      'ax1.plot(days, Q,    color="#00DDFF", lw=1.4, label="Total Q")',
-      'ax1.plot(days, base, color="#34d399", lw=1.4, ls="--", label="Baseflow (LH α=0.925)")',
+      'ax1.plot(days, Q,    color="#00DDFF", lw=1.4, label="Observed Q")',
+      'ax1.plot(days, base, color="#34d399", lw=1.4, ls="--", label=f"Baseflow (LH α={ALPHA})")',
       'ax1.fill_between(days, base, Q, color="#00A3FF", alpha=0.18, label="Quickflow")',
       'ax1.set_ylabel("Q (m³/s)")',
-      'ax1.set_title(f"USGS {GAUGE} · {PROFILE} · BFI = {BFI:.3f}", color="#fff", fontsize=11)',
-      'ax1.legend(loc="upper left", framealpha=0.4, fontsize=9)',
-      '',
-      'ax2.bar(days, storms*5, width=1.0, color=(0.49, 0.83, 0.99, 0.5))',
-      'ax2.set_xlabel("Day of year"); ax2.set_ylabel("Rain (mm)")',
+      'ax1.set_title(f"USGS {GAUGE} · {NAME} · observed data · BFI = {BFI:.3f}", color="#fff", fontsize=11)',
+      'ax1.legend(loc="upper right", framealpha=0.4, fontsize=9)',
+      'ax2.bar(days, P_MM, width=1.0, color=(0.49, 0.83, 0.99, 0.6))',
+      'ax2.set_xlabel(f"Day of water year (day 0 = {START})"); ax2.set_ylabel("P (mm/day)")',
       'ax2.invert_yaxis()',
-      '',
       'plt.tight_layout()',
       '',
-      'print(f"Gauge      : {GAUGE}")',
-      'print(f"Profile    : {PROFILE}")',
-      'print(f"Mean Q     : {Q.mean():.2f} m³/s")',
-      'print(f"Peak Q     : {Q.max():.2f} m³/s   (day {int(np.argmax(Q))})")',
-      'print(f"BFI (LH)   : {BFI:.3f}")',
-      'print(f"Annual vol : {Q.sum()*86400:.2e} m³")'
+      'print(f"Gauge        : {GAUGE}  {NAME}")',
+      'print(f"Source file  : {SOURCE_MEMBER}  (sha256 {SOURCE_SHA256[:16]}...)")',
+      'print(f"Period       : {START} + {len(Q)} days (observed; CAMELS-US v1.2)")',
+      'print(f"Mean Q       : {Q.mean():.3f} m3/s  ({Q_MM.mean():.3f} mm/day)")',
+      'print(f"Peak Q       : {Q.max():.2f} m3/s   (day {int(np.argmax(Q))})")',
+      'print(f"Total P      : {P_MM.sum():.0f} mm   Total Q: {Q_MM.sum():.0f} mm   Q/P = {Q_MM.sum()/P_MM.sum():.3f}")',
+      'print(f"BFI (LH)     : {BFI:.3f}   this water year only")',
+      'print(f"BFI (CAMELS) : {BFI_CAMELS:.3f}   20-year CAMELS signature (differs: period and implementation)")',
+      'print(f"USGS QC      : {len(Q) - QC_ESTIMATED_DAYS} days approved (A), {QC_ESTIMATED_DAYS} approved-estimated (A:e), 0 missing")'
     ].join('\n');
   }
+  /*@@CORE2-END@@*/
 
   /* ──────────────────────────────────────────────────────────────────
      Initialize all Tangles after page setup. Each section's setup function
@@ -1403,15 +1437,20 @@ select:focus { outline:1px solid var(--cyan); }
   (function setupPyCell() {
     var select = document.getElementById('gaugeSelect');
     var src = document.getElementById('pySource');
-    function refresh() { src.textContent = buildPySource(select.value); }
+    var facts = document.getElementById('gaugeFacts');
+    function refresh() {
+      var g = CAMELS[select.value];
+      src.textContent = buildPySource(g);
+      facts.textContent = 'CAMELS attributes: area ' + g.area_km2 + ' km², mean precipitation ' + g.p_mean_mm_day.toFixed(2) +
+        ' mm/day, snow fraction ' + g.frac_snow.toFixed(2) + ', aridity (PET/P) ' + g.aridity.toFixed(2) + ', baseflow index ' + g.baseflow_index.toFixed(3) +
+        ' (1989–2009). Water year ' + g.start + ' to ' + g.end + '.';
+    }
     refresh();
     select.addEventListener('change', function () {
       refresh();
-      whenReady(function () {
-        if (window.aihydro.rewriteCell) {
-          window.aihydro.rewriteCell('hydrograph-camels', function () { return src.textContent; }, false);
-        }
-      });
+      if (window.aihydro && window.aihydro.rewriteCell) {
+        window.aihydro.rewriteCell('hydrograph-camels', function () { return src.textContent; }, false);
+      }
     });
   })();
 
