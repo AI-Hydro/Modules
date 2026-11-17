@@ -33,7 +33,10 @@ Each packet adds one row per DOI that passes `verify_citation.py --doi <DOI>`; a
 
 | Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
 |---|---|---|---|---|---|
-| _pending (P1)_ | _none yet_ | _not run_ | 0 | _placeholder_ | precipitation-point-to-basin |
+| Thiessen (1911) | 10.1175/1520-0493(1911)39<1082b:PAFLA>2.0.CO;2 | PASS | 3 (crossref, openalex, semantic_scholar) | PRECIPITATION AVERAGES FOR LARGE AREAS / Monthly Weather Review / 1911 | precipitation-point-to-basin |
+| Shepard (1968) | 10.1145/800186.810616 | PASS | 3 (crossref, openalex, semantic_scholar) | A two-dimensional interpolation function for irregularly-spaced data / Proceedings of the 1968 23rd ACM national conference (OpenAlex: ACM National Meeting) / 1968 | precipitation-point-to-basin |
+| Thornton et al. (1997) | 10.1016/S0022-1694(96)03128-9 | PASS | 3 (crossref, openalex, semantic_scholar) | Generating surfaces of daily meteorological variables over large regions of complex terrain / Journal of Hydrology / 1997 | precipitation-point-to-basin |
+| Jennings et al. (2018) | 10.1038/s41467-018-03629-7 | PASS | 3 (crossref, openalex, semantic_scholar) | Spatial variation of the rain–snow temperature threshold across the Northern Hemisphere / Nature Communications / 2018 | precipitation-point-to-basin |
 
 ### evapotranspiration-budyko
 

@@ -1,0 +1,18 @@
+{
+  "areal-precip": {
+    "mode": "headless",
+    "source_sha256": "105d7ed8e541961bc729fc376a192d64db9d93bd4b5f606120f28ab763ae73c5",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  },
+  "precip-climate": {
+    "mode": "headless",
+    "source_sha256": "f668988beb776144e6bc5dec9dccd73d058ed78da87dbce81a4ad581fab120b4",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  }
+}

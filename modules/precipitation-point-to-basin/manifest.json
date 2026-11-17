@@ -1,0 +1,42 @@
+{
+  "moduleId": "precipitation-point-to-basin",
+  "title": "Rain and Snow: From Gauge to Basin",
+  "description": "From a rain gauge to a basin average: build the arithmetic, Thiessen and inverse-distance estimates on a synthetic storm field you can inspect completely, then use real CAMELS-US Daymet precipitation for four basins to see how hard, how often and when it falls, test a rain-snow temperature threshold, and reproduce two CAMELS climate attributes with a live Python cell.",
+  "version": "0.1.0",
+  "license": "CC-BY-4.0",
+  "topic": "precipitation",
+  "level": "intro",
+  "estimatedMinutes": 35,
+  "tags": [
+    "precipitation",
+    "areal-precipitation",
+    "Thiessen-polygons",
+    "inverse-distance-weighting",
+    "intensity",
+    "seasonality",
+    "snow-fraction",
+    "CAMELS",
+    "Daymet"
+  ],
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "Newman, A. J. et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA. Hydrology and Earth System Sciences, 19, 209-223.",
+    "doi": "10.5194/hess-19-209-2015"
+  },
+  "isFeatured": false,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 2,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/precipitation-point-to-basin/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/precipitation-point-to-basin",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-11-17",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}

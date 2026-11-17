@@ -372,9 +372,107 @@ def extract_legacy(ctx: Extraction, want) -> None:
 #
 #
 # ==== BEGIN extract_precipitation_point_to_basin (packet P1 owns) ====
+P1_GAUGES = {
+    "01013500": "Fish River near Fort Kent, ME",
+    "02472000": "Leaf River near Collins, MS",
+    "09484000": "Sabino Creek near Tucson, AZ",
+    "14305500": "Siletz River at Siletz, OR",
+}
+P1_DAILY = ("1995-10-01", "2000-09-30")        # WY1996-2000: 5 water years of daily precipitation and temperature
+P1_MONTHLY_FIRST_WY, P1_MONTHLY_LAST_WY = 1990, 2009   # WY1990-2009 = 1989-10-01..2009-09-30, the CAMELS period
+P1_ATTRIBUTE_FILES = ("camels_name.txt", "camels_topo.txt", "camels_clim.txt")
+
+
 def extract_precipitation_point_to_basin(ctx: Extraction) -> None:
-    """Stub: packet P1 fills this in."""
-    return None
+    """Daily precipitation + wet-day mean temperature (WY1996-2000), monthly totals (WY1990-2009) and
+    the CAMELS attributes the precipitation lesson reproduces, for four basins.
+
+    Precipitation is stored as integer hundredths of a millimetre (the file carries two decimals, so
+    nothing is lost). Daily mean temperature is stored only for days with precipitation, in order,
+    as the half-degree bin floor(2 * (tmax + tmin) / 2) = floor(tmax + tmin) in whole numbers. For any
+    threshold T that is a multiple of 0.5 C, "mean temperature < T" is exactly "bin < 2 * T", so
+    the lesson's 0.5 C slider loses nothing, and the page stays small.
+    """
+    names, topo, clim = ctx.attr("camels_name.txt"), ctx.attr("camels_topo.txt"), ctx.attr("camels_clim.txt")
+    out_dir = ctx.module_dir("precipitation-point-to-basin")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    d0, d1 = (dt.date.fromisoformat(x) for x in P1_DAILY)
+    m0, m1 = dt.date(P1_MONTHLY_FIRST_WY - 1, 10, 1), dt.date(P1_MONTHLY_LAST_WY, 9, 30)
+    basins, prov_series, month_days = {}, {}, None
+    for g, display in P1_GAUGES.items():
+        member, sha, ff = ctx.forcing_full(g)
+        dates, cols = ff["dates"], ff["cols"]
+        prcp_h, tmean_wet, monthly, days_in_month = [], [], {}, {}
+        for i, d in enumerate(dates):
+            h = round(cols["prcp"][i] * 100)
+            assert abs(cols["prcp"][i] * 100 - h) < 1e-6 and h >= 0, f"{g} {d}: prcp {cols['prcp'][i]}"
+            if m0 <= d <= m1:
+                key = (d.year, d.month)
+                monthly[key] = monthly.get(key, 0) + h
+                days_in_month[key] = days_in_month.get(key, 0) + 1
+            if d0 <= d <= d1:
+                prcp_h.append(h)
+                if h > 0:
+                    s2 = (cols["tmax"][i] + cols["tmin"][i]) * 100
+                    assert abs(s2 - round(s2)) < 1e-6, f"{g} {d}: tmax + tmin not in hundredths"
+                    tmean_wet.append(int(round(s2)) // 100)   # floor(tmax + tmin) = floor(2 * mean temperature)
+        # water-year month order Oct..Sep for WY1990..WY2009
+        keys = [(y, m) for wy in range(P1_MONTHLY_FIRST_WY, P1_MONTHLY_LAST_WY + 1)
+                for (y, m) in [(wy - 1, 10), (wy - 1, 11), (wy - 1, 12)] + [(wy, k) for k in range(1, 10)]]
+        assert len(keys) == 240 and all(k in monthly for k in keys)
+        md = [days_in_month[k] for k in keys]
+        month_days = md if month_days is None else month_days
+        assert md == month_days
+        assert len(prcp_h) == 1827
+        n = names[g]; t = topo[g]; c = clim[g]
+        basins[g] = {
+            "gauge_id": g,
+            "name": display,
+            "camels_name": n["gauge_name"].strip(),
+            "huc_02": ctx.huc(g),
+            "lat": num(t["gauge_lat"], 5),
+            "lon": num(t["gauge_lon"], 5),
+            "area_km2": num(t["area_gages2"], 2),
+            "elev_mean_m": num(t["elev_mean"], 2),
+            "camels": {"p_mean_mm_day": num(c["p_mean"]), "frac_snow": num(c["frac_snow"]),
+                       "high_prec_freq_days_per_year": num(c["high_prec_freq"], 4),
+                       "high_prec_dur_days": num(c["high_prec_dur"]), "low_prec_freq_days_per_year": num(c["low_prec_freq"], 4)},
+            "source_member": member,
+            "source_sha256": sha,
+            "prcp_hundredths_mm": prcp_h,
+            "tmean_halfdeg_bin_on_wet_days": tmean_wet,
+            "monthly_hundredths_mm": [monthly[k] for k in keys],
+        }
+        prov_series[g] = {
+            "file": "data/precip-data.json",
+            "forcing_source_member": member,
+            "forcing_source_member_sha256": sha,
+            "daily_period": [d0.isoformat(), d1.isoformat()],
+            "n_days": len(prcp_h),
+            "n_wet_days_with_tmean": len(tmean_wet),
+            "monthly_period": [m0.isoformat(), m1.isoformat()],
+            "n_months": len(keys),
+            "units": {"prcp_hundredths_mm": "Daymet basin-mean precipitation in hundredths of a mm/day (integer; the file has two decimals)",
+                      "tmean_halfdeg_bin_on_wet_days": "floor(tmax + tmin) = floor(2 * mean temperature): the half-degree bin of the daily mean temperature (C), only for days with prcp > 0, in date order; for a threshold T that is a multiple of 0.5, mean < T is exactly bin < 2 * T",
+                      "monthly_hundredths_mm": "monthly precipitation totals in hundredths of a mm, water-year order Oct..Sep, WY1990..WY2009"},
+        }
+    blob = {
+        "source": "CAMELS-US v1.2 (Newman et al. 2015; Addor et al. 2017); Daymet basin means (Thornton et al. 1997)",
+        "daily_start": d0.isoformat(), "daily_n": 1827,
+        "monthly_first_wy": P1_MONTHLY_FIRST_WY, "monthly_last_wy": P1_MONTHLY_LAST_WY,
+        "monthly_days": month_days,
+        "basins": basins,
+    }
+    (out_dir / "precip-data.json").write_text(json.dumps(blob, separators=(",", ":"), ensure_ascii=False) + "\n", encoding="utf-8")
+    prov = ctx.prov_base("precipitation-point-to-basin", attribute_files=P1_ATTRIBUTE_FILES)
+    prov["series"] = prov_series
+    prov["blob"] = "data/precip-data.json (inlined into module.html as <script id=\"precip-data\">)"
+    prov["notes"] = [
+        "tmean_halfdeg_bin_on_wet_days holds one value per day with prcp > 0, in date order; the matching days are the nonzero entries of prcp_hundredths_mm.",
+        "Monthly totals are sums of the daily Daymet basin-mean values over each calendar month; day counts per month are in monthly_days.",
+        "CAMELS attributes are copied as distributed (camels_clim.txt: p_mean, frac_snow, high_prec_freq, high_prec_dur, low_prec_freq).",
+    ]
+    (out_dir / "PROVENANCE.json").write_text(json.dumps(prov, indent=1) + "\n", encoding="utf-8")
 # ==== END extract_precipitation_point_to_basin ====
 #
 #

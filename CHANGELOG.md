@@ -5,7 +5,10 @@ All notable changes to the learning modules. Versions are per module (`manifest.
 ## Wave 3 — new lessons (in progress)
 
 ### precipitation-point-to-basin new → 0.1.0
-- pending
+- New lesson, "Rain and Snow: From Gauge to Basin" (topic precipitation, 35 min). A gauge is a point (a computed funnel-to-basin ratio); a SYNTHETIC 60 × 60 km storm field with six gauges G1 to G6 (toggle buttons with `aria-pressed`, IDW power slider, map radio group) compares the arithmetic mean, Thiessen polygons and inverse-distance weighting against a known true mean, with a Thiessen raster labelled by region and a weights table; four real CAMELS-US basins (basin cards) show the daily exceedance curve, wet-day share, high-precipitation days, longest dry spell and largest day for water years 1996 to 2000, the 20-water-year monthly regime with DJF and JJA shares, and the snow fraction against a rain/snow temperature threshold (−2 to +3 °C) with CAMELS `frac_snow` beside it as a reference; a reproduction check recomputes CAMELS `p_mean` from 20 years of monthly totals and `high_prec_freq` from five years of daily values and says what differs (the period).
+- Two executable cells with pre-rendered outputs and alt text: `areal-precip` (SYNTHETIC, rebuilt from the gauge set and IDW power) and `precip-climate` (REAL, rebuilt from the basin and threshold). Seven-item checkpoint (four choices, three numeric) whose answers are computed from the page's own model and data and recomputed independently in the tests.
+- Data: `data/precip-data.json` (about 37 KB; daily precipitation in integer hundredths of a mm and the half-degree temperature bin on wet days for WY1996–2000, monthly totals for WY1990–2009, four basins) with `data/PROVENANCE.json` (source member paths, sha256). Extractor: `extract_precipitation_point_to_basin` in `scripts/extract_camels.py`. The temperature is stored as the bin floor(tmax + tmin) so that "mean temperature < T" is exactly "bin < 2 T" for the 0.5 °C thresholds the lesson uses.
+- Citations (all pass the gate, see `CITATIONS.verified.md`): Thiessen 1911, Shepard 1968, Thornton et al. 1997, Jennings et al. 2018, with Newman et al. 2015 and Addor et al. 2017 for the data.
 
 ### evapotranspiration-budyko new → 0.1.0
 - pending
