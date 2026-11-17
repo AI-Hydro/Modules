@@ -89,3 +89,26 @@ def test_polygon_boundary_ends_at_the_gauge_vertex():
     coords = json.loads(m.group(1))["geometry"]["coordinates"][0]
     lon, lat = -69.3147, 45.17501
     assert min(abs(x - lon) + abs(y - lat) for x, y in coords) < 0.001
+
+
+def test_forward_claims_match_what_the_capstone_does():
+    """The capstone runs the same steps in a Python cell on its own 24x24 SYNTHETIC hillslope; it has no 3-D scene."""
+    cap = module_text("capstone-basin-story")
+    assert "scene3d" not in cap and "data-aihydro-scene3d" not in cap
+    assert "SYNTHETIC" in cap and "24×24" in cap
+    assert "scene3d</code> for the TWI heatmap" not in T                      # old, false claim
+    assert "This view shows elevation only; it is not a TWI map." in T
+    assert "does not use the 3-D view" in T and "different synthetic hillslope (24×24 cells)" in T
+    assert "run this same pipeline on a synthetic hillslope" not in T
+    course = json.load(open(SHARED.parent / "courses/intro-to-hydrology/course.json"))
+    order = [m["id"] for m in course["modules"]]
+    assert order.index("dem-to-twi") == 8 and order.index("capstone-basin-story") == 9   # Module 9 -> Module 10
+    assert "Module 10 Capstone" in T
+
+
+def test_bridge_wait_is_the_shared_helper_and_the_only_poll():
+    """No private timers: whenReady is the inlined shared/ready.js, and the 3-D scene is requested once."""
+    assert shared_js("ready.js").strip() in T
+    assert len(re.findall(r"\bsetInterval\(", T)) == 1                         # the one inside the shared helper
+    assert "setTimeout(" not in T
+    assert T.count("window.aihydro.scene3d(") == 1

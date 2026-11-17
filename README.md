@@ -18,7 +18,7 @@ The table is generated from `modules/*/manifest.json` by `python scripts/gen_doc
 | [Splitting the Flow: Baseflow Separation](modules/baseflow-separation/) | Baseflow analysis | Intro | 40 min | 0.3.0 |
 | [Capstone: A Basin's Water Story](modules/capstone-basin-story/) | Catchment analysis | Intro | 60 min | 0.4.0 |
 | [Congratulations: Course Complete](modules/course-certificate/) | Course completion | Intro | 5 min | 0.1.4 |
-| [The Shape of the Land: DEM to TWI](modules/dem-to-twi/) | Terrain analysis | Intro | 55 min | 0.4.0 |
+| [The Shape of the Land: DEM to TWI](modules/dem-to-twi/) | Terrain analysis | Intro | 55 min | 0.4.1 |
 | [The Return Flow: Evapotranspiration and the Budyko Curve](modules/evapotranspiration-budyko/) | Evapotranspiration | Intro | 40 min | 0.1.0 |
 | [Rain and Snow: From Gauge to Basin](modules/precipitation-point-to-basin/) | Precipitation | Intro | 35 min | 0.1.0 |
 | [Reading a Hydrograph](modules/reading-a-hydrograph/) | Streamflow | Intro | 30 min | 0.4.0 |

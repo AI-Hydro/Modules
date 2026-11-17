@@ -79,3 +79,18 @@ for (const id of fs.readdirSync(`${H.ROOT}/modules`).filter((d) => fs.existsSync
     assert.ok(counters.setInterval <= 1, `${counters.setInterval} setInterval calls`);
   });
 }
+
+test('dem-to-twi: without the bridge exactly one poll runs and the 3-D scene is never requested', () => {
+  const { ctx, counters } = run(H.moduleText('dem-to-twi'));
+  assert.equal(ctx.window.aihydro, undefined);
+  assert.equal(counters.setInterval, 1);
+});
+
+test('dem-to-twi: with the bridge present the 3-D scene is requested once, with no poll', async () => {
+  const calls = [];
+  const { counters } = run(H.moduleText('dem-to-twi'), { globals: { aihydro: { scene3d(o) { calls.push(o); } } } });
+  await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+  assert.equal(counters.setInterval, 0);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].dem.length, 5);
+});

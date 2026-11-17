@@ -2,6 +2,12 @@
 
 All notable changes to the learning modules. Versions are per module (`manifest.json` and the manifest embedded in `module.html` carry the same number).
 
+## 2026-11-17 — dem-to-twi forward claims
+
+### dem-to-twi 0.4.0 → 0.4.1
+- The 3-D view note no longer says the same pipeline runs in `scene3d` for a TWI heatmap in the Capstone: the view shows elevation only, and the Capstone (Module 10) runs the same steps (fill, D8, accumulation, slope, TWI) in a Python cell on its own 24×24 SYNTHETIC hillslope, with no 3-D scene. The "Next step" note says the same. Checked against `capstone-basin-story` and the course order (dem-to-twi 9, capstone 10).
+- Bridge wait reviewed: the lesson already inlines `shared/ready.js` (one shared promise, one 50 ms poll, gives up after ~10 s) and requests the scene once; no defect found, no code change. Tests now pin this (page-level poll count, single `scene3d` request, text of the claims).
+
 ## 2026-11-17 — Real-basin 3-D scene (pilot P1) in watershed-runoff
 
 Owner-approved pilot of docs/vision-2040/findings/threejs-studio-feasibility-2026-11-17.md (P1). Owner ruling: the Copernicus DEM credit goes in the lesson's References, not in the scene.
