@@ -1,0 +1,40 @@
+{
+  "moduleId": "runoff-generation",
+  "title": "Runoff Generation: Infiltration Excess and Saturation Excess",
+  "description": "Two ways rain becomes runoff. Compute Green–Ampt ponding and infiltration on a SYNTHETIC soil column with a finite storage deficit, map which mechanism wins over rain intensity and deficit, watch the saturated area of a SYNTHETIC hillslope grow with storm depth, then compute event runoff coefficients from real CAMELS-US daily rain and flow for three basins and see why daily data cannot identify the mechanism.",
+  "version": "0.1.0",
+  "license": "CC-BY-4.0",
+  "topic": "runoff-generation",
+  "level": "intro",
+  "estimatedMinutes": 40,
+  "tags": [
+    "runoff-generation",
+    "infiltration-excess",
+    "saturation-excess",
+    "Green-Ampt",
+    "variable-source-area",
+    "event-runoff-coefficient",
+    "CAMELS"
+  ],
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "Dunne, T. & Black, R.D. (1970). Partial area contributions to storm runoff in a small New England watershed. Water Resources Research, 6(5), 1296–1311.",
+    "doi": "10.1029/WR006i005p01296"
+  },
+  "isFeatured": false,
+  "courseId": "intro-hydro-2026",
+  "courseOrder": 4,
+  "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/runoff-generation/module.html",
+  "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/runoff-generation",
+  "author": "Mohammad Galib, Purdue University",
+  "createdAt": "2026-11-17",
+  "downloadCount": 0,
+  "githubReactions": 0,
+  "discussionUrl": ""
+}

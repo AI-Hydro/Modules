@@ -591,9 +591,79 @@ def extract_evapotranspiration_budyko(ctx: Extraction) -> None:
 #
 #
 # ==== BEGIN extract_runoff_generation (packet P3 owns) ====
+RG_PERIOD = ("1995-10-01", "2000-09-30")           # water years 1996-2000, 1827 days
+RG_BASINS = ["14305500", "02472000", "09484000"]   # rain-event basins (Siletz, Leaf, Sabino)
+RG_OMITTED = "01013500"                            # Fish River: attributes only (frac_snow is the stated reason)
+RG_ATTR_FILES = ["camels_name.txt", "camels_topo.txt", "camels_hydro.txt", "camels_clim.txt", "camels_soil.txt"]
+
+
+def _rg_num(x: float):
+    """An int when the value is integral (smaller JSON), else the float exactly as parsed."""
+    return int(x) if float(x).is_integer() else float(x)
+
+
 def extract_runoff_generation(ctx: Extraction) -> None:
-    """Stub: packet P3 fills this in."""
-    return None
+    """WY1996-2000 daily flow (as distributed), Daymet basin precipitation (integer hundredths of mm,
+    lossless: the file carries two decimals) and the soil / runoff-ratio / snow attributes the lesson
+    compares with. Writes data/runoff-events.json and data/PROVENANCE.json."""
+    names, topo = ctx.attr("camels_name.txt"), ctx.attr("camels_topo.txt")
+    soil, hydro, clim = ctx.attr("camels_soil.txt"), ctx.attr("camels_hydro.txt"), ctx.attr("camels_clim.txt")
+    d = ctx.module_dir("runoff-generation")
+    d.mkdir(parents=True, exist_ok=True)
+
+    def attrs(g: str) -> dict:
+        return {
+            "camels_name": names[g]["gauge_name"].strip(),
+            "area_km2": num(topo[g]["area_gages2"], 2),
+            "soil_conductivity_cm_h": num(soil[g]["soil_conductivity"], 6),
+            "soil_porosity": num(soil[g]["soil_porosity"], 6),
+            "soil_depth_statsgo_m": num(soil[g]["soil_depth_statsgo"], 6),
+            "max_water_content_m": num(soil[g]["max_water_content"], 6),
+            "runoff_ratio": num(hydro[g]["runoff_ratio"], 6),
+            "frac_snow": num(clim[g]["frac_snow"], 6),
+        }
+
+    prov = ctx.prov_base("runoff-generation", attribute_files=RG_ATTR_FILES)
+    prov["series"] = {}
+    blob = {"period": list(RG_PERIOD), "basins": {}, "omitted": {}}
+    for g in RG_BASINS:
+        fm, fsha, fseries = ctx.flow(g)
+        pm, psha, forc = ctx.forcing_full(g)
+        rows = clip(fseries, *RG_PERIOD)
+        assert all(r[1] >= 0 and r[2] != "M" for r in rows), f"missing or negative flow in {g}"
+        pr = dict(zip(forc["dates"], forc["cols"]["prcp"]))
+        hund = []
+        for r in rows:
+            v = pr[r[0]]
+            assert abs(v * 100 - round(v * 100)) < 1e-6, "precipitation is not an integer number of hundredths"
+            hund.append(int(round(v * 100)))
+        est = [i for i, r in enumerate(rows) if r[2] != "A"]
+        assert {r[2] for r in rows} <= {"A", "A:e"}
+        blob["basins"][g] = {
+            "name": GAUGES[g],
+            **attrs(g),
+            "flow_member": fm, "flow_sha256": fsha, "precip_member": pm, "precip_sha256": psha,
+            "q_cfs": [_rg_num(r[1]) for r in rows],
+            "estimated_idx": est,
+            "prcp_hundredths_mm": hund,
+        }
+        prov["series"][g] = {
+            "file": "data/runoff-events.json",
+            "flow_source_member": fm,
+            "flow_source_member_sha256": fsha,
+            "precip_source_member": pm,
+            "precip_source_member_sha256": psha,
+            "period": [rows[0][0].isoformat(), rows[-1][0].isoformat()],
+            "n_days": len(rows),
+            "units": {"q_cfs": "cubic feet per second (daily mean), as distributed",
+                      "prcp_hundredths_mm": "Daymet basin-mean precipitation, integer hundredths of mm/day (lossless)"},
+            "usgs_qc_flags": {f: sum(1 for r in rows if r[2] == f) for f in sorted({r[2] for r in rows})},
+        }
+    blob["omitted"][RG_OMITTED] = {"name": GAUGES[RG_OMITTED], **attrs(RG_OMITTED)}
+    prov["omitted_gauge_attributes_only"] = RG_OMITTED
+    prov["soil_conductivity_unit"] = "cm/hr (CAMELS attribute documentation, camels_attributes_v2.0)"
+    (d / "runoff-events.json").write_text(json.dumps(blob, separators=(",", ":")) + "\n")
+    (d / "PROVENANCE.json").write_text(json.dumps(prov, indent=1) + "\n")
 # ==== END extract_runoff_generation ====
 #
 #

@@ -70,7 +70,20 @@ Books and handbooks without a DOI used by this lesson (marked on the page "Refer
 
 | Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
 |---|---|---|---|---|---|
-| _pending (P3)_ | _none yet_ | _not run_ | 0 | _placeholder_ | runoff-generation |
+| Horton (1933) | 10.1029/TR014i001p00446 | PASS | 3 (crossref, openalex, semantic_scholar) | The Rôle of infiltration in the hydrologic cycle / Transactions American Geophysical Union / 1933 | runoff-generation |
+| Dunne & Black (1970) | 10.1029/WR006i005p01296 | PASS | 3 (crossref, openalex, semantic_scholar) | Partial Area Contributions to Storm Runoff in a Small New England Watershed / Water Resources Research / 1970 | runoff-generation |
+| Green & Ampt (1911) | 10.1017/S0021859600001441 | PASS | 3 (crossref, openalex, semantic_scholar) | Studies on Soil Phyics. (index spelling of the title) / The Journal of Agricultural Science / 1911 | runoff-generation |
+| Mein & Larson (1973) | 10.1029/WR009i002p00384 | PASS | 3 (crossref, openalex, semantic_scholar) | Modeling infiltration during a steady rain / Water Resources Research / 1973 | runoff-generation |
+| Merz, Blöschl & Parajka (2006) | 10.1016/j.jhydrol.2006.06.008 | PASS | 3 (crossref, openalex, semantic_scholar) | Spatio-temporal variability of event runoff coefficients / Journal of Hydrology / 2006 | runoff-generation |
+| Blume, Zehe & Bronstert (2007) | 10.1623/hysj.52.5.843 | PASS | 3 (crossref, openalex, semantic_scholar) | Rainfall—runoff response, event-based runoff coefficients and hydrograph separation / Hydrological Sciences Journal / 2007 | runoff-generation |
+| Cosby et al. (1984) | 10.1029/WR020i006p00682 | PASS | 3 (crossref, openalex, semantic_scholar) | A Statistical Exploration of the Relationships of Soil Moisture Characteristics to the Physical Properties of Soils / Water Resources Research / 1984 | runoff-generation |
+| Thornton, Running & White (1997) | 10.1016/S0022-1694(96)03128-9 | PASS | 3 (crossref, openalex, semantic_scholar) | Generating surfaces of daily meteorological variables over large regions of complex terrain / Journal of Hydrology / 1997 | runoff-generation |
+
+runoff-generation notes (gate run 2026-11-17, `verify_citation.py --doi <DOI>`; Newman et al. 2015, Addor et al. 2017, Beven & Kirkby 1979, Nathan & McMahon 1990 and Ladson et al. 2013 are in the main table above):
+
+- **Rejected DOI.** The plan listed `10.1016/j.jhydrol.2006.03.006` for Merz et al. (2006). The gate passes that DOI (3 indexes) but it resolves to a different paper, Arp et al., *Surface-water hydrodynamics and regimes of a small mountain stream–lake ecosystem* (J. Hydrol. 2006). It is not cited anywhere. The title search for *Spatio-temporal variability of event runoff coefficients* (Merz) returned `10.1016/j.jhydrol.2006.06.008`, which passes with 3 indexes and matching authors, and is the DOI used.
+- **Claims are kept to what the titles support:** Horton (infiltration in the hydrologic cycle; the infiltration-excess attribution), Dunne & Black (partial-area contributions to storm runoff; the saturation-excess attribution), Green & Ampt and Mein & Larson (infiltration models; the Mein & Larson ponding-time formula for a steady rain), Merz et al. and Blume et al. (event runoff coefficients), Cosby et al. (named only as one of the sources the CAMELS attribute documentation lists for soil_conductivity; read from `camels_attributes_v2.0.pdf`), Thornton et al. (credit for the Daymet forcing). No result from these papers is quoted.
+- **Flagged for human review:** volume, issue and page numbers in the lesson's reference list were written from index records and memory; the gate does not check them (the start pages of the AGU papers agree with their DOI suffixes).
 
 ## Failed the gate (removed, together with the claims that depended on them)
 
