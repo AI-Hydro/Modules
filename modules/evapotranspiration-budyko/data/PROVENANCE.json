@@ -1,0 +1,120 @@
+{
+ "module": "evapotranspiration-budyko",
+ "dataset": "CAMELS-US v1.2 (basin_timeseries_v1p2_metForcing_obsFlow + attribute files)",
+ "camels_root_relative_sources": {
+  "attribute_files": {
+   "camels_name.txt": {
+    "sha256": "f3a85272cd934c6e12386db5f21979675fc891844250a335135786ad9a2de445"
+   },
+   "camels_topo.txt": {
+    "sha256": "b64ca9923bcaccf21dde33137903797919e8d6732edd7849f8534e0ddcbec8e8"
+   },
+   "camels_hydro.txt": {
+    "sha256": "7dcae3ea8c28e6485fc9e39b3c5e8bb509d6354ebe9b0b98873ec47fa36e3c41"
+   },
+   "camels_clim.txt": {
+    "sha256": "6a3a80256afbaea13f59f279c174d3c010156b826ffb53a4cfb5508814404f5f"
+   }
+  },
+  "archive": "basin_timeseries_v1p2_metForcing_obsFlow.zip"
+ },
+ "extraction_script": "scripts/extract_camels.py",
+ "extracted_on": "2026-11-17",
+ "citations": [
+  "Newman, A. J., Clark, M. P., Sampson, K., Wood, A., Hay, L. E., Bock, A., Viger, R. J., Blodgett, D., Brekke, L., Arnold, J. R., Hopson, T., and Duan, Q. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA: data set characteristics and assessment of regional variability in hydrologic model performance. Hydrol. Earth Syst. Sci., 19, 209-223. doi:10.5194/hess-19-209-2015",
+  "Addor, N., Newman, A. J., Mizukami, N., and Clark, M. P. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293-5313. doi:10.5194/hess-21-5293-2017"
+ ],
+ "licence_note": "CAMELS-US streamflow originates from USGS NWIS (public domain); forcing is Daymet basin means as distributed by CAMELS.",
+ "access": "read-only local copy; no network access during extraction",
+ "blob": "data/et-budyko.json (inlined into module.html by scripts/build_modules.py as <script id=\"et-budyko\">)",
+ "series": {
+  "01013500": {
+   "forcing_member": "basin_dataset_public_v1p2/basin_mean_forcing/daymet/01/01013500_lump_cida_forcing_leap.txt",
+   "forcing_member_sha256": "2dd0c986e2ae6016cfbbfc907a1c32789fc4c04f5ee0a002373712f79ab6592d",
+   "period": [
+    "1996-10-01",
+    "1997-09-30"
+   ],
+   "n_days": 365,
+   "columns": {
+    "dayl": "s",
+    "srad": "W/m2 (daylight-period mean)",
+    "tmax": "C",
+    "tmin": "C",
+    "vp": "Pa"
+   }
+  },
+  "02472000": {
+   "forcing_member": "basin_dataset_public_v1p2/basin_mean_forcing/daymet/03/02472000_lump_cida_forcing_leap.txt",
+   "forcing_member_sha256": "6f16ae5fd04addd2c0fa4718ec6584e05b390cab8e949ad5be7b6f3782b3c27d",
+   "period": [
+    "1996-10-01",
+    "1997-09-30"
+   ],
+   "n_days": 365,
+   "columns": {
+    "dayl": "s",
+    "srad": "W/m2 (daylight-period mean)",
+    "tmax": "C",
+    "tmin": "C",
+    "vp": "Pa"
+   }
+  },
+  "09484000": {
+   "forcing_member": "basin_dataset_public_v1p2/basin_mean_forcing/daymet/15/09484000_lump_cida_forcing_leap.txt",
+   "forcing_member_sha256": "7834096375f8aeddbeb5ecf07f0df67e0ce0bfefff8fa390b16d0d982e54d310",
+   "period": [
+    "1996-10-01",
+    "1997-09-30"
+   ],
+   "n_days": 365,
+   "columns": {
+    "dayl": "s",
+    "srad": "W/m2 (daylight-period mean)",
+    "tmax": "C",
+    "tmin": "C",
+    "vp": "Pa"
+   }
+  },
+  "14305500": {
+   "forcing_member": "basin_dataset_public_v1p2/basin_mean_forcing/daymet/17/14305500_lump_cida_forcing_leap.txt",
+   "forcing_member_sha256": "d341282b3d05ba9b1df65fae5b71a1e901673f21fb11566569f75a3866484395",
+   "period": [
+    "1996-10-01",
+    "1997-09-30"
+   ],
+   "n_days": 365,
+   "columns": {
+    "dayl": "s",
+    "srad": "W/m2 (daylight-period mean)",
+    "tmax": "C",
+    "tmin": "C",
+    "vp": "Pa"
+   }
+  }
+ },
+ "encoding": "<column>_x100 in the blob = the value as distributed (two decimals) times 100, as integers; dayl_x100 holds the first value and then day-to-day differences (lossless)",
+ "all_gauges_table": {
+  "attribute_files": [
+   "camels_clim.txt",
+   "camels_hydro.txt"
+  ],
+  "fields": [
+   "aridity (camels_clim)",
+   "runoff_ratio (camels_hydro)",
+   "frac_snow (camels_clim)"
+  ],
+  "n_gauges": 671,
+  "ids": "single space-separated string, ascending",
+  "rounding": "each value rounded to 4 decimal places (to keep the page small); the four course basins are also stored unrounded under 'course'",
+  "na_runoff_ratio_gauges": [
+   "03281100"
+  ],
+  "na_handling": "runoff_ratio is NA in camels_hydro for these gauge(s); stored as null and left out of the Budyko fit"
+ },
+ "units": {
+  "daily": "dayl s; srad W/m2 (mean over the daylight period); tmax, tmin C; vp Pa",
+  "attributes": "p_mean, pet_mean, q_mean mm/day; aridity, runoff_ratio, frac_snow dimensionless"
+ },
+ "usage_note": "PET is recomputed by the lesson from these forcing columns and compared with the tabulated pet_mean as a reproduction check; no modelOutput PET is used."
+}

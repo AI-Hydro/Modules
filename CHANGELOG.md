@@ -11,7 +11,11 @@ All notable changes to the learning modules. Versions are per module (`manifest.
 - Citations (all pass the gate, see `CITATIONS.verified.md`): Thiessen 1911, Shepard 1968, Thornton et al. 1997, Jennings et al. 2018, with Newman et al. 2015 and Addor et al. 2017 for the data.
 
 ### evapotranspiration-budyko new → 0.1.0
-- pending
+- New lesson "The Return Flow: Evapotranspiration and the Budyko Curve" (topic evapotranspiration, ~40 min, course order 3).
+- Real data: Daymet water year 1997 (dayl, srad, tmax, tmin, vp) for four CAMELS basins, and aridity / runoff_ratio / frac_snow for 671 gauges (`data/et-budyko.json`, 64.8 KB with provenance; extractor `--only evapotranspiration-budyko`).
+- PET two ways (Hargreaves–Samani; Priestley–Taylor with the net-radiation budget shown step by step, α slider), checked against the tabulated `pet_mean` as a reproduction check with the period/method differences stated.
+- Long-term AET from E = P − Q; Budyko space with 670 basins, both limits, a Fu curve with an ω slider and an in-lesson least-squares fit; points outside the limits are read as assumptions that do not hold, not as data problems.
+- Two executable cells (`pet-two-ways`, `budyko-camels`) with pre-rendered outputs; seven-item checkpoint with computed answers; five DOIs gate-verified, two handbooks without DOI marked pending the owner's decision.
 
 ### runoff-generation new → 0.1.0
 - pending

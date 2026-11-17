@@ -42,7 +42,29 @@ Each packet adds one row per DOI that passes `verify_citation.py --doi <DOI>`; a
 
 | Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
 |---|---|---|---|---|---|
-| _pending (P2)_ | _none yet_ | _not run_ | 0 | _placeholder_ | evapotranspiration-budyko |
+| Priestley & Taylor (1972) | 10.1175/1520-0493(1972)100<0081:OTAOSH>2.3.CO;2 | PASS | 3 (crossref, openalex, semantic_scholar) | On the Assessment of Surface Heat Flux and Evaporation Using Large-Scale Parameters / Monthly Weather Review / 1972 | evapotranspiration-budyko |
+| Hargreaves & Samani (1985) | 10.13031/2013.26773 | PASS | 3 (crossref, openalex, semantic_scholar) | Reference Crop Evapotranspiration from Temperature / Applied Engineering in Agriculture / 1985 | evapotranspiration-budyko |
+| Zhang et al. (2004) | 10.1029/2003WR002710 | PASS | 3 (crossref, openalex, semantic_scholar) | A rational function approach for estimating mean annual evapotranspiration / Water Resources Research / 2004 | evapotranspiration-budyko |
+| Zhang, Dawes & Walker (2001) | 10.1029/2000WR900325 | PASS | 3 (crossref, openalex, semantic_scholar) | Response of mean annual evapotranspiration to vegetation changes at catchment scale / Water Resources Research / 2001 | evapotranspiration-budyko |
+| Thornton, Running & White (1997) | 10.1016/S0022-1694(96)03128-9 | PASS | 3 (crossref, openalex, semantic_scholar) | Generating surfaces of daily meteorological variables over large regions of complex terrain / Journal of Hydrology / 1997 | evapotranspiration-budyko |
+
+Newman et al. (2015) and Addor et al. (2017) are cited by the lesson as data credits; both already pass (see the table above; their "Used in" cells are not edited here). Gate run for this lesson on 2026-11-17: `verify_citation.py --doi <DOI>` for each of the five rows plus Newman and Addor, all `gate_pass: true`.
+
+Notes for human review (evapotranspiration-budyko):
+
+- The gate confirms existence and DOI/title/year/author consistency only. Volume and page numbers are not given in the lesson's reference list for these five works for that reason.
+- Priestley & Taylor (1972): the DOI contains `<` and `>`. The lesson links it with those characters percent-encoded and shows it with the slash as an HTML entity (`&#47;`) so that the repository scan `test_every_doi_in_the_modules_passed_the_gate`, whose pattern stops at `<`, does not match a truncated prefix of it. The scan pattern needs fixing in Phase B (it would also reject the Thiessen 1911 DOI of the precipitation lesson). Attribution wording: α = 1.26 is described as "the value associated with Priestley & Taylor (1972) for a wet surface"; written from the index record, not from the full text.
+- Zhang et al. (2004): used for "the Fu form of the Budyko curve with the parameter written ω". Web records say Fu's model is the starting point of that paper; the full text was not read. Fu (1981) itself is deliberately not cited.
+- Zhang, Dawes & Walker (2001): title-level claim only (mean annual evapotranspiration responds to vegetation).
+- Thornton et al. (1997): cited only as the Daymet reference.
+- CAMELS `pet_mean`: described as Priestley–Taylor with α "calibrated for each catchment", the wording of the CAMELS attributes table (camels_attributes_v2.0.pdf, "estimated by N15 using Priestley-Taylor formulation calibrated for each catchment"), next to the Addor et al. (2017) citation.
+
+Books and handbooks without a DOI used by this lesson (marked on the page "Reference without DOI — pending owner decision"; not index-verifiable; owner to decide whether they stay):
+
+| Reference | Used for |
+|---|---|
+| Allen, R. G., Pereira, L. S., Raes, D. & Smith, M. (1998). *Crop evapotranspiration: guidelines for computing crop water requirements.* FAO Irrigation and Drainage Paper 56. FAO, Rome | Ra geometry, net-radiation, Δ and γ expressions (written from the handbook's standard formulas) |
+| Budyko, M. I. (1974). *Climate and Life.* Academic Press, New York | the two limits and the idea of Budyko space |
 
 ### runoff-generation
 

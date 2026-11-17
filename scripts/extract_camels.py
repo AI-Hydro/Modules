@@ -481,9 +481,108 @@ def extract_precipitation_point_to_basin(ctx: Extraction) -> None:
 #
 #
 # ==== BEGIN extract_evapotranspiration_budyko (packet P2 owns) ====
+ET_GAUGES = ["01013500", "02472000", "09484000", "14305500"]      # the four course basins
+ET_WY = ("1996-10-01", "1997-09-30")                              # water year 1997, 365 days
+ET_FORCING_VARS = ("dayl", "srad", "tmax", "tmin", "vp")          # as distributed (s, W/m2, C, C, Pa)
+ET_ATTRIBUTE_FILES = ("camels_name.txt", "camels_topo.txt", "camels_hydro.txt", "camels_clim.txt")
+ET_ALL_DECIMALS = 4                                               # aridity, runoff_ratio, frac_snow rounding
+
+
 def extract_evapotranspiration_budyko(ctx: Extraction) -> None:
-    """Stub: packet P2 fills this in."""
-    return None
+    """evapotranspiration-budyko: one water year of Daymet forcing for the four course basins (PET
+    inputs) plus aridity / runoff_ratio / frac_snow for every CAMELS gauge (the Budyko plot).
+
+    Writes modules/evapotranspiration-budyko/data/et-budyko.json (the page's inlined blob) and
+    PROVENANCE.json. Daily values are exactly as distributed; the 671-gauge table is rounded to
+    ET_ALL_DECIMALS and the rounding is recorded in PROVENANCE.json.
+    """
+    mod = "evapotranspiration-budyko"
+    d = ctx.module_dir(mod)
+    d.mkdir(parents=True, exist_ok=True)
+    clim, hydro = ctx.attr("camels_clim.txt"), ctx.attr("camels_hydro.txt")
+    names, topo = ctx.attr("camels_name.txt"), ctx.attr("camels_topo.txt")
+    start, end = (dt.date.fromisoformat(x) for x in ET_WY)
+
+    basins, series = {}, {}
+    for g in ET_GAUGES:
+        member, sha, full = ctx.forcing_full(g)
+        i0 = full["dates"].index(start)
+        i1 = full["dates"].index(end) + 1
+        assert full["dates"][i0:i1] == [start + dt.timedelta(days=k) for k in range(i1 - i0)], "gap in dates"
+        assert i1 - i0 == 365
+        b = {
+            "name": GAUGES[g],
+            "camels_name": names[g]["gauge_name"].strip(),
+            "lat": full["lat"],                  # forcing-file header, degrees north
+            "elev_m": full["elev_m"],            # forcing-file header, metres
+            "area_gages2_km2": num(topo[g]["area_gages2"], 2),
+            "huc": ctx.huc(g),                   # member path = FORC_MEMBER with this huc
+            "sha256": sha,                       # of that member inside the archive
+        }
+        for v in ET_FORCING_VARS:
+            raw = full["cols"][v][i0:i1]
+            ints = [round(x * 100) for x in raw]
+            assert all(abs(x * 100 - k) < 1e-6 for x, k in zip(raw, ints)), f"{v} is not a 2-decimal value"
+            if v == "dayl":     # smooth in time: store the first value and then day-to-day differences
+                ints = [ints[0]] + [ints[k] - ints[k - 1] for k in range(1, len(ints))]
+            b[v + "_x100"] = ints
+        basins[g] = b
+        series[g] = {
+            "forcing_member": member,
+            "forcing_member_sha256": sha,
+            "period": [start.isoformat(), end.isoformat()],
+            "n_days": i1 - i0,
+            "columns": {"dayl": "s", "srad": "W/m2 (daylight-period mean)", "tmax": "C", "tmin": "C", "vp": "Pa"},
+        }
+    assert all(len(b[v + "_x100"]) == 365 for b in basins.values() for v in ET_FORCING_VARS)
+
+    course = {}
+    for g in ET_GAUGES:
+        course[g] = {
+            "p_mean": float(clim[g]["p_mean"]), "pet_mean": float(clim[g]["pet_mean"]),
+            "aridity": float(clim[g]["aridity"]), "q_mean": float(hydro[g]["q_mean"]),
+            "runoff_ratio": float(hydro[g]["runoff_ratio"]), "frac_snow": float(clim[g]["frac_snow"]),
+        }
+
+    ids = sorted(set(clim) & set(hydro))
+    assert len(ids) == 671 and set(ids) == set(clim) == set(hydro)
+
+    def r(x: str):
+        x = x.strip()
+        return None if x == "NA" else round(float(x), ET_ALL_DECIMALS)
+
+    allb = {
+        "ids": " ".join(ids),
+        "aridity": [r(clim[g]["aridity"]) for g in ids],
+        "runoff_ratio": [r(hydro[g]["runoff_ratio"]) for g in ids],
+        "frac_snow": [r(clim[g]["frac_snow"]) for g in ids],
+    }
+    assert None not in allb["aridity"] and None not in allb["frac_snow"]
+    na = [g for g, v in zip(ids, allb["runoff_ratio"]) if v is None]
+
+    blob = {"wy": {"start": ET_WY[0], "end": ET_WY[1], "n": 365}, "basins": basins, "course": course, "all": allb}
+    (d / "et-budyko.json").write_text(json.dumps(blob, separators=(",", ":")) + "\n", encoding="utf-8")
+
+    prov = ctx.prov_base(mod, attribute_files=ET_ATTRIBUTE_FILES)
+    prov["blob"] = "data/et-budyko.json (inlined into module.html by scripts/build_modules.py as <script id=\"et-budyko\">)"
+    prov["series"] = series
+    prov["encoding"] = ("<column>_x100 in the blob = the value as distributed (two decimals) times 100, as integers; "
+                        "dayl_x100 holds the first value and then day-to-day differences (lossless)")
+    prov["all_gauges_table"] = {
+        "attribute_files": ["camels_clim.txt", "camels_hydro.txt"],
+        "fields": ["aridity (camels_clim)", "runoff_ratio (camels_hydro)", "frac_snow (camels_clim)"],
+        "n_gauges": len(ids),
+        "ids": "single space-separated string, ascending",
+        "rounding": f"each value rounded to {ET_ALL_DECIMALS} decimal places (to keep the page small); "
+                    "the four course basins are also stored unrounded under 'course'",
+        "na_runoff_ratio_gauges": na,
+        "na_handling": "runoff_ratio is NA in camels_hydro for these gauge(s); stored as null and left out of the Budyko fit",
+    }
+    prov["units"] = {"daily": "dayl s; srad W/m2 (mean over the daylight period); tmax, tmin C; vp Pa",
+                     "attributes": "p_mean, pet_mean, q_mean mm/day; aridity, runoff_ratio, frac_snow dimensionless"}
+    prov["usage_note"] = ("PET is recomputed by the lesson from these forcing columns and compared with the tabulated "
+                          "pet_mean as a reproduction check; no modelOutput PET is used.")
+    (d / "PROVENANCE.json").write_text(json.dumps(prov, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
 # ==== END extract_evapotranspiration_budyko ====
 #
 #

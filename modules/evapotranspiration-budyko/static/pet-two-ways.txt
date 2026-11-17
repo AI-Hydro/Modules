@@ -1,0 +1,11 @@
+Basin                       : 09484000  Sabino Creek near Tucson, AZ
+Source file                 : basin_dataset_public_v1p2/basin_mean_forcing/daymet/15/09484000_lump_cida_forcing_leap.txt  (sha256 7834096375f8aedd...)
+Period                      : 1996-10-01 + 365 days (water year 1997; Daymet basin mean)
+Header                      : latitude 32.37 N, elevation 2393 m
+Hargreaves-Samani mean PET  : 3.267 mm/day  (1192 mm/yr, 0 days at 0)
+Priestley-Taylor mean PET   : 3.266 mm/day  (1192 mm/yr, 0 days at 0; alpha 1.26)
+CAMELS pet_mean             : 4.597 mm/day  (1989-10-01..2009-09-30)
+Ratio to CAMELS pet_mean    : Hargreaves-Samani 0.71   Priestley-Taylor 0.71
+alpha matching pet_mean     : 1.774   (descriptive, for this water year only)
+Differences are expected: one water year here against 1989-2009 there, a fixed alpha here against an alpha
+calibrated for each catchment there (Addor et al. 2017), and radiation built from the Daymet columns above.
