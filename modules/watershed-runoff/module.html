@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>The Watershed: Where Rain Becomes Runoff — AI-Hydro Interactive Module</title>
+<title>The Watershed: Where Rain Becomes Runoff — AI-Hydro Interactive Module (synthetic terrain)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -12,13 +12,14 @@
 {
   "id": "watershed-runoff",
   "title": "The Watershed: Where Rain Becomes Runoff",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "watershed-hydrology",
   "level": "intro",
   "estimated_minutes": 40,
-  "requires": { "executable": false },
+  "requires": { "executable": true, "python": ["numpy", "matplotlib"] },
+  "citation": { "text": "O'Callaghan, J. F. & Mark, D. M. (1984). The extraction of drainage networks from digital elevation data. Computer Vision, Graphics, and Image Processing, 28(3), 323-344. doi:10.1016/S0734-189X(84)80011-0" },
   "ai_hydro_preview_min_version": "0.2"
 }
 </script>
@@ -73,7 +74,7 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 .instruction::before { content:'💡'; flex-shrink:0; }
 
 /* Workflow strip */
-.workflow-strip { display:grid; grid-template-columns:repeat(6,1fr); gap:0; margin:20px 0; position:relative; }
+.workflow-strip { display:grid; grid-template-columns:repeat(7,1fr); gap:0; margin:20px 0; position:relative; }
 .workflow-strip::before { content:''; position:absolute; top:28px; left:calc(100%/12); right:calc(100%/12); height:2px; background:linear-gradient(90deg,var(--green),var(--cyan)); z-index:0; }
 .wf-node { display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; z-index:1; padding:0 4px; cursor:pointer; }
 .wf-icon { width:56px; height:56px; border-radius:50%; border:2px solid var(--border); background:var(--navy); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 0 0 4px rgba(0,163,255,0.08); transition:transform 0.2s,box-shadow 0.2s; }
@@ -109,6 +110,17 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 .stat-chip { background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:12px; padding:10px 16px; min-width:100px; }
 .stat-label { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
 .stat-val { font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--bright); margin-top:4px; line-height:1; }
+
+/* Code cells (Python rain→runoff section) */
+.aihydro-cell { border:1px solid rgba(0,221,255,0.22); border-radius:18px; background:rgba(2,6,23,0.55); padding:18px 20px; margin:16px 0; }
+.aihydro-cell-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+.aihydro-cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,221,255,0.12); color:var(--cyan); padding:3px 10px; border-radius:6px; }
+.aihydro-cell-desc { font-size:13px; color:var(--muted); flex:1; }
+.run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
+.run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
+.aihydro-source { font-family:'JetBrains Mono',monospace; font-size:12.5px; white-space:pre; overflow-x:auto; background:rgba(0,0,0,0.45); border-radius:10px; padding:14px; margin-bottom:12px; color:var(--text); border:1px solid rgba(125,211,252,0.08); max-height:380px; }
+.aihydro-output { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; min-height:2em; background:rgba(0,0,0,0.30); border-radius:10px; padding:12px; color:var(--sub); overflow:auto; max-height:480px; }
+.aihydro-output:empty::before { content:'(no output yet — run the cell)'; color:var(--muted); font-style:italic; }
 
 /* Quiz */
 .aihydro-quiz { margin:0; }
@@ -161,11 +173,11 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
   </div>
   <h1>The <span class="gradient-text">Watershed</span><br>Where Rain Becomes Runoff</h1>
   <p class="hero-sub">
-    Every raindrop belongs to exactly one watershed. Orbit a 3-D basin, drop virtual rain on a
-    topographic map, and watch D8 routing decide where every drop ends up — no Python required.
+    Every raindrop belongs to exactly one watershed. Orbit a SYNTHETIC 3-D basin, drop virtual rain on a
+    topographic map, watch D8 routing decide where every drop ends up, then turn rainfall into runoff with two short Python design calculations.
   </p>
   <div class="instruction">
-    Read the concept · Orbit the 3-D terrain · Click the flow-routing map · Pass the checkpoint
+    Read the concept · Orbit the 3-D terrain · Click the flow-routing map · Run the rain→runoff cells · Pass the checkpoint
   </div>
 </div>
 
@@ -177,6 +189,7 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
     <div class="wf-node" onclick="scrollToSection('sec-terrain')"><div class="wf-icon">🌐</div><span class="wf-label">3-D</span></div>
     <div class="wf-node" onclick="scrollToSection('sec-routing')"><div class="wf-icon">🗺️</div><span class="wf-label">Route</span></div>
     <div class="wf-node" onclick="scrollToSection('sec-sim')"><div class="wf-icon">🌧️</div><span class="wf-label">Sim</span></div>
+    <div class="wf-node" onclick="scrollToSection('sec-runoff')"><div class="wf-icon">💧</div><span class="wf-label">Runoff</span></div>
     <div class="wf-node" onclick="scrollToSection('sec-quiz')"><div class="wf-icon">✓</div><span class="wf-label">Check</span></div>
     <div class="wf-node" onclick="scrollToSection('sec-prov')">
       <div class="wf-icon" style="border-color:rgba(0,221,255,0.6);box-shadow:0 0 20px rgba(0,221,255,0.25);">📜</div>
@@ -240,8 +253,8 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 
 <!-- §2 3-D TERRAIN -->
 <div id="sec-terrain" class="wide card" data-aihydro-editable="prose">
-  <h2>2 · Orbit a synthetic watershed in 3-D</h2>
-  <p>A procedurally generated <strong>horseshoe catchment</strong> — ridges on three sides, a single outlet at the south. <strong>Drag to orbit · scroll to zoom · right-drag to pan.</strong></p>
+  <h2>2 · Orbit a SYNTHETIC watershed in 3-D</h2>
+  <p>A procedurally generated (formula-built, not surveyed) <strong>horseshoe catchment</strong> — ridges on three sides, a single outlet on the south edge, at its lowest edge cell. <strong>Drag to orbit · scroll to zoom · right-drag to pan.</strong></p>
 
   <div class="terrain-wrap">
     <canvas data-aihydro-scene3d id="terrainCanvas" aria-label="3-D watershed terrain, draggable"></canvas>
@@ -249,7 +262,7 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
   </div>
 
   <div style="margin-top:16px;">
-    <p>Colour: <span style="color:#34d399;">■ green-teal</span> = valleys · <span style="color:#60a5fa;">■ blue</span> = mid-slope · <span style="color:#e2e8f0;">■ white</span> = ridges. Cyan lines trace the stream network converging to the outlet at bottom-centre.</p>
+    <p>Colour: <span style="color:#34d399;">■ green-teal</span> = valleys · <span style="color:#60a5fa;">■ blue</span> = mid-slope · <span style="color:#e2e8f0;">■ white</span> = ridges. Cyan lines are the stream network derived from flow accumulation (cells with at least 60 cells draining through them — an arbitrary threshold), converging to the outlet at bottom-centre.</p>
   </div>
   <div class="callout">
     <span class="callout-label">Look for</span>
@@ -260,7 +273,7 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 <!-- §3 FLOW ROUTING CONCEPT -->
 <div id="sec-routing" class="wide card" data-aihydro-editable="prose">
   <h2>3 · How topography decides where water goes — the D8 algorithm</h2>
-  <p>A computer extracts the watershed by applying one rule to every cell in a DEM: <strong>water flows to whichever of the 8 neighbouring cells is lowest.</strong> This is the <em>D8 algorithm</em> (eight-direction flow).</p>
+  <p>A computer extracts the watershed by applying one rule to every cell in a DEM: <strong>water flows to whichever of the 8 neighbouring cells gives the steepest descent.</strong> This is the <em>D8 algorithm</em> (eight-direction flow; O'Callaghan &amp; Mark, 1984).</p>
 
   <div class="grid2">
     <div>
@@ -268,8 +281,8 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
         <div class="concept-title" style="margin-bottom:10px;">D8 in 3 steps</div>
         <ol style="padding-left:18px;font-size:14px;color:var(--sub);line-height:1.8;">
           <li><strong style="color:var(--text);">Look at 8 neighbours</strong> (N, NE, E, SE, S, SW, W, NW).</li>
-          <li><strong style="color:var(--text);">Find the steepest drop</strong> — the neighbour with the greatest elevation difference.</li>
-          <li><strong style="color:var(--text);">Follow that path</strong> downhill until the edge of the DEM or a sink.</li>
+          <li><strong style="color:var(--text);">Find the steepest drop per unit distance</strong> — elevation difference <em>divided by</em> the distance to the neighbour (diagonal neighbours are √2 farther).</li>
+          <li><strong style="color:var(--text);">Fill depressions first</strong> (priority-flood), otherwise pits trap the path; then follow the directions downhill to the outlet.</li>
         </ol>
       </div>
       <div class="callout tip" style="margin-top:14px;">
@@ -300,9 +313,9 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
           <text x="50"  y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">105</text>
           <text x="140" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#34d399" font-weight="bold">98</text>
           <text x="230" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">102</text>
-          <line x1="140" y1="132" x2="155" y2="168" stroke="#00FFFF" stroke-width="3" marker-end="url(#arH)"/>
+          <line x1="140" y1="132" x2="140" y2="168" stroke="#00FFFF" stroke-width="3" marker-end="url(#arH)"/>
           <text x="140" y="68"  text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#00FFFF">current cell</text>
-          <text x="140" y="215" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#34d399">steepest neighbour (drop = 10 m)</text>
+          <text x="140" y="215" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#34d399">steepest neighbour (drop = 10 m over 1 cell)</text>
         </svg>
       </div>
     </div>
@@ -312,7 +325,7 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 <!-- §4 DROP-RAIN SIM -->
 <div id="sec-sim" class="wide card glow" data-aihydro-editable="prose">
   <h2>4 · Drop virtual rain — trace the D8 flow path</h2>
-  <p><strong>Click any cell</strong> on the elevation map to drop a virtual raindrop. The D8 algorithm traces the path to the outlet (cyan circle, south edge). Click near the outlet to reveal the full contributing area.</p>
+  <p><strong>Click any cell</strong> on the elevation map to drop a virtual raindrop. The D8 flow path (white) runs to the outlet (cyan circle, south edge) and the amber cells are the <strong>contributing area</strong> of the clicked cell — the watershed you would get by moving the outlet there. Cyan dots are the stream network. Click <em>Show whole watershed</em> to see the area drained by the real outlet.</p>
 
   <div class="grid2">
     <div>
@@ -321,30 +334,130 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
       </div>
       <div class="routing-legend">
         <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(90deg,#001a40,#34d399);"></div><span>Low → High elev.</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#00FFFF;opacity:0.85;"></div><span>Flow path</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:rgba(255,255,255,0.9);"></div><span>Flow path</span></div>
         <div class="legend-item"><div class="legend-swatch" style="background:rgba(251,191,36,0.7);"></div><span>Contributing area</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:rgba(0,221,255,0.75);"></div><span>Stream (≥ 60 cells)</span></div>
         <div class="legend-item"><div class="legend-swatch" style="background:#f87171;border-radius:50%;width:12px;height:12px;"></div><span>Drop point</span></div>
       </div>
+      <button type="button" class="run-btn" id="showWatershed" style="margin-top:10px;">Show whole watershed</button>
     </div>
     <div>
-      <p style="margin-bottom:14px;">The highlighted path is the <strong>flow path</strong>. All cells routing through a given point form the <strong>contributing area</strong> for that outlet.</p>
+      <p style="margin-bottom:14px;">The DEM is a formula, so its units are a convention: elevations are in synthetic metres and cells are assumed 30 m. Nothing here is a real place.</p>
       <div class="stat-row">
         <div class="stat-chip"><div class="stat-label">Path cells</div><div class="stat-val" id="statPath">—</div></div>
-        <div class="stat-chip"><div class="stat-label">Elev drop</div><div class="stat-val" id="statDrop">—</div></div>
-        <div class="stat-chip"><div class="stat-label">Mean slope</div><div class="stat-val" id="statSlope">—</div></div>
+        <div class="stat-chip"><div class="stat-label">Elev drop (m, synthetic)</div><div class="stat-val" id="statDrop">—</div></div>
+        <div class="stat-chip"><div class="stat-label">Mean path slope</div><div class="stat-val" id="statSlope">—</div></div>
+        <div class="stat-chip"><div class="stat-label">Contributing area</div><div class="stat-val" id="statArea">—</div></div>
       </div>
       <div class="callout" style="margin-top:14px;">
         <span class="callout-label">Try this</span>
-        Click near the top ridge. The path sweeps to the central channel before running to the outlet. Click the dark-blue channel cells — the path is almost immediate. Click very near the outlet (south edge, centre) to light up the entire watershed area.
+        Click near the top ridge: the path sweeps into the central channel before running to the outlet. Click a stream cell and the contributing area jumps to a whole sub-basin. Elevation drop is measured on the depression-filled surface the router actually uses.
       </div>
-      <div id="flowMsg" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:10px;min-height:1.4em;"></div>
+      <div id="flowMsg" role="status" aria-live="polite" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:10px;min-height:1.4em;"></div>
     </div>
   </div>
 </div>
 
-<!-- §5 QUIZ -->
+<!-- §4b RAIN TO RUNOFF -->
+<div id="sec-runoff" class="wide card" data-aihydro-editable="prose">
+  <h2>5 · From rain to runoff — two SYNTHETIC design calculations</h2>
+  <p>
+    The routing above tells you <em>where</em> water goes; these cells estimate <em>how much</em>. Both are textbook design formulas applied to the
+    watershed's area (32 × 32 cells of 30 m = 921 600 m² = 92.16 ha, because every cell drains to the outlet). <strong>All inputs are assumptions chosen for teaching</strong>,
+    not measurements, and the results are labelled SYNTHETIC in the output.
+  </p>
+
+  <h3 style="margin-top:14px;">Rational method — peak flow from a design storm</h3>
+  <p style="font-size:14px;">
+    <code>Q = C · i · A</code>, with runoff coefficient C (–), rainfall intensity i and area A. In SI units with i in mm/h and A in ha this is
+    <code>Q = C · i · A / 360</code> (m³/s), because 1 mm/h over 1 ha is 10 m³/h = 1/360 m³/s. It assumes a steady, uniform rain lasting at least as long as the catchment's time of concentration,
+    a constant C, and no storage — so it is meant for small catchments. The size limit depends on the agency; check the local design manual.
+  </p>
+  <div class="aihydro-cell" data-aihydro-cell-id="rational-method" data-language="python">
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">python</span>
+      <span class="aihydro-cell-desc">Rational method · SYNTHETIC inputs</span>
+      <button class="run-btn aihydro-run" type="button">Run ▶</button>
+    </div>
+    <pre class="aihydro-source">import numpy as np
+import matplotlib.pyplot as plt
+
+# ─── SYNTHETIC design example: every input is an assumption, not a measurement ───
+AREA_HA = 92.16        # 32 x 32 cells of 30 m = 921 600 m² (this module's watershed)
+C       = 0.35         # runoff coefficient (dimensionless, assumed)
+I_MM_H  = 40.0         # design rainfall intensity (mm/h, assumed)
+
+# Q = C·i·A in base SI units: i in m/s, A in m²
+i_ms = I_MM_H / 1000.0 / 3600.0
+A_m2 = AREA_HA * 1e4
+Q_m3s = C * i_ms * A_m2
+Q_check = C * I_MM_H * AREA_HA / 360.0          # the same number from the Q = C i A / 360 shortcut
+assert abs(Q_m3s - Q_check) < 1e-9
+
+print("SYNTHETIC rational-method example")
+print(f"  A = {AREA_HA} ha ({A_m2:,.0f} m²),  C = {C},  i = {I_MM_H} mm/h")
+print(f"  Q = {Q_m3s:.3f} m³/s   (= C·i·A/360 = {Q_check:.3f})")
+print("  Valid for: steady uniform rain at least as long as the time of concentration,")
+print("  constant C, small catchment. Not a measured flood.")
+
+# sensitivity of Q to intensity for three assumed C values
+i_grid = np.linspace(5, 80, 50)
+fig, ax = plt.subplots(figsize=(7, 3.6))
+for c in (0.2, 0.35, 0.6):
+    ax.plot(i_grid, c * i_grid * AREA_HA / 360.0, label=f"C = {c}")
+ax.plot([I_MM_H], [Q_m3s], "o", color="#00FFFF")
+ax.set(xlabel="rainfall intensity i (mm/h)", ylabel="peak flow Q (m³/s)", title="Rational method (SYNTHETIC inputs)")
+ax.legend(); plt.tight_layout()</pre>
+    <div class="aihydro-output" aria-live="polite"></div>
+  </div>
+
+  <h3 style="margin-top:18px;">SCS curve number — runoff depth from storm depth</h3>
+  <p style="font-size:14px;">
+    <code>S = 25400/CN − 254</code> (mm), initial abstraction <code>Ia = 0.2·S</code>, and for P &gt; Ia the runoff depth is
+    <code>Q = (P − Ia)² / (P − Ia + S)</code>, otherwise 0 (USDA-SCS, 1972). CN is an assumed catchment property (soil, cover, wetness); here CN = 75. The two demo storms both exceed Ia, so both produce runoff.
+  </p>
+  <div class="aihydro-cell" data-aihydro-cell-id="scs-cn" data-language="python">
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">python</span>
+      <span class="aihydro-cell-desc">SCS curve number · SYNTHETIC inputs</span>
+      <button class="run-btn aihydro-run" type="button">Run ▶</button>
+    </div>
+    <pre class="aihydro-source">import numpy as np
+import matplotlib.pyplot as plt
+
+# ─── SYNTHETIC design example: CN and the storms are assumptions ───
+CN = 75
+AREA_M2 = 921_600.0                  # this module's watershed (32 x 32 cells of 30 m)
+S  = 25400.0 / CN - 254.0            # potential retention, mm
+Ia = 0.2 * S                         # initial abstraction, mm
+
+def scs_runoff(P):
+    """Runoff depth Q (mm) for storm depth P (mm); zero until P exceeds Ia."""
+    P = np.asarray(P, dtype=float)
+    x = np.maximum(P - Ia, 0.0)
+    return x * x / (x + S)
+
+print(f"CN = {CN}:  S = {S:.1f} mm,  Ia = {Ia:.1f} mm")
+for P in (40.0, 80.0):
+    Q = float(scs_runoff(P))
+    vol = Q / 1000.0 * AREA_M2
+    print(f"  storm P = {P:5.1f} mm  ->  runoff Q = {Q:6.2f} mm  (Q/P = {Q/P:.3f}),  volume = {vol:,.0f} m³")
+
+# the curve
+P_grid = np.linspace(0, 120, 200)
+fig, ax = plt.subplots(figsize=(7, 3.6))
+ax.plot(P_grid, scs_runoff(P_grid), color="#00DDFF")
+ax.axvline(Ia, color="#f59e0b", ls="--", label=f"Ia = {Ia:.1f} mm")
+ax.plot([40, 80], [scs_runoff(40.0), scs_runoff(80.0)], "o", color="#34d399", label="demo storms")
+ax.set(xlabel="storm depth P (mm)", ylabel="runoff depth Q (mm)", title="SCS curve number, CN = 75 (SYNTHETIC)")
+ax.legend(); plt.tight_layout()</pre>
+    <div class="aihydro-output" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- §6 QUIZ -->
 <div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
-  <h2>5 · Checkpoint</h2>
+  <h2>6 · Checkpoint</h2>
   <p>Three questions — pass all three to mark this module complete and unlock <em>DEM → TWI</em>.</p>
 
   <div class="aihydro-quiz" id="watershedQuiz">
@@ -359,7 +472,7 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 
     <div class="aihydro-quiz-question" data-answer="0">
       <p class="q-text">2 · In the D8 algorithm, a cell's flow direction points toward…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="0"> The steepest-descending of its 8 neighbours</label>
+      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="0"> The neighbour with the steepest drop per unit distance</label>
       <label class="aihydro-quiz-option"><input type="radio" name="q2" value="1"> The average elevation of all 8 neighbours</label>
       <label class="aihydro-quiz-option"><input type="radio" name="q2" value="2"> The nearest stream channel</label>
       <div class="aihydro-quiz-feedback" data-fb="1">Averaging doesn't give a direction — you need the single steepest downslope path.</div>
@@ -384,17 +497,18 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 <div id="sec-prov" class="wide card refs" data-aihydro-editable="prose">
   <h2>Sources &amp; Further Reading</h2>
   <ol>
-    <li><em>Dingman, S. L. (2015). Physical Hydrology, 3rd ed.</em> Waveland Press. — Watershed definition and delineation concepts, Chapter 3.</li>
-    <li><em>Jenson, S. K. &amp; Domingue, J. O. (1988).</em> Extracting topographic structure from digital elevation data for GIS analysis. <em>Photogrammetric Engineering &amp; Remote Sensing</em>, 54(11), 1593–1600. — Original D8 algorithm.</li>
-    <li><em>O'Callaghan, J. F. &amp; Mark, D. M. (1984).</em> The extraction of drainage networks from digital elevation data. <em>Computer Vision, Graphics, and Image Processing</em>, 28(3), 323–344. — Flow accumulation and channel extraction.</li>
+    <li><em>O'Callaghan, J. F. &amp; Mark, D. M. (1984).</em> The extraction of drainage networks from digital elevation data. <em>Computer Vision, Graphics, and Image Processing</em>, 28(3), 323–344. doi:10.1016/S0734-189X(84)80011-0 — the D8 flow-direction method, flow accumulation and channel extraction.</li>
+    <li><em>Barnes, R., Lehman, C. &amp; Mulla, D. (2014).</em> Priority-flood: an optimal depression-filling and watershed-labeling algorithm for digital elevation models. <em>Computers &amp; Geosciences</em>, 62, 117–127. doi:10.1016/j.cageo.2013.04.024 — the depression-filling used here.</li>
+    <li><em>USDA-SCS (1972).</em> National Engineering Handbook, Section 4: Hydrology — curve-number runoff (handbook, no DOI; see CITATIONS.verified.md).</li>
+    <li><em>Dingman, S. L. (2015).</em> Physical Hydrology, 3rd ed. Waveland Press (book; no DOI) — watershed and runoff concepts.</li>
   </ol>
   <dl class="provenance">
     <div class="prov-item"><dt>Author</dt><dd>Mohammad Galib · Purdue University</dd></div>
     <div class="prov-item"><dt>License</dt><dd>CC-BY-4.0 — free to reuse with attribution</dd></div>
-    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.1.1</dd></div>
+    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.2.0</dd></div>
     <div class="prov-item"><dt>Course</dt><dd>Introduction to Hydrology · <code>intro-hydro-2026</code></dd></div>
-    <div class="prov-item"><dt>Data</dt><dd>All terrain is synthetic (procedurally generated); no real DEM used</dd></div>
-    <div class="prov-item"><dt>Dependencies</dt><dd>three.js r128 (lazy CDN, 3-D only); no kernel required</dd></div>
+    <div class="prov-item"><dt>Data</dt><dd>SYNTHETIC: terrain is procedurally generated (32×32, 30 m cells assumed, synthetic metres); rational-method and curve-number inputs are assumptions. No real DEM or measurement is used.</dd></div>
+    <div class="prov-item"><dt>Dependencies</dt><dd>three.js r128 (lazy CDN, 3-D only); Python (numpy, matplotlib) for the two design cells; D8 code shared with Modules 6 and 7</dd></div>
   </dl>
 </div>
 
@@ -425,13 +539,161 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
     var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
   }
 
-  /* ── Synthetic DEM (32×32 horseshoe catchment) ── */
-  var N = 32;
-  var DEM = (function () {
-    var d = [];
-    for (var j = 0; j < N; j++) {
+  /* One D8 implementation (shared/d8.js): priority-flood fill, drop/distance directions, accumulation */
+/*@@BEGIN js:shared/d8.js@@*/
+/* D8 terrain routing on a regular grid: priority-flood fill, steepest-descent
+ * flow direction (drop / distance), flow accumulation, slope and TWI.
+ *
+ *   dem      : array of rows (dem[row][col]), elevations in metres
+ *   cell     : cell size in metres
+ *   outlet   : {r, c}; defaults to the lowest cell on the grid edge
+ *
+ * Fill follows Barnes, Lehman & Mulla (2014) "Priority-flood" with epsilon
+ * increments, seeded ONLY at the outlet so that every cell has a strictly
+ * descending path to it. Ties break by insertion order (deterministic; the
+ * Python twin shared/d8.py uses the identical rule).
+ * Single source of truth: shared/d8.js (twin: d8.py).
+ */
+var D8_DIRS = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]]; /* N NE E SE S SW W NW */
+
+function d8LowestEdge(dem) {
+  var R = dem.length, C = dem[0].length, best = null, r, c;
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    if (r !== 0 && c !== 0 && r !== R - 1 && c !== C - 1) continue;
+    if (best === null || dem[r][c] < dem[best.r][best.c]) best = { r: r, c: c };
+  }
+  return best;
+}
+
+function d8Fill(dem, outlet, epsilon) {
+  var R = dem.length, C = dem[0].length, N = R * C;
+  var lo = Infinity, hi = -Infinity, r, c, k;
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    if (dem[r][c] < lo) lo = dem[r][c];
+    if (dem[r][c] > hi) hi = dem[r][c];
+  }
+  var eps = epsilon === undefined ? 1e-5 * ((hi - lo) || 1) : epsilon;
+  var out = new Array(N), seen = new Uint8Array(N);
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) out[r * C + c] = dem[r][c];
+  var heap = [], counter = 0;
+  function less(a, b) { return a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]); }
+  function push(e) {
+    var i = heap.length; heap.push(e);
+    while (i > 0) { var p = (i - 1) >> 1; if (less(heap[i], heap[p])) { var t = heap[i]; heap[i] = heap[p]; heap[p] = t; i = p; } else break; }
+  }
+  function pop() {
+    var top = heap[0], last = heap.pop();
+    if (heap.length) {
+      heap[0] = last; var i = 0;
+      for (;;) {
+        var l = 2 * i + 1, rr = l + 1, m = i;
+        if (l < heap.length && less(heap[l], heap[m])) m = l;
+        if (rr < heap.length && less(heap[rr], heap[m])) m = rr;
+        if (m === i) break;
+        var t = heap[i]; heap[i] = heap[m]; heap[m] = t; i = m;
+      }
+    }
+    return top;
+  }
+  var o = outlet.r * C + outlet.c;
+  seen[o] = 1; push([out[o], counter++, o]);
+  while (heap.length) {
+    var e = pop(), idx = e[2], er = (idx / C) | 0, ec = idx % C;
+    for (k = 0; k < 8; k++) {
+      var nr = er + D8_DIRS[k][0], nc = ec + D8_DIRS[k][1];
+      if (nr < 0 || nc < 0 || nr >= R || nc >= C) continue;
+      var ni = nr * C + nc;
+      if (seen[ni]) continue;
+      seen[ni] = 1;
+      if (out[ni] <= out[idx] + eps) out[ni] = out[idx] + eps;
+      push([out[ni], counter++, ni]);
+    }
+  }
+  return out; /* flat row-major */
+}
+
+/* receiver index per cell (-1 for the outlet), steepest drop/distance */
+function d8Directions(filled, R, C, cell, outlet) {
+  var rec = new Array(R * C), o = outlet.r * C + outlet.c, r, c, k;
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    var i = r * C + c;
+    if (i === o) { rec[i] = -1; continue; }
+    var best = 0, bi = -1;
+    for (k = 0; k < 8; k++) {
+      var nr = r + D8_DIRS[k][0], nc = c + D8_DIRS[k][1];
+      if (nr < 0 || nc < 0 || nr >= R || nc >= C) continue;
+      var dist = (D8_DIRS[k][0] !== 0 && D8_DIRS[k][1] !== 0) ? cell * Math.SQRT2 : cell;
+      var g = (filled[i] - filled[nr * C + nc]) / dist;
+      if (g > best) { best = g; bi = nr * C + nc; }
+    }
+    rec[i] = bi;
+  }
+  return rec;
+}
+
+/* number of cells draining through each cell (the cell itself included) */
+function d8Accumulation(filled, rec) {
+  var N = filled.length, order = [], i;
+  for (i = 0; i < N; i++) order.push(i);
+  order.sort(function (a, b) { return filled[b] - filled[a] || a - b; });
+  var acc = new Array(N).fill(1);
+  for (var j = 0; j < N; j++) { i = order[j]; if (rec[i] >= 0) acc[rec[i]] += acc[i]; }
+  return acc;
+}
+
+/* tan(beta): steepest downslope gradient, floored (see TAN_FLOOR note) */
+function d8TanBeta(filled, rec, R, C, cell, floor) {
+  var t = new Array(R * C);
+  for (var i = 0; i < R * C; i++) {
+    if (rec[i] < 0) { t[i] = floor; continue; }
+    var r = (i / C) | 0, c = i % C, nr = (rec[i] / C) | 0, nc = rec[i] % C;
+    var dist = (r !== nr && c !== nc) ? cell * Math.SQRT2 : cell;
+    t[i] = Math.max((filled[i] - filled[rec[i]]) / dist, floor);
+  }
+  return t;
+}
+
+function d8Route(dem, cell, opts) {
+  opts = opts || {};
+  var R = dem.length, C = dem[0].length;
+  var outlet = opts.outlet || d8LowestEdge(dem);
+  var floor = opts.tanFloor === undefined ? 1e-3 : opts.tanFloor;
+  var filled = d8Fill(dem, outlet, opts.epsilon);
+  var rec = d8Directions(filled, R, C, cell, outlet);
+  var acc = d8Accumulation(filled, rec);
+  var tanb = d8TanBeta(filled, rec, R, C, cell, floor);
+  var twi = new Array(R * C);
+  for (var i = 0; i < R * C; i++) twi[i] = Math.log((acc[i] * cell) / tanb[i]); /* a = A/w = acc*cell^2/cell */
+  return { R: R, C: C, cell: cell, outlet: outlet, filled: filled, rec: rec, acc: acc, tanBeta: tanb, twi: twi, tanFloor: floor };
+}
+
+/* path from a cell to the outlet (guarded: cannot loop forever) */
+function d8Path(rec, start, maxSteps) {
+  var path = [start], i = start, guard = maxSteps || rec.length;
+  while (rec[i] >= 0 && guard-- > 0) { i = rec[i]; path.push(i); }
+  return path;
+}
+
+/* cells whose D8 path passes through target (target included) */
+function d8Upstream(rec, target) {
+  var N = rec.length, kids = new Array(N), i;
+  for (i = 0; i < N; i++) kids[i] = [];
+  for (i = 0; i < N; i++) if (rec[i] >= 0) kids[rec[i]].push(i);
+  var out = [target], stack = [target];
+  while (stack.length) { var u = stack.pop(); for (var j = 0; j < kids[u].length; j++) { out.push(kids[u][j]); stack.push(kids[u][j]); } }
+  return out;
+}
+/*@@END js:shared/d8.js@@*/
+
+  /*@@CORE-BEGIN@@*/
+  /* SYNTHETIC DEM: a formula, not a survey. Values are scaled to metres by
+     definition (ELEV_UNIT_M metres per model unit) and cells are assumed 30 m. */
+  var N = 32, CELL_M = 30, ELEV_UNIT_M = 100, STREAM_MIN_CELLS = 60;
+  function makeDEM () {
+    var d = [], i, j;
+    for (j = 0; j < N; j++) {
       var row = [];
-      for (var i = 0; i < N; i++) {
+      for (i = 0; i < N; i++) {
         var x = (i / (N - 1)) * 2 - 1;
         var y = (j / (N - 1)) * 2 - 1;
         var r = Math.sqrt(x * x + y * y);
@@ -439,40 +701,37 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
         var trough = Math.abs(x) * 0.55;
         var slope  = (y + 1) * 0.25;
         var noise  = (Math.sin(i * 1.7 + j * 0.9) + Math.cos(j * 2.1 + i * 0.6)) * 0.04;
-        row.push(Math.max(0, rim + trough - slope + noise + 0.1));
+        row.push(Math.max(0, rim + trough - slope + noise + 0.1) * ELEV_UNIT_M);
       }
       d.push(row);
     }
     return d;
-  })();
-
-  var demMin = Infinity, demMax = -Infinity;
-  for (var j = 0; j < N; j++)
-    for (var i = 0; i < N; i++) {
-      if (DEM[j][i] < demMin) demMin = DEM[j][i];
-      if (DEM[j][i] > demMax) demMax = DEM[j][i];
-    }
-  function normH (j, i) { return (DEM[j][i] - demMin) / (demMax - demMin + 1e-9); }
-
-  /* ── D8 routing ── */
-  var D8 = [[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]];
-
-  function d8Path (si, sj) {
-    var path = [[si, sj]], i = si, j = sj;
-    var seen = {}; seen[j * N + i] = 1;
-    for (var s = 0; s < N * N; s++) {
-      var bDH = 1e-9, bI = -1, bJ = -1;
-      for (var d = 0; d < 8; d++) {
-        var ni = i + D8[d][0], nj = j + D8[d][1];
-        if (ni < 0 || ni >= N || nj < 0 || nj >= N) continue;
-        var dh = DEM[j][i] - DEM[nj][ni];
-        if (dh > bDH && !seen[nj * N + ni]) { bDH = dh; bI = ni; bJ = nj; }
-      }
-      if (bI < 0) break;
-      i = bI; j = bJ; seen[j * N + i] = 1; path.push([i, j]);
-    }
-    return path;
   }
+  var DEM = makeDEM();
+  var ROUTE = d8Route(DEM, CELL_M);                 /* outlet = lowest edge cell */
+  var OUTLET_IDX = ROUTE.outlet.r * N + ROUTE.outlet.c;
+  function reachFraction () {
+    var ok = 0;
+    for (var i = 0; i < N * N; i++) { var p = d8Path(ROUTE.rec, i); if (p[p.length - 1] === OUTLET_IDX) ok++; }
+    return ok / (N * N);
+  }
+  function pathStats (start) {
+    var path = d8Path(ROUTE.rec, start), len = 0, k;
+    for (k = 1; k < path.length; k++) {
+      var a = path[k - 1], b = path[k];
+      len += (((a / N) | 0) !== ((b / N) | 0) && a % N !== b % N) ? CELL_M * Math.SQRT2 : CELL_M;
+    }
+    var drop = ROUTE.filled[start] - ROUTE.filled[path[path.length - 1]];
+    return { path: path, cells: path.length, length_m: len, drop_m: drop, slope: len > 0 ? drop / len : 0 };
+  }
+  /*@@CORE-END@@*/
+
+  var demMin = Infinity, demMax = -Infinity, j0, i0;
+  for (j0 = 0; j0 < N; j0++) for (i0 = 0; i0 < N; i0++) {
+    if (DEM[j0][i0] < demMin) demMin = DEM[j0][i0];
+    if (DEM[j0][i0] > demMax) demMax = DEM[j0][i0];
+  }
+  function normH (j, i) { return (DEM[j][i] - demMin) / (demMax - demMin + 1e-9); }
 
   /* ── 2-D routing canvas ── */
   (function () {
@@ -481,102 +740,91 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
     var ctx = canvas.getContext('2d');
     var CW = canvas.width, CH = canvas.height;
     var cW = CW / N, cH = CH / N;
+    var oI = ROUTE.outlet.c, oJ = ROUTE.outlet.r;
 
     function elevRgb (t) {
       var r = Math.round(t * 190), g = Math.round(55 + t * 155), b = Math.round(75 + t * 130);
       return 'rgb(' + r + ',' + g + ',' + b + ')';
     }
-
+    function drawOutlet () {
+      ctx.fillStyle = '#00FFFF';
+      ctx.beginPath();
+      ctx.arc((oI + 0.5) * cW, (oJ + 0.5) * cH, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
     function drawBase () {
       for (var j = 0; j < N; j++)
         for (var i = 0; i < N; i++) {
           ctx.fillStyle = elevRgb(normH(j, i));
           ctx.fillRect(i * cW, j * cH, cW + 0.5, cH + 0.5);
         }
-      /* outlet */
-      ctx.fillStyle = '#00FFFF';
-      ctx.beginPath();
-      ctx.arc((Math.floor(N / 2) + 0.5) * cW, (N - 0.5) * cH, 5, 0, Math.PI * 2);
-      ctx.fill();
+      /* stream network: cells with at least STREAM_MIN_CELLS cells draining through them */
+      ctx.fillStyle = 'rgba(0,221,255,0.75)';
+      for (var k = 0; k < N * N; k++)
+        if (ROUTE.acc[k] >= STREAM_MIN_CELLS) ctx.fillRect((k % N) * cW + cW * 0.25, ((k / N) | 0) * cH + cH * 0.25, cW * 0.5, cH * 0.5);
+      drawOutlet();
     }
 
-    var curPath = null, dropCell = null, areaMap = null;
+    var curPath = null, dropCell = null, area = null;
 
     function drawState () {
       drawBase();
-      if (areaMap) {
-        for (var j = 0; j < N; j++)
-          for (var i = 0; i < N; i++)
-            if (areaMap[j * N + i]) {
-              ctx.fillStyle = 'rgba(251,191,36,0.35)';
-              ctx.fillRect(i * cW, j * cH, cW, cH);
-            }
+      if (area) {
+        ctx.fillStyle = 'rgba(251,191,36,0.35)';
+        for (var q = 0; q < area.length; q++)
+          ctx.fillRect((area[q] % N) * cW, ((area[q] / N) | 0) * cH, cW, cH);
       }
       if (curPath && curPath.length > 1) {
-        ctx.strokeStyle = 'rgba(0,255,255,0.88)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
-        ctx.moveTo((curPath[0][0] + 0.5) * cW, (curPath[0][1] + 0.5) * cH);
+        ctx.moveTo((curPath[0] % N + 0.5) * cW, (((curPath[0] / N) | 0) + 0.5) * cH);
         for (var k = 1; k < curPath.length; k++)
-          ctx.lineTo((curPath[k][0] + 0.5) * cW, (curPath[k][1] + 0.5) * cH);
+          ctx.lineTo((curPath[k] % N + 0.5) * cW, (((curPath[k] / N) | 0) + 0.5) * cH);
         ctx.stroke();
       }
-      if (dropCell) {
+      if (dropCell != null) {
         ctx.fillStyle = '#f87171';
         ctx.beginPath();
-        ctx.arc((dropCell[0] + 0.5) * cW, (dropCell[1] + 0.5) * cH, cW * 0.6, 0, Math.PI * 2);
+        ctx.arc((dropCell % N + 0.5) * cW, (((dropCell / N) | 0) + 0.5) * cH, cW * 0.6, 0, Math.PI * 2);
         ctx.fill();
       }
-      /* re-draw outlet on top */
-      ctx.fillStyle = '#00FFFF';
-      ctx.beginPath();
-      ctx.arc((Math.floor(N / 2) + 0.5) * cW, (N - 0.5) * cH, 5, 0, Math.PI * 2);
-      ctx.fill();
+      drawOutlet();
     }
 
     drawBase();
+
+    function select (idx) {
+      dropCell = idx;
+      var ps = pathStats(idx);
+      curPath = ps.path;
+      area = d8Upstream(ROUTE.rec, idx);          /* contributing area of the clicked cell */
+      drawState();
+      var cj = (idx / N) | 0, ci = idx % N;
+      document.getElementById('statPath').textContent  = ps.cells + ' cells';
+      document.getElementById('statDrop').textContent  = ps.drop_m.toFixed(1) + ' m';
+      document.getElementById('statSlope').textContent = (ps.slope * 100).toFixed(1) + ' %';
+      document.getElementById('statArea').textContent  = (area.length * CELL_M * CELL_M / 1e6).toFixed(3) + ' km²';
+      document.getElementById('flowMsg').textContent   =
+        'Cell [' + ci + ', ' + cj + ']  filled elev ' + ROUTE.filled[idx].toFixed(1) + ' m (synthetic) → outlet, ' + ps.cells +
+        ' cells, ' + ps.length_m.toFixed(0) + ' m of flow path; ' + area.length + ' cells drain through it.' +
+        (ps.cells > 1 && ps.drop_m < 0.5 ? ' This cell lies in a depression that was filled, so its path is nearly flat.' : '');
+    }
 
     function handleClick (ex, ey) {
       var rect = canvas.getBoundingClientRect();
       var scX = CW / rect.width, scY = CH / rect.height;
       var ci = Math.min(N - 1, Math.max(0, Math.floor((ex - rect.left) * scX / cW)));
       var cj = Math.min(N - 1, Math.max(0, Math.floor((ey - rect.top)  * scY / cH)));
-      dropCell = [ci, cj];
-      curPath  = d8Path(ci, cj);
-
-      /* Compute area only near outlet */
-      var oI = Math.floor(N / 2), oJ = N - 1;
-      if (Math.abs(ci - oI) <= 3 && cj >= N - 5) {
-        var area = new Uint8Array(N * N);
-        area[oJ * N + oI] = 1;
-        for (var jj = 0; jj < N; jj++)
-          for (var ii = 0; ii < N; ii++) {
-            var p = d8Path(ii, jj);
-            for (var k = 0; k < p.length; k++)
-              if (p[k][0] === oI && p[k][1] === oJ) { area[jj * N + ii] = 1; break; }
-          }
-        areaMap = area;
-      } else {
-        areaMap = null;
-      }
-
-      drawState();
-
-      var L   = curPath.length;
-      var hS  = DEM[cj][ci], hE = DEM[curPath[L-1][1]][curPath[L-1][0]];
-      var drop = ((hS - hE) * 100).toFixed(1);
-      var slp  = L > 1 ? ((hS - hE) / L * 100).toFixed(2) : '0.00';
-      document.getElementById('statPath').textContent  = L + ' cells';
-      document.getElementById('statDrop').textContent  = drop + ' m';
-      document.getElementById('statSlope').textContent = slp + ' m/c';
-      document.getElementById('flowMsg').textContent   =
-        '📍 Cell [' + ci + ', ' + cj + ']  elev = ' + (hS * 100).toFixed(1) + ' m  →  path = ' + L + ' cells';
+      select(cj * N + ci);
     }
 
     canvas.addEventListener('click', function (e) { handleClick(e.clientX, e.clientY); });
     canvas.addEventListener('touchend', function (e) {
       e.preventDefault(); var t = e.changedTouches[0]; handleClick(t.clientX, t.clientY);
     }, { passive: false });
+    var whole = document.getElementById('showWatershed');
+    if (whole) whole.addEventListener('click', function () { select(OUTLET_IDX); });
   })();
 
   /* ── 3-D scene3d terrain ── */
@@ -599,9 +847,9 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
             col.push(0.05 + tn * 0.85, 0.20 + tn * 0.60, 0.25 + tn * 0.55);
           }
 
-        for (var jj = 0; jj < Nc-1; jj++)
-          for (var ii = 0; ii < Mc-1; ii++) {
-            var a = jj*Mc+ii, b = jj*Mc+ii+1, cc = (jj+1)*Mc+ii, dd = (jj+1)*Mc+ii+1;
+        for (var j1 = 0; j1 < Nc-1; j1++)
+          for (var i1 = 0; i1 < Mc-1; i1++) {
+            var a = j1*Mc+i1, b = j1*Mc+i1+1, cc = (j1+1)*Mc+i1, dd = (j1+1)*Mc+i1+1;
             idx.push(a,b,dd, a,dd,cc);
           }
 
@@ -612,26 +860,19 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
         geo.computeVertexNormals();
         scene.add(new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide })));
 
-        /* Stream lines (low-elevation cells) */
+        /* Stream network from flow accumulation: each stream cell joined to its D8 receiver */
         var lp = [];
-        for (var jj = 1; jj < Nc-1; jj++)
-          for (var ii = 1; ii < Mc-1; ii++)
-            if (normH(jj, ii) < 0.28) {
-              var bDH = 0, bNi = -1, bNj = -1;
-              for (var d = 0; d < 8; d++) {
-                var ni = ii + D8[d][0], nj = jj + D8[d][1];
-                if (ni<0||ni>=Mc||nj<0||nj>=Nc) continue;
-                var dh = DEM[jj][ii] - DEM[nj][ni];
-                if (dh > bDH) { bDH = dh; bNi = ni; bNj = nj; }
-              }
-              if (bNi >= 0) {
-                lp.push((ii/(Mc-1)-0.5)*12, normH(jj,ii)*3.0+0.06, (jj/(Nc-1)-0.5)*12);
-                lp.push((bNi/(Mc-1)-0.5)*12, normH(bNj,bNi)*3.0+0.06, (bNj/(Nc-1)-0.5)*12);
-              }
-            }
+        for (var k = 0; k < Nc * Mc; k++) {
+          var rcv = ROUTE.rec[k];
+          if (ROUTE.acc[k] >= STREAM_MIN_CELLS && rcv >= 0) {
+            var kj = (k / Mc) | 0, ki = k % Mc, rj = (rcv / Mc) | 0, ri = rcv % Mc;
+            lp.push((ki/(Mc-1)-0.5)*12, normH(kj,ki)*3.0+0.06, (kj/(Nc-1)-0.5)*12);
+            lp.push((ri/(Mc-1)-0.5)*12, normH(rj,ri)*3.0+0.06, (rj/(Nc-1)-0.5)*12);
+          }
+        }
         var lGeo = new THREE.BufferGeometry();
         lGeo.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3));
-        scene.add(new THREE.LineSegments(lGeo, new THREE.LineBasicMaterial({ color: 0x00FFFF, opacity: 0.65, transparent: true })));
+        scene.add(new THREE.LineSegments(lGeo, new THREE.LineBasicMaterial({ color: 0x00FFFF, opacity: 0.8, transparent: true })));
 
         scene.add(new THREE.AmbientLight(0x334466, 0.9));
         var dl = new THREE.DirectionalLight(0x00DDFF, 1.4); dl.position.set(6,12,4); scene.add(dl);
