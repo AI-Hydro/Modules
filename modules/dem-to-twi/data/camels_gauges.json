@@ -1,0 +1,23 @@
+{
+ "01031500": {
+  "gauge_id": "01031500",
+  "name": "Piscataquis River near Dover-Foxcroft, ME",
+  "camels_name": "Piscataquis River near Dover-Foxcroft, Maine",
+  "huc_02": "01",
+  "lat": 45.17501,
+  "lon": -69.3147,
+  "area_km2": 769.05,
+  "elev_mean_m": 247.8,
+  "q_mean_mm_day": 2.030242,
+  "runoff_ratio": 0.576289,
+  "baseflow_index": 0.445091,
+  "q5_mm_day": 0.111345,
+  "q95_mm_day": 8.010503,
+  "zero_q_freq_as_distributed": 0.0,
+  "hfd_mean_doy": 181.0,
+  "p_mean_mm_day": 3.522957,
+  "pet_mean_mm_day": 2.071324,
+  "aridity": 0.58795,
+  "frac_snow": 0.291836
+ }
+}
