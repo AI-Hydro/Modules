@@ -20,6 +20,8 @@
 	"abstract": "A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean to a full basin characterisation at your fingertips. Seven learning modules, each showcasing a different interactive capability of the AI-Hydro learning hub, followed by a personalised certificate of completion.",
 	"kernel": "isolated",
 	"estimatedHours": 5,
+	"isFeatured": true,
+	"tags": ["hydrology", "water-cycle", "watershed", "streamflow", "baseflow", "DEM", "TWI", "USGS"],
 	"modules": [
 		{
 			"id": "water-cycle-in-motion",
