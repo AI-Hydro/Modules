@@ -13,6 +13,12 @@ confirms every module carries the shared Lyne-Hollick / D8 text and the bundled 
 Not done (Wave 2): accessibility, quiz-engine unification, CSP/hygiene, CI/API, README module table.
 
 
+## 2026-11-17 — Pilot P1: real-basin 3-D scene in watershed-runoff (0.4.0)
+
+Implemented pilot P1 of `docs/vision-2040/findings/threejs-studio-feasibility-2026-11-17.md` (see CHANGELOG.md and DECISIONS.md): `tools/build_scene3d.py`, the `img:` marker, section 5 of watershed-runoff, `tests/test_scene3d.py`, `tests/js/scene3d.test.js`.
+Verification (no network): the gate commands of CONTRIBUTING.md, run one by one; the builder run twice gives identical sha256 for all four outputs; the page loads in the Browser pane with the poster visible (no bridge); with a local stand-in for the released bridge and WebGL the live canvas replaces the poster and shows the drop path.
+Not done: frame rate on the M2 at device pixel ratio 2; a pack-mode run with 0 network requests and a non-blank canvas in the installed build; the owner's side-by-side with the 2-D V1 figure; the extension-side hardening (PR 181) was read, not run.
+
 ## 2026-11-17 — Wave 2: function, accessibility, repository
 
 Implemented Wave 2 of `docs/vision-2040/findings/modules-audit-2026-11-17.md` (see CHANGELOG.md and DECISIONS.md).

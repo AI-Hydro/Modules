@@ -1,6 +1,6 @@
 # Introduction to Hydrology
 
-**11 modules · ~7 hours (420 min of lessons) · Intro level · CC-BY-4.0**  
+**11 modules · ~8 hours (430 min of lessons) · Intro level · CC-BY-4.0**  
 **Author:** Mohammad Galib, Purdue University
 
 A hands-on, animated tour through the whole hydrologic cycle — from the first flash of water vapour rising off the ocean, through precipitation, evapotranspiration and runoff generation, to a full basin characterisation at your fingertips. Ten learning modules, each showcasing a different interactive capability of the AI-Hydro learning hub, followed by a personalised certificate of completion.
@@ -13,7 +13,7 @@ A hands-on, animated tour through the whole hydrologic cycle — from the first 
 | 2 | [Rain and Snow: From Gauge to Basin](../../modules/precipitation-point-to-basin/) | 35 min | M1 |
 | 3 | [The Return Flow: Evapotranspiration and the Budyko Curve](../../modules/evapotranspiration-budyko/) | 40 min | M2 |
 | 4 | [Runoff Generation: Infiltration Excess and Saturation Excess](../../modules/runoff-generation/) | 40 min | M2 |
-| 5 | [The Watershed: Where Rain Becomes Runoff](../../modules/watershed-runoff/) | 40 min | M4 |
+| 5 | [The Watershed: Where Rain Becomes Runoff](../../modules/watershed-runoff/) | 50 min | M4 |
 | 6 | [Reading a Hydrograph](../../modules/reading-a-hydrograph/) | 30 min | M1 |
 | 7 | [Splitting the Flow: Baseflow Separation](../../modules/baseflow-separation/) | 40 min | M6 |
 | 8 | [Catching the Flow: Real Streamflow Data](../../modules/real-streamflow-data/) | 45 min | M6 |

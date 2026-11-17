@@ -32,3 +32,17 @@ def test_owner_decisions_unchanged():
     for keep in ['<div class="sig-line">Mohammad Galib</div>', '<div class="sig-line">Purdue University</div>',
                  '<div class="sig-label">Institution</div>', "Requires completion of all 10 course modules"]:
         assert keep in T
+
+
+def test_course_hours_follow_the_minutes_and_the_certificate_says_so():
+    import json
+    import math
+    from helpers import MODULES
+    mins = sum(json.load(open(p))["estimatedMinutes"] for p in MODULES.glob("*/manifest.json"))
+    course = json.load(open(ROOT / "courses/intro-to-hydrology/course.json"))
+    assert course["estimatedHours"] == math.ceil(mins / 60) == 8, mins
+    assert f"~{course['estimatedHours']} Hours" in T
+    assert json.load(open(MODULES / "course-certificate/manifest.json"))["version"] == "0.1.4" and "v0.1.4" in T
+    ws = next(m for m in course["modules"] if m["id"] == "watershed-runoff")
+    assert ws["estimatedMinutes"] == json.load(open(MODULES / "watershed-runoff/manifest.json"))["estimatedMinutes"] == 50
+    assert "Fish River" in ws["abstract"]
