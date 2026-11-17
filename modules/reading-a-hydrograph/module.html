@@ -478,8 +478,8 @@ select:focus { outline:1px solid var(--cyan); }
     </div>
     <div class="callout tip" style="margin-top:14px;">
       <span class="callout-label">Practical default</span>
-      <code>α = 0.925</code> with 3 passes is the daily-data setting recommended by Nathan &amp; McMahon (1990) and standardised
-      by Ladson et al. (2013). Here the time step is one <em>hour</em>, so the daily value is only a starting point.
+      <code>α = 0.925</code> with 3 passes is a value commonly used for daily data (e.g. Nathan &amp; McMahon, 1990); Ladson et al. (2013)
+      propose a standardised procedure including reflection of the series. Here the time step is one <em>hour</em>, so the daily value is only a starting point.
       Move the slider above to <em>0.99</em> and watch the baseflow line drop.
     </div>
   </div>
@@ -1120,11 +1120,11 @@ select:focus { outline:1px solid var(--cyan); }
      ────────────────────────────────────────────────────────────────── */
   /* One shared Lyne–Hollick implementation (shared/lyne_hollick.js), standard multi-pass form */
 /*@@BEGIN js:shared/lyne_hollick.js@@*/
-/* Lyne–Hollick recursive digital filter, standard multi-pass form.
+/* Lyne–Hollick recursive digital filter, multi-pass with reflection; initial quickflow 0 for each pass.
  *
  * Each pass filters the baseflow produced by the PREVIOUS pass (not the raw
- * series), alternating forward / backward / forward (Ladson et al., 2013; the
- * same convention as CAMELS). The series is reflected at both ends before
+ * series), alternating forward / backward / forward (after Ladson et al., 2013, who
+ * propose a standardised procedure including reflection of the series). The series is reflected at both ends before
  * filtering so the recursion has a spin-up and the edges are not biased.
  *
  *   f_t = alpha * f_{t-1} + (1 + alpha) / 2 * (Q_t - Q_{t-1})     (quickflow)
@@ -1348,7 +1348,7 @@ function baseflowIndex(Q, base) {
   var CAMELS = JSON.parse(document.getElementById('camels-wy').textContent).gauges;
 
 /*@@BEGIN pyjs:shared/lyne_hollick.py PY_LH@@*/
-  var PY_LH = "# Lyne\u2013Hollick recursive digital filter, standard multi-pass form.\n# Each pass filters the baseflow of the PREVIOUS pass (forward / backward /\n# forward; Ladson et al., 2013), with the series reflected 30 steps at both ends.\n#   f_t = alpha*f_{t-1} + (1+alpha)/2*(Q_t - Q_{t-1});  f_t = max(f_t, 0)\n#   b_t = max(Q_t - f_t, 0)\n# Single source of truth: shared/lyne_hollick.py (twin of lyne_hollick.js).\ndef lyne_hollick(Q, alpha=0.925, passes=3, reflect=30):\n    Q = [float(v) for v in Q]\n    n = len(Q)\n    r = max(0, min(reflect, n - 1))\n    cur = Q[1:r + 1][::-1] + Q + (Q[n - 1 - r:n - 1][::-1] if r else [])\n    m, k = len(cur), (1.0 + alpha) / 2.0\n    for p in range(passes):\n        b, f = [0.0] * m, 0.0\n        if p % 2 == 0:\n            b[0] = cur[0]\n            for i in range(1, m):\n                f = max(alpha * f + k * (cur[i] - cur[i - 1]), 0.0)\n                b[i] = max(cur[i] - f, 0.0)\n        else:\n            b[m - 1] = cur[m - 1]\n            for i in range(m - 2, -1, -1):\n                f = max(alpha * f + k * (cur[i] - cur[i + 1]), 0.0)\n                b[i] = max(cur[i] - f, 0.0)\n        cur = b\n    return cur[r:r + n]\n\n\ndef baseflow_index(Q, base):\n    sq = float(sum(Q))\n    return float(sum(base)) / sq if sq > 0 else float(\"nan\")";
+  var PY_LH = "# Lyne\u2013Hollick recursive digital filter, multi-pass with reflection; initial quickflow 0 for each pass.\n# Each pass filters the baseflow of the PREVIOUS pass (forward / backward /\n# forward; after Ladson et al., 2013), with the series reflected 30 steps at both ends.\n#   f_t = alpha*f_{t-1} + (1+alpha)/2*(Q_t - Q_{t-1});  f_t = max(f_t, 0)\n#   b_t = max(Q_t - f_t, 0)\n# Single source of truth: shared/lyne_hollick.py (twin of lyne_hollick.js).\ndef lyne_hollick(Q, alpha=0.925, passes=3, reflect=30):\n    Q = [float(v) for v in Q]\n    n = len(Q)\n    r = max(0, min(reflect, n - 1))\n    cur = Q[1:r + 1][::-1] + Q + (Q[n - 1 - r:n - 1][::-1] if r else [])\n    m, k = len(cur), (1.0 + alpha) / 2.0\n    for p in range(passes):\n        b, f = [0.0] * m, 0.0\n        if p % 2 == 0:\n            b[0] = cur[0]\n            for i in range(1, m):\n                f = max(alpha * f + k * (cur[i] - cur[i - 1]), 0.0)\n                b[i] = max(cur[i] - f, 0.0)\n        else:\n            b[m - 1] = cur[m - 1]\n            for i in range(m - 2, -1, -1):\n                f = max(alpha * f + k * (cur[i] - cur[i + 1]), 0.0)\n                b[i] = max(cur[i] - f, 0.0)\n        cur = b\n    return cur[r:r + n]\n\n\ndef baseflow_index(Q, base):\n    sq = float(sum(Q))\n    return float(sum(base)) / sq if sq > 0 else float(\"nan\")";
 /*@@END pyjs:shared/lyne_hollick.py@@*/
 
   /*@@CORE2-BEGIN@@*/

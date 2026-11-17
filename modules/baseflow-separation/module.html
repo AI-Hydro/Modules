@@ -1002,10 +1002,10 @@ body:has(.folium-map) > .folium-map,
   </div>
 
   <p>
-    The standard form runs <strong>3 passes</strong>: forward → backward → forward, and
+    The form used here runs <strong>3 passes</strong>: forward → backward → forward, and
     <strong>each pass filters the baseflow left by the previous pass</strong>, not the raw series.
     The series is also <em>reflected</em> 30 steps at both ends so the recursion has a spin-up and the
-    first and last days are not biased (Ladson et al., 2013). The same implementation is used in every
+    first and last days are not biased (after Ladson et al., 2013, who propose a standardised procedure including reflection of the series). The same implementation is used in every
     module of this course. The parameter <strong style="color:var(--cyan);">α</strong> controls the smoothing:
   </p>
 
@@ -1020,7 +1020,7 @@ body:has(.folium-map) > .folium-map,
     </div>
     <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;padding:14px;flex:1;min-width:180px;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--bright);font-weight:700;">α = 0.925</div>
-      <p style="font-size:13px;margin-top:6px;">The daily-data value recommended by Nathan &amp; McMahon (1990) and used as the standard by Ladson et al. (2013).</p>
+      <p style="font-size:13px;margin-top:6px;">A value commonly used for daily data (e.g. Nathan &amp; McMahon, 1990).</p>
     </div>
   </div>
 
@@ -1094,9 +1094,9 @@ b_true = 2.0 + 1.2 * np.sin(2 * np.pi * (days - 80) / 365)   # known baseflow
 Q = b_true + qf
 
 # ── Lyne–Hollick filter: 3 passes, each on the previous pass's baseflow ──
-<!--@@BEGIN pypre:shared/lyne_hollick.py@@--># Lyne–Hollick recursive digital filter, standard multi-pass form.
+<!--@@BEGIN pypre:shared/lyne_hollick.py@@--># Lyne–Hollick recursive digital filter, multi-pass with reflection; initial quickflow 0 for each pass.
 # Each pass filters the baseflow of the PREVIOUS pass (forward / backward /
-# forward; Ladson et al., 2013), with the series reflected 30 steps at both ends.
+# forward; after Ladson et al., 2013), with the series reflected 30 steps at both ends.
 #   f_t = alpha*f_{t-1} + (1+alpha)/2*(Q_t - Q_{t-1});  f_t = max(f_t, 0)
 #   b_t = max(Q_t - f_t, 0)
 # Single source of truth: shared/lyne_hollick.py (twin of lyne_hollick.js).
@@ -1244,8 +1244,8 @@ print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic un
 <div id="sec-prov" class="wide card refs aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
   <h2>Sources &amp; Further Reading</h2>
   <ol>
-    <li><em>Nathan, R. J. &amp; McMahon, T. A. (1990).</em> Evaluation of automated techniques for base flow and recession analyses. <em>Water Resources Research</em>, 26(7), 1465–1473. doi:10.1029/WR026i007p01465 — evaluates the recursive filter; recommends α = 0.925 for daily data.</li>
-    <li><em>Ladson, A. R., Brown, R., Neal, B. &amp; Nathan, R. (2013).</em> A standard approach to baseflow separation using the Lyne and Hollick filter. <em>Australasian Journal of Water Resources</em>, 17(1). doi:10.7158/13241583.2013.11465417 — the multi-pass, reflected form used here and by CAMELS.</li>
+    <li><em>Nathan, R. J. &amp; McMahon, T. A. (1990).</em> Evaluation of automated techniques for base flow and recession analyses. <em>Water Resources Research</em>, 26(7), 1465–1473. doi:10.1029/WR026i007p01465 — evaluates recursive baseflow filters; α = 0.925 is commonly used for daily data (e.g. here).</li>
+    <li><em>Ladson, A. R., Brown, R., Neal, B. &amp; Nathan, R. (2013).</em> A standard approach to baseflow separation using the Lyne and Hollick filter. <em>Australasian Journal of Water Resources</em>, 17(1). doi:10.7158/13241583.2013.11465417 — proposes a standardised procedure including reflection of the series; the CAMELS attribute documentation cites this paper for its baseflow index.</li>
     <li><em>Eckhardt, K. (2005).</em> How to construct recursive digital filters for baseflow separation. <em>Hydrological Processes</em>, 19(2), 507–515. doi:10.1002/hyp.5675 — a two-parameter alternative; shows the BFI depends on the filter.</li>
   </ol>
   <dl class="provenance">
@@ -1287,11 +1287,11 @@ print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic un
 
   /* ── One Lyne–Hollick implementation (inlined from shared/lyne_hollick.js) ── */
 /*@@BEGIN js:shared/lyne_hollick.js@@*/
-/* Lyne–Hollick recursive digital filter, standard multi-pass form.
+/* Lyne–Hollick recursive digital filter, multi-pass with reflection; initial quickflow 0 for each pass.
  *
  * Each pass filters the baseflow produced by the PREVIOUS pass (not the raw
- * series), alternating forward / backward / forward (Ladson et al., 2013; the
- * same convention as CAMELS). The series is reflected at both ends before
+ * series), alternating forward / backward / forward (after Ladson et al., 2013, who
+ * propose a standardised procedure including reflection of the series). The series is reflected at both ends before
  * filtering so the recursion has a spin-up and the edges are not biased.
  *
  *   f_t = alpha * f_{t-1} + (1 + alpha) / 2 * (Q_t - Q_{t-1})     (quickflow)

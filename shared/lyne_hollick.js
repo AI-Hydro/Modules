@@ -1,8 +1,8 @@
-/* Lyne–Hollick recursive digital filter, standard multi-pass form.
+/* Lyne–Hollick recursive digital filter, multi-pass with reflection; initial quickflow 0 for each pass.
  *
  * Each pass filters the baseflow produced by the PREVIOUS pass (not the raw
- * series), alternating forward / backward / forward (Ladson et al., 2013; the
- * same convention as CAMELS). The series is reflected at both ends before
+ * series), alternating forward / backward / forward (after Ladson et al., 2013, who
+ * propose a standardised procedure including reflection of the series). The series is reflected at both ends before
  * filtering so the recursion has a spin-up and the edges are not biased.
  *
  *   f_t = alpha * f_{t-1} + (1 + alpha) / 2 * (Q_t - Q_{t-1})     (quickflow)
