@@ -66,3 +66,11 @@ CI checks:
 3. Author and license fields are present
 
 Human review checks branding compliance, accuracy of hydrology content, and originality.
+
+## Shared code, bundled data and tests
+
+- Algorithms used by more than one module (Lyne–Hollick filter, D8/TWI) live in `shared/` and are inlined between `@@BEGIN`/`@@END` markers by `python scripts/build_modules.py` (run it after editing `shared/` or `modules/<id>/data/`; `--check` fails if a module is stale). Modules must remain single HTML files with no new external script hosts.
+- Real-data slices come from CAMELS-US via `scripts/extract_camels.py` and ship with `data/PROVENANCE.json` (source member, sha256, period, units, QC flags, citations). Label anything else SYNTHETIC; do not give synthetic series real gauge ids.
+- Every number a lesson states must come from a cell or from a cited, verified source; run each citation through the cite-verify gate and record it in `CITATIONS.verified.md`.
+- Run the tests before opening a PR: `/opt/miniconda3/bin/python -s -E -m pytest tests` and `node --test tests/js/*.test.js`.
+
