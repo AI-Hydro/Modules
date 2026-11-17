@@ -59,10 +59,13 @@ def test_twi_cell_equals_story_value(computed):
 
 
 def test_bfi_flashiness_ordering_quoted_in_quiz(computed):
+    from helpers import quiz_item
     rb = {g: computed[g]["rb"] for g in GAUGES}
+    q1 = quiz_item("capstone-basin-story", "q1")           # the prompt is computed from the records, not typed
     for g, name in (("01013500", "Fish River"), ("14305500", "Siletz"), ("09484000", "Sabino"), ("02472000", "Leaf")):
-        assert f"{name}" in T and f"{rb[g]:.3f}" in T
+        assert f"{name} {rb[g]:.3f}" in q1["prompt"]
     assert max(rb, key=rb.get) == "09484000"                  # quiz answer: Sabino Creek
+    assert q1["options"][q1["expected"]].startswith("Sabino Creek")
 
 
 def test_camels_signature_numbers_on_cards_match_data():
@@ -74,7 +77,11 @@ def test_camels_signature_numbers_on_cards_match_data():
 
 def test_quiz_twi_example():
     import math
-    assert f"{math.log(500 / math.tan(math.radians(2))):.2f}" in T and f"{math.log(20 / math.tan(math.radians(20))):.2f}" in T
+    from helpers import quiz_item
+    q3 = quiz_item("capstone-basin-story", "q3")
+    assert f"TWI = {math.log(500 / math.tan(math.radians(2))):.2f}" in q3["prompt"]
+    assert f"TWI = {math.log(20 / math.tan(math.radians(20))):.2f}" in q3["prompt"]
+    assert q3["expected"] == 0                                # the larger TWI (cell A) saturates first
 
 
 def test_no_asserted_numbers_or_fake_gauge_names_remain():

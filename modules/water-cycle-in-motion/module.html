@@ -8,20 +8,35 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-<script type="application/vnd.aihydro.module+json">
+<!--@@BEGIN manifest:module@@--><script type="application/vnd.aihydro.module+json">
 {
   "id": "water-cycle-in-motion",
   "title": "The Water Cycle in Motion",
-  "version": "0.2.0",
-  "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
+  "version": "0.3.0",
+  "authors": [
+    {
+      "name": "Mohammad Galib",
+      "affiliation": "Purdue University"
+    }
+  ],
   "license": "CC-BY-4.0",
   "topic": "hydrology-fundamentals",
   "level": "intro",
   "estimated_minutes": 30,
-  "requires": { "executable": true, "python": ["manim"], "optional": true },
+  "requires": {
+    "executable": true,
+    "python": [
+      "manim"
+    ],
+    "optional": true
+  },
+  "citation": {
+    "text": "Trenberth, K.E. et al. (2007). Estimates of the global water budget. J. Hydrometeorol., 8(4), 758–769.",
+    "doi": "10.1175/JHM600.1"
+  },
   "ai_hydro_preview_min_version": "0.2"
 }
-</script>
+</script><!--@@END manifest:module@@-->
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -146,6 +161,11 @@ a:hover { border-bottom-color:var(--cyan); }
                  text-transform:uppercase; letter-spacing:0.07em; display:block; margin-bottom:5px; color:var(--cyan); }
 .callout.tip .callout-label { color:#34d399; }
 
+.bath-actions { margin-top:10px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.bath-note { font-size:12px; color:var(--muted); }
+.aihydro-static-note { font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted); margin-bottom:8px; }
+.aihydro-static-figure img { max-width:100%; border-radius:8px; display:block; margin-top:10px; }
+
 /* ── Flux cards ───────────────────────────────────────── */
 .flux-card {
   background:rgba(15,15,30,0.8); border:1px solid var(--border);
@@ -184,18 +204,6 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 .cycle-svg-wrap svg { display:block; width:100%; height:auto; }
 
 /* ── Quiz ─────────────────────────────────────────────── */
-.aihydro-quiz { margin:0; }
-.aihydro-quiz-question { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border); }
-.aihydro-quiz-question:last-of-type { border-bottom:none; }
-.q-text { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text); font-size:16px; margin-bottom:14px; }
-.aihydro-quiz-option { display:block; text-align:left; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(15,15,30,0.7); color:var(--sub); cursor:pointer; margin-bottom:8px; transition:border-color 0.15s,background 0.15s; }
-.aihydro-quiz-option:hover { border-color:var(--cyan); color:var(--text); }
-.aihydro-quiz-option.correct   { border-color:#34d399; background:rgba(52,211,153,0.12); color:#d1fae5; }
-.aihydro-quiz-option.incorrect { border-color:#f87171; background:rgba(248,113,113,0.10); color:#fee2e2; }
-.aihydro-quiz-feedback { font-size:13px; color:var(--muted); min-height:1em; padding:6px 0 0; display:none; }
-.aihydro-quiz-feedback.show { display:block; }
-.aihydro-quiz-submit { font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:10px 28px; cursor:pointer; margin-top:8px; transition:transform 0.1s,box-shadow 0.2s; }
-.aihydro-quiz-submit:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
 
 /* ── Video render cells (Manim) ── unclip output for playback ── */
 .aihydro-cell[data-aihydro-render="video"] .aihydro-output {
@@ -217,6 +225,44 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 .prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
 .prov-item dd { font-size:13px; color:var(--sub); }
 @media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
+/*@@BEGIN css:shared/a11y.css@@*/
+/* Shared accessibility styles (inlined by scripts/build_modules.py). */
+.hydro-sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline:3px solid #00FFFF; outline-offset:2px; border-radius:6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+/*@@END css:shared/a11y.css@@*/
+/*@@BEGIN css:shared/quiz.css@@*/
+/* HydroQuiz styles (inlined by scripts/build_modules.py). Colours fall back to the AI-Hydro palette. */
+.hq { margin:0; }
+.hq-list { list-style:none; padding:0; margin:0; }
+.hq-item { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border,rgba(125,211,252,0.15)); }
+.hq-item:last-child { border-bottom:none; }
+.hq-fieldset { border:0; min-width:0; }
+.hq-prompt { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text,#fff); font-size:16px; line-height:1.5; margin-bottom:12px; padding:0; }
+.hq-options { display:flex; flex-direction:column; gap:8px; }
+.hq-opt { display:flex; align-items:flex-start; gap:10px; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border,rgba(125,211,252,0.15)); background:rgba(15,15,30,0.7); color:var(--sub,#7dd3fc); cursor:pointer; }
+.hq-opt:hover { border-color:var(--cyan,#00DDFF); color:var(--text,#fff); }
+.hq-opt input { margin-top:4px; accent-color:var(--cyan,#00DDFF); flex:0 0 auto; }
+.hq-opt:has(input:checked) { border-color:var(--cyan,#00DDFF); background:rgba(0,221,255,0.10); color:var(--text,#fff); }
+.hq-numeric { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.hq-numlabel { font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--sub,#7dd3fc); }
+.hq-input { width:10em; font-family:'JetBrains Mono',monospace; font-size:15px; padding:9px 12px; border-radius:10px; border:1px solid var(--border,rgba(125,211,252,0.35)); background:rgba(2,6,23,0.7); color:var(--text,#fff); }
+.hq-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.hq-check, .hq-reveal { font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; border-radius:999px; padding:9px 22px; cursor:pointer; }
+.hq-check { background:linear-gradient(135deg,#00A3FF,#00DDFF); color:#0a0a15; border:none; }
+.hq-reveal { background:transparent; color:var(--cyan,#00DDFF); border:1px solid var(--cyan,#00DDFF); }
+.hq-feedback { margin-top:10px; font-size:14px; line-height:1.55; min-height:1.2em; color:var(--muted,#94a3b8); }
+.hq-item[data-state="correct"] .hq-feedback { color:#86efac; border-left:4px solid #34d399; padding-left:12px; }
+.hq-item[data-state="incorrect"] .hq-feedback { color:#fca5a5; border-left:4px dashed #f87171; padding-left:12px; }
+.hq-item[data-state="revealed"] .hq-feedback { color:#e2e8f0; border-left:4px double #94a3b8; padding-left:12px; }
+.hq-summary { margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--muted,#94a3b8); }
+.hq-summary[data-complete="1"] { color:#86efac; }
+[hidden] { display:none !important; }
+/*@@END css:shared/quiz.css@@*/
 </style>
 </head>
 <body>
@@ -263,22 +309,22 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 <div class="wide card" style="padding:22px 24px;">
   <h3 style="margin-bottom:16px;">Your path through this module</h3>
   <div class="workflow-strip">
-    <div class="wf-node" onclick="window.scrollToSection('sec-film')" title="Watch the animation">
+    <div class="wf-node" data-scroll="sec-film" title="Watch the animation">
       <div class="wf-icon">🎬</div><span class="wf-label">Film</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-fluxes')" title="Six fluxes explained">
+    <div class="wf-node" data-scroll="sec-fluxes" title="Six fluxes explained">
       <div class="wf-icon">💧</div><span class="wf-label">Fluxes</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-balance')" title="Mass-balance simulator">
+    <div class="wf-node" data-scroll="sec-balance" title="Mass-balance simulator">
       <div class="wf-icon">⚖️</div><span class="wf-label">Balance</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-scrub')" title="Scrub the cycle">
+    <div class="wf-node" data-scroll="sec-scrub" title="Scrub the cycle">
       <div class="wf-icon">🔎</div><span class="wf-label">Scrub</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-quiz')" title="Checkpoint quiz">
+    <div class="wf-node" data-scroll="sec-quiz" title="Checkpoint quiz">
       <div class="wf-icon">✓</div><span class="wf-label">Check</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-prov')" title="Sources">
+    <div class="wf-node" data-scroll="sec-prov" title="Sources">
       <div class="wf-icon" style="border-color:rgba(0,221,255,0.6);box-shadow:0 0 20px rgba(0,221,255,0.25);">📜</div>
       <span class="wf-label" style="color:var(--cyan);">Sources</span>
     </div>
@@ -312,7 +358,7 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
     <div class="aihydro-cell-header">
       <span class="aihydro-cell-lang">Python · Manim</span>
       <span class="aihydro-cell-desc">Renders the water-cycle animation (~15 s at 480p)</span>
-      <button class="aihydro-run" type="button">▶ Run</button>
+      <button class="run-btn aihydro-run" type="button">▶ Run</button>
     </div>
     <pre class="aihydro-source">from manim import *
 
@@ -455,7 +501,8 @@ class WaterCycle(Scene):
             run_time=1.3
         )
         self.wait(1.3)</pre>
-    <div class="aihydro-output"></div>
+    <div class="aihydro-output"><!--@@BEGIN static:water-cycle-film@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">Final frame of the animation, rendered with Manim (stored image).
+Run the cell in AI-Hydro to render the full ~15 s video (requires Manim in the kernel).</pre><div class="aihydro-static-figure"><img alt="Final frame of the Manim water-cycle animation on a dark background: a white cloud labelled Condensation at the top centre and a sun at the top right; rain lines fall from the cloud (Precipitation); blue upward arrows rise toward the cloud (Evaporation) and short green upward arrows rise from a tree (Transpiration); violet downward arrows enter a low hill (Infiltration); cyan arrows lead away from the hill toward the sea (Runoff); the title The Hydrologic Cycle sits above a dark green land strip." src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA1YAAAHgCAMAAACRjgwYAAABIFBMVEX////8///7+/v5+fr5+fnw/f3x9/jnvFjg///Y///X+vvb3uCT/v5f/f6v7e89/f4g/v4L//8F8/M005kF3NsSxrUB//8A//8A+vsB7e4B3N4Cys69rYmni+mOjJpEmKUJn6sGjKEHhKgRgXkDsrYEpakEmaACissChdEChM8Cf8kDfcQBseIAo/8AnPQBk+cBjuABjd6BcpZiaW8pYCogcVtcVmtrTCpSRCszTDs7OTgDesADdLcIeIkEa6kGcXcIbG8IZWkHXmcMV1cLTlIHRVUOQUAIOUcQNjM1MDAiMyIXLycIMUArKzQaKxoJKzMiKCUZKhoZKRkIKUQJKjMOJzMLJy4cHSANFxwJICwJGSQPERkKEBsLDBYKDBcKChVnmMM0AAAqeElEQVR42u3dC1va2NoGYDpW6ogoUIaQxGFffCbZPWz37qi1rdMYINB0LBZnahHCIf//X3zvSjgqhwQWyuF5rr0diLjaam7flTdhJeQgCMI5IXwLEASsEIRzGnc3NzeNBlghCI+0/vrw4UUvhx8+3oEVgsxVpD4evniYDzdghSAz5ubDi3H50AArBOGKigcssEI2cPo3GRXLR7BCkCD5+MJHTu/ACkE4liovf4EVgvjL3Qvf+QBWCOKrV/EiQD60wApB+Kqa3RVYIZgBcp8HghUCVdxdgRWyMWkdBmc12wkssEI2Jh9ezJI7sEKQsflrJlUvDsEKQcZOAV/MmI9ghSBcp4AsDbBCkJFpzKxqhm4gWCEoVtzLFVghKFbcyxVYIQ7eDDItLbBCkIc5nIvVX2CFIA6Hy5bmmQWCFYKGBfdZIFghYDU9N2CFIPczp6qgs0CwQhy8exGsEMR53PY6C1ghCOdDq6A9C7BCwIr7u67ACgEr7q1AsEI2IKdzs/oLrBDE4XjpUvD3MoIVAlZghSBPcWyFSSCCoGWBIGiwI8gGsnLACkEcHksEghWCOIt6FyMutUUQh/8bQz6CFYLwPri6AysEcTi/M8QBKwRxeC4TiCViEGQBs8AbsEIQh3OL3QErBHH49gI/ghWC8G5atMAKQRyed42b5b5xYIXg6Ir7XU7BCnHQDOTaBgQrxMGFgdzvxQhWPlOvtp12bfynbR9jNMv4Pq7iNLAFVgtJU08qWVWWC+NQaWnLxzAFoYLv5epNA+8csFqIKlliHspibtwrLGEKK/fTNbONb+bTpvVh4TeMAyuf0Tpo8sa4V5SnsLJkfBdX1NVHB6wWc1iV7qBoFulDRdfdolPONXNZ92CprBsFgT2ydP22v72WM/Jlp10w9LIlSjna1CzcstdXc3qhyUYy2vksDrceOY3Dx1AFVj4OidT+E1O2a4psO1ZSzBqySDxKst3UGKucXtcTeZm2K2y7YjlGztE0x0pUFLliO1VNKNEIRbneVOU6VTD3lTV8g5e4Xv3lgNWCYgjZ3mNbNOlDWnMcPdGkQ6qy05RKjvugnmw7zYSip73tjlhwmqajGE5NKKqyN1Wkl9YkanzUEiRVT9emzh6RJ3V144DVopIbYGW6zTwlSShE75CqJNjsQdkpSDolpydoesf8qOms23UvGUJhgFXJhaTQVxtpmhAKRXyDnSXts39oOGC1sJQFeYAYOxjSxD6rXJeVLrmv6LFqZtOi5VSUYnOIVcFllU23werpcvdhgYdVYOUvcrrTWGjT9I6du9LkPiuTWXGrVadt0WVVdsrJZFPKOcOsygJr02eTqFbLXbDmKVVg5ScVMVl3S1XBaScVepAsdFmVnJooN50iPbBFueJY2f4kkLoTUlkwGEUt6dgdVm1ZpkainGPHVmD1hEdYE98n8uFmzuHByocrRdQMXaVuhXMrZ8t6lv1XMGtZIVtzSqKkaAmt6hQSgqiU2XadbRd1Sys0ZUE2k5IuKEWnnhU04lmXtbKutZ2qIhSauqDZ+P4+FaxxU8EPd3MPDlZ+UjXNsneJRNsy2dmnpm3b7v/ZpX71ptsmt0uVge3NukVi2uWmY9cd6q87nZezESrDIyBPlMYIWR/+4jEyWCEbnZuPHz54p4gPP3z42OA0KlghCPeAFYKAFYKAFYKAFYIgYIUgYIUgYIUgCFghCFghCFghCAJWCAJWCAJWCIKAFYKA1ROnVraKxQKlWLRuF/Buw1qlP34F72YEqzWPXTI0JZkQhpKg2xvkLS57v23lRo+fs7AaJ1itY27zqkQ7efwgGt3b29/fdbO/v7cXPTiIC0IqqZlzrT5RpfViRo8f7YxfqOOnAFZrlHZJE2mPj+7t726NzO7eHtv3k/psS6e3razERI0ff98bP4u1bsFqTcJMEakxe3wv4d29gxTt+YHvVWWx8Q+mjr/lji/ipgdgtQaHU0aSmQpv+coO2/NlM8CBVjMnBxh/mxUtuYA2BlitcurZhHDgd5/vyooJouFzx7f1hBALNv42G19HBwOsVrZSZROp6O5W4Owf+INFqFLR/cWNj4DV8vUpjNlQdXd8c9r4udnH36XxC9hHwWrlYsnCwYw7vQsrJijVSeOX5xz/QFBwI2+wWq00s6nY/tY8Ce/FE7nxpUpPx/fmGn9rL57WcStvsFqh3MqpaHhrztBMTR3TWqjLQnRn3vF3ooKC+x+A1crETMT3tzhkL5UceZapJM5bqroFS8T5YbBakRipeY56ho+wEiPuU1VIxziNvxtLm9hVwWoVogsH4S1O2Rmx35NafuMfpNERBKsVSFaIbvHLw/2ep1rqjBykcthZwWrpZ4BcVbH9Pl0aHD+f4j1+CvNAsFr2bgXnvZ72+1hioG9RSvOsVR236FuA1VKnzH2vZ30FqdcHryRi3MffiYl4JxZYLXGaydjOFvfsptTO+G05vruA8eMK9lewWuJ2RWp/awHZEwrddsXeYsZH2wKsljYW9wMr9k4OSizBVnwpGOkDehLm/2ccJDANBKtljRIPc6O04+ZXL/spb7mXeOf5r+4nGThe00wNeyxYLWdKc0/RPE59OdudPIvGadGXvVS0u2HAnPeyOf/gaPoWuyxYLWXkObp04a4nz9KzZ6Gh/Mqml9H49vDWZ8/6DtnXzdENjKNcgdVSppLam1lUF8Y9Tf1EY7TrR8d8kvHqjDGrrWgCbxcGq2WMnpqh+e1xmATKy56wvyf8Ovk1DJfHc4aLegVcGwhWyxjpYBZShGCKKI9MnJbpDPl5YXfUgH+ZGM5dgdUSphqsYbHtn1RnFpja8/vaDq3tYLNAvFUYrJYvBWHXf8PP3et9k/JmgcJ+kNc/2w4ma0/AupxgtXzJ+j1pNYMp1gsUUtsBvySQrF1caQFWSxgltjhTzIgQC83wVf5lxbPYacFq6SIf+EM1iymWVGy2r/MLK6ZipwWrpUsy6gPVznZo1sQPZv3KZ+4fjFYgWK1gxCmstqloPAuFnoCVV7KmwToAK7BatWo1L6o5WVHJmgYL1QqsVuzYihWL+VDNfmzlF1YMVwWC1Sp1AsNzHVN1p3FCPDT3GPQXQScQrJyVuiQwPG7+Nz+qUGhXEHbmHuQZzUW3x523wkWBYLV8KQqj33DPYf7nXmWRCnaVxYSZ4JirLPCOK7BavtgjrwmkeReHUuVeEzj2fSEBZ4Kjj7CiCeyzYLUiPYttPqWKMNAV7DE+Q1HBeugqHMfZYLBylnI9290RE8AQn+wJu/S/0MJc7QtF7LNgtYyzwHT0gaptTqpCBzEqKNHQwlwdiHhfCFgtZdT4zqJU7bIDt2icV+0L3Xe1m9Kxy4KVs5yLWUSHj6u4qaJiFd6asJjF3K4OErgvI1gtbbnaXYyqfa/LGE39uhhX+wKKFVgta24TA81Abt0KagPGvKXSduIHz0Lcjq92Bm5KItawx4LVsibXP3e1s8NNQCjaXdOJqha3QZ/1zwtHUyXssGC1tGkr3WkgzyngXh8rz2ngdncauI+losFqqVMXO3fi2eE3BdyNHwxM1+IcD692OvfhSWLpTbBa6pQT7n3jOBarnfjgGtS7sdg233JFd42rYncFq+VO0b0PPb9itROL7Q7f4+1gm+fR1c7QPVQRsFrOFFIHO1vcitWvsfv3X9yPx3a4Ndmp+iXQrgCrFYiZju3+yqkN+Gs89uBCQ3L1K69ZIKnC/bjBaiVSSsQ59cH3Rqhi88D4Pp9Z4F5cxAwQrFYklUQqyqFcbUeFg5HvON45EHiM/ywq4B73YLU6ScaEg7knavuxsTfMCkdT84+/G0thtSWwCpxmkWJVR5+UKZQmPZ263ZmyZuBePL43V0HZiQqxCfdKIHPR7flKYSq2j7UBwSpw2mVJ0A1FGrlmv6xOejp1+9Q1A3dot50d1jZjOfFWCeG5xqejqlQ0jLUBwWqWqAKVKn3kmkK19oin5YHa5D2utWd+//3+gTDjjr+9R5PIqbf12Z15/Gfd8XHHYLCalVVZ8Ps72U6aA4/nWOBLi3dmarTjB56q7fhCtdWFuz0TWneVqB3BwI4KVrOxsgTN0opZue5YmqpWnaquK/m6QatNtouqmU0q1GOuG/R7u6kICvv1XdANteI9drc77Es0g+pWUSvkZbnq/xZyewdCPBqkufBsP5pKHez7vuVv4PF3o/He+HsCTlqB1Wysmkq6ZAhKQa1XlHZbSdbJV0EoyDI5KgiKVUrSm43K7Cndp5Stk2IJtqMpVYFVLm+7LZWdWlJpO1ZaNivS9JlTvd/Do91YiEV3/e7zMfbiIDcn7Yz/zPf48f74USxgAVYzsVIVWSMT7q0GVa1Q0ASFlSnDVpmXmpBnjOiD2mdV1ZpONumx8rZnk/Qhzz4p0rtoNdkJtHJ0eO8gRXv+3s6UC/T2CEg8uh/eChgan8nam1K0aHxmaqARsoNDK7CaeRLIeoJu10IyLIrsNQb7rNoJfYiV0zZ1ZYiVrLjLa+r+WZnDa3FuMzJs198fdVUTE3Xgfj64qa4sIsPG3xszfvfzQ+PvpXCJBVjNzUp0D9Cl7D1WjpgbYlVT8o6e7BDzWLmQ0gFYtZOx+0J2addOCUI8dhCl3b+bKK2q6W6N7u1uzZXx45PY1Ijxd+Jor4PV/KxkmQ4larJIiwzVrT6rerrSY8UqVFZyXFb9aqWxdYnsIJNAWpF91BUS4d3uft4NU7A3r6gp45OoUVUwmkaxAqtZogjeNW9N99jKFJRiUS0Icj6vthWPFWPCjjDcp820Xq8SolJZESvuY4/VLdOUZ48SVOrUpK8/Oj7BSji8s0vZCW8tJn7Gx2pLYDVTmoYsa6yFbOuywk7uGpKo3DpFWdJs6gQWGCtVU6lD4XhPqVDpbaciJ41yMpuVsu3u9oqi6RpVLENWypYiF/29/X5RaLgEb7UHq0XFO7byRTRwK7qUPlhiV+FYAjfeAaunZjVDcqno8qo6SONNwWC1oFgLPb7QhWV1tX2Qwr0XwWpBsfO5XHGxrpZyHrgbS5vYQ8FqVWOw5WKWUBWWhQGrVU4xEd9fNlW0gAWusAWrlU45uWQTwXBUkLGABViteJrZiW+ef+zsx9IGLlsHqzWYCIqp6JIcYdFKAElMAMFqLWJrqfjeUsz/4mkdl1aA1docYclC7MlbF3uxlIqbGIDVOsWUaNmJp6xUtICFjPkfWK1Z2oUkwQo/ISoTrQqwWkNYphx0oQpOp3/prckKTgCD1bqmqNCySo9bsmilCyGtYvoHVuucqi4Nrn20aFP7VKiSho3vO1it+1ywpKVnWmFpJlMJDbM/sNqM2AUlwdYWW+BJ4h22yllCNXGaCqw2KM2iJj5cYowXqSitTChqMAVWGzgbtHQ5LaQOonscD7W8Zc0SilFGOx2sNrZolRgtIX4Q3d/hIIot4plQdAukwGrjaZXzWsfWmBX9pq8O6IlKJ1WjhJkfWCFdW5ahyXS0RevPMl37uzs+NO17q9ayr5KUbM6CKLBCHqZmFXRVltLdBWlJWG/h5/2BBaDJUmfp2nRSVvVCGaDAahOjTzt9ZAwuhVQvmzldo7udJMVEd9lnUew+SohJWVE1PVcsD57oLUxbTKmA1ZbAar3y3z+nveDtuM/Ytn1bqZT/+6pcqVTpybjXvXs95Y/44xV+DmAFVkP535spLwArsAIrsELACqwQsAIrsAIrsAIrBKzACgErsAIrsAIrsELACqwQsAIrBKzACqwQsAIrBKzACgErsAIrsELACgErsELACqzACqzACqwQsAIrBKzACqzACqzACgErsELACqzACqzACqwQsAIrBKzACgErsAIrBKzACgErsELACqzACqwQsELACqwQsAIrsAIrsAIrBKzACgErsAIrsAIrsELACqwQsAKr9WTV/tJ7WPvae/jNBiuwAquZ8+Vlrfvw/VFv69F7sAIrsJo5Ry+7gmovX3Yr17eXL+tgBVZgNXOxetktV+9fvjzqWXv5HqzACqxmLlZdQVSsuuXqG3tYByuwAquZi1WnXL1nj4561jaiXIEVWC2qWHmC3GLllatv3sM6WIEVWM1crNxy9d57dNSztgnlCqzAamHFignqFCtWrr51H9bBCqzAauZiReXqfffRUc/aBpQrsAKrxRUrEtR79NLsP6yDFViB1czFakzegxVYgVXA1KqU4kv28es3+vD+yH3IPhy9Zx9RrcAKrGYsWb2H71/imkCwAiuwAiuwAiuwAiuwAiuwAiuwAiuwAiuwWkZWpZ88WZV+8GFlWXz+jT9KPL9jP0tgBVZ+WLX/uOTJ6vVnPqzevuHzb/z8qs3xO3b5RxuswMoHq9Lx8U9+rGi0HzxYWcfHXMrVj+NjjuXq59jRwAoZZNX+4/j4kh+r18fHn3mwent8zKVcfT4+5liuLo+Px5QrsEIGWVF5GV+uArNyR/sxPyuLjWNxKVYcy9XP8aOBFTLAihWr8eUqMKvXbLTP87N6y8Z5w6VYcSxXl2y00eUKrJABVm55GVuugrLqjPZjXlaWN47FpVhxK1c/J4wGVkiflVesxparoKxee6N9npfVW2+cN1yKFbdydemNNrJcgRXSZ9UpL+PKVUBWvdF+zMfK6o5jcSlWnMrVz0mjgRXSZ/VHd1e55MHqdXe0z/Oxetsd5w2XYsWpXF12RxtVrsAK6al5dXw8sVwFY1Xqj/ZjHlZWfxyLS7HiUq5+ThwNrJCemv/2d5XL+Vm97o/2eR5Wb/vjvOFSrLiUq8v+aCPKFVghPTXHx5PLVSBWpcHRfszOyhocx+JSrDiUq5+TRwMrpJP24J4yslwFYvV6cLTPs7N6OzjOGy7FikO5uhwc7WG5AitkVHkZWa6CsLo32o9ZWVnD41hcitXc5ernlNHACukUqz+Op5WrIKxeD4/2eVZWb4fHecOlWM1dri6HR3tQrsAKGVleRpWrAKwejPZjNlbW/XEsLsVqznL1c9poYIWMLFajylUAVq/vj/Z5NlZv74/zhkuxmrNcXd4f7X65AitkdHkZUa78sxox2o9ZWFkPx7G4FKu5ytXPqaOBFTK6WI0oV/5ZvX442udZWL19OM4bLsVqrnJ1+XC0e+UKrJAx5eVhufLNauRoP4KzskaNY3EpVnOUq5/TRwMrZHiJmHdc17J4xWsti7cOp7UseH7HLt85eNM9WIEVWIEVWIEVWIEVWIEVWIEVWIEVWIEVWIEVWIEVAlZgBVZgBVZgNTqnmV7OL04ijVGvOWefPXWcT53/DuXm9PD+puvTw8zIP+w6cjpy+0XmMHJ48in6rwesaPRDsAKrVWN1GDk5Pw89Pz8/iRxeREKN0bt9KHTustgKPXBxffJg2/V5aDSri61R2xuZXzIXjeuTcGgEq/MQWIHVyrGKXNN+HXrO9vlDJzOGlfM8dOe9OnQxwtwDandjWDm1UaoinQEufnnIymn9AlZgtXKs2P7vsaKHY1mFg7FqjGM1Kie9erQ3gpWzBVZgtZItiw4rh7G6Pj1lghrnp+etMawuzs/Pb5y78/Nrp3WeOf1ErFrnd9cn9PTi9PRigFXnqdP6dHJ67c7pPrnbP52c9Hg2wqFPnYfHv9PI1+8u2cjORec1Hiv292mA1QJZWdlObD9/cFlpPthSA6txrE4jh+HInXN9eHoaidyNZnUdCdEu3jqN3N1FMjd0QEavDZ1HQof09Po8cljrsOo9dQ4zNyehSOQ084wZuTs8uT4NnXT7IaGtRq8Y0ViNd5c0coNec+6+xmV1c3h6Holcg5VfVrUvvYfVr72HX6vjh8qpFVtSbUsu+/mDb7Xh93fZTlVrgtVYVtQbJDSRC7a/ZwZYZU5Ywu4k0PtM5txxu3Sn9EWZUKZ1fhE57HzSY3UYcZ8e0v+p+kTCLTrmYq9w24SRSGfo01Ck32D/RF/47vKEBnRfE+6yipyzyWYErPyyCh6DqpSkOo5ZnuGL6yomgZNY3bHd9+Q8TIQy/f2dWJ2csnisWpEwVatI68LtD7JjqxN3cuhWl1bk2bXLyntKBe7aHTZDtlqM1YU7xvVF79Cq98foJZJ09+4y0rjuv4axunjGTIee64Vp+0ZhCqvCtBHGvWDtWbFIrg7brOq20y7kczXntlAzDFaYmoV8oelU6VMGm+w1Tds263rdfZldTyZzVZMqVt5wUVbZVzXB6h6rTOTCzbiWBStQnzL0n4tBVp1Oe4aqHWPVf5ph/E4YRcbqNHQ3+Iefh8KtwWcn7/7FRr4ZbFmchL2/TyP4v+0eq5mzuqxatWCsyslkNll0NN3R1aos6TnRoK1qua3aFXpqSHLbsXWhJCezsulks46u2Kpc1oVKSbGrEr24roh6TtLB6j6r562JncBGJNLKXNPLP41gRf8ZZEX/uYlEai12JthllRnuJl6HBp+3IpF3v1944/VZZYYlglUQVldnrWDVSk+y8qSbTkFyDMlxNIWeJg2nbDu6TL0Ngd7fXxFudanzMlNysopzK1Qkk6p9ukLHaWKbbQKre6y8vfrmelyD/SR07tadk0FWnYMx+mKXVecp+9R1JOO2BDvVyp0c3nSlHA51409D0f0WfXS33d15rE69s9G1C7AKzKp2dvY9ICvZa3XkNY+VzoDk08pt51NijloWwq3hvaye10RmqCoUBZoBNoU8Y9UbZYNZ3d1nRd2BO3b1Q2Pc6eC7cPiUXXTBLnb61GVFGxtup6Llsuo/vesO5LK6/iXMXpzp/g69Dv9y3pkBnrJCuP07G9l7TcNjdf3cPWuduQOrwKyuzs7OGjOwyqnNwgArx5JFq8PKHGCVV5tmjxVbpiZRACune23SdadwdIrOYSiSyUQu7k/U7p6HOgIyz+9choefPtFrvaMn55xdm3RBIK7djt/58wxDQ1O654eZzAk15W/c9gT1Hg4HBncuIs9PaLTrjKvv5Nn/Db7mzv2STChMf59zTAIDs/qHVJ1dBWfVTBSdQVY5p6lk3U9VRbvPqk3GCh1WFSlL/Y707Uayqlc66XVqTg8jEfdyWXqQub7IRA4/NTK0qTcFPO+84JxtPelscqsPndzKXBye0xceuk3BCPm5cNgQp7XeU4eOrcKhUChC2yPsZPP54OBM60kkTJs8aBf77lUWnde4Q905rZPe58EqCKvWmRt/XQs7LbMXZiXaNZqirGfThk5HSWqSNsq3jlZ0dNGylRyrXYKVFZuMlfsyQyzkBasolh2ddSr0RNPRpPYmsSqrgkzn0tXELOcn8kLnhGLmU4CvOmVmG9f+XJz865LnP3fDWX33WPkqV/UcpelYuVyBRJQNq5kr5XLFci5HKyMWc3mLlSBTt7yX6kaOOu5OxbDauXLTKORyebti5EreZ82K+1UbNAksCW7rUw/4r3bP57Qr3pObSICv/PSL98vyxM+h0V3k3Vqz+v33B79HTqZvmZVV46yTf/j87Z9wZrcirGw70Ffl+99QuiAp0GEOHaxd3N1cZE6nH+RFIpFzsOLH6qrLyn+TfWKyYDWZlWVZqlJy7Gy2SSf3jKxp5/Wyqrg1ydSzdP6czqTrFSXvfbaQFjWq7+UsTR0/hcMZXafZoF3QbE0xp08CI7/8QkdtPnon4ecZB6y4sar1VJ1943IAoam5JliNYaVZVolI6WkqWFmaC8q6Y6WLSdEoqgK5MlQ6mSfeOqWkpKu6o+hOOV1XWDuoqgts6mgobTp4rTgVOpte0tI+jocbPlu87HVgxY3V2UAazsbkiVgpuq5LVKnShtNmLVVq8dSFkkoFvi3LTjVNZamWoE94zRzNdGyhpHgnLxirOvVeqVOksI5P2ykLnA9NwYoXq78HWV2B1SNMAotkhzqnRXfWZxu6UGSsqEo5BYHOPDgKnbDIJt0vsHP0WY+Va8hkZ9MdlZ2bSLDLWEpgtZSsWmdDqYHV4lm1m27tcd8kYyr1eoeVLlETnamhK1I6rIpy3R5iVXDrUxaslpzV1TCrM7B6hE6gk207Mp04p0ldmk0CPVaqStjY+T5V6bCqp9kkcJBVWTCYOxmslppV456qs7/BaoEpetXKUFjdKbsHTHozJ5gqnVyvUiPCUejK/6ZkdViV6bN5oUDHWZXO1cuOkmw6bTo4c1mVwWo5Wd0vVrya7GA1UpUiSooiS+xdNE33GrC2mpbLclKRNE0usmMpVcmrdMxlyiK9ZdT7rGQk6N3YZVVU6cCrpil5jS5ULrMXaKJqg9Xysao9ULUxXYsnv9R28LItmgR2z0nYt82JLx35ArBaKlZnI9IAq0ePuiRn0MGKB6u/R7G6AqtHj/J0lxxvMqvWyUmDP6vW2cjUwOqxj7myWcMGq0dm1bq7Ojm5+rvFm9XVaFZnYLWp2SBWrdrVFWN1dXXX4sqqNkbVZjTZwWqjWTFUHVZDsOZnNa5YbUaTHaw2mFXj+9Ugq6urGjdW/4xVtRFdC7DaWFaNvzuY+qyuvjc4sTqbkBpYgdWasqJOxdVDVldXfzd4sPo+idUVWIHVWrIaRDXM6urqn9bcrFpnE/MPWIHVGrKqXV2NZ8V6F3OyuprMav27FmC1gay+X01mxbbMw6o2RZX/RW7BCqxWg1Xj99+vfLCqzcFqWrFa/0sDwWqzWDX+ufLHqtcUDM7qn6mq1r5rAVabxMrtVPhkdXX/gia/rFpnPlIDK7BaD1Ytr1Phm9W9C5r8svruh9UZWIHVWrDqtv8CsPIB6wGrhi9Va95kB6sNYdXotf8CsRq4oMknqyt/rNa7yQ5WG8Gqf6FSYFZTehf3WdV8qlrvrgVYbQCr4WsqgrLqXtDkj9WZ7zTACqxWl9UwqllYeRc0+WL1t39WV2AFVivLqnafzCysxvcuhlm1zgKkBlZgtZqsGvcvVJqV1bjexTCrb0FYnYEVWK0iq/uoLj5Rfv+dfbwY2HJyMnFLr3dRm8YqULFa53IFVuvLii5Uuhci1c25/y0Tm4LTbht386GTj5u0B4HVurK636nwJnc9MkG2DDYFW2AFVhvLqlW7GpVPDwqRny2TehdgBVYbw2o0qoFSFGzLBFhgBVYbwmpE++9eKToPtmVCUxCswGojWA1eqDSuXAXdMr53AVZgtQGsRnYq7per86BbRvQuGmAFVhvCahqqTikKvmVEvAuawAqs1p1V7Wp6Pj0oRH62jO1dgBVYrTerCZ2KKRcv+dgyrncBVmC1zqx8orq6evvuQQE7n75lXO8CrMDqMVh5zeemPYJVc3GsHl6oNDZ/vrrimP971wCr1WHVtO3bipe6bdvLyapZkGWjPrChrRe0ZN1p5sT8Q1bNhLkgVj46FQtj9b/JKzSB1dPGLhfzhq6pipwUxbRwPwlRkmVF0XTDtCq1palWijT0NK/T/5kzYmUNs6KnRXshrFq1QBC4s5q4kAxYPU1VqphGVpWlDiTCQ3a0rK7ruVyBks+x6HqWgZMlsYNMklW9YNWXjZXSLVJSvi4NsapLizq2qgWEsABWE2CB1SOnWjSyisspTUiyRsGq2NNvyd2sWmaeiprsAksnlWzeaj4tq6apVjW5RM8MUdWzaoGxysnprKFVlJzz6j85vdCUhWxBN50y/YKgmtU21Yr3JfOy8t2pWCyrsSs0gdXjVahyPuuySMhMRX3WUajOKck0Y6nohXL7yVjlBf1WS7pFikhJhlutzLStC7pRcP4jOrdpu5h2yqJhyU1Hl2ynXRD0Slaam9XkC5UeldWYFZrA6jHSLhuqzCTImlGqtrkYLeguroSSNetPMgksC7cOsemwkrusHEtgf58//k0vKLPPS4aSpb+wSAdgt0LZKQnN+VgF6lQsnNXoFZqmsaqD1bxNiaKuJOjwScnyLC1dXDmNcRUVff454SysSsJ9VgnaznoUr/5tFLusRPY5RfVYWUJtHlazoVokq1ErNE1hZaW1OljNTqrA9nqqUYXbBU4uLUOVWNmakxZfVv+R2rUuq6TGvkbjwao2K4RFsnrYu5jCqigKCb0JVrPs7SWdSNHOXnyM00+2qSU9Wu0nZVVMNz1WokyILJrxtSVDl2gXkkrzswreqXgkVvd7F9MmgTU9IUi5NlgFS8WgiV9a1q3H/JVEtZFoiWrBXvDpYFNM5+22IeRqWaFIU5qEalsJpd4uptVyQlFpO1UrQclJCm3WE2pdVW91OrSiLzFqumDOyGoOVItnNbxC0/SWhZ1NC0kTrPz3J6ws7d2SZtpP8C+r51VRSCtGZZGs2EUgtTb7UKnQ7LZaqdjs/2yLXS+z7ezYynbq9D/2WtupFNmxRP9LZmAV4EKlJ2E11BT00wmsKIKgWGDla5crahKVKeP26f5xzZLLWi+v06W2s3YqHpPVwApN/hrslkywbsFq6uyISkVCydtP/g+8NRSaYwSTtcSsWrW5ITwKq17v4u6vTm4m/+tMSUhkbbCaNPfTRDqwMZelwWMbcjBZy8uqxgHCI7HydS/Hwd/EOdpp1qUpyJ9VWae53/KY6hxoGTTLkA17tVnN1al4fFZTbzn3oCmYFqRCG6xGFQZqE+SXsZgzWWm12F5dVm/4QHhEVlNuOfcgVS0tBLxScgNYWVpCGH7/0XKFTU4l/XYlWbXu/v3v1WM1+ZZzo+Y6rClYAauhQpXQlrxN2ixQA0Mx26vGirX/VpPVpFvOjUyRJhUrf0ETL1Zlt1CtQienSsd+0uS/6dKxcjsVq8oqaO+iXZBW/oImPqxKCh1RFVfl39w26a+rlleGVadTsbqsgvcuEoK40hc0cWDVzCWpM7papxwsdcxcUK8tG6te+2+VWY2+5dyEI4oVv6Bpbla2LgpyfvVKtk1zQflBN7eaKCwXq4ELlVaaVeCm4Gpf0DQnqzodUq3O7O9elc0n6drp4V8IiqAsE6uhC5VWnNXV5BWa/FzQZDY3ghWdZph4jLL8B1myIBoD05MSvaOktjSs7l2otPKsgvYu2AVN6YELmuoJfQNYMVTaql8eSe1cUe/CatOFuUJhWVjdv1BpDVjNd0GTJqStdWd1uw6o3LmGQhXL+8kZbDEnZTlYPbxQaS1YzXFBU4XWVEjW1ppVnaGqOusRmsS7x1i2u0YazQKfntWoFZXWhNXMFzQp7KejrTErOq+wPqg6U8Fkoa15S3sWnpzV6LdUrQurGS9osryfTnFdWbVpwquUnfWKmRSUzsK6yhOzGvc+xfVhFfyCpiS9Ibaz7LG9nqxoB1yLi4wfXDIjd1d7rz0pq7FvqVonVoEvaMop3cX41XVkVZbX5S0x91Po3UWh8ISsJrylar1YBexdNKX+j2ftWNlauts1W7cM/NyUJ2M18X2K68Yq0AVNRv/eMWJ1ZVg1/vGTPB1Uff1nPaP1f27p/13yHPnVn3zGefOGzzh/vuL5r7t89xg/nW/iwD2Zfvt7eXejxjCr79ND7TLZ/L6m+TJ4R63/XPIc+tWffMZ584bPOH++4vmvu3w39xDf3Ex8iTZ0r7Oj5d2PgrL6RvO/o+9rG2XwxyaC1WOy+kJXYmq/JSf8yv46fBvBxJd1YfWezf/WV5XZ/5HJ2lHxG8+xv31bz3H4jZYTilSQ0uOxqPduzSmvB6uvipAsfl/jJN0iRaK+fEcePS6rvJCfpNcUzKL5/kg4OjrSNNVcB1Y5Ma2t9c/1SPxNy3/F/v2UrKhafUlq3/PSEZsWKkdJif1AvmpHqkoF0VQF7ajzcZkzzOrnJpcq+l2IXftpWR0dKUkqVr/Rb2+ZuVGTX78n2QOZbf2NHhSFb72PS5yfflkdiekj/OSRxbKSRVabeqw0kqSo7Jj3G5seflk3Vt8UQcbxBrLoSeA3KfltBKscY/RFMNeMlbnuR1XIkhxbmWllBKsiO+r6InxdL1ba2h9VIUuQI1aOqMn3XZG/f5HY73FN9lh9l+nDkfK9Mx3sfFxtVl/ozRI4mEcWHVORFPrtrUpHxWTySNW+fP8iy6Yps6OPr4p2pLGJoCax7e7H1WZ1lBbz+JkjCEdW1Kv4DWdyEIQnqy9J9CoQhC+rfEI08T1CEJ6sNEHGBBBBeLL6KgsqvkEIwpOVKSZy+P4gCE9WR+kkrlZCEK6scFiFIJxZ0dkqHFYhCFdWX2W8CQRB+LKiZgXOViEIV1bvExKaFQjClVUujWYFgvBldSTIeBcIgnBlpeG9VQjCmZWKxjqCcGalCmisIwhnVhauAkSQR1wnEEEQsEIQsEIQsEIQBKwQBKwQBKwQBAErBAErBAErBAErsEIQsEIQsEIQsEIQBKwQBKwQBKwQBAErBAErBAErBEHACkHACkHACkEQsEIQsEIQsEIQBKwQBKwQBKwQBKzACkHACkHACkHACkEQsEIQsEIQsEIQBKwQBKwQBKwQBAErBAErBAErBEHACkHACkHACkHACqwQBKwQBKwQBKwQBAErBAErBAErBEHACkHACkHACkEQsEIQsEIQsEIQBKwQBKwQBKwQBKzACkHACkHACkHACkEQsEIQsEIQsEIQBKwQBKwQBKwQBAErBAErBAErBEHACkHACkHACkEQsEIQsEIQsEIQsAIrBAErBAErBAErBEHACkHACkHACkEQsEIQsEKQtWP1/8LFoqNIY3weAAAAAElFTkSuQmCC"></div></div><!--@@END static:water-cycle-film@@--></div>
   </div>
 </div>
 
@@ -542,7 +589,7 @@ class WaterCycle(Scene):
     <div class="aihydro-cell-header">
       <span class="aihydro-cell-lang">python</span>
       <span class="aihydro-cell-desc">Dry-adiabatic and dew-point lapse rates · condensation level</span>
-      <button class="aihydro-run" type="button">▶ Run</button>
+      <button class="run-btn aihydro-run" type="button">▶ Run</button>
     </div>
     <pre class="aihydro-source">import math
 
@@ -564,7 +611,10 @@ print(f"Dry adiabatic lapse rate : {dry_adiabatic:.2f} K/km  ({dry_adiabatic/10:
 print(f"Dew-point lapse rate     : {dewpoint_lapse:.2f} K/km  ({dewpoint_lapse/10:.2f} K per 100 m)")
 print(f"Condensation level (T - Td = {T - Td:.0f} K): about {lcl_km*1000:.0f} m above the surface")
 print("Assumed surface state; the lapse rates are computed, not measured.")</pre>
-    <div class="aihydro-output" aria-live="polite"></div>
+    <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:dewpoint-lapse@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">Dry adiabatic lapse rate : 9.76 K/km  (0.98 K per 100 m)
+Dew-point lapse rate     : 1.75 K/km  (0.18 K per 100 m)
+Condensation level (T - Td = 5 K): about 625 m above the surface
+Assumed surface state; the lapse rates are computed, not measured.</pre></div><!--@@END static:dewpoint-lapse@@--></div>
   </div>
 </div>
 
@@ -584,7 +634,7 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     <div>
       <!-- bindParam slider -->
       <div class="param-block" id="bp-precip">
-        <label>Precipitation (P) <span id="pVal">3.0</span> mm day⁻¹</label>
+        <label for="precipSlider">Precipitation (P) <span id="pVal">3.0</span> mm day⁻¹</label>
         <input type="range" min="0" max="10" step="0.1" value="3.0" id="precipSlider">
       </div>
       <div class="param-block">
@@ -596,7 +646,7 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
       </div>
 
       <!-- Live balance display -->
-      <div style="background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:14px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:14px;margin-top:8px;" role="status" aria-live="polite">
+      <div style="background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:14px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:14px;margin-top:8px;" role="group" aria-label="Water balance readout (spoken summary follows the slider)">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
           <span style="color:var(--muted);">P</span>
           <span id="bP" style="color:#60a5fa;">3.0 mm/d</span>
@@ -621,7 +671,9 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     </div>
 
     <div class="sim-wrap" style="padding:12px;">
-      <canvas id="bathtubCanvas" width="480" height="280" aria-label="Catchment mass-balance simulator"></canvas>
+      <canvas id="bathtubCanvas" width="480" height="280" role="img" aria-label="Bucket diagram of the SYNTHETIC catchment: rain falls in, evapotranspiration leaves upward, runoff leaves at the side when storage passes 80 millimetres" aria-describedby="bathLive"></canvas>
+      <div class="bath-actions"><button type="button" class="run-btn" id="bathStep">Advance 10 days</button> <span class="bath-note" id="bathMotionNote"></span></div>
+      <div id="bathLive" class="hydro-sr-only" role="status" aria-live="polite"></div>
     </div>
   </div>
 </div>
@@ -639,7 +691,7 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
 
   <!-- Cycle SVG — the timeline target -->
   <div class="cycle-svg-wrap">
-    <svg id="cycleSvg" viewBox="0 0 820 440" role="img" aria-label="Interactive water cycle diagram">
+    <svg id="cycleSvg" viewBox="0 0 820 440" role="img" aria-label="Water cycle diagram: evaporation from the sea and transpiration from the tree rise to the cloud, condensation forms the cloud, precipitation falls on the hill, infiltration soaks into the ground and runoff flows from the hill to the sea. The stage slider below highlights one flux at a time.">
       <defs>
         <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#00A3FF" stop-opacity="0.7"/>
@@ -707,18 +759,18 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
         <line x1="200" y1="340" x2="345" y2="158" stroke="#00A3FF" stroke-width="2.5" marker-end="url(#ahB)" stroke-dasharray="6 4"/>
         <line x1="80"  y1="340" x2="285" y2="158" stroke="#00A3FF" stroke-width="2.5" marker-end="url(#ahB)" stroke-dasharray="6 4"/>
       </g>
-      <text id="label-evap" x="120" y="255" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#00A3FF" opacity="0.25">Evaporation</text>
+      <text id="label-evap" x="120" y="255" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#00A3FF" opacity="0.85">Evaporation</text>
 
       <!-- ── TRANSPIRATION arrows (tree → cloud) ── -->
       <g id="arrow-transp" opacity="0.25">
-        <line x1="545" y1="260" x2="455" y2="158" stroke="#34d399" stroke-width="2.5" marker-end="url(#ahG)" stroke-dasharray="5 4"/>
-        <line x1="555" y1="265" x2="465" y2="162" stroke="#34d399" stroke-width="2.0" marker-end="url(#ahG)" stroke-dasharray="5 4"/>
+        <line x1="545" y1="260" x2="455" y2="158" stroke="#34d399" stroke-width="3" marker-end="url(#ahG)" stroke-dasharray="1 6" stroke-linecap="round"/>
+        <line x1="555" y1="265" x2="465" y2="162" stroke="#34d399" stroke-width="3" marker-end="url(#ahG)" stroke-dasharray="1 6" stroke-linecap="round"/>
       </g>
-      <text id="label-transp" x="535" y="218" text-anchor="middle" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#34d399" opacity="0.25">Transpiration</text>
+      <text id="label-transp" x="535" y="218" text-anchor="middle" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#34d399" opacity="0.85">Transpiration</text>
 
       <!-- ── CONDENSATION glow on cloud ── -->
       <ellipse id="arrow-cond" cx="380" cy="112" rx="88" ry="48" fill="none" stroke="#ddddff" stroke-width="0" opacity="0.0"/>
-      <text id="label-cond" x="380" y="165" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#ddddff" opacity="0.25">Condensation</text>
+      <text id="label-cond" x="380" y="165" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#ddddff" opacity="0.85">Condensation</text>
 
       <!-- ── PRECIPITATION arrows (cloud → hill) ── -->
       <g id="arrow-precip" opacity="0.25">
@@ -728,22 +780,22 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
         <line x1="330" y1="157" x2="345" y2="252" stroke="#60a5fa" stroke-width="2.0" marker-end="url(#ah)"/>
         <line x1="425" y1="157" x2="455" y2="252" stroke="#60a5fa" stroke-width="2.0" marker-end="url(#ah)"/>
       </g>
-      <text id="label-precip" x="390" y="218" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#60a5fa" opacity="0.25">Precipitation</text>
+      <text id="label-precip" x="390" y="218" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#60a5fa" opacity="0.85">Precipitation</text>
 
       <!-- ── INFILTRATION arrows (surface → underground) ── -->
       <g id="arrow-infil" opacity="0.25">
-        <line x1="400" y1="295" x2="400" y2="338" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#ahV)"/>
-        <line x1="430" y1="300" x2="428" y2="338" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#ahV)"/>
-        <line x1="370" y1="300" x2="372" y2="338" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#ahV)"/>
+        <line x1="400" y1="295" x2="400" y2="338" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#ahV)" stroke-dasharray="10 3 2 3"/>
+        <line x1="430" y1="300" x2="428" y2="338" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#ahV)" stroke-dasharray="10 3 2 3"/>
+        <line x1="370" y1="300" x2="372" y2="338" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#ahV)" stroke-dasharray="10 3 2 3"/>
       </g>
-      <text id="label-infil" x="360" y="328" text-anchor="middle" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#a78bfa" opacity="0.25">Infiltration</text>
+      <text id="label-infil" x="360" y="328" text-anchor="middle" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#a78bfa" opacity="0.85">Infiltration</text>
 
       <!-- ── RUNOFF arrow (hill → sea) ── -->
       <path id="arrow-runoff" d="M 560,338 Q 650,380 720,370 L 720,370" stroke="#00FFFF" stroke-width="3" fill="none" marker-end="url(#ah)" opacity="0.25"/>
-      <text id="label-runoff" x="665" y="395" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#00FFFF" opacity="0.25">Runoff</text>
+      <text id="label-runoff" x="665" y="395" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#00FFFF" opacity="0.85">Runoff</text>
 
       <!-- Stage label -->
-      <text id="stageLabel" x="410" y="430" text-anchor="middle" font-family="Poppins,sans-serif" font-size="16" font-weight="600" fill="#94a3b8">◀ Drag the scrubber to step through each flux ▶</text>
+      <text id="stageLabel" aria-hidden="true" x="410" y="430" text-anchor="middle" font-family="Poppins,sans-serif" font-size="16" font-weight="600" fill="#94a3b8">◀ Drag the scrubber to step through each flux ▶</text>
     </svg>
   </div>
 
@@ -752,8 +804,9 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
   <!-- Always-available scrubber: works without the AI-Hydro bridge -->
   <div class="param-block" style="max-width:560px;margin:14px auto 0;">
     <label for="stageRange">Stage <span id="stageRangeVal">0 / 6</span></label>
-    <input type="range" id="stageRange" min="0" max="6" step="1" value="0" aria-label="Water-cycle stage, 0 to 6">
+    <input type="range" id="stageRange" min="0" max="6" step="1" value="0" aria-label="Water-cycle stage, 0 to 6" aria-describedby="stageSr">
   </div>
+  <p id="stageSr" role="status" aria-live="polite" style="text-align:center;font-size:14px;color:var(--muted);margin-top:8px;">Stage 0 of 6: nothing highlighted yet.</p>
 </div>
 
 <!-- ══════════════════════════════════════════════════════ -->
@@ -761,40 +814,8 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
 <!-- ══════════════════════════════════════════════════════ -->
 <div id="sec-quiz" class="wide card glow" data-aihydro-editable="prose">
   <h2>5 · Checkpoint</h2>
-  <p>Three quick questions — get all three right to mark this module complete and unlock the next two.</p>
-
-  <div class="aihydro-quiz" id="cycleQuiz">
-
-    <div class="aihydro-quiz-question" data-answer="0">
-      <p class="q-text">1 · Which two processes return water vapour to the atmosphere?</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="0"> Evaporation &amp; Transpiration</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="1"> Precipitation &amp; Runoff</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="2"> Infiltration &amp; Condensation</label>
-      <div class="aihydro-quiz-feedback" data-fb="1">Those move water <em>downward</em>, not into the atmosphere.</div>
-      <div class="aihydro-quiz-feedback" data-fb="2">Infiltration goes underground; condensation forms clouds — neither is an upward flux to the air.</div>
-    </div>
-
-    <div class="aihydro-quiz-question" data-answer="1">
-      <p class="q-text">2 · The water balance of a closed catchment is: P equals…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="0"> Runoff only (R)</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="1"> ET + R + ΔS</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="2"> ET only</label>
-      <div class="aihydro-quiz-feedback" data-fb="0">Runoff only ignores ET and changes in soil/groundwater storage. (ΔS averages to about zero only over many years.)</div>
-      <div class="aihydro-quiz-feedback" data-fb="2">ET only ignores runoff and storage — valid only if R = 0 and ΔS = 0, which never holds in practice.</div>
-    </div>
-
-    <div class="aihydro-quiz-question" data-answer="0">
-      <p class="q-text">3 · Condensation happens because rising moist air…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="0"> Cools as it ascends and reaches its dew point</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="1"> Warms when it meets sunlight above the clouds</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="2"> Mixes with dry, cold ocean air at altitude</label>
-      <div class="aihydro-quiz-feedback" data-fb="1">Sunlight warms surfaces, not air above the clouds. Condensation is driven by cooling, not heating.</div>
-      <div class="aihydro-quiz-feedback" data-fb="2">While cold air plays a role in some weather, the primary mechanism is the adiabatic cooling of a rising parcel.</div>
-    </div>
-
-    <button class="aihydro-quiz-submit" type="button" id="quizSubmit">Check answers</button>
-    <span id="quizScore" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--muted);margin-left:14px;"></span>
-  </div>
+  <p>Answer every item correctly to mark this module complete. Wrong answers can be changed and checked again; the numeric answers are computed from this page's own cell and bucket model.</p>
+  <div id="cycleQuiz"></div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════ -->
@@ -819,7 +840,7 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     </div>
     <div class="prov-item">
       <dt>Module ID</dt>
-      <dd><code>water-cycle-in-motion</code> · v0.2.0</dd>
+      <dd><code>water-cycle-in-motion</code> · v0.3.0</dd>
     </div>
     <div class="prov-item">
       <dt>Course</dt>
@@ -854,27 +875,444 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
 <!--  SCRIPTS                                               -->
 <!-- ══════════════════════════════════════════════════════ -->
 <script>
+/*@@BEGIN js:shared/ready.js@@*/
+/* Bridge readiness: ONE shared promise for the whole page.
+ *
+ * window.aihydro is injected by the AI-Hydro preview bridge, sometimes after the module's own
+ * scripts have run. Every call to whenReady() waits on the same promise, so at most one 50 ms
+ * poll exists per page no matter how many handlers call it (the old per-call setInterval leaked
+ * one timer per call when no bridge was present). The poll stops after about 10 s: outside the
+ * preview (a plain browser) the bridge never arrives and the callbacks never run, which is the
+ * intended standalone behaviour. Modules must render without the bridge.
+ *
+ * Single source of truth: shared/ready.js (inlined by scripts/build_modules.py).
+ */
+function aihydroReady() {
+  if (!window.__aihydroReadyPromise) {
+    window.__aihydroReadyPromise = new Promise(function (resolve) {
+      if (window.aihydro) { resolve(window.aihydro); return; }
+      var tries = 0;
+      var t = setInterval(function () {
+        if (window.aihydro) { clearInterval(t); resolve(window.aihydro); }
+        else if (++tries >= 200) { clearInterval(t); }
+      }, 50);
+    });
+  }
+  return window.__aihydroReadyPromise;
+}
+function whenReady(fn) {
+  aihydroReady().then(function () { fn(); });
+}
+/*@@END js:shared/ready.js@@*/
+/*@@BEGIN js:shared/a11y.js@@*/
+/* Accessibility helpers shared by every module (keyboard access, live announcements,
+ * reduced motion). Single source of truth: shared/a11y.js, inlined by scripts/build_modules.py.
+ * Pure logic (keyValue) is unit-tested under node; the DOM helpers use only the standard DOM.
+ */
+var HydroA11y = (function () {
+  'use strict';
+
+  /* True when the user asked the OS/browser for less motion. Widgets must still update;
+     they just must not animate or autoplay on their own. */
+  function reducedMotion() {
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) { return false; }
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* Round to the step grid anchored at min, trimming float noise. */
+  function snap(v, min, step) {
+    var n = Math.round((v - min) / step);
+    var out = min + n * step;
+    var decimals = (String(step).split('.')[1] || '').length;
+    return parseFloat(out.toFixed(Math.min(decimals + 2, 12)));
+  }
+
+  /* WAI-ARIA slider keys. Returns the new value, or null when the key is not handled. */
+  function keyValue(key, cur, o) {
+    var step = o.step || 1, page = o.page || step * 10, v;
+    switch (key) {
+      case 'ArrowRight': case 'ArrowUp':   v = cur + step; break;
+      case 'ArrowLeft':  case 'ArrowDown': v = cur - step; break;
+      case 'PageUp':   v = cur + page; break;
+      case 'PageDown': v = cur - page; break;
+      case 'Home': v = o.min; break;
+      case 'End':  v = o.max; break;
+      default: return null;
+    }
+    return clamp(snap(v, o.min, step), o.min, o.max);
+  }
+
+  /* One polite live region for short announcements (selected cell, new scenario, ...). */
+  function announce(msg) {
+    var el = document.getElementById('hydro-announcer');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'hydro-announcer';
+      el.className = 'hydro-sr-only';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(el);
+    }
+    el.textContent = '';
+    el.textContent = String(msg);
+  }
+
+  /* Make `el` a keyboard-operable slider.
+       o = { label, min, max, step, page, get(), set(v), text(v) }
+     get() returns the current value, set(v) applies a new one (the caller redraws), text(v)
+     is the human-readable value for screen readers. Call the returned sync() after the value
+     changes by other means (mouse drag, a paired <input type=range>). */
+  function slider(el, o) {
+    el.setAttribute('role', 'slider');
+    el.setAttribute('tabindex', '0');
+    if (o.label) el.setAttribute('aria-label', o.label);
+    el.setAttribute('aria-valuemin', String(o.min));
+    el.setAttribute('aria-valuemax', String(o.max));
+    function sync() {
+      var v = o.get();
+      el.setAttribute('aria-valuenow', String(v));
+      el.setAttribute('aria-valuetext', o.text ? o.text(v) : String(v));
+    }
+    el.addEventListener('keydown', function (ev) {
+      var nv = keyValue(ev.key, o.get(), o);
+      if (nv === null) return;
+      ev.preventDefault();
+      if (nv !== o.get()) o.set(nv);
+      sync();
+    });
+    sync();
+    return { sync: sync };
+  }
+
+  /* Make a non-button element (a card, a node) operable from the keyboard: role, tab stop, and
+     Enter/Space as well as click all call fn. */
+  function activatable(el, fn, role) {
+    if (!el.getAttribute('role')) el.setAttribute('role', role || 'button');
+    if (el.getAttribute('tabindex') === null) el.setAttribute('tabindex', '0');
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fn(ev); }
+    });
+  }
+
+  /* [data-scroll="section-id"] elements scroll to that section (replaces inline onclick). */
+  function wireScrollNav() {
+    var nodes = document.querySelectorAll('[data-scroll]');
+    for (var i = 0; i < nodes.length; i++) (function (node) {
+      activatable(node, function () {
+        var t = document.getElementById(node.getAttribute('data-scroll'));
+        if (!t) return;
+        t.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        t.setAttribute('tabindex', '-1');
+        try { t.focus({ preventScroll: true }); } catch (e) {}
+      });
+    })(nodes[i]);
+  }
+
+  /* Mark readouts as polite live regions so screen readers hear changed values. */
+  function live(ids) {
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+    });
+  }
+
+  return { reducedMotion: reducedMotion, keyValue: keyValue, snap: snap, announce: announce,
+           slider: slider, live: live, activatable: activatable, wireScrollNav: wireScrollNav };
+})();
+/*@@END js:shared/a11y.js@@*/
+/*@@BEGIN js:shared/quiz.js@@*/
+/* HydroQuiz: the one checkpoint engine used by every module.
+ *
+ * Behaviour (the contract the tests pin):
+ *  - nothing about the answer is in the DOM before the first attempt (no pre-marked option, no
+ *    explanation text); the specification lives in the module's script, not the markup;
+ *  - every item can be answered again and again; a wrong attempt gets feedback for THAT answer but
+ *    never names the right one; after two wrong attempts a "Show explanation" button appears;
+ *  - a correct attempt shows the explanation; revealing an answer does not count as correct;
+ *  - fully keyboard operable (native radio group or text field + a Check button; Enter checks a
+ *    numeric answer) and announced through role=status live regions;
+ *  - numeric items take their answer from a function over the lesson's own data or code, so the
+ *    expected value can never be typed in by hand and drift from the lesson;
+ *  - completion goes to the AI-Hydro host as `artifact/quizComplete` with an explicit target
+ *    origin (the embedding window's origin), never '*'. If that origin cannot be determined, or
+ *    the page is standalone, nothing is posted.
+ *
+ * Item specification:
+ *   (prompt may be a function, so numbers quoted in the question come from the lesson's data too)
+ *   { id, type:'choice', prompt, options:[text,...], correct:index|function,
+ *     feedback:[text|null,...],            // shown when that option is chosen and wrong
+ *     explain:text|function }              // shown when correct (and on "Show explanation")
+ *   { id, type:'numeric', prompt, answer:number|function, tol:{abs,rel}, unit, format:function,
+ *     hint:text|function, explain:text|function(answer) }
+ *
+ * Single source of truth: shared/quiz.js (inlined by scripts/build_modules.py).
+ */
+var HydroQuiz = (function () {
+  'use strict';
+
+  var instances = {};
+  var lastReport = null;
+
+  function resolve(v, arg) { return typeof v === 'function' ? v(arg) : v; }
+
+  /* "0.74", "0,74", "1 350", "1,350", "−3", "12 mm", "45%" -> number; anything else -> null */
+  function parseNumber(text) {
+    var s = String(text == null ? '' : text).replace(/−/g, '-').replace(/[  ]/g, ' ').trim();
+    var m = /^([+-]?[0-9][0-9 ,.]*(?:e[+-]?[0-9]+)?|[+-]?\.[0-9]+)\s*(?:%|[A-Za-z°µμ\/²³·^ -]*)$/i.exec(s);
+    if (!m) return null;
+    var n = m[1].replace(/ /g, '');
+    if (n.indexOf('.') >= 0 && n.indexOf(',') >= 0) n = n.replace(/,/g, '');
+    else if (/^[+-]?[0-9]{1,3}(,[0-9]{3})+$/.test(n)) n = n.replace(/,/g, '');
+    else n = n.replace(',', '.');
+    if (!/^[+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(n)) return null;
+    var v = parseFloat(n);
+    return isFinite(v) ? v : null;
+  }
+
+  function tolerance(item, ans) {
+    var t = item.tol || {};
+    var abs = typeof t.abs === 'number' ? t.abs : 0;
+    var rel = typeof t.rel === 'number' ? t.rel : (typeof t.abs === 'number' ? 0 : 0.02);
+    return Math.max(abs, rel * Math.abs(ans));
+  }
+
+  function gradeChoice(item, idx) {
+    if (idx === null || idx === undefined || idx < 0) return { status: 'empty' };
+    return { status: idx === resolve(item.correct) ? 'correct' : 'incorrect', choice: idx };
+  }
+
+  function gradeNumeric(item, text) {
+    var v = parseNumber(text);
+    if (v === null) return { status: 'invalid' };
+    var ans = resolve(item.answer);
+    var tol = tolerance(item, ans);
+    var ok = Math.abs(v - ans) <= tol;
+    return { status: ok ? 'correct' : 'incorrect', value: v, answer: ans, tol: tol, direction: v > ans ? 'high' : 'low' };
+  }
+
+  function fmt(item, v) {
+    if (item.format) return item.format(v);
+    var s = Math.abs(v) >= 1000 ? String(Math.round(v)) : String(parseFloat(v.toPrecision(4)));
+    return s + (item.unit ? ' ' + item.unit : '');
+  }
+
+  function feedbackText(item, res) {
+    if (res.status === 'correct') {
+      var ex = item.type === 'numeric' ? resolve(item.explain, res.answer) : resolve(item.explain);
+      return '✓ Correct. ' + (ex || '');
+    }
+    if (item.type === 'numeric') {
+      var hint = resolve(item.hint, res.answer);
+      return '✗ Not quite: your value is too ' + res.direction + '. ' + (hint || 'Recompute it from the numbers in the lesson and try again.');
+    }
+    var fb = item.feedback && item.feedback[res.choice];
+    return '✗ Not quite. ' + (fb || 'Re-read the section above and try again.');
+  }
+
+  function revealText(item) {
+    if (item.type === 'numeric') {
+      var a = resolve(item.answer);
+      return 'Answer: ' + fmt(item, a) + '. ' + (resolve(item.explain, a) || '');
+    }
+    var c = resolve(item.correct);
+    return 'Answer: ' + item.options[c] + '. ' + (resolve(item.explain) || '');
+  }
+
+  /* A numeric constant read from the text of a code cell (e.g. `C = 0.35`), so an answer is
+     computed from the very numbers the learner reads in the cell. */
+  function sourceConstant(cellId, name) {
+    var pre = document.querySelector('[data-aihydro-cell-id="' + cellId + '"] .aihydro-source');
+    var m = pre && new RegExp('^\\s*' + name + '\\s*=\\s*([-+0-9._eE]+)', 'm').exec(pre.textContent);
+    if (!m) throw new Error('constant ' + name + ' not found in cell ' + cellId);
+    return parseFloat(m[1].replace(/_/g, ''));
+  }
+
+  /* The window that embeds this page, as an origin string, or null (standalone / unknown). */
+  function parentOrigin(win) {
+    win = win || window;
+    try { if (!win.parent || win.parent === win) return null; } catch (e) { return null; }
+    var o = null;
+    try { var a = win.location && win.location.ancestorOrigins; if (a && a.length) o = a[0]; } catch (e) { o = null; }
+    if (!o || o === 'null') {
+      try { o = win.document.referrer ? new URL(win.document.referrer).origin : null; } catch (e) { o = null; }
+    }
+    return o && o !== 'null' ? o : null;
+  }
+
+  /* artifact/quizComplete exactly as the AI-Hydro bridge sends it, but to a named origin. */
+  function postComplete(quizId, passed, score, total, win) {
+    win = win || window;
+    var origin = parentOrigin(win);
+    lastReport = { quizId: quizId, passed: passed, score: score, total: total, origin: origin, posted: false };
+    if (!origin) return false;
+    var base = win.__aihydroArtifact || {};
+    var msg = { source: 'aihydro-artifact' };
+    for (var k in base) msg[k] = base[k];
+    msg.type = 'artifact/quizComplete';
+    msg.quizId = quizId; msg.passed = passed; msg.score = score; msg.total = total;
+    try { win.parent.postMessage(msg, origin); lastReport.posted = true; } catch (e) { return false; }
+    return true;
+  }
+
+  function el(tag, props, kids) {
+    var e = document.createElement(tag);
+    if (props) for (var k in props) {
+      if (k === 'class') e.className = props[k];
+      else if (k === 'text') e.textContent = props[k];
+      else e.setAttribute(k, props[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function mount(root, spec) {
+    var quizId = spec.quizId;
+    var items = spec.items;
+    var rec = {};            // id -> { attempts, correct, revealed, node refs }
+    var list = el('ol', { 'class': 'hq-list' });
+    var summary = el('p', { 'class': 'hq-summary', role: 'status', 'aria-live': 'polite' });
+
+    root.setAttribute('class', 'hq');
+    root.setAttribute('data-hq-quiz', quizId);
+
+    function counts() {
+      var n = 0;
+      items.forEach(function (it) { if (rec[it.id].correct) n++; });
+      return n;
+    }
+    function updateSummary() {
+      var n = counts(), total = items.length;
+      summary.textContent = n === total
+        ? 'All ' + total + ' correct ✓ Checkpoint complete.'
+        : n + ' of ' + total + ' correct. Wrong answers can be changed and checked again.';
+      summary.setAttribute('data-complete', n === total ? '1' : '0');
+    }
+
+    items.forEach(function (it, qi) {
+      var r = rec[it.id] = { attempts: 0, correct: false, revealed: false, radios: [], input: null };
+      var uid = quizId + '-' + it.id;
+      var fb = el('div', { 'class': 'hq-feedback', id: uid + '-fb', role: 'status', 'aria-live': 'polite' });
+      var check = el('button', { 'class': 'hq-check', type: 'button', text: 'Check answer' });
+      var reveal = el('button', { 'class': 'hq-reveal', type: 'button', text: 'Show explanation', hidden: 'hidden' });
+      var legend = el('legend', { 'class': 'hq-prompt', text: (qi + 1) + ' · ' + resolve(it.prompt) });
+      var body;
+
+      if (it.type === 'numeric') {
+        var input = el('input', { 'class': 'hq-input', type: 'text', inputmode: 'decimal', autocomplete: 'off',
+                                  id: uid + '-in', 'aria-describedby': uid + '-fb' });
+        r.input = input;
+        input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); doCheck(); } });
+        body = el('div', { 'class': 'hq-numeric' }, [
+          el('label', { 'class': 'hq-numlabel', 'for': uid + '-in', text: 'Your answer' + (it.unit ? ' (' + it.unit + ')' : '') }),
+          input
+        ]);
+      } else {
+        body = el('div', { 'class': 'hq-options' });
+        it.options.forEach(function (text, oi) {
+          var radio = el('input', { type: 'radio', name: uid, value: String(oi), 'aria-describedby': uid + '-fb' });
+          r.radios.push(radio);
+          body.appendChild(el('label', { 'class': 'hq-opt' }, [radio, el('span', { text: text })]));
+        });
+      }
+
+      function selected() {
+        for (var i = 0; i < r.radios.length; i++) if (r.radios[i].checked) return i;
+        return -1;
+      }
+      function doCheck() {
+        var res = it.type === 'numeric' ? gradeNumeric(it, r.input.value) : gradeChoice(it, selected());
+        if (res.status === 'empty' || res.status === 'invalid') {
+          fb.textContent = res.status === 'empty' ? 'Choose an answer first, then check it.' : 'Enter a number (for example 0.74), then check it.';
+          item.setAttribute('data-state', 'pending');
+          return;
+        }
+        r.attempts++;
+        r.correct = res.status === 'correct';
+        item.setAttribute('data-state', r.correct ? 'correct' : 'incorrect');
+        fb.textContent = feedbackText(it, res);
+        check.textContent = 'Check again';
+        if (!r.correct && r.attempts >= 2) reveal.removeAttribute('hidden');
+        updateSummary();
+        postComplete(quizId, counts() === items.length, counts(), items.length);
+        if (spec.onChange) spec.onChange(api.state());
+      }
+      check.addEventListener('click', doCheck);
+      reveal.addEventListener('click', function () {
+        r.revealed = true;
+        item.setAttribute('data-state', r.correct ? 'correct' : 'revealed');
+        fb.textContent = revealText(it);
+      });
+      r.check = doCheck;
+
+      var fieldset = el('fieldset', { 'class': 'hq-fieldset' }, [
+        legend, body,
+        el('div', { 'class': 'hq-actions' }, [check, reveal]),
+        fb
+      ]);
+      var item = el('li', { 'class': 'hq-item', 'data-hq-item': it.id, 'data-state': '' }, [fieldset]);
+      list.appendChild(item);
+    });
+
+    root.appendChild(list);
+    root.appendChild(summary);
+    updateSummary();
+
+    var api = {
+      quizId: quizId,
+      state: function () {
+        var n = counts();
+        return { quizId: quizId, correct: n, total: items.length, passed: n === items.length,
+                 items: items.map(function (it) { return { id: it.id, attempts: rec[it.id].attempts, correct: rec[it.id].correct, revealed: rec[it.id].revealed }; }) };
+      },
+      /* test/programmatic hooks: answer an item then check it */
+      answer: function (id, value) {
+        var r = rec[id];
+        if (r.input) r.input.value = String(value);
+        else if (r.radios[value]) r.radios[value].checked = true;
+      },
+      check: function (id) { rec[id].check(); },
+      /* every item as the learner sees it plus the computed right answer, for tests that cross-check them independently */
+      describe: function () {
+        return items.map(function (it) {
+          return { id: it.id, type: it.type, prompt: resolve(it.prompt), options: it.options || null,
+                   expected: resolve(it.type === 'numeric' ? it.answer : it.correct),
+                   explain: it.type === 'numeric' ? resolve(it.explain, resolve(it.answer)) : resolve(it.explain) };
+        });
+      },
+      /* the computed right answer (index or number), for tests that cross-check it independently */
+      expected: function (id) {
+        for (var i = 0; i < items.length; i++) if (items[i].id === id) return resolve(items[i].type === 'numeric' ? items[i].answer : items[i].correct);
+        return undefined;
+      }
+    };
+    instances[quizId] = api;
+    return api;
+  }
+
+  return { mount: mount, parseNumber: parseNumber, gradeChoice: gradeChoice, gradeNumeric: gradeNumeric,
+           sourceConstant: sourceConstant, parentOrigin: parentOrigin, postComplete: postComplete, feedbackText: feedbackText,
+           revealText: revealText, tolerance: tolerance, instances: instances,
+           lastReport: function () { return lastReport; } };
+})();
+/*@@END js:shared/quiz.js@@*/
+</script>
+<script>
 (function () {
   'use strict';
 
-  /* ── Scroll helper ─────────────────────────────────── */
-  window.scrollToSection = function (id) {
-    var el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  /* ── whenReady: wait for window.aihydro bridge ─────── */
-  function whenReady(fn) {
-    if (window.aihydro) { fn(); return; }
-    var t = setInterval(function () {
-      if (window.aihydro) { clearInterval(t); fn(); }
-    }, 50);
-  }
+  HydroA11y.wireScrollNav();
 
   /* ── Flux-card reveal (IntersectionObserver) ────────── */
   (function initFluxReveal() {
     var cards = document.querySelectorAll('.flux-card');
-    if (!window.IntersectionObserver) {
+    if (!window.IntersectionObserver || HydroA11y.reducedMotion()) {
       cards.forEach(function (c) { c.classList.add('visible'); });
       return;
     }
@@ -926,29 +1364,35 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     var bDSEl  = document.getElementById('bDS');
     var bSEl   = document.getElementById('bS');
 
+    var REDUCED = HydroA11y.reducedMotion();
+    var liveEl = document.getElementById('bathLive'), liveTimer = null;
+    function announceSoon() {
+      clearTimeout(liveTimer);
+      liveTimer = setTimeout(function () {
+        var dS = precip - last.ET - last.R;
+        liveEl.textContent = 'Precipitation ' + precip.toFixed(1) + ' millimetres per day, evapotranspiration ' + last.ET.toFixed(1) + ', runoff ' + last.R.toFixed(1) +
+          ', storage change ' + (dS >= 0 ? 'plus ' : 'minus ') + Math.abs(dS).toFixed(1) + ', storage ' + storage.toFixed(1) + ' of 100 millimetres.';
+      }, 700);
+    }
+
     if (slider) {
       slider.addEventListener('input', function () {
         precip = parseFloat(slider.value);
         pValEl.textContent = precip.toFixed(1);
         bPEl.textContent   = precip.toFixed(1) + ' mm/d';
-        if (window.aihydro && window.aihydro.bindParam) {
-          window.aihydro.bindParam('precip', precip, null);
-        }
+        if (REDUCED) { advance(30); draw(); }      /* no animation loop: each change runs the model 30 days */
+        announceSoon();
       });
     }
+    var stepBtn = document.getElementById('bathStep');
+    if (stepBtn) stepBtn.addEventListener('click', function () { advance(10); draw(); announceSoon(); });
+    if (REDUCED) document.getElementById('bathMotionNote').textContent = 'Reduced motion: each slider change runs the bucket 30 days forward.';
 
-    whenReady(function () {
-      if (window.aihydro && window.aihydro.bindParam) {
-        window.aihydro.bindParam('precip', precip, function (v) {
-          precip = parseFloat(v) || 0;
-          if (slider) slider.value = precip;
-          pValEl.textContent = precip.toFixed(1);
-          bPEl.textContent   = precip.toFixed(1) + ' mm/d';
-        });
-      }
-    });
-
+    var lastRead = '';
     function readouts() {
+      var key = [last.ET.toFixed(1), last.R.toFixed(1), (precip - last.ET - last.R).toFixed(1), storage.toFixed(1)].join('|');
+      if (key === lastRead) return;                 /* only touch the DOM when a value changed */
+      lastRead = key;
       bETEl.textContent = last.ET.toFixed(1) + ' mm/d';
       bREl.textContent  = last.R.toFixed(1) + ' mm/d';
       var dS = precip - last.ET - last.R;          /* exactly the balance P − ET − R */
@@ -1071,7 +1515,7 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     }
 
     /* Respect prefers-reduced-motion */
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (REDUCED) {
       advance(0.05); draw();
     } else {
       requestAnimationFrame(step);
@@ -1099,7 +1543,7 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     /* dim all */
     ALL_IDS.forEach(function (id) {
       var el = document.getElementById(id);
-      if (el) el.setAttribute('opacity', '0.18');
+      if (el) el.setAttribute('opacity', id.indexOf('label') === 0 ? '0.85' : '0.18');
     });
     /* highlight active */
     stage.ids.forEach(function (id) {
@@ -1114,6 +1558,9 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     if (rng) { rng.value = Math.min(idx, STAGES.length - 1); }
     var rv = document.getElementById('stageRangeVal');
     if (rv) rv.textContent = Math.min(idx, STAGES.length - 1) + ' / ' + (STAGES.length - 1);
+    var sr = document.getElementById('stageSr');
+    if (sr) sr.textContent = (idx === 0 ? 'Stage 0 of 6: nothing highlighted yet.' : stage.label);
+    if (rng) rng.setAttribute('aria-valuetext', stage.label);
   }
   (function wireStageRange() {
     var rng = document.getElementById('stageRange');
@@ -1133,75 +1580,51 @@ print("Assumed surface state; the lapse rates are computed, not measured.")</pre
     /* Show initial dim state */
     ALL_IDS.forEach(function (id) {
       var el = document.getElementById(id);
-      if (el) el.setAttribute('opacity', '0.22');
+      if (el) el.setAttribute('opacity', id.indexOf('label') === 0 ? '0.85' : '0.22');
     });
   });
-})();
-
-/* ── Quiz wiring ─────────────────────────────────────── */
-(function wireQuiz() {
-  var MODULE_ID = 'water-cycle-in-motion';
-  var quizEl    = document.getElementById('cycleQuiz');
-  var submitBtn = document.getElementById('quizSubmit');
-  var scoreEl   = document.getElementById('quizScore');
-  if (!quizEl || !submitBtn) return;
-
-  var questions = Array.prototype.slice.call(quizEl.querySelectorAll('.aihydro-quiz-question'));
-
-  submitBtn.addEventListener('click', function () {
-    var numCorrect = 0;
-
-    questions.forEach(function (qEl, qi) {
-      var correct    = parseInt(qEl.getAttribute('data-answer'), 10);
-      var radios     = qEl.querySelectorAll('input[type="radio"]');
-      var feedbacks  = qEl.querySelectorAll('.aihydro-quiz-feedback');
-      var selected   = -1;
-      radios.forEach(function (r) { if (r.checked) selected = parseInt(r.value, 10); });
-
-      /* Style options */
-      var labels = qEl.querySelectorAll('.aihydro-quiz-option');
-      labels.forEach(function (lbl, i) {
-        lbl.classList.remove('correct', 'incorrect');
-        if (i === correct) lbl.classList.add('correct');
-        else if (selected !== -1 && i === selected) lbl.classList.add('incorrect');
-      });
-
-      /* Show relevant feedback */
-      feedbacks.forEach(function (fb) { fb.classList.remove('show'); });
-      if (selected !== -1 && selected !== correct) {
-        var fb = qEl.querySelector('.aihydro-quiz-feedback[data-fb="' + selected + '"]');
-        if (fb) fb.classList.add('show');
-      }
-
-      if (selected === correct) numCorrect++;
-    });
-
-    var passed = numCorrect === questions.length;
-    var score  = numCorrect / questions.length;
-
-    if (scoreEl) {
-      scoreEl.textContent = numCorrect + '/' + questions.length + (passed ? ' ✓ Complete!' : ' — try again');
-      scoreEl.style.color = passed ? '#34d399' : '#f87171';
-    }
-
-    if (passed) {
-      submitBtn.textContent = 'Module complete ✓';
-      submitBtn.style.background = 'linear-gradient(135deg,#34d399,#059669)';
-      (function wr(fn) {
-        if (window.aihydro) { fn(); return; }
-        var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
-      })(function () {
-        if (window.aihydro && window.aihydro.quiz) {
-          window.aihydro.quiz({ moduleId: MODULE_ID, passed: true, score: score });
-        }
-      });
-      try {
-        window.parent.postMessage({
-          type: 'aihydro-quiz-complete', moduleId: MODULE_ID, passed: true, score: score
-        }, '*');
-      } catch (e) {}
-    }
+  /* ── Checkpoint: shared engine; numeric answers come from this page's own cell and bucket model ── */
+  (function () {
+  function lclMetres () {
+    var K = function (n) { return HydroQuiz.sourceConstant('dewpoint-lapse', n); };
+    var dry = K('g') / K('cp') * 1000;
+    var dew = (K('g') / (K('Rd') * K('T'))) * (K('Rv') * K('Td') * K('Td') / K('Lv')) * 1000;
+    return (K('T') - K('Td')) / (dry - dew) * 1000;
+  }
+  function steadyRunoff (P) {
+    var S = 45, r = { R: 0 };
+    for (var i = 0; i < 4000 * 20; i++) { r = stepBucket(S, P, 2.0, 0.05); S = r.S; }
+    return r.R;
+  }
+  window.__wcQuiz = HydroQuiz.mount(document.getElementById('cycleQuiz'), {
+    quizId: 'water-cycle-in-motion-checkpoint', moduleId: 'water-cycle-in-motion',
+    items: [
+      { id: 'q1', type: 'choice', prompt: 'Which two processes return water vapour to the atmosphere?',
+        options: ['Evaporation & Transpiration', 'Precipitation & Runoff', 'Infiltration & Condensation'],
+        correct: 0, feedback: [null, 'Those move water downward, not into the atmosphere.', 'Infiltration goes underground; condensation forms clouds. Neither is an upward flux to the air.'],
+        explain: 'Evaporation and transpiration (together, evapotranspiration) are the upward fluxes of vapour.' },
+      { id: 'q2', type: 'choice', prompt: 'The water balance of a closed catchment is: P equals…',
+        options: ['Runoff only (R)', 'ET + R + ΔS', 'ET only'],
+        correct: 1, feedback: ['Runoff only ignores ET and changes in soil and groundwater storage. (ΔS averages to about zero only over many years.)', null, 'ET only ignores runoff and storage; it is valid only if R = 0 and ΔS = 0, which never holds in practice.'],
+        explain: 'P = ET + R + ΔS: precipitation goes to evapotranspiration, runoff or a change in storage.' },
+      { id: 'q3', type: 'choice', prompt: 'Condensation happens because rising moist air…',
+        options: ['Cools as it ascends and reaches its dew point', 'Warms when it meets sunlight above the clouds', 'Mixes with dry, cold ocean air at altitude'],
+        correct: 0, feedback: [null, 'Sunlight warms surfaces, not air above the clouds. Condensation is driven by cooling, not heating.', 'Cold air plays a role in some weather, but the primary mechanism is the adiabatic cooling of a rising parcel.'],
+        explain: 'A rising parcel cools faster than its dew point falls, so the two meet at the condensation level.' },
+      { id: 'q4', type: 'numeric', unit: 'm',
+        prompt: 'The dew-point cell in §2 starts from T = 288.15 K and Td = 283.15 K. Using the constants in that cell, at what height above the surface (in metres) does the rising parcel reach its dew point?',
+        answer: lclMetres, tol: { abs: 5 },
+        hint: 'Divide T − Td by the difference between the dry-adiabatic lapse rate and the dew-point lapse rate (both K/km, printed by the cell), then convert km to m.',
+        explain: function (a) { return 'The two lapse rates differ by about ' + ((HydroQuiz.sourceConstant('dewpoint-lapse', 'T') - HydroQuiz.sourceConstant('dewpoint-lapse', 'Td')) / (a / 1000)).toFixed(2) + ' K/km, so 5 K of dew-point depression closes in about ' + Math.round(a) + ' m.'; } },
+      { id: 'q5', type: 'numeric', unit: 'mm/day',
+        prompt: 'In the §3 bucket (ET fixed at 2.0 mm/day), set P = 10 mm/day and let it run until storage stops changing. What runoff R (mm/day) leaves the bucket at that steady state?',
+        answer: function () { return steadyRunoff(10); }, tol: { abs: 0.05 },
+        hint: 'At a steady state storage no longer changes, so ΔS = 0 in P = ET + R + ΔS.',
+        explain: function (a) { return 'With ΔS = 0, R = P − ET = 10 − 2.0 = ' + a.toFixed(1) + ' mm/day; the model reaches it by running the bucket until it spills.'; } }
+    ]
   });
+  })();
+
 })();
 </script>
 

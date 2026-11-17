@@ -1,0 +1,3 @@
+{
+  "twi-grid": "Two panels for the SYNTHETIC 20 by 20 hillslope at 30 m. Left: a map of the topographic wetness index on the viridis scale (dark purple low, yellow high; colour bar about 5 to 16): mostly purple and blue cells with scattered teal and green ones, a few yellow cells including one near row 10, column 10, and brighter cells along the bottom edge. Right: histogram of TWI from about 4.3 to 16.3 with most cells between 4.3 and 9 and a long thin tail to the right; a dashed line marks the mean of 6.65."
+}

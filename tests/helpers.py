@@ -78,3 +78,20 @@ def run_node(js: str, timeout: int = 60):
 
 def shared_js(*names: str) -> str:
     return "\n".join((SHARED / n).read_text() for n in names)
+
+
+_QUIZ_CACHE: dict = {}
+
+
+def quiz_dump() -> dict:
+    """Every module's checkpoint as rendered (prompts, options, explanations, computed answers),
+    produced by running the page's own scripts under node (tests/js/dump_quiz.js). Cached per run."""
+    if not _QUIZ_CACHE:
+        r = subprocess.run(["node", str(ROOT / "tests" / "js" / "dump_quiz.js")], capture_output=True, text=True, timeout=120)
+        assert r.returncode == 0, r.stderr
+        _QUIZ_CACHE.update(json.loads(r.stdout))
+    return _QUIZ_CACHE
+
+
+def quiz_item(mod: str, item_id: str) -> dict:
+    return next(i for i in quiz_dump()[mod]["items"] if i["id"] == item_id)

@@ -8,21 +8,35 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Poppins:wght@400;500;600;700&amp;family=Nunito:wght@400;600;700&amp;family=Comfortaa:wght@400;600&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet">
 
-<script type="application/vnd.aihydro.module+json">
+<!--@@BEGIN manifest:module@@--><script type="application/vnd.aihydro.module+json">
 {
   "id": "baseflow-separation",
   "title": "Splitting the Flow: Baseflow Separation",
-  "version": "0.2.0",
-  "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
+  "version": "0.3.0",
+  "authors": [
+    {
+      "name": "Mohammad Galib",
+      "affiliation": "Purdue University"
+    }
+  ],
   "license": "CC-BY-4.0",
   "topic": "baseflow-analysis",
   "level": "intro",
   "estimated_minutes": 40,
-  "requires": { "executable": true, "python": ["numpy", "matplotlib"] },
-  "citation": { "text": "Ladson, A. R., Brown, R., Neal, B. & Nathan, R. (2013). A standard approach to baseflow separation using the Lyne and Hollick filter. Australasian Journal of Water Resources, 17(1). doi:10.7158/13241583.2013.11465417" },
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "Ladson, A. R., Brown, R., Neal, B. & Nathan, R. (2013). A standard approach to baseflow separation using the Lyne and Hollick filter. Australasian Journal of Water Resources, 17(1).",
+    "doi": "10.7158/13241583.2013.11465417"
+  },
   "ai_hydro_preview_min_version": "0.2"
 }
-</script>
+</script><!--@@END manifest:module@@-->
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,14 +103,23 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 
 /* Compare wipe */
 .aihydro-compare { position:relative; overflow:hidden; border-radius:18px; border:1px solid var(--border); background:var(--mid); user-select:none; cursor:col-resize; }
-.aihydro-compare > * { position:absolute; top:0; left:0; width:100%; height:100%; }
-.aihydro-compare > *:last-child { clip-path: inset(0 0 0 50%); }
+.aihydro-compare > .cmp-pane { position:absolute; top:0; left:0; width:100%; height:100%; }
 .compare-divider { position:absolute; top:0; bottom:0; width:3px; background:rgba(0,255,255,0.8); left:50%; transform:translateX(-50%); pointer-events:none; z-index:10; }
 .compare-handle { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:36px; height:36px; border-radius:50%; background:rgba(0,255,255,0.9); display:flex; align-items:center; justify-content:center; color:#0a0a15; font-size:14px; font-weight:900; pointer-events:none; z-index:11; box-shadow:0 0 16px rgba(0,255,255,0.6); }
 .compare-label { position:absolute; top:12px; padding:4px 10px; font-family:'Poppins',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; border-radius:8px; z-index:12; pointer-events:none; }
 .compare-label.left  { left:12px;  background:rgba(0,0,0,0.65); color:var(--muted); }
 .compare-label.right { right:12px; background:rgba(0,163,255,0.25); color:var(--bright); }
 
+.compare-handle:focus-visible { outline:3px solid #fff; outline-offset:3px; }
+.cmp-keys { font-size:13px; color:var(--muted); margin:-8px 0 10px; }
+.legend { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 12px; font-size:13px; color:var(--sub); }
+.legend-item { display:inline-flex; align-items:center; gap:8px; }
+.sw { display:inline-block; width:26px; height:14px; border-radius:3px; border:1px solid var(--border); }
+.sw-base { background:rgba(52,211,153,0.6); border-color:#34d399; }
+.sw-quick { background:repeating-linear-gradient(45deg, rgba(0,163,255,0.26) 0 3px, #7dd3fc 3px 4.5px); }
+.sw-total { height:0; border:0; border-top:3px solid #00DDFF; border-radius:0; }
+.aihydro-static-note { font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted); margin-bottom:8px; }
+.aihydro-static-figure img { max-width:100%; border-radius:8px; display:block; margin-top:10px; }
 /* param panel */
 .param-block { margin:14px 0; }
 .param-block label { display:flex; justify-content:space-between; align-items:baseline; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
@@ -126,20 +149,6 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 .rewrite-pill { display:inline-flex; align-items:center; gap:6px; font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:3px 10px; color:var(--green); }
 .rewrite-pill::before { content:'⚡'; }
 
-/* Quiz */
-.aihydro-quiz { margin:0; }
-.aihydro-quiz-question { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border); }
-.aihydro-quiz-question:last-of-type { border-bottom:none; }
-.q-text { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text); font-size:16px; margin-bottom:14px; }
-.aihydro-quiz-option { display:block; text-align:left; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(15,15,30,0.7); color:var(--sub); cursor:pointer; margin-bottom:8px; transition:border-color 0.15s,background 0.15s; }
-.aihydro-quiz-option:hover { border-color:var(--cyan); color:var(--text); }
-.aihydro-quiz-option.correct   { border-color:#34d399; background:rgba(52,211,153,0.12); color:#d1fae5; }
-.aihydro-quiz-option.incorrect { border-color:#f87171; background:rgba(248,113,113,0.10); color:#fee2e2; }
-.aihydro-quiz-feedback { font-size:13px; color:var(--muted); min-height:1em; padding:6px 0 0; display:none; }
-.aihydro-quiz-feedback.show { display:block; }
-.aihydro-quiz-submit { font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:10px 28px; cursor:pointer; margin-top:8px; transition:transform 0.1s,box-shadow 0.2s; }
-.aihydro-quiz-submit:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
-
 /* References */
 .refs ol { counter-reset:r; padding:0; list-style:none; }
 .refs li { counter-increment:r; padding-left:36px; position:relative; margin-bottom:12px; font-size:14px; color:var(--sub); line-height:1.55; }
@@ -149,748 +158,47 @@ input[type=range] { width:100%; accent-color:var(--cyan); cursor:pointer; }
 .prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
 .prov-item dd { font-size:13px; color:var(--sub); }
 @media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
+/*@@BEGIN css:shared/a11y.css@@*/
+/* Shared accessibility styles (inlined by scripts/build_modules.py). */
+.hydro-sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline:3px solid #00FFFF; outline-offset:2px; border-radius:6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+/*@@END css:shared/a11y.css@@*/
+/*@@BEGIN css:shared/quiz.css@@*/
+/* HydroQuiz styles (inlined by scripts/build_modules.py). Colours fall back to the AI-Hydro palette. */
+.hq { margin:0; }
+.hq-list { list-style:none; padding:0; margin:0; }
+.hq-item { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border,rgba(125,211,252,0.15)); }
+.hq-item:last-child { border-bottom:none; }
+.hq-fieldset { border:0; min-width:0; }
+.hq-prompt { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text,#fff); font-size:16px; line-height:1.5; margin-bottom:12px; padding:0; }
+.hq-options { display:flex; flex-direction:column; gap:8px; }
+.hq-opt { display:flex; align-items:flex-start; gap:10px; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border,rgba(125,211,252,0.15)); background:rgba(15,15,30,0.7); color:var(--sub,#7dd3fc); cursor:pointer; }
+.hq-opt:hover { border-color:var(--cyan,#00DDFF); color:var(--text,#fff); }
+.hq-opt input { margin-top:4px; accent-color:var(--cyan,#00DDFF); flex:0 0 auto; }
+.hq-opt:has(input:checked) { border-color:var(--cyan,#00DDFF); background:rgba(0,221,255,0.10); color:var(--text,#fff); }
+.hq-numeric { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.hq-numlabel { font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--sub,#7dd3fc); }
+.hq-input { width:10em; font-family:'JetBrains Mono',monospace; font-size:15px; padding:9px 12px; border-radius:10px; border:1px solid var(--border,rgba(125,211,252,0.35)); background:rgba(2,6,23,0.7); color:var(--text,#fff); }
+.hq-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.hq-check, .hq-reveal { font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; border-radius:999px; padding:9px 22px; cursor:pointer; }
+.hq-check { background:linear-gradient(135deg,#00A3FF,#00DDFF); color:#0a0a15; border:none; }
+.hq-reveal { background:transparent; color:var(--cyan,#00DDFF); border:1px solid var(--cyan,#00DDFF); }
+.hq-feedback { margin-top:10px; font-size:14px; line-height:1.55; min-height:1.2em; color:var(--muted,#94a3b8); }
+.hq-item[data-state="correct"] .hq-feedback { color:#86efac; border-left:4px solid #34d399; padding-left:12px; }
+.hq-item[data-state="incorrect"] .hq-feedback { color:#fca5a5; border-left:4px dashed #f87171; padding-left:12px; }
+.hq-item[data-state="revealed"] .hq-feedback { color:#e2e8f0; border-left:4px double #94a3b8; padding-left:12px; }
+.hq-summary { margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--muted,#94a3b8); }
+.hq-summary[data-complete="1"] { color:#86efac; }
+[hidden] { display:none !important; }
+/*@@END css:shared/quiz.css@@*/
 </style>
 
-<style id="aihydro-preview-style">
-:root {
-  --aihydro-blue: #00A3FF;
-  --aihydro-cyan: #00DDFF;
-  --aihydro-hero-cyan: #00D4FF;
-  --aihydro-bright-cyan: #00FFFF;
-  --aihydro-bg-deep: #0a0a15;
-  --aihydro-bg-navy: #1a1a2e;
-  --aihydro-bg-mid: #0f0f1e;
-  --aihydro-text: #FFFFFF;
-  --aihydro-text-accent: #7dd3fc;
-  --aihydro-text-muted: #94a3b8;
-  --aihydro-border: rgba(125, 211, 252, 0.18);
-  --aihydro-border-strong: rgba(0, 221, 255, 0.45);
-  --aihydro-gradient-primary: linear-gradient(135deg, #00A3FF 0%, #00DDFF 100%);
-  --aihydro-gradient-hero: linear-gradient(135deg, #00D4FF 0%, #00FFFF 100%);
-  --aihydro-font-display: 'Quicksand', system-ui, sans-serif;
-  --aihydro-font-heading: 'Poppins', 'Nunito', system-ui, sans-serif;
-  --aihydro-font-body: 'Nunito', system-ui, sans-serif;
-  --aihydro-font-ui: 'Comfortaa', 'Quicksand', system-ui, sans-serif;
-  --aihydro-font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
-}
-
-/* ---- Module shell -------------------------------------------------- */
-body.aihydro-module, .aihydro-module {
-  background: linear-gradient(180deg, var(--aihydro-bg-deep) 0%, var(--aihydro-bg-navy) 100%);
-  color: var(--aihydro-text-accent);
-  font-family: var(--aihydro-font-body);
-  font-size: 16px;
-  line-height: 1.65;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-.aihydro-module .aihydro-content {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 32px 24px 64px;
-}
-.aihydro-module h1, .aihydro-module h2, .aihydro-module h3 {
-  font-family: var(--aihydro-font-heading);
-  color: var(--aihydro-text);
-  letter-spacing: 0.01em;
-  line-height: 1.25;
-}
-.aihydro-module h1 { font-weight: 600; font-size: 32px; margin: 0 0 8px; }
-.aihydro-module h2 { font-weight: 600; font-size: 24px; margin: 28px 0 12px; }
-.aihydro-module h3 { font-weight: 500; font-size: 19px; margin: 20px 0 8px; }
-.aihydro-module p { margin: 0 0 14px; }
-.aihydro-module strong { color: var(--aihydro-text); }
-.aihydro-module a { color: var(--aihydro-cyan); text-decoration: none; }
-.aihydro-module a:hover { text-decoration: underline; }
-
-/* ---- Module header ------------------------------------------------- */
-.aihydro-module-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(0,163,255,0.10) 0%, rgba(0,221,255,0.04) 100%);
-  border-bottom: 1px solid var(--aihydro-border);
-}
-.aihydro-module-header .aihydro-brand-mark {
-  font-family: var(--aihydro-font-display);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 0.04em;
-  background: var(--aihydro-gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  white-space: nowrap;
-}
-.aihydro-module-header .aihydro-module-title {
-  font-family: var(--aihydro-font-heading);
-  font-weight: 600;
-  font-size: 18px;
-  color: var(--aihydro-text);
-  margin: 0;
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.aihydro-module-header .aihydro-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-family: var(--aihydro-font-ui);
-  font-size: 11px;
-}
-.aihydro-pill {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--aihydro-border);
-  color: var(--aihydro-text-accent);
-  background: rgba(125,211,252,0.06);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.aihydro-pill.is-primary {
-  background: var(--aihydro-gradient-primary);
-  color: var(--aihydro-bg-deep);
-  border: none;
-  font-weight: 600;
-}
-
-.aihydro-authors {
-  font-family: var(--aihydro-font-ui);
-  font-size: 12px;
-  color: var(--aihydro-text-muted);
-  margin: 4px 0 0;
-}
-
-/* ---- Steps --------------------------------------------------------- */
-.aihydro-step {
-  margin: 28px 0;
-  padding: 20px 22px;
-  background: rgba(15,15,30,0.55);
-  border: 1px solid var(--aihydro-border);
-  border-radius: 14px;
-  position: relative;
-}
-.aihydro-step[data-aihydro-status="done"]   { border-color: var(--aihydro-border-strong); }
-.aihydro-step[data-aihydro-status="active"] { box-shadow: 0 0 0 1px var(--aihydro-cyan), 0 10px 30px rgba(0,221,255,0.10); }
-.aihydro-step > .aihydro-step-index {
-  position: absolute; top: -14px; left: 18px;
-  background: var(--aihydro-gradient-primary);
-  color: var(--aihydro-bg-deep);
-  font-family: var(--aihydro-font-ui); font-weight: 600;
-  padding: 4px 12px; border-radius: 999px; font-size: 12px;
-  letter-spacing: 0.04em;
-}
-
-/* ---- Callouts ------------------------------------------------------ */
-.aihydro-callout {
-  border-left: 3px solid var(--aihydro-cyan);
-  background: rgba(0,221,255,0.06);
-  padding: 12px 14px;
-  border-radius: 0 10px 10px 0;
-  margin: 16px 0;
-  font-size: 15px;
-}
-.aihydro-callout .aihydro-callout-title {
-  font-family: var(--aihydro-font-heading);
-  font-weight: 600;
-  color: var(--aihydro-text);
-  display: block;
-  margin-bottom: 4px;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.aihydro-callout.is-note    { border-color: var(--aihydro-cyan); }
-.aihydro-callout.is-warning { border-color: #facc15; background: rgba(250,204,21,0.07); }
-.aihydro-callout.is-tip     { border-color: #34d399; background: rgba(52,211,153,0.07); }
-.aihydro-callout.is-agent   {
-  border-color: var(--aihydro-blue);
-  background: linear-gradient(135deg, rgba(0,163,255,0.10), rgba(0,221,255,0.04));
-}
-.aihydro-callout.is-warning .aihydro-callout-title { color: #facc15; }
-.aihydro-callout.is-tip .aihydro-callout-title     { color: #34d399; }
-
-/* ---- Figures ------------------------------------------------------- */
-.aihydro-figure {
-  margin: 18px 0;
-  padding: 12px;
-  background: var(--aihydro-bg-deep);
-  border: 1px solid var(--aihydro-border);
-  border-radius: 10px;
-}
-.aihydro-figure img, .aihydro-figure svg, .aihydro-figure canvas {
-  display: block; max-width: 100%; height: auto;
-  margin: 0 auto; border-radius: 6px;
-}
-.aihydro-figure-caption {
-  font-family: var(--aihydro-font-ui);
-  font-size: 12px;
-  color: var(--aihydro-text-muted);
-  text-align: center;
-  margin-top: 8px;
-}
-
-/* ---- Parameter panel ---------------------------------------------- */
-.aihydro-params {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
-  margin: 16px 0;
-  padding: 14px 16px;
-  background: rgba(0,163,255,0.05);
-  border: 1px dashed var(--aihydro-border-strong);
-  border-radius: 10px;
-}
-.aihydro-param-row {
-  display: flex; flex-direction: column; gap: 6px;
-}
-.aihydro-param-row label,
-.aihydro-params label {
-  font-family: var(--aihydro-font-ui);
-  font-size: 12px;
-  color: var(--aihydro-text-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.aihydro-params input[type="number"],
-.aihydro-params input[type="text"],
-.aihydro-params select {
-  background: var(--aihydro-bg-deep);
-  border: 1px solid var(--aihydro-border);
-  color: var(--aihydro-text);
-  font-family: var(--aihydro-font-mono);
-  padding: 6px 10px; border-radius: 6px; font-size: 14px;
-}
-.aihydro-params input[type="range"] {
-  accent-color: var(--aihydro-cyan);
-  width: 100%;
-}
-.aihydro-param-value {
-  font-family: var(--aihydro-font-mono);
-  color: var(--aihydro-cyan);
-  font-size: 13px;
-}
-
-/* ---- Buttons ------------------------------------------------------- */
-.aihydro-button,
-.aihydro-run {
-  font-family: var(--aihydro-font-ui);
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  padding: 7px 16px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  background: var(--aihydro-gradient-primary);
-  color: var(--aihydro-bg-deep);
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-}
-.aihydro-button:hover,
-.aihydro-run:hover { box-shadow: 0 6px 18px rgba(0,221,255,0.30); transform: translateY(-1px); }
-.aihydro-button:disabled,
-.aihydro-run:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
-.aihydro-button.is-ghost {
-  background: transparent; color: var(--aihydro-cyan);
-  border: 1px solid var(--aihydro-border-strong);
-}
-
-/* ---- Cells (executable code) -------------------------------------- */
-.aihydro-cell {
-  border: 1px solid var(--aihydro-border);
-  border-radius: 10px;
-  margin: 14px 0;
-  padding: 12px 14px;
-  background: var(--aihydro-bg-deep);
-  color: var(--aihydro-text-accent);
-  position: relative;
-}
-.aihydro-cell[data-aihydro-focused="1"] {
-  outline: 1px solid var(--aihydro-cyan);
-}
-/* Run-state accent stripe so a slow or failed cell reads at a glance. */
-.aihydro-cell[data-aihydro-cell-status="warming"],
-.aihydro-cell[data-aihydro-cell-status="running"] {
-  box-shadow: inset 3px 0 0 var(--aihydro-cyan);
-}
-.aihydro-cell[data-aihydro-cell-status="done"] {
-  box-shadow: inset 3px 0 0 rgba(74,222,128,0.85);
-}
-.aihydro-cell[data-aihydro-cell-status="error"] {
-  box-shadow: inset 3px 0 0 rgba(248,113,113,0.9);
-}
-/* Status pill appended to the cell header, label driven by the attribute. */
-.aihydro-cell[data-aihydro-cell-status] .aihydro-cell-header::after {
-  font-family: var(--aihydro-font-ui);
-  font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 2px 7px; border-radius: 999px; margin-left: auto;
-}
-.aihydro-cell[data-aihydro-cell-status="warming"] .aihydro-cell-header::after {
-  content: "Warming"; color: var(--aihydro-cyan); background: rgba(0,221,255,0.12);
-  animation: aihydroPulse 1.2s ease-in-out infinite;
-}
-.aihydro-cell[data-aihydro-cell-status="running"] .aihydro-cell-header::after {
-  content: "Running"; color: var(--aihydro-cyan); background: rgba(0,221,255,0.12);
-  animation: aihydroPulse 1.2s ease-in-out infinite;
-}
-.aihydro-cell[data-aihydro-cell-status="done"] .aihydro-cell-header::after {
-  content: "Done"; color: rgba(74,222,128,0.95); background: rgba(74,222,128,0.12);
-}
-.aihydro-cell[data-aihydro-cell-status="error"] .aihydro-cell-header::after {
-  content: "Error"; color: rgba(248,113,113,0.95); background: rgba(248,113,113,0.12);
-}
-@keyframes aihydroPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
-@media (prefers-reduced-motion: reduce) {
-  .aihydro-cell[data-aihydro-cell-status] .aihydro-cell-header::after { animation: none; }
-}
-.aihydro-cell .aihydro-cell-header {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--aihydro-font-ui);
-  font-size: 11px;
-  color: var(--aihydro-text-muted);
-  margin-bottom: 8px;
-}
-.aihydro-cell .aihydro-cell-header .aihydro-cell-lang {
-  background: rgba(0,221,255,0.10);
-  color: var(--aihydro-cyan);
-  padding: 2px 8px; border-radius: 4px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-}
-.aihydro-source {
-  font-family: var(--aihydro-font-mono);
-  font-size: 13px;
-  white-space: pre-wrap;
-  margin: 0 0 10px;
-  padding: 10px;
-  background: var(--aihydro-bg-mid);
-  border-radius: 6px;
-  overflow-x: auto;
-  overflow-y: auto;
-  max-height: 280px;
-  resize: vertical;
-  color: var(--aihydro-text);
-  transition: max-height 0.2s ease, opacity 0.15s ease;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(125,211,252,0.25) transparent;
-}
-.aihydro-source::-webkit-scrollbar { width: 6px; height: 6px; }
-.aihydro-source::-webkit-scrollbar-track { background: transparent; }
-.aihydro-source::-webkit-scrollbar-thumb { background: rgba(125,211,252,0.25); border-radius: 3px; }
-.aihydro-source.is-collapsed {
-  max-height: 3.2em;
-  overflow: hidden;
-  cursor: pointer;
-  opacity: 0.65;
-  -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
-  margin-bottom: 4px;
-  user-select: none;
-}
-.aihydro-toggle-source {
-  font-family: var(--aihydro-font-ui);
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--aihydro-border);
-  background: transparent;
-  color: var(--aihydro-text-muted);
-  cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.aihydro-toggle-source:hover {
-  color: var(--aihydro-cyan);
-  border-color: var(--aihydro-border-strong);
-  background: rgba(0,221,255,0.06);
-}
-.aihydro-copy {
-  font-family: var(--aihydro-font-ui);
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--aihydro-border);
-  cursor: pointer;
-  background: transparent;
-  color: var(--aihydro-text-muted);
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
-  margin-left: auto;
-}
-.aihydro-copy:hover { color: var(--aihydro-cyan); border-color: var(--aihydro-border-strong); background: rgba(0,221,255,0.06); }
-.aihydro-copy.copied { color: #34d399; border-color: #34d399; }
-.aihydro-output-wrap {
-  position: relative;
-}
-.aihydro-copy-output {
-  position: absolute;
-  top: 6px; right: 8px;
-  font-family: var(--aihydro-font-ui);
-  font-size: 10px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  border: 1px solid var(--aihydro-border);
-  background: rgba(10,10,21,0.75);
-  color: var(--aihydro-text-muted);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.15s, color 0.15s;
-  z-index: 2;
-  white-space: nowrap;
-}
-.aihydro-output-wrap:hover .aihydro-copy-output { opacity: 1; }
-.aihydro-copy-output:hover { color: var(--aihydro-cyan); border-color: var(--aihydro-border-strong); }
-.aihydro-copy-output.copied { color: #34d399; border-color: #34d399; }
-.aihydro-output {
-  font-family: var(--aihydro-font-mono);
-  font-size: 13px;
-  white-space: pre-wrap;
-  min-height: 1.2em;
-  margin: 0;
-  padding: 10px;
-  background: rgba(0,0,0,0.30);
-  border-radius: 6px;
-  max-height: 320px;
-  overflow: auto;
-  color: var(--aihydro-text-accent);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(125,211,252,0.20) transparent;
-}
-.aihydro-output::-webkit-scrollbar { width: 6px; height: 6px; }
-.aihydro-output::-webkit-scrollbar-track { background: transparent; }
-.aihydro-output::-webkit-scrollbar-thumb { background: rgba(125,211,252,0.20); border-radius: 3px; }
-.aihydro-output:empty::before {
-  content: "(no output yet)";
-  color: var(--aihydro-text-muted); font-style: italic;
-}
-.aihydro-stderr { color: #f48771; }
-.aihydro-stdout { color: var(--aihydro-text-accent); }
-.aihydro-error  { color: #f87171; }
-.aihydro-output-images { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.aihydro-output-images img { max-width: 100%; height: auto; border-radius: 4px; }
-.aihydro-output-video { margin-top: 8px; }
-.aihydro-output-video video { max-width: 100%; height: auto; border-radius: 6px; background: #000; box-shadow: 0 2px 10px rgba(0,0,0,0.35); }
-.aihydro-truncated { font-size: 11px; opacity: 0.75; margin-top: 6px; }
-
-/* ---- Standalone-mode pill (replaces run buttons outside the preview) */
-.aihydro-standalone-pill {
-  font-family: var(--aihydro-font-ui);
-  font-size: 12px;
-  color: var(--aihydro-text-muted);
-  padding: 7px 14px;
-  border-radius: 999px;
-  border: 1px dashed var(--aihydro-border);
-  background: rgba(125,211,252,0.05);
-  cursor: not-allowed;
-  display: inline-flex; align-items: center; gap: 6px;
-}
-.aihydro-standalone-pill::before {
-  content: "↗"; color: var(--aihydro-cyan); font-weight: 700;
-}
-
-/* ---- Quiz / question --------------------------------------------- */
-.aihydro-question {
-  margin: 16px 0;
-  padding: 16px 18px;
-  background: rgba(0,163,255,0.06);
-  border: 1px solid var(--aihydro-border);
-  border-radius: 10px;
-}
-.aihydro-question .aihydro-question-prompt {
-  font-family: var(--aihydro-font-heading);
-  font-weight: 500;
-  color: var(--aihydro-text);
-  margin-bottom: 10px;
-}
-.aihydro-question .aihydro-choices {
-  display: flex; flex-wrap: wrap; gap: 8px;
-}
-.aihydro-choice {
-  font-family: var(--aihydro-font-ui);
-  font-size: 13px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--aihydro-border);
-  background: var(--aihydro-bg-deep);
-  color: var(--aihydro-text-accent);
-  cursor: pointer;
-  text-align: left;
-}
-.aihydro-choice:hover { border-color: var(--aihydro-cyan); color: var(--aihydro-cyan); }
-.aihydro-choice[data-aihydro-state="correct"]   { background: rgba(52,211,153,0.18); border-color: #34d399; color: #d1fae5; }
-.aihydro-choice[data-aihydro-state="incorrect"] { background: rgba(248,113,113,0.15); border-color: #f87171; color: #fee2e2; }
-.aihydro-feedback {
-  margin-top: 10px;
-  font-size: 14px;
-  font-family: var(--aihydro-font-body);
-  color: var(--aihydro-text-accent);
-  min-height: 1.2em;
-}
-
-/* ---- Reveal ------------------------------------------------------- */
-.aihydro-reveal {
-  border: 1px solid var(--aihydro-border);
-  border-radius: 8px;
-  margin: 12px 0;
-  background: var(--aihydro-bg-mid);
-}
-.aihydro-reveal > summary {
-  cursor: pointer;
-  padding: 10px 14px;
-  font-family: var(--aihydro-font-ui);
-  font-weight: 600;
-  color: var(--aihydro-cyan);
-  list-style: none;
-}
-.aihydro-reveal > summary::-webkit-details-marker { display: none; }
-.aihydro-reveal > summary::before {
-  content: "▸"; display: inline-block; margin-right: 8px;
-  transition: transform 0.15s ease;
-}
-.aihydro-reveal[open] > summary::before { transform: rotate(90deg); }
-.aihydro-reveal-body { padding: 0 14px 12px; }
-
-/* ---- Provenance footer ------------------------------------------- */
-.aihydro-provenance {
-  margin: 32px 0 0;
-  padding: 18px 20px;
-  border-top: 1px solid var(--aihydro-border);
-  background: rgba(15,15,30,0.50);
-  font-family: var(--aihydro-font-ui);
-  font-size: 12px;
-  color: var(--aihydro-text-muted);
-  border-radius: 0 0 12px 12px;
-}
-.aihydro-provenance dt {
-  color: var(--aihydro-text-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 11px;
-  margin-top: 8px;
-}
-.aihydro-provenance dd { margin: 2px 0 0; color: var(--aihydro-text-muted); }
-.aihydro-provenance .aihydro-cite {
-  display: block; margin-top: 10px; font-style: italic;
-  color: var(--aihydro-text-accent);
-}
-
-/* ---- Radio-input quiz (SKILL.md standard format) ------------------- */
-.aihydro-quiz { margin: 18px 0; }
-.aihydro-quiz-question {
-  margin-bottom: 16px;
-  padding: 14px 16px;
-  border: 1px solid var(--aihydro-border);
-  border-radius: 8px;
-  background: rgba(0,163,255,0.04);
-  transition: border-color 0.2s, background 0.2s;
-}
-.aihydro-quiz-question.aq-correct {
-  border-color: rgba(52,211,153,0.40);
-  background: rgba(52,211,153,0.06);
-}
-.aihydro-quiz-question.aq-incorrect {
-  border-color: rgba(248,113,113,0.35);
-  background: rgba(248,113,113,0.05);
-}
-.aihydro-quiz-question .q-text {
-  font-family: var(--aihydro-font-heading);
-  font-weight: 500;
-  color: var(--aihydro-text);
-  margin: 0 0 10px;
-}
-.aihydro-quiz-option {
-  display: flex; align-items: baseline; gap: 8px;
-  margin: 6px 0;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--aihydro-text-accent);
-}
-.aihydro-quiz-option input[type="radio"] { cursor: pointer; accent-color: var(--aihydro-cyan); }
-.aihydro-quiz-feedback {
-  margin-top: 10px; padding: 8px 12px;
-  border-left: 2px solid var(--aihydro-border);
-  background: rgba(148,163,184,0.07);
-  font-size: 13px; color: var(--aihydro-text-accent);
-  border-radius: 0 4px 4px 0;
-  display: none;
-}
-.aihydro-quiz-question.aq-incorrect .aihydro-quiz-feedback[data-show="true"] { display: block; }
-.aihydro-quiz-submit {
-  padding: 7px 18px;
-  border: 1px solid var(--aihydro-cyan);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--aihydro-cyan);
-  font-family: var(--aihydro-font-ui);
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.aihydro-quiz-submit:hover { background: rgba(0,221,255,0.10); }
-#quizScore { font-size: 14px; color: var(--aihydro-text-accent); margin-left: 14px; }
-
-/* ── Interactivity primitives (timeline / compare / sim) ─────────────── */
-.aihydro-timeline {
-  display: flex; align-items: center; gap: 10px;
-  margin: 10px 0; padding: 6px 8px;
-  border: 1px solid var(--aihydro-border); border-radius: 8px;
-  background: var(--aihydro-bg-mid);
-}
-.aihydro-tl-btn {
-  width: 28px; height: 28px; flex-shrink: 0;
-  border: 1px solid var(--aihydro-border); border-radius: 6px;
-  background: rgba(0,221,255,0.08); color: var(--aihydro-cyan);
-  cursor: pointer; font-size: 13px; line-height: 1;
-}
-.aihydro-tl-btn:hover { background: rgba(0,221,255,0.16); }
-.aihydro-tl-scrub { flex: 1; accent-color: var(--aihydro-cyan); }
-.aihydro-compare { overflow: hidden; border-radius: 8px; }
-.aihydro-compare > * { display: block; max-width: 100%; }
-.aihydro-compare-handle {
-  position: absolute; top: 0; bottom: 0; width: 2px;
-  background: var(--aihydro-cyan); transform: translateX(-1px);
-  pointer-events: none; box-shadow: 0 0 8px rgba(0,221,255,0.5);
-}
-.aihydro-compare-range {
-  position: absolute; left: 0; right: 0; bottom: 8px; width: 100%;
-  margin: 0; accent-color: var(--aihydro-cyan); cursor: ew-resize;
-}
-canvas[data-aihydro-sim], canvas[data-aihydro-scene3d] {
-  display: block; max-width: 100%; border-radius: 8px;
-  border: 1px solid var(--aihydro-border); background: var(--aihydro-bg-deep);
-}
-canvas[data-aihydro-scene3d] { width: 100%; min-height: 320px; cursor: grab; }
-canvas[data-aihydro-scene3d]:active { cursor: grabbing; }
-</style><style id="aihydro-leaflet-normalizer">
-html:has(.folium-map),
-body:has(.folium-map) {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-body:has(.folium-map) > .folium-map,
-.folium-map {
-  width: 100vw !important;
-  height: 100vh !important;
-  min-height: 100vh !important;
-}
-.folium-map.leaflet-container,
-.leaflet-container {
-  background: #e5e3df !important;
-}
-</style><style id="aihydro-editor-style-v3">[data-aihydro-editable].aihydro-edit-active {
-  outline: 1px dashed rgba(0,221,255,0.35);
-  outline-offset: 4px;
-  border-radius: 4px;
-  min-height: 1em;
-  transition: outline-color 0.15s;
-}
-[data-aihydro-editable].aihydro-edit-active:hover {
-  outline-color: rgba(0,221,255,0.55);
-}
-[data-aihydro-editable].aihydro-edit-active:focus {
-  outline: 2px solid rgba(0,221,255,0.8);
-  outline-offset: 4px;
-}
-.aihydro-component-hover {
-  outline: 2px solid rgba(0,221,255,0.35) !important;
-  outline-offset: 4px !important;
-  cursor: pointer !important;
-  transition: outline-color 0.15s;
-}
-.aihydro-component-selected {
-  outline: 2px solid rgba(0,221,255,0.9) !important;
-  outline-offset: 4px !important;
-  box-shadow: 0 0 24px rgba(0,221,255,0.35) !important;
-}
-.aihydro-component-pin {
-  position: absolute;
-  top: -10px; right: -10px;
-  z-index: 1000;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  background: linear-gradient(135deg, #00A3FF, #00DDFF);
-  border: none; border-radius: 16px;
-  color: #0a0a15;
-  font-family: Poppins, system-ui, sans-serif;
-  font-size: 11px; font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,221,255,0.4);
-}
-.aihydro-component-pin.has-comment { background: rgba(0,221,255,0.85); }
-.aihydro-selection-bubble {
-  position: fixed; z-index: 99998;
-  display: none;
-  align-items: center; gap: 2px;
-  padding: 3px 5px;
-  background: rgba(15,15,30,0.97);
-  border: 1px solid rgba(0,221,255,0.6);
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-  font-family: Poppins, system-ui, sans-serif;
-  font-size: 12px; user-select: none; white-space: nowrap;
-}
-.aihydro-selection-bubble.visible { display: inline-flex; }
-.aihydro-selection-bubble button {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 22px;
-  border: none; background: transparent;
-  color: #cbd5e1; border-radius: 4px; cursor: pointer;
-  font-family: inherit; font-size: inherit; font-weight: 700;
-}
-.aihydro-selection-bubble button:hover { background: rgba(0,221,255,0.18); color: #00DDFF; }
-.aihydro-selection-bubble .bb-comment {
-  width: auto; padding: 0 10px 0 8px;
-  background: rgba(0,221,255,0.15); color: #00DDFF;
-  font-weight: 700; gap: 4px;
-}
-.aihydro-selection-bubble .bb-comment:hover { background: rgba(0,221,255,0.3); }
-.aihydro-selection-bubble .bb-divider {
-  width: 1px; height: 14px;
-  background: rgba(125,211,252,0.2); margin: 0 2px;
-}
-.aihydro-composer {
-  position: fixed; z-index: 99999;
-  width: 320px;
-  background: rgba(15,15,30,0.98);
-  border: 1px solid rgba(0,221,255,0.5);
-  border-radius: 12px; padding: 12px;
-  box-shadow: 0 12px 36px rgba(0,0,0,0.65);
-  font-family: Nunito, system-ui, sans-serif;
-}
-.aihydro-composer .cmp-target {
-  margin: 0 0 8px; padding: 5px 9px;
-  border-left: 3px solid rgba(0,221,255,0.5);
-  font-size: 12px; color: #94a3b8; font-style: italic;
-  background: rgba(0,221,255,0.05); border-radius: 4px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.aihydro-composer textarea {
-  width: 100%; box-sizing: border-box;
-  background: rgba(10,10,21,0.8);
-  border: 1px solid rgba(125,211,252,0.3); border-radius: 8px;
-  color: #e2e8f0; font-size: 13px; font-family: inherit;
-  padding: 8px 10px; resize: vertical; min-height: 64px; outline: none;
-}
-.aihydro-composer textarea:focus { border-color: rgba(0,221,255,0.7); }
-.aihydro-composer .cmp-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
-.aihydro-composer button {
-  font-family: Poppins, system-ui, sans-serif; font-size: 12px; font-weight: 600;
-  padding: 5px 12px; border-radius: 7px; border: none; cursor: pointer;
-}
-.aihydro-composer .cmp-cancel { background: rgba(125,211,252,0.1); color: #7dd3fc; }
-.aihydro-composer .cmp-add { background: linear-gradient(135deg, #00A3FF, #00DDFF); color: #0a0a15; }
-.aihydro-composer .cmp-hint { margin-top: 6px; font-size: 10px; color: #64748b; text-align: right; }</style></head>
+</head>
 <body>
 <main>
 
@@ -935,12 +243,12 @@ body:has(.folium-map) > .folium-map,
 <div class="wide card" style="padding:22px 24px;">
   <h3 style="margin-bottom:16px;">Your path through this module</h3>
   <div class="workflow-strip">
-    <div class="wf-node" onclick="scrollToSection('sec-concept')"><div class="wf-icon">💡</div><span class="wf-label">Concept</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-math')"><div class="wf-icon">📐</div><span class="wf-label">Filter</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-cell')"><div class="wf-icon">⚡</div><span class="wf-label">Live Code</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-compare')"><div class="wf-icon">↔️</div><span class="wf-label">Compare</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-quiz')"><div class="wf-icon">✓</div><span class="wf-label">Check</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-prov')">
+    <div class="wf-node" data-scroll="sec-concept"><div class="wf-icon">💡</div><span class="wf-label">Concept</span></div>
+    <div class="wf-node" data-scroll="sec-math"><div class="wf-icon">📐</div><span class="wf-label">Filter</span></div>
+    <div class="wf-node" data-scroll="sec-cell"><div class="wf-icon">⚡</div><span class="wf-label">Live Code</span></div>
+    <div class="wf-node" data-scroll="sec-compare"><div class="wf-icon">↔️</div><span class="wf-label">Compare</span></div>
+    <div class="wf-node" data-scroll="sec-quiz"><div class="wf-icon">✓</div><span class="wf-label">Check</span></div>
+    <div class="wf-node" data-scroll="sec-prov">
       <div class="wf-icon" style="border-color:rgba(0,221,255,0.6);box-shadow:0 0 20px rgba(0,221,255,0.25);">📜</div>
       <span class="wf-label" style="color:var(--cyan);">Sources</span>
     </div>
@@ -948,7 +256,7 @@ body:has(.folium-map) > .folium-map,
 </div>
 
 <!-- §1 CONCEPT -->
-<div id="sec-concept" class="wide card glow aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
+<div id="sec-concept" class="wide card glow" data-aihydro-editable="prose">
   <h2>1 · Two flows, one stream</h2>
   <p>
     When it rains, two very different processes contribute to the stream at the same time:
@@ -979,7 +287,7 @@ body:has(.folium-map) > .folium-map,
 </div>
 
 <!-- §2 LYNE-HOLLICK FILTER -->
-<div id="sec-math" class="wide card aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
+<div id="sec-math" class="wide card" data-aihydro-editable="prose">
   <h2>2 · The Lyne–Hollick digital filter</h2>
   <p>
     The Lyne–Hollick filter is a one-parameter recursive digital filter for automated
@@ -1034,7 +342,7 @@ body:has(.folium-map) > .folium-map,
 </div>
 
 <!-- §3 LIVE CODE + rewriteCell -->
-<div id="sec-cell" class="wide card glow aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
+<div id="sec-cell" class="wide card glow" data-aihydro-editable="prose">
   <h2>3 · Drag α — watch the code rewrite itself <span style="font-size:12px;color:#f59e0b;">(SYNTHETIC series)</span></h2>
   <p>
     Move the slider below. As you drag, the value of <code>alpha</code> in the Python
@@ -1046,7 +354,7 @@ body:has(.folium-map) > .folium-map,
   <!-- α slider (bindParam) -->
   <div style="background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;">
     <div class="param-block" id="bp-alpha">
-      <label>
+      <label for="alphaSlider">
         Filter parameter α
         <span id="alphaDisplay">0.925</span>
       </label>
@@ -1062,7 +370,7 @@ body:has(.folium-map) > .folium-map,
         <span style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:0.05em;">BFI (computed by the filter on this page)</span>
         <span id="bfiEstDisplay" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--bright);font-weight:700;">0.742</span>
       </div>
-      <div class="bfi-bar-track"><div class="bfi-bar-fill" id="bfiBar" style="width:74.2%;"></div></div>
+      <div class="bfi-bar-track" id="bfiTrack" role="meter" aria-label="Baseflow index computed by the filter" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.742"><div class="bfi-bar-fill" id="bfiBar" style="width:74.2%;"></div></div>
       <div class="bfi-labels"><span>0 (all quickflow)</span><span>1 (all baseflow)</span></div>
     </div>
   </div>
@@ -1072,7 +380,7 @@ body:has(.folium-map) > .folium-map,
     <div class="aihydro-cell-header">
       <span class="aihydro-cell-lang">Python</span>
       <span class="aihydro-cell-desc">Lyne–Hollick baseflow separation — α is updated by the slider above</span>
-      <button class="aihydro-run" type="button">▶ Run</button>
+      <button class="run-btn aihydro-run" type="button">Run ▶</button>
     </div>
     <pre class="aihydro-source" id="lhSource">import numpy as np
 import matplotlib
@@ -1148,7 +456,10 @@ print(f"α = {alpha:.3f}")
 print(f"BFI (filter)   = {BFI:.4f}  ({BFI*100:.1f}% of flow classed as baseflow)")
 print(f"BFI (true)     = {BFI_true:.4f}  (known only because this series is synthetic)")
 print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic units)")</pre>
-    <div class="aihydro-output-wrap"><div class="aihydro-output"></div><button type="button" class="aihydro-copy-output">Copy output</button></div>
+    <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:lh-filter@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">α = 0.925
+BFI (filter)   = 0.7419  (74.2% of flow classed as baseflow)
+BFI (true)     = 0.7515  (known only because this series is synthetic)
+Mean Q = 2.66  |  Mean base = 1.97  (synthetic units)</pre><div class="aihydro-static-figure"><img alt="Line chart of a synthetic 365-day hydrograph. Total flow (cyan line) has 15 storm peaks between about 4 and 9 synthetic units on a slowly varying seasonal baseflow of 1 to 3.3 units; the Lyne-Hollick baseflow (green area, alpha 0.925) follows the slow trend and the quickflow (blue) fills the space between baseflow and total flow. Title: BFI 0.742." src="data:image/png;base64,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"></div></div><!--@@END static:lh-filter@@--></div>
   </div>
 
   <div class="callout tip" style="margin-top:14px;">
@@ -1158,7 +469,7 @@ print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic un
 </div>
 
 <!-- §4 COMPARE WIPE -->
-<div id="sec-compare" class="wide card aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
+<div id="sec-compare" class="wide card" data-aihydro-editable="prose">
   <h2>4 · Before and after — drag to compare</h2>
   <p>
     The <strong>wipe control</strong> below shows the same SYNTHETIC hydrograph as the Python cell (same series, same filter):
@@ -1168,34 +479,41 @@ print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic un
   </p>
 
   <!-- aihydro.compare block -->
-  <div class="aihydro-compare" id="hydrographCompare" style="height: 280px; margin: 16px 0px; position: relative;" data-aihydro-wired="1">
+  <div class="aihydro-compare" id="hydrographCompare" role="group" aria-label="Before and after comparison of the same synthetic hydrograph. Use the divider slider to move between total flow and the separated flow." style="height: 280px; margin: 16px 0px; position: relative;">
     <!-- LEFT: total Q only -->
-    <div id="cmpLeft">
-      <svg id="svgLeft" viewBox="0 0 700 280" style="width:100%;height:100%;display:block;" aria-label="Total streamflow — unseparated">
+    <div id="cmpLeft" class="cmp-pane">
+      <svg id="svgLeft" viewBox="0 0 700 280" style="width:100%;height:100%;display:block;" role="img" aria-label="Total streamflow of the synthetic year, unseparated">
         <rect x="0" y="0" width="700" height="280" fill="#0f0f1e"></rect>
         <path id="pathQLeft" d="" fill="rgba(0,163,255,0.22)" stroke="none"></path>
         <path id="lineQLeft" d="" fill="none" stroke="#00DDFF" stroke-width="2.2"></path>
         <text x="16" y="22" font-family="Poppins,sans-serif" font-size="12" fill="#94a3b8" font-weight="600">Total Q (unseparated)</text>
-        <text x="16" y="270" font-family="Poppins,sans-serif" font-size="11" fill="#334466">Day of year →</text>
+        <text x="16" y="270" font-family="Poppins,sans-serif" font-size="11" fill="#94a3b8">Day of year →</text>
       </svg>
     </div>
     <!-- RIGHT: baseflow + quickflow separated -->
-    <div id="cmpRight" style="clip-path: inset(0px 0px 0px 50%); position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;">
-      <svg id="svgRight" viewBox="0 0 700 280" style="width:100%;height:100%;display:block;" aria-label="Separated baseflow and quickflow">
+    <div id="cmpRight" class="cmp-pane" style="clip-path: inset(0px 0px 0px 50%); position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;">
+      <svg id="svgRight" viewBox="0 0 700 280" style="width:100%;height:100%;display:block;" role="img" aria-label="Same synthetic year separated into baseflow (solid green) and quickflow (hatched blue)">
         <rect x="0" y="0" width="700" height="280" fill="#0f0f1e"></rect>
         <path id="pathBase" d="" fill="rgba(52,211,153,0.50)" stroke="none"></path>
-        <path id="pathQuick" d="" fill="rgba(0,163,255,0.28)" stroke="none"></path>
+        <defs><pattern id="hatchQuick" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="rgba(0,163,255,0.26)"></rect><line x1="0" y1="0" x2="0" y2="7" stroke="#7dd3fc" stroke-width="1.6"></line></pattern></defs>
+        <path id="pathQuick" d="" fill="url(#hatchQuick)" stroke="none"></path>
         <path id="lineQRight" d="" fill="none" stroke="#00DDFF" stroke-width="2.2"></path>
         <path id="lineBase" d="" fill="none" stroke="#34d399" stroke-width="1.2" stroke-dasharray="5 3"></path>
         <text x="16" y="22" font-family="Poppins,sans-serif" font-size="12" fill="#34d399" font-weight="600">Separated — Baseflow + Quickflow</text>
-        <text x="16" y="270" font-family="Poppins,sans-serif" font-size="11" fill="#334466">Day of year →</text>
+        <text x="16" y="270" font-family="Poppins,sans-serif" font-size="11" fill="#94a3b8">Day of year →</text>
       </svg>
     </div>
     <div class="compare-divider" id="cmpDivider" style="left: 50%;"></div>
-    <div class="compare-handle" id="cmpHandle" style="left: 50%;">↔</div>
+    <div class="compare-handle" id="cmpHandle" style="left: 50%;"><span aria-hidden="true">↔</span></div>
     <div class="compare-label left">Before</div>
     <div class="compare-label right">After</div>
-  <div class="aihydro-compare-handle" style="left: 50%;"></div><input type="range" min="0" max="100" class="aihydro-compare-range"></div>
+  </div>
+  <p class="cmp-keys">Keyboard: focus the divider (Tab), then use ← → to move it, Home/End for the ends.</p>
+  <div class="legend" aria-label="Legend">
+    <span class="legend-item"><span class="sw sw-base" aria-hidden="true"></span>Baseflow (solid green area, dashed line)</span>
+    <span class="legend-item"><span class="sw sw-quick" aria-hidden="true"></span>Quickflow (hatched blue area)</span>
+    <span class="legend-item"><span class="sw sw-total" aria-hidden="true"></span>Total Q (solid cyan line)</span>
+  </div>
 
   <p style="font-size:13px;color:var(--muted);">
     Synthetic data, α = <span id="cmpBfi">0.925 · BFI = 0.742</span>. The real split depends on the actual gauge record — Modules 5 and 7 bundle real CAMELS-US observations you can run through this filter.
@@ -1203,45 +521,14 @@ print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic un
 </div>
 
 <!-- §5 QUIZ -->
-<div id="sec-quiz" class="wide card aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
+<div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
   <h2>5 · Checkpoint</h2>
-  <p>Three questions — pass all three to mark this module complete.</p>
-
-  <div class="aihydro-quiz" id="bfQuiz">
-    <div class="aihydro-quiz-question" data-answer="1">
-      <p class="q-text">1 · The Baseflow Index (BFI) is defined as…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="0"> Peak flow divided by mean annual flow</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="1"> Total baseflow volume divided by total streamflow volume</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="2"> The recession constant of the hydrograph falling limb</label>
-      <div class="aihydro-quiz-feedback" data-fb="0">That's a flood-frequency ratio, not the BFI.</div>
-      <div class="aihydro-quiz-feedback" data-fb="2">The recession constant describes how quickly flow falls, not the fraction that is baseflow.</div>
-    </div>
-
-    <div class="aihydro-quiz-question" data-answer="2">
-      <p class="q-text">2 · In the Lyne–Hollick filter, increasing α closer to 1 will…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="0"> Increase the estimated BFI</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="1"> Leave the BFI unchanged</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="2"> Decrease the estimated BFI (more conservative baseflow)</label>
-      <div class="aihydro-quiz-feedback" data-fb="0">Higher α means stronger smoothing — baseflow hugs the slow trend and doesn't respond to storms, so the estimate is smaller, not larger.</div>
-      <div class="aihydro-quiz-feedback" data-fb="1">α is the key sensitivity parameter; changing it always changes the BFI estimate.</div>
-    </div>
-
-    <div class="aihydro-quiz-question" data-answer="0">
-      <p class="q-text">3 · Which type of catchment would you expect to have a high BFI (close to 1)?</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="0"> A spring-fed chalk stream with a thick, permeable aquifer</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="1"> An impervious urban catchment with fast storm drains</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="2"> A steep mountain catchment dominated by snowmelt</label>
-      <div class="aihydro-quiz-feedback" data-fb="1">Urban and impervious catchments route almost all rain to the stream rapidly — very low BFI.</div>
-      <div class="aihydro-quiz-feedback" data-fb="2">Snowmelt is a large quickflow pulse — it tends to lower BFI, not raise it.</div>
-    </div>
-
-    <button class="aihydro-quiz-submit" type="button" id="quizSubmit" data-aq-wired="1">Check answers</button>
-    <span id="quizScore" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--muted);margin-left:14px;"></span>
-  </div>
+  <p>Answer every item correctly to mark this module complete. Wrong answers can be changed and checked again; the numeric answers are computed from the series on this page.</p>
+  <div id="bfQuiz"></div>
 </div>
 
 <!-- §6 PROVENANCE -->
-<div id="sec-prov" class="wide card refs aihydro-edit-active" data-aihydro-editable="prose" contenteditable="true" spellcheck="true">
+<div id="sec-prov" class="wide card refs" data-aihydro-editable="prose">
   <h2>Sources &amp; Further Reading</h2>
   <ol>
     <li><em>Nathan, R. J. &amp; McMahon, T. A. (1990).</em> Evaluation of automated techniques for base flow and recession analyses. <em>Water Resources Research</em>, 26(7), 1465–1473. doi:10.1029/WR026i007p01465 — evaluates recursive baseflow filters; α = 0.925 is commonly used for daily data (e.g. here).</li>
@@ -1251,7 +538,7 @@ print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic un
   <dl class="provenance">
     <div class="prov-item"><dt>Author</dt><dd>Mohammad Galib · Purdue University</dd></div>
     <div class="prov-item"><dt>License</dt><dd>CC-BY-4.0 — free to reuse with attribution</dd></div>
-    <div class="prov-item"><dt>Module ID</dt><dd><code>baseflow-separation</code> · v0.2.0</dd></div>
+    <div class="prov-item"><dt>Module ID</dt><dd><code>baseflow-separation</code> · v0.3.0</dd></div>
     <div class="prov-item"><dt>Course</dt><dd>Introduction to Hydrology · <code>intro-hydro-2026</code></dd></div>
     <div class="prov-item"><dt>Data</dt><dd>SYNTHETIC hydrograph from a deterministic formula (no random numbers); no real gauge data</dd></div>
     <div class="prov-item"><dt>Dependencies</dt><dd>numpy, matplotlib (kernel cell); compare wipe is pure DOM; filter shared with all modules (shared/lyne_hollick.js and .py)</dd></div>
@@ -1272,18 +559,439 @@ print(f"Mean Q = {Q.mean():.2f}  |  Mean base = {base.mean():.2f}  (synthetic un
   </div>
 </main>
 <script>
+/*@@BEGIN js:shared/ready.js@@*/
+/* Bridge readiness: ONE shared promise for the whole page.
+ *
+ * window.aihydro is injected by the AI-Hydro preview bridge, sometimes after the module's own
+ * scripts have run. Every call to whenReady() waits on the same promise, so at most one 50 ms
+ * poll exists per page no matter how many handlers call it (the old per-call setInterval leaked
+ * one timer per call when no bridge was present). The poll stops after about 10 s: outside the
+ * preview (a plain browser) the bridge never arrives and the callbacks never run, which is the
+ * intended standalone behaviour. Modules must render without the bridge.
+ *
+ * Single source of truth: shared/ready.js (inlined by scripts/build_modules.py).
+ */
+function aihydroReady() {
+  if (!window.__aihydroReadyPromise) {
+    window.__aihydroReadyPromise = new Promise(function (resolve) {
+      if (window.aihydro) { resolve(window.aihydro); return; }
+      var tries = 0;
+      var t = setInterval(function () {
+        if (window.aihydro) { clearInterval(t); resolve(window.aihydro); }
+        else if (++tries >= 200) { clearInterval(t); }
+      }, 50);
+    });
+  }
+  return window.__aihydroReadyPromise;
+}
+function whenReady(fn) {
+  aihydroReady().then(function () { fn(); });
+}
+/*@@END js:shared/ready.js@@*/
+/*@@BEGIN js:shared/a11y.js@@*/
+/* Accessibility helpers shared by every module (keyboard access, live announcements,
+ * reduced motion). Single source of truth: shared/a11y.js, inlined by scripts/build_modules.py.
+ * Pure logic (keyValue) is unit-tested under node; the DOM helpers use only the standard DOM.
+ */
+var HydroA11y = (function () {
+  'use strict';
+
+  /* True when the user asked the OS/browser for less motion. Widgets must still update;
+     they just must not animate or autoplay on their own. */
+  function reducedMotion() {
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) { return false; }
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* Round to the step grid anchored at min, trimming float noise. */
+  function snap(v, min, step) {
+    var n = Math.round((v - min) / step);
+    var out = min + n * step;
+    var decimals = (String(step).split('.')[1] || '').length;
+    return parseFloat(out.toFixed(Math.min(decimals + 2, 12)));
+  }
+
+  /* WAI-ARIA slider keys. Returns the new value, or null when the key is not handled. */
+  function keyValue(key, cur, o) {
+    var step = o.step || 1, page = o.page || step * 10, v;
+    switch (key) {
+      case 'ArrowRight': case 'ArrowUp':   v = cur + step; break;
+      case 'ArrowLeft':  case 'ArrowDown': v = cur - step; break;
+      case 'PageUp':   v = cur + page; break;
+      case 'PageDown': v = cur - page; break;
+      case 'Home': v = o.min; break;
+      case 'End':  v = o.max; break;
+      default: return null;
+    }
+    return clamp(snap(v, o.min, step), o.min, o.max);
+  }
+
+  /* One polite live region for short announcements (selected cell, new scenario, ...). */
+  function announce(msg) {
+    var el = document.getElementById('hydro-announcer');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'hydro-announcer';
+      el.className = 'hydro-sr-only';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(el);
+    }
+    el.textContent = '';
+    el.textContent = String(msg);
+  }
+
+  /* Make `el` a keyboard-operable slider.
+       o = { label, min, max, step, page, get(), set(v), text(v) }
+     get() returns the current value, set(v) applies a new one (the caller redraws), text(v)
+     is the human-readable value for screen readers. Call the returned sync() after the value
+     changes by other means (mouse drag, a paired <input type=range>). */
+  function slider(el, o) {
+    el.setAttribute('role', 'slider');
+    el.setAttribute('tabindex', '0');
+    if (o.label) el.setAttribute('aria-label', o.label);
+    el.setAttribute('aria-valuemin', String(o.min));
+    el.setAttribute('aria-valuemax', String(o.max));
+    function sync() {
+      var v = o.get();
+      el.setAttribute('aria-valuenow', String(v));
+      el.setAttribute('aria-valuetext', o.text ? o.text(v) : String(v));
+    }
+    el.addEventListener('keydown', function (ev) {
+      var nv = keyValue(ev.key, o.get(), o);
+      if (nv === null) return;
+      ev.preventDefault();
+      if (nv !== o.get()) o.set(nv);
+      sync();
+    });
+    sync();
+    return { sync: sync };
+  }
+
+  /* Make a non-button element (a card, a node) operable from the keyboard: role, tab stop, and
+     Enter/Space as well as click all call fn. */
+  function activatable(el, fn, role) {
+    if (!el.getAttribute('role')) el.setAttribute('role', role || 'button');
+    if (el.getAttribute('tabindex') === null) el.setAttribute('tabindex', '0');
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fn(ev); }
+    });
+  }
+
+  /* [data-scroll="section-id"] elements scroll to that section (replaces inline onclick). */
+  function wireScrollNav() {
+    var nodes = document.querySelectorAll('[data-scroll]');
+    for (var i = 0; i < nodes.length; i++) (function (node) {
+      activatable(node, function () {
+        var t = document.getElementById(node.getAttribute('data-scroll'));
+        if (!t) return;
+        t.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        t.setAttribute('tabindex', '-1');
+        try { t.focus({ preventScroll: true }); } catch (e) {}
+      });
+    })(nodes[i]);
+  }
+
+  /* Mark readouts as polite live regions so screen readers hear changed values. */
+  function live(ids) {
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+    });
+  }
+
+  return { reducedMotion: reducedMotion, keyValue: keyValue, snap: snap, announce: announce,
+           slider: slider, live: live, activatable: activatable, wireScrollNav: wireScrollNav };
+})();
+/*@@END js:shared/a11y.js@@*/
+/*@@BEGIN js:shared/quiz.js@@*/
+/* HydroQuiz: the one checkpoint engine used by every module.
+ *
+ * Behaviour (the contract the tests pin):
+ *  - nothing about the answer is in the DOM before the first attempt (no pre-marked option, no
+ *    explanation text); the specification lives in the module's script, not the markup;
+ *  - every item can be answered again and again; a wrong attempt gets feedback for THAT answer but
+ *    never names the right one; after two wrong attempts a "Show explanation" button appears;
+ *  - a correct attempt shows the explanation; revealing an answer does not count as correct;
+ *  - fully keyboard operable (native radio group or text field + a Check button; Enter checks a
+ *    numeric answer) and announced through role=status live regions;
+ *  - numeric items take their answer from a function over the lesson's own data or code, so the
+ *    expected value can never be typed in by hand and drift from the lesson;
+ *  - completion goes to the AI-Hydro host as `artifact/quizComplete` with an explicit target
+ *    origin (the embedding window's origin), never '*'. If that origin cannot be determined, or
+ *    the page is standalone, nothing is posted.
+ *
+ * Item specification:
+ *   (prompt may be a function, so numbers quoted in the question come from the lesson's data too)
+ *   { id, type:'choice', prompt, options:[text,...], correct:index|function,
+ *     feedback:[text|null,...],            // shown when that option is chosen and wrong
+ *     explain:text|function }              // shown when correct (and on "Show explanation")
+ *   { id, type:'numeric', prompt, answer:number|function, tol:{abs,rel}, unit, format:function,
+ *     hint:text|function, explain:text|function(answer) }
+ *
+ * Single source of truth: shared/quiz.js (inlined by scripts/build_modules.py).
+ */
+var HydroQuiz = (function () {
+  'use strict';
+
+  var instances = {};
+  var lastReport = null;
+
+  function resolve(v, arg) { return typeof v === 'function' ? v(arg) : v; }
+
+  /* "0.74", "0,74", "1 350", "1,350", "−3", "12 mm", "45%" -> number; anything else -> null */
+  function parseNumber(text) {
+    var s = String(text == null ? '' : text).replace(/−/g, '-').replace(/[  ]/g, ' ').trim();
+    var m = /^([+-]?[0-9][0-9 ,.]*(?:e[+-]?[0-9]+)?|[+-]?\.[0-9]+)\s*(?:%|[A-Za-z°µμ\/²³·^ -]*)$/i.exec(s);
+    if (!m) return null;
+    var n = m[1].replace(/ /g, '');
+    if (n.indexOf('.') >= 0 && n.indexOf(',') >= 0) n = n.replace(/,/g, '');
+    else if (/^[+-]?[0-9]{1,3}(,[0-9]{3})+$/.test(n)) n = n.replace(/,/g, '');
+    else n = n.replace(',', '.');
+    if (!/^[+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(n)) return null;
+    var v = parseFloat(n);
+    return isFinite(v) ? v : null;
+  }
+
+  function tolerance(item, ans) {
+    var t = item.tol || {};
+    var abs = typeof t.abs === 'number' ? t.abs : 0;
+    var rel = typeof t.rel === 'number' ? t.rel : (typeof t.abs === 'number' ? 0 : 0.02);
+    return Math.max(abs, rel * Math.abs(ans));
+  }
+
+  function gradeChoice(item, idx) {
+    if (idx === null || idx === undefined || idx < 0) return { status: 'empty' };
+    return { status: idx === resolve(item.correct) ? 'correct' : 'incorrect', choice: idx };
+  }
+
+  function gradeNumeric(item, text) {
+    var v = parseNumber(text);
+    if (v === null) return { status: 'invalid' };
+    var ans = resolve(item.answer);
+    var tol = tolerance(item, ans);
+    var ok = Math.abs(v - ans) <= tol;
+    return { status: ok ? 'correct' : 'incorrect', value: v, answer: ans, tol: tol, direction: v > ans ? 'high' : 'low' };
+  }
+
+  function fmt(item, v) {
+    if (item.format) return item.format(v);
+    var s = Math.abs(v) >= 1000 ? String(Math.round(v)) : String(parseFloat(v.toPrecision(4)));
+    return s + (item.unit ? ' ' + item.unit : '');
+  }
+
+  function feedbackText(item, res) {
+    if (res.status === 'correct') {
+      var ex = item.type === 'numeric' ? resolve(item.explain, res.answer) : resolve(item.explain);
+      return '✓ Correct. ' + (ex || '');
+    }
+    if (item.type === 'numeric') {
+      var hint = resolve(item.hint, res.answer);
+      return '✗ Not quite: your value is too ' + res.direction + '. ' + (hint || 'Recompute it from the numbers in the lesson and try again.');
+    }
+    var fb = item.feedback && item.feedback[res.choice];
+    return '✗ Not quite. ' + (fb || 'Re-read the section above and try again.');
+  }
+
+  function revealText(item) {
+    if (item.type === 'numeric') {
+      var a = resolve(item.answer);
+      return 'Answer: ' + fmt(item, a) + '. ' + (resolve(item.explain, a) || '');
+    }
+    var c = resolve(item.correct);
+    return 'Answer: ' + item.options[c] + '. ' + (resolve(item.explain) || '');
+  }
+
+  /* A numeric constant read from the text of a code cell (e.g. `C = 0.35`), so an answer is
+     computed from the very numbers the learner reads in the cell. */
+  function sourceConstant(cellId, name) {
+    var pre = document.querySelector('[data-aihydro-cell-id="' + cellId + '"] .aihydro-source');
+    var m = pre && new RegExp('^\\s*' + name + '\\s*=\\s*([-+0-9._eE]+)', 'm').exec(pre.textContent);
+    if (!m) throw new Error('constant ' + name + ' not found in cell ' + cellId);
+    return parseFloat(m[1].replace(/_/g, ''));
+  }
+
+  /* The window that embeds this page, as an origin string, or null (standalone / unknown). */
+  function parentOrigin(win) {
+    win = win || window;
+    try { if (!win.parent || win.parent === win) return null; } catch (e) { return null; }
+    var o = null;
+    try { var a = win.location && win.location.ancestorOrigins; if (a && a.length) o = a[0]; } catch (e) { o = null; }
+    if (!o || o === 'null') {
+      try { o = win.document.referrer ? new URL(win.document.referrer).origin : null; } catch (e) { o = null; }
+    }
+    return o && o !== 'null' ? o : null;
+  }
+
+  /* artifact/quizComplete exactly as the AI-Hydro bridge sends it, but to a named origin. */
+  function postComplete(quizId, passed, score, total, win) {
+    win = win || window;
+    var origin = parentOrigin(win);
+    lastReport = { quizId: quizId, passed: passed, score: score, total: total, origin: origin, posted: false };
+    if (!origin) return false;
+    var base = win.__aihydroArtifact || {};
+    var msg = { source: 'aihydro-artifact' };
+    for (var k in base) msg[k] = base[k];
+    msg.type = 'artifact/quizComplete';
+    msg.quizId = quizId; msg.passed = passed; msg.score = score; msg.total = total;
+    try { win.parent.postMessage(msg, origin); lastReport.posted = true; } catch (e) { return false; }
+    return true;
+  }
+
+  function el(tag, props, kids) {
+    var e = document.createElement(tag);
+    if (props) for (var k in props) {
+      if (k === 'class') e.className = props[k];
+      else if (k === 'text') e.textContent = props[k];
+      else e.setAttribute(k, props[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function mount(root, spec) {
+    var quizId = spec.quizId;
+    var items = spec.items;
+    var rec = {};            // id -> { attempts, correct, revealed, node refs }
+    var list = el('ol', { 'class': 'hq-list' });
+    var summary = el('p', { 'class': 'hq-summary', role: 'status', 'aria-live': 'polite' });
+
+    root.setAttribute('class', 'hq');
+    root.setAttribute('data-hq-quiz', quizId);
+
+    function counts() {
+      var n = 0;
+      items.forEach(function (it) { if (rec[it.id].correct) n++; });
+      return n;
+    }
+    function updateSummary() {
+      var n = counts(), total = items.length;
+      summary.textContent = n === total
+        ? 'All ' + total + ' correct ✓ Checkpoint complete.'
+        : n + ' of ' + total + ' correct. Wrong answers can be changed and checked again.';
+      summary.setAttribute('data-complete', n === total ? '1' : '0');
+    }
+
+    items.forEach(function (it, qi) {
+      var r = rec[it.id] = { attempts: 0, correct: false, revealed: false, radios: [], input: null };
+      var uid = quizId + '-' + it.id;
+      var fb = el('div', { 'class': 'hq-feedback', id: uid + '-fb', role: 'status', 'aria-live': 'polite' });
+      var check = el('button', { 'class': 'hq-check', type: 'button', text: 'Check answer' });
+      var reveal = el('button', { 'class': 'hq-reveal', type: 'button', text: 'Show explanation', hidden: 'hidden' });
+      var legend = el('legend', { 'class': 'hq-prompt', text: (qi + 1) + ' · ' + resolve(it.prompt) });
+      var body;
+
+      if (it.type === 'numeric') {
+        var input = el('input', { 'class': 'hq-input', type: 'text', inputmode: 'decimal', autocomplete: 'off',
+                                  id: uid + '-in', 'aria-describedby': uid + '-fb' });
+        r.input = input;
+        input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); doCheck(); } });
+        body = el('div', { 'class': 'hq-numeric' }, [
+          el('label', { 'class': 'hq-numlabel', 'for': uid + '-in', text: 'Your answer' + (it.unit ? ' (' + it.unit + ')' : '') }),
+          input
+        ]);
+      } else {
+        body = el('div', { 'class': 'hq-options' });
+        it.options.forEach(function (text, oi) {
+          var radio = el('input', { type: 'radio', name: uid, value: String(oi), 'aria-describedby': uid + '-fb' });
+          r.radios.push(radio);
+          body.appendChild(el('label', { 'class': 'hq-opt' }, [radio, el('span', { text: text })]));
+        });
+      }
+
+      function selected() {
+        for (var i = 0; i < r.radios.length; i++) if (r.radios[i].checked) return i;
+        return -1;
+      }
+      function doCheck() {
+        var res = it.type === 'numeric' ? gradeNumeric(it, r.input.value) : gradeChoice(it, selected());
+        if (res.status === 'empty' || res.status === 'invalid') {
+          fb.textContent = res.status === 'empty' ? 'Choose an answer first, then check it.' : 'Enter a number (for example 0.74), then check it.';
+          item.setAttribute('data-state', 'pending');
+          return;
+        }
+        r.attempts++;
+        r.correct = res.status === 'correct';
+        item.setAttribute('data-state', r.correct ? 'correct' : 'incorrect');
+        fb.textContent = feedbackText(it, res);
+        check.textContent = 'Check again';
+        if (!r.correct && r.attempts >= 2) reveal.removeAttribute('hidden');
+        updateSummary();
+        postComplete(quizId, counts() === items.length, counts(), items.length);
+        if (spec.onChange) spec.onChange(api.state());
+      }
+      check.addEventListener('click', doCheck);
+      reveal.addEventListener('click', function () {
+        r.revealed = true;
+        item.setAttribute('data-state', r.correct ? 'correct' : 'revealed');
+        fb.textContent = revealText(it);
+      });
+      r.check = doCheck;
+
+      var fieldset = el('fieldset', { 'class': 'hq-fieldset' }, [
+        legend, body,
+        el('div', { 'class': 'hq-actions' }, [check, reveal]),
+        fb
+      ]);
+      var item = el('li', { 'class': 'hq-item', 'data-hq-item': it.id, 'data-state': '' }, [fieldset]);
+      list.appendChild(item);
+    });
+
+    root.appendChild(list);
+    root.appendChild(summary);
+    updateSummary();
+
+    var api = {
+      quizId: quizId,
+      state: function () {
+        var n = counts();
+        return { quizId: quizId, correct: n, total: items.length, passed: n === items.length,
+                 items: items.map(function (it) { return { id: it.id, attempts: rec[it.id].attempts, correct: rec[it.id].correct, revealed: rec[it.id].revealed }; }) };
+      },
+      /* test/programmatic hooks: answer an item then check it */
+      answer: function (id, value) {
+        var r = rec[id];
+        if (r.input) r.input.value = String(value);
+        else if (r.radios[value]) r.radios[value].checked = true;
+      },
+      check: function (id) { rec[id].check(); },
+      /* every item as the learner sees it plus the computed right answer, for tests that cross-check them independently */
+      describe: function () {
+        return items.map(function (it) {
+          return { id: it.id, type: it.type, prompt: resolve(it.prompt), options: it.options || null,
+                   expected: resolve(it.type === 'numeric' ? it.answer : it.correct),
+                   explain: it.type === 'numeric' ? resolve(it.explain, resolve(it.answer)) : resolve(it.explain) };
+        });
+      },
+      /* the computed right answer (index or number), for tests that cross-check it independently */
+      expected: function (id) {
+        for (var i = 0; i < items.length; i++) if (items[i].id === id) return resolve(items[i].type === 'numeric' ? items[i].answer : items[i].correct);
+        return undefined;
+      }
+    };
+    instances[quizId] = api;
+    return api;
+  }
+
+  return { mount: mount, parseNumber: parseNumber, gradeChoice: gradeChoice, gradeNumeric: gradeNumeric,
+           sourceConstant: sourceConstant, parentOrigin: parentOrigin, postComplete: postComplete, feedbackText: feedbackText,
+           revealText: revealText, tolerance: tolerance, instances: instances,
+           lastReport: function () { return lastReport; } };
+})();
+/*@@END js:shared/quiz.js@@*/
+</script>
+<script>
 (function () {
   'use strict';
 
-  window.scrollToSection = function (id) {
-    var el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  function whenReady (fn) {
-    if (window.aihydro) { fn(); return; }
-    var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
-  }
+  HydroA11y.wireScrollNav();
 
   /* ── One Lyne–Hollick implementation (inlined from shared/lyne_hollick.js) ── */
 /*@@BEGIN js:shared/lyne_hollick.js@@*/
@@ -1413,14 +1121,23 @@ function baseflowIndex(Q, base) {
 
     var dragging = false;
 
+    var cmpPct = 50, cmpSlider = null;
     function setPos (frac) {
       frac = Math.max(0.05, Math.min(0.95, frac));
+      cmpPct = Math.round(frac * 100);
       var pct = (frac * 100).toFixed(1) + '%';
       right.style.clipPath = 'inset(0 0 0 ' + pct + ')';
       divider.style.left = pct;
       handle.style.left  = pct;
+      if (cmpSlider) cmpSlider.sync();
     }
 
+    /* keyboard + screen-reader access to the divider (the drag below stays for mouse and touch) */
+    cmpSlider = HydroA11y.slider(handle, {
+      label: 'Compare divider position', min: 5, max: 95, step: 5, page: 15,
+      get: function () { return cmpPct; }, set: function (v) { setPos(v / 100); },
+      text: function (v) { return v + ' percent across: left of the divider total flow only, right of it baseflow and quickflow separated'; }
+    });
     setPos(0.5);
 
     function onMove (cx) {
@@ -1434,12 +1151,6 @@ function baseflowIndex(Q, base) {
     wrap.addEventListener('touchstart', function (e) { dragging = true; onMove(e.touches[0].clientX); }, { passive: true });
     document.addEventListener('touchmove', function (e) { if (dragging) onMove(e.touches[0].clientX); }, { passive: true });
     document.addEventListener('touchend',  function ()  { dragging = false; });
-
-    whenReady(function () {
-      if (window.aihydro && window.aihydro.compare) {
-        window.aihydro.compare('#hydrographCompare');
-      }
-    });
   })();
 
   /* ── Alpha slider + bindParam + rewriteCell ── */
@@ -1451,7 +1162,9 @@ function baseflowIndex(Q, base) {
     var srcPre  = document.getElementById('lhSource');
     var cmpNote = document.getElementById('cmpBfi');
     var hourly  = document.getElementById('hourlyAlpha');
+    var track   = document.getElementById('bfiTrack');
     if (!slider) return;
+    HydroA11y.live(['bfiEstDisplay', 'cmpBfi', 'hourlyAlpha']);
 
     function buildSource (alpha) {
       return srcPre.textContent.replace(/^alpha = [\d.]+/m, 'alpha = ' + alpha.toFixed(3));
@@ -1462,6 +1175,7 @@ function baseflowIndex(Q, base) {
       var base = lyneHollick(Q, alpha);
       var bfi = baseflowIndex(Q, base);
       bfiBar.style.width  = (bfi * 100).toFixed(1) + '%';
+      track.setAttribute('aria-valuenow', bfi.toFixed(3));
       bfiDisp.textContent = bfi.toFixed(3);
       if (cmpNote) cmpNote.textContent = alpha.toFixed(3) + ' · BFI = ' + bfi.toFixed(3);
       if (hourly) hourly.textContent = Math.pow(alpha, 1 / 24).toFixed(4);
@@ -1478,134 +1192,42 @@ function baseflowIndex(Q, base) {
     slider.addEventListener('input', function () { update(parseFloat(slider.value)); });
     update(parseFloat(slider.value));
 
-    whenReady(function () {
-      if (window.aihydro && window.aihydro.bindParam) {
-        window.aihydro.bindParam('alpha', parseFloat(slider.value), function (v) {
-          slider.value = v;
-          update(parseFloat(v));
-        });
-      }
-    });
   })();
 
-})();
-
-/* ── Quiz wiring ─────────────────────────────────────── */
-(function wireQuiz() {
-  var MODULE_ID = 'baseflow-separation';
-  var quizEl    = document.getElementById('bfQuiz');
-  var submitBtn = document.getElementById('quizSubmit');
-  var scoreEl   = document.getElementById('quizScore');
-  if (!quizEl || !submitBtn) return;
-
-  var questions = Array.prototype.slice.call(quizEl.querySelectorAll('.aihydro-quiz-question'));
-
-  submitBtn.addEventListener('click', function () {
-    var numCorrect = 0;
-
-    questions.forEach(function (qEl) {
-      var correct   = parseInt(qEl.getAttribute('data-answer'), 10);
-      var radios    = qEl.querySelectorAll('input[type="radio"]');
-      var feedbacks = qEl.querySelectorAll('.aihydro-quiz-feedback');
-      var selected  = -1;
-      radios.forEach(function (r) { if (r.checked) selected = parseInt(r.value, 10); });
-
-      var labels = qEl.querySelectorAll('.aihydro-quiz-option');
-      labels.forEach(function (lbl, i) {
-        lbl.classList.remove('correct', 'incorrect');
-        if (i === correct) lbl.classList.add('correct');
-        else if (selected !== -1 && i === selected) lbl.classList.add('incorrect');
-      });
-
-      feedbacks.forEach(function (fb) { fb.classList.remove('show'); });
-      if (selected !== -1 && selected !== correct) {
-        var fb = qEl.querySelector('.aihydro-quiz-feedback[data-fb="' + selected + '"]');
-        if (fb) fb.classList.add('show');
-      }
-
-      if (selected === correct) numCorrect++;
-    });
-
-    var passed = numCorrect === questions.length;
-    var score  = numCorrect / questions.length;
-
-    if (scoreEl) {
-      scoreEl.textContent = numCorrect + '/' + questions.length + (passed ? ' ✓ Complete!' : ' — try again');
-      scoreEl.style.color = passed ? '#34d399' : '#f87171';
-    }
-
-    if (passed) {
-      submitBtn.textContent = 'Module complete ✓';
-      submitBtn.style.background = 'linear-gradient(135deg,#34d399,#059669)';
-      (function wr(fn) {
-        if (window.aihydro) { fn(); return; }
-        var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
-      })(function () {
-        if (window.aihydro && window.aihydro.quiz) {
-          window.aihydro.quiz({ moduleId: MODULE_ID, passed: true, score: score });
-        }
-      });
-      try {
-        window.parent.postMessage({
-          type: 'aihydro-quiz-complete', moduleId: MODULE_ID, passed: true, score: score
-        }, '*');
-      } catch (e) {}
-    }
+  /* ── Checkpoint (shared engine; numeric and interpretive answers are computed from this page's series) ── */
+  var BFQ_ALPHAS = [0.80, 0.90, 0.95, 0.98];
+  function bfiAt (a) { return baseflowIndex(Q, lyneHollick(Q, a)); }
+  window.__bfQuiz = HydroQuiz.mount(document.getElementById('bfQuiz'), {
+    quizId: 'baseflow-separation-checkpoint', moduleId: 'baseflow-separation',
+    items: [
+      { id: 'q1', type: 'choice', prompt: 'The Baseflow Index (BFI) is defined as…',
+        options: ['Peak flow divided by mean annual flow', 'Total baseflow volume divided by total streamflow volume', 'The recession constant of the hydrograph falling limb'],
+        correct: 1, feedback: ['That is a flood-frequency style ratio, not the BFI.', null, 'The recession constant describes how quickly flow falls, not the fraction of flow that is baseflow.'],
+        explain: 'BFI = Σ baseflow / Σ total Q, a volume ratio between 0 and 1.' },
+      { id: 'q2', type: 'choice', prompt: 'In the Lyne–Hollick filter, increasing α closer to 1 will…',
+        options: ['Increase the estimated BFI', 'Leave the BFI unchanged', 'Decrease the estimated BFI (more conservative baseflow)'],
+        correct: 2, feedback: ['Higher α lets quickflow persist longer, so the baseflow line sits lower and the estimate is smaller, not larger. Drag the slider and watch the BFI bar.', 'α is the key sensitivity parameter: changing it always changes the BFI estimate.', null],
+        explain: 'Higher α lets quickflow persist, so the baseflow line is lower and the BFI falls; the slider shows the same thing.' },
+      { id: 'q3', type: 'choice', prompt: 'Which type of catchment would you expect to have a high BFI (close to 1)?',
+        options: ['A spring-fed chalk stream with a thick, permeable aquifer', 'An impervious urban catchment with fast storm drains', 'A steep mountain catchment dominated by snowmelt'],
+        correct: 0, feedback: [null, 'Urban and impervious catchments route almost all rain to the stream quickly, which gives a very low BFI.', 'Snowmelt is a large quickflow pulse; it tends to lower the BFI, not raise it.'],
+        explain: 'A deep, permeable aquifer releases water slowly, so most of the flow is baseflow.' },
+      { id: 'q4', type: 'numeric', prompt: 'Set α = 0.980 in §3 (or run the cell with alpha = 0.98). What BFI does the filter give for the SYNTHETIC series? Give 3 decimals.',
+        answer: function () { return bfiAt(0.98); }, tol: { abs: 0.003 },
+        hint: 'Drag the α slider in §3 to 0.980 and read the BFI bar, or change alpha in the cell.',
+        explain: function (a) { return 'At α = 0.980 the filter classes ' + (a * 100).toFixed(1) + '% of the flow as baseflow, down from ' + (bfiAt(0.925) * 100).toFixed(1) + '% at α = 0.925.'; } },
+      { id: 'q5', type: 'choice', prompt: 'This series is synthetic, so its true baseflow share is known (printed by the cell as BFI (true)). Which of these α values brings the filter\'s BFI closest to that true value?',
+        options: BFQ_ALPHAS.map(function (a) { return 'α = ' + a.toFixed(2); }),
+        correct: function () { var best = 0; BFQ_ALPHAS.forEach(function (a, i) { if (Math.abs(bfiAt(a) - TRUE_BFI) < Math.abs(bfiAt(BFQ_ALPHAS[best]) - TRUE_BFI)) best = i; }); return best; },
+        feedback: BFQ_ALPHAS.map(function (a) { return 'At α = ' + a.toFixed(2) + ' the filter BFI is ' + bfiAt(a).toFixed(3) + ' against a true value of ' + TRUE_BFI.toFixed(3) + '; another choice is closer.'; }),
+        explain: 'The filter BFI changes smoothly with α, so the best α here is the one that happens to land nearest the true share (' + TRUE_BFI.toFixed(3) + '). On a real gauge no true value exists, which is why α is a calibration choice and the BFI a filter output.' }
+    ]
   });
-})();
-</script>
-<script>(function(){
-  function invalidateLeafletMaps() {
-    // NEVER do bare Object.keys(window) + window[k]: VS Code webviews expose
-    // cross-origin nested Window proxies on window; reading properties throws
-    // SecurityError before we can typeof-check them.
-    Object.keys(window).forEach(function(k) {
-      var v;
-      try {
-        v = window[k];
-      } catch (_) {
-        return;
-      }
-      if (!v || typeof v !== 'object') return;
-      try {
-        if (typeof v.invalidateSize === 'function') {
-          v.invalidateSize(true);
-        }
-      } catch (_) {}
-    });
-  }
-  function normalizeLeaflet() {
-    try {
-      var maps = Array.prototype.slice.call(document.querySelectorAll('.folium-map'));
-      if (!maps.length) return;
-      document.documentElement.style.width = '100%';
-      document.documentElement.style.height = '100%';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
-      maps.forEach(function(el) {
-        el.style.width = '100vw';
-        el.style.height = '100vh';
-        el.style.minHeight = '100vh';
-      });
-      invalidateLeafletMaps();
-    } catch (e) {
-      try { console.error('AI-Hydro Leaflet normalizer failed', e); } catch (_) {}
-    }
-  }
-  window.__aihydroNormalizeLeaflet = normalizeLeaflet;
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', normalizeLeaflet);
-  } else {
-    normalizeLeaflet();
-  }
-  window.addEventListener('load', normalizeLeaflet);
-  setTimeout(normalizeLeaflet, 50);
-  setTimeout(normalizeLeaflet, 250);
-  setTimeout(normalizeLeaflet, 1000);
-  setTimeout(normalizeLeaflet, 2500);
-})();</script>
 
-  <script>
+})();
+
+</script>
+<script>
   (function(){
     var inPreview = (window.AIHYDRO_HTML_PREVIEW_STANDALONE === true) ||
                     (typeof window.aihydro !== 'undefined') ||

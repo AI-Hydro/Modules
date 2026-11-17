@@ -2,7 +2,8 @@
   "moduleId": "dem-to-twi",
   "title": "The Shape of the Land: DEM to TWI",
   "description": "Compute the Topographic Wetness Index from a DEM step by step — click cells to trace D8 flow paths computed in code, run the full fill → D8 → accumulation → slope → TWI pipeline on a synthetic hillslope, explore a 3-D terrain, and compare elevation vs wetness with a wipe slider. Includes D8 vs D∞ and the effect of the slope floor and DEM resolution.",
-  "version": "0.3.0",
+  "version": "0.4.0",
+  "license": "CC-BY-4.0",
   "topic": "terrain-analysis",
   "level": "intro",
   "estimatedMinutes": 55,
@@ -35,7 +36,6 @@
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/dem-to-twi",
   "author": "Mohammad Galib, Purdue University",
   "createdAt": "2026-05-18",
-  "updatedAt": "2026-11-17",
   "downloadCount": 0,
   "githubReactions": 0,
   "discussionUrl": ""

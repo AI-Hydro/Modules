@@ -1,0 +1,7 @@
+BFI (Lyne–Hollick, α=0.925, this 5-year record): 0.557   (a filter output, not a measured groundwater fraction)
+Richards–Baker flashiness index                  : 0.051
+Seasonal amplitude ratio                        : 2.99
+Q10 (exceeded 10% of days, high flow)           : 118.31 m³/s
+Q50 (median)                                    : 22.34 m³/s
+Q90 (exceeded 90% of days, low flow)            : 9.486 m³/s
+Zero-flow days (not drawn on the log axis)      : 0

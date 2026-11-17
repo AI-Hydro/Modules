@@ -45,8 +45,10 @@ def test_python_cell_reproduces_js_means_and_terciles():
     coarse = [[(dem[2*r][2*c] + dem[2*r+1][2*c] + dem[2*r][2*c+1] + dem[2*r+1][2*c+1]) / 4 for c in range(n // 2)] for r in range(n // 2)]
     e30 = sum(d8_route(dem, 30.0)["twi"]) / 400
     e60 = sum(d8_route(coarse, 60.0)["twi"]) / 100
-    assert f"{e30:.2f} at 30 m and {e60:.2f} at 60 m" in T
-    assert f"{e60 - e30:.2f}" in T
+    from helpers import quiz_item
+    q3 = quiz_item("dem-to-twi", "q3")                       # computed in the page from the same pipeline
+    assert f"{e30:.2f} at 30 m and {e60:.2f} at 60 m" in q3["prompt"]
+    assert f"{abs(e60 - e30):.2f}" in q3["options"][2]
     assert m60 == pytest.approx(e60, abs=5e-4)
 
 
@@ -63,7 +65,9 @@ def test_numbers_quoted_in_text_match_computation():
     import math
     assert f"{math.log(100 / 1e-3):.1f}" in T and f"{math.log(100 / 1e-6):.1f}" in T
     assert j["acc"][22] == 25
-    assert "6.25" in T and f"{math.log(6.25):.2f}" in T
+    from helpers import quiz_item
+    q2 = quiz_item("dem-to-twi", "q2")
+    assert "6.25" in q2["explain"] and f"{math.log(6.25):.2f}" in q2["explain"]
 
 
 def test_marker_is_the_camels_outlet_and_catchment_map_has_no_fake_overlay():

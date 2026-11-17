@@ -1,0 +1,6 @@
+Cells: 400;  raised by depression filling (> 1 mm): 2;  outlet (row, col): (19, 9)
+a/tan(beta) spans 77 to 12000000 m  ->  TWI 4.34 to 16.30
+Mean TWI at 30 m : 6.648   (std 2.147)
+Mean TWI at 60 m : 7.583   (same surface, 2x2 block mean)
+Terciles of the 30 m grid: 5.22 | 7.14   (relative classes, no fixed thresholds)
+Wettest cell: TWI 16.30 with 400 cells draining through it

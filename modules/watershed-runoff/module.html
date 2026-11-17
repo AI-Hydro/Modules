@@ -8,21 +8,35 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-<script type="application/vnd.aihydro.module+json">
+<!--@@BEGIN manifest:module@@--><script type="application/vnd.aihydro.module+json">
 {
   "id": "watershed-runoff",
   "title": "The Watershed: Where Rain Becomes Runoff",
-  "version": "0.2.0",
-  "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
+  "version": "0.3.0",
+  "authors": [
+    {
+      "name": "Mohammad Galib",
+      "affiliation": "Purdue University"
+    }
+  ],
   "license": "CC-BY-4.0",
   "topic": "watershed-hydrology",
   "level": "intro",
   "estimated_minutes": 40,
-  "requires": { "executable": true, "python": ["numpy", "matplotlib"] },
-  "citation": { "text": "O'Callaghan, J. F. & Mark, D. M. (1984). The extraction of drainage networks from digital elevation data. Computer Vision, Graphics, and Image Processing, 28(3), 323-344. doi:10.1016/S0734-189X(84)80011-0" },
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "O'Callaghan, J.F. & Mark, D.M. (1984). The extraction of drainage networks from digital elevation data. Comput. Vision Graph. Image Process., 28(3), 323–344.",
+    "doi": "10.1016/S0734-189X(84)80011-0"
+  },
   "ai_hydro_preview_min_version": "0.2"
 }
-</script>
+</script><!--@@END manifest:module@@-->
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -96,11 +110,14 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 /* Terrain canvas */
 .terrain-wrap { position:relative; border-radius:20px; overflow:hidden; background:var(--mid); border:1px solid var(--border); }
 .terrain-wrap canvas[data-aihydro-scene3d] { display:block; width:100%; height:400px; }
+.terrain-wrap canvas#terrainFallback { display:block; height:400px; width:auto; max-width:100%; aspect-ratio:1; margin:0 auto; }
+.terrain-wrap canvas[hidden] { display:none; }
 .terrain-hint { position:absolute; bottom:14px; right:14px; background:rgba(0,0,0,0.65); border:1px solid rgba(0,221,255,0.25); border-radius:10px; padding:6px 12px; font-size:12px; color:var(--muted); pointer-events:none; }
 
 /* Routing canvas */
 .routing-wrap { border-radius:18px; overflow:hidden; background:var(--mid); border:1px solid var(--border); }
 .routing-wrap canvas { display:block; cursor:crosshair; width:100%; }
+.routing-wrap canvas:focus-visible { outline:3px solid #00FFFF; outline-offset:-3px; }
 .routing-legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:12px; color:var(--muted); }
 .legend-item { display:flex; align-items:center; gap:6px; }
 .legend-swatch { width:14px; height:8px; border-radius:3px; }
@@ -123,18 +140,6 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 .aihydro-output:empty::before { content:'(no output yet — run the cell)'; color:var(--muted); font-style:italic; }
 
 /* Quiz */
-.aihydro-quiz { margin:0; }
-.aihydro-quiz-question { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border); }
-.aihydro-quiz-question:last-of-type { border-bottom:none; }
-.q-text { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text); font-size:16px; margin-bottom:14px; }
-.aihydro-quiz-option { display:block; text-align:left; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(15,15,30,0.7); color:var(--sub); cursor:pointer; margin-bottom:8px; transition:border-color 0.15s,background 0.15s; }
-.aihydro-quiz-option:hover { border-color:var(--cyan); color:var(--text); }
-.aihydro-quiz-option.correct   { border-color:#34d399; background:rgba(52,211,153,0.12); color:#d1fae5; }
-.aihydro-quiz-option.incorrect { border-color:#f87171; background:rgba(248,113,113,0.10); color:#fee2e2; }
-.aihydro-quiz-feedback { font-size:13px; color:var(--muted); min-height:1em; padding:6px 0 0; display:none; }
-.aihydro-quiz-feedback.show { display:block; }
-.aihydro-quiz-submit { font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:10px 28px; cursor:pointer; margin-top:8px; transition:transform 0.1s,box-shadow 0.2s; }
-.aihydro-quiz-submit:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
 
 /* References */
 .refs ol { counter-reset:r; padding:0; list-style:none; }
@@ -145,6 +150,44 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 .prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
 .prov-item dd { font-size:13px; color:var(--sub); }
 @media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
+/*@@BEGIN css:shared/a11y.css@@*/
+/* Shared accessibility styles (inlined by scripts/build_modules.py). */
+.hydro-sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline:3px solid #00FFFF; outline-offset:2px; border-radius:6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+/*@@END css:shared/a11y.css@@*/
+/*@@BEGIN css:shared/quiz.css@@*/
+/* HydroQuiz styles (inlined by scripts/build_modules.py). Colours fall back to the AI-Hydro palette. */
+.hq { margin:0; }
+.hq-list { list-style:none; padding:0; margin:0; }
+.hq-item { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border,rgba(125,211,252,0.15)); }
+.hq-item:last-child { border-bottom:none; }
+.hq-fieldset { border:0; min-width:0; }
+.hq-prompt { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text,#fff); font-size:16px; line-height:1.5; margin-bottom:12px; padding:0; }
+.hq-options { display:flex; flex-direction:column; gap:8px; }
+.hq-opt { display:flex; align-items:flex-start; gap:10px; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border,rgba(125,211,252,0.15)); background:rgba(15,15,30,0.7); color:var(--sub,#7dd3fc); cursor:pointer; }
+.hq-opt:hover { border-color:var(--cyan,#00DDFF); color:var(--text,#fff); }
+.hq-opt input { margin-top:4px; accent-color:var(--cyan,#00DDFF); flex:0 0 auto; }
+.hq-opt:has(input:checked) { border-color:var(--cyan,#00DDFF); background:rgba(0,221,255,0.10); color:var(--text,#fff); }
+.hq-numeric { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.hq-numlabel { font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--sub,#7dd3fc); }
+.hq-input { width:10em; font-family:'JetBrains Mono',monospace; font-size:15px; padding:9px 12px; border-radius:10px; border:1px solid var(--border,rgba(125,211,252,0.35)); background:rgba(2,6,23,0.7); color:var(--text,#fff); }
+.hq-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.hq-check, .hq-reveal { font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; border-radius:999px; padding:9px 22px; cursor:pointer; }
+.hq-check { background:linear-gradient(135deg,#00A3FF,#00DDFF); color:#0a0a15; border:none; }
+.hq-reveal { background:transparent; color:var(--cyan,#00DDFF); border:1px solid var(--cyan,#00DDFF); }
+.hq-feedback { margin-top:10px; font-size:14px; line-height:1.55; min-height:1.2em; color:var(--muted,#94a3b8); }
+.hq-item[data-state="correct"] .hq-feedback { color:#86efac; border-left:4px solid #34d399; padding-left:12px; }
+.hq-item[data-state="incorrect"] .hq-feedback { color:#fca5a5; border-left:4px dashed #f87171; padding-left:12px; }
+.hq-item[data-state="revealed"] .hq-feedback { color:#e2e8f0; border-left:4px double #94a3b8; padding-left:12px; }
+.hq-summary { margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--muted,#94a3b8); }
+.hq-summary[data-complete="1"] { color:#86efac; }
+[hidden] { display:none !important; }
+/*@@END css:shared/quiz.css@@*/
 </style>
 </head>
 <body>
@@ -185,13 +228,13 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 <div class="wide card" style="padding:22px 24px;">
   <h3 style="margin-bottom:16px;">Your path through this module</h3>
   <div class="workflow-strip">
-    <div class="wf-node" onclick="scrollToSection('sec-concept')"><div class="wf-icon">🏔️</div><span class="wf-label">Concept</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-terrain')"><div class="wf-icon">🌐</div><span class="wf-label">3-D</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-routing')"><div class="wf-icon">🗺️</div><span class="wf-label">Route</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-sim')"><div class="wf-icon">🌧️</div><span class="wf-label">Sim</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-runoff')"><div class="wf-icon">💧</div><span class="wf-label">Runoff</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-quiz')"><div class="wf-icon">✓</div><span class="wf-label">Check</span></div>
-    <div class="wf-node" onclick="scrollToSection('sec-prov')">
+    <div class="wf-node" data-scroll="sec-concept"><div class="wf-icon">🏔️</div><span class="wf-label">Concept</span></div>
+    <div class="wf-node" data-scroll="sec-terrain"><div class="wf-icon">🌐</div><span class="wf-label">3-D</span></div>
+    <div class="wf-node" data-scroll="sec-routing"><div class="wf-icon">🗺️</div><span class="wf-label">Route</span></div>
+    <div class="wf-node" data-scroll="sec-sim"><div class="wf-icon">🌧️</div><span class="wf-label">Sim</span></div>
+    <div class="wf-node" data-scroll="sec-runoff"><div class="wf-icon">💧</div><span class="wf-label">Runoff</span></div>
+    <div class="wf-node" data-scroll="sec-quiz"><div class="wf-icon">✓</div><span class="wf-label">Check</span></div>
+    <div class="wf-node" data-scroll="sec-prov">
       <div class="wf-icon" style="border-color:rgba(0,221,255,0.6);box-shadow:0 0 20px rgba(0,221,255,0.25);">📜</div>
       <span class="wf-label" style="color:var(--cyan);">Sources</span>
     </div>
@@ -254,13 +297,15 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
 <!-- §2 3-D TERRAIN -->
 <div id="sec-terrain" class="wide card" data-aihydro-editable="prose">
   <h2>2 · Orbit a SYNTHETIC watershed in 3-D</h2>
-  <p>A procedurally generated (formula-built, not surveyed) <strong>horseshoe catchment</strong> — ridges on three sides, a single outlet on the south edge, at its lowest edge cell. <strong>Drag to orbit · scroll to zoom · right-drag to pan.</strong></p>
+  <p>A procedurally generated (formula-built, not surveyed) <strong>horseshoe catchment</strong> — ridges on three sides, a single outlet on the south edge, at its lowest edge cell. <strong id="orbitHelp">Drag to orbit · scroll to zoom · right-drag to pan.</strong></p>
 
   <div class="terrain-wrap">
-    <canvas data-aihydro-scene3d id="terrainCanvas" aria-label="3-D watershed terrain, draggable"></canvas>
-    <div class="terrain-hint">🖱 Drag · Scroll · Right-drag</div>
+    <canvas data-aihydro-scene3d id="terrainCanvas" role="img" aria-label="3-D view of the SYNTHETIC horseshoe watershed: ridges on three sides, one central channel draining to a single outlet on the south edge" aria-describedby="terrainDesc"></canvas>
+    <canvas id="terrainFallback" width="640" height="640" hidden role="img" aria-label="Shaded-relief map of the SYNTHETIC horseshoe watershed viewed from above: ridges on three sides, one central channel draining to a single outlet on the south edge" aria-describedby="terrainDesc"></canvas>
+    <div class="terrain-hint" id="terrainHint">🖱 Drag · Scroll · Right-drag</div>
   </div>
 
+  <p id="terrainDesc" class="hydro-sr-only">Text description of the 3-D view: the surface is a 32 by 32 cell horseshoe-shaped catchment. Elevation is lowest along a central channel that runs north to south and highest on the ridges to the west, north and east. The stream network branches like a tree and leaves the model at one outlet on the south edge. The 2-D map in section 4 shows the same terrain and can be explored with the keyboard.</p>
   <div style="margin-top:16px;">
     <p>Colour: <span style="color:#34d399;">■ green-teal</span> = valleys · <span style="color:#60a5fa;">■ blue</span> = mid-slope · <span style="color:#e2e8f0;">■ white</span> = ridges. Cyan lines are the stream network derived from flow accumulation (cells with at least 60 cells draining through them — an arbitrary threshold), converging to the outlet at bottom-centre.</p>
   </div>
@@ -330,8 +375,9 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
   <div class="grid2">
     <div>
       <div class="routing-wrap">
-        <canvas id="routingCanvas" width="360" height="360" aria-label="Click to trace flow path"></canvas>
+        <canvas id="routingCanvas" width="360" height="360" tabindex="0" role="application" aria-label="Elevation map of the SYNTHETIC watershed, 32 by 32 cells. Arrow keys move the cursor cell, Shift plus an arrow moves four cells, Enter or Space drops a raindrop and traces its flow path. You can also click." aria-describedby="cursorMsg flowMsg"></canvas>
       </div>
+      <p id="cursorMsg" role="status" aria-live="polite" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:8px 0 0;min-height:1.4em;">Focus the map and use the arrow keys to move the cursor.</p>
       <div class="routing-legend">
         <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(90deg,#001a40,#34d399);"></div><span>Low → High elev.</span></div>
         <div class="legend-item"><div class="legend-swatch" style="background:rgba(255,255,255,0.9);"></div><span>Flow path</span></div>
@@ -343,7 +389,7 @@ a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,
     </div>
     <div>
       <p style="margin-bottom:14px;">The DEM is a formula, so its units are a convention: elevations are in synthetic metres and cells are assumed 30 m. Nothing here is a real place.</p>
-      <div class="stat-row">
+      <div class="stat-row" id="statRow">
         <div class="stat-chip"><div class="stat-label">Path cells</div><div class="stat-val" id="statPath">—</div></div>
         <div class="stat-chip"><div class="stat-label">Elev drop (m, synthetic)</div><div class="stat-val" id="statDrop">—</div></div>
         <div class="stat-chip"><div class="stat-label">Mean path slope</div><div class="stat-val" id="statSlope">—</div></div>
@@ -408,7 +454,11 @@ for c in (0.2, 0.35, 0.6):
 ax.plot([I_MM_H], [Q_m3s], "o", color="#00FFFF")
 ax.set(xlabel="rainfall intensity i (mm/h)", ylabel="peak flow Q (m³/s)", title="Rational method (SYNTHETIC inputs)")
 ax.legend(); plt.tight_layout()</pre>
-    <div class="aihydro-output" aria-live="polite"></div>
+    <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:rational-method@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">SYNTHETIC rational-method example
+  A = 92.16 ha (921,600 m²),  C = 0.35,  i = 40.0 mm/h
+  Q = 3.584 m³/s   (= C·i·A/360 = 3.584)
+  Valid for: steady uniform rain at least as long as the time of concentration,
+  constant C, small catchment. Not a measured flood.</pre><div class="aihydro-static-figure"><img alt="Line chart, rational method with SYNTHETIC inputs: peak flow in cubic metres per second rises in a straight line with rainfall intensity from 5 to 80 millimetres per hour. Three lines for runoff coefficients 0.2, 0.35 and 0.6 reach about 4, 7 and 12 cubic metres per second at 80 millimetres per hour; a cyan dot marks the worked example at 40 millimetres per hour, about 3.6 cubic metres per second on the 0.35 line." src="data:image/png;base64,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"></div></div><!--@@END static:rational-method@@--></div>
   </div>
 
   <h3 style="margin-top:18px;">SCS curve number — runoff depth from storm depth</h3>
@@ -451,46 +501,17 @@ ax.axvline(Ia, color="#f59e0b", ls="--", label=f"Ia = {Ia:.1f} mm")
 ax.plot([40, 80], [scs_runoff(40.0), scs_runoff(80.0)], "o", color="#34d399", label="demo storms")
 ax.set(xlabel="storm depth P (mm)", ylabel="runoff depth Q (mm)", title="SCS curve number, CN = 75 (SYNTHETIC)")
 ax.legend(); plt.tight_layout()</pre>
-    <div class="aihydro-output" aria-live="polite"></div>
+    <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:scs-cn@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">CN = 75:  S = 84.7 mm,  Ia = 16.9 mm
+  storm P =  40.0 mm  -&gt;  runoff Q =   4.94 mm  (Q/P = 0.123),  volume = 4,552 m³
+  storm P =  80.0 mm  -&gt;  runoff Q =  26.92 mm  (Q/P = 0.337),  volume = 24,812 m³</pre><div class="aihydro-static-figure"><img alt="Line chart, SCS curve number 75 with SYNTHETIC inputs: runoff depth in millimetres stays at zero until the storm depth passes the initial abstraction of 16.9 millimetres (dashed vertical line), then rises as a curve to about 57 millimetres at 120 millimetres of rain. Two dots mark the demo storms: 40 millimetres of rain gives about 4.9 millimetres of runoff and 80 millimetres gives about 26.9." src="data:image/png;base64,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"></div></div><!--@@END static:scs-cn@@--></div>
   </div>
 </div>
 
 <!-- §6 QUIZ -->
 <div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
   <h2>6 · Checkpoint</h2>
-  <p>Three questions — pass all three to mark this module complete and unlock <em>DEM → TWI</em>.</p>
-
-  <div class="aihydro-quiz" id="watershedQuiz">
-    <div class="aihydro-quiz-question" data-answer="1">
-      <p class="q-text">1 · The watershed divide is defined by…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="0"> The deepest stream channels in the landscape</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="1"> The topographic high points surrounding the catchment</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q1" value="2"> Legal boundaries between landowners</label>
-      <div class="aihydro-quiz-feedback" data-fb="0">Stream channels are inside the watershed — they're where water converges, not diverges.</div>
-      <div class="aihydro-quiz-feedback" data-fb="2">Watershed boundaries are purely topographic; they have nothing to do with land ownership.</div>
-    </div>
-
-    <div class="aihydro-quiz-question" data-answer="0">
-      <p class="q-text">2 · In the D8 algorithm, a cell's flow direction points toward…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="0"> The neighbour with the steepest drop per unit distance</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="1"> The average elevation of all 8 neighbours</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q2" value="2"> The nearest stream channel</label>
-      <div class="aihydro-quiz-feedback" data-fb="1">Averaging doesn't give a direction — you need the single steepest downslope path.</div>
-      <div class="aihydro-quiz-feedback" data-fb="2">D8 uses only local elevation differences, not global distances to streams.</div>
-    </div>
-
-    <div class="aihydro-quiz-question" data-answer="2">
-      <p class="q-text">3 · Moving the stream gauge 10 km upstream would…</p>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="0"> Leave the watershed boundary unchanged</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="1"> Expand the watershed area</label>
-      <label class="aihydro-quiz-option"><input type="radio" name="q3" value="2"> Reduce the watershed to only the sub-catchment above the new point</label>
-      <div class="aihydro-quiz-feedback" data-fb="0">The watershed is defined relative to the outlet — change the outlet and the boundary changes.</div>
-      <div class="aihydro-quiz-feedback" data-fb="1">Moving upstream cuts off the area between old and new gauge — it makes the watershed smaller.</div>
-    </div>
-
-    <button class="aihydro-quiz-submit" type="button" id="quizSubmit">Check answers</button>
-    <span id="quizScore" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--muted);margin-left:14px;"></span>
-  </div>
+  <p>Answer every item correctly to mark this module complete. Wrong answers can be changed and checked again; the numeric answers are computed from this module's own DEM and code cells.</p>
+  <div id="watershedQuiz"></div>
 </div>
 
 <!-- §6 PROVENANCE -->
@@ -505,7 +526,7 @@ ax.legend(); plt.tight_layout()</pre>
   <dl class="provenance">
     <div class="prov-item"><dt>Author</dt><dd>Mohammad Galib · Purdue University</dd></div>
     <div class="prov-item"><dt>License</dt><dd>CC-BY-4.0 — free to reuse with attribution</dd></div>
-    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.2.0</dd></div>
+    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.3.0</dd></div>
     <div class="prov-item"><dt>Course</dt><dd>Introduction to Hydrology · <code>intro-hydro-2026</code></dd></div>
     <div class="prov-item"><dt>Data</dt><dd>SYNTHETIC: terrain is procedurally generated (32×32, 30 m cells assumed, synthetic metres); rational-method and curve-number inputs are assumptions. No real DEM or measurement is used.</dd></div>
     <div class="prov-item"><dt>Dependencies</dt><dd>three.js r128 (lazy CDN, 3-D only); Python (numpy, matplotlib) for the two design cells; D8 code shared with Modules 6 and 7</dd></div>
@@ -526,18 +547,486 @@ ax.legend(); plt.tight_layout()</pre>
   </div>
 </main>
 <script>
+/*@@BEGIN js:shared/ready.js@@*/
+/* Bridge readiness: ONE shared promise for the whole page.
+ *
+ * window.aihydro is injected by the AI-Hydro preview bridge, sometimes after the module's own
+ * scripts have run. Every call to whenReady() waits on the same promise, so at most one 50 ms
+ * poll exists per page no matter how many handlers call it (the old per-call setInterval leaked
+ * one timer per call when no bridge was present). The poll stops after about 10 s: outside the
+ * preview (a plain browser) the bridge never arrives and the callbacks never run, which is the
+ * intended standalone behaviour. Modules must render without the bridge.
+ *
+ * Single source of truth: shared/ready.js (inlined by scripts/build_modules.py).
+ */
+function aihydroReady() {
+  if (!window.__aihydroReadyPromise) {
+    window.__aihydroReadyPromise = new Promise(function (resolve) {
+      if (window.aihydro) { resolve(window.aihydro); return; }
+      var tries = 0;
+      var t = setInterval(function () {
+        if (window.aihydro) { clearInterval(t); resolve(window.aihydro); }
+        else if (++tries >= 200) { clearInterval(t); }
+      }, 50);
+    });
+  }
+  return window.__aihydroReadyPromise;
+}
+function whenReady(fn) {
+  aihydroReady().then(function () { fn(); });
+}
+/*@@END js:shared/ready.js@@*/
+/*@@BEGIN js:shared/a11y.js@@*/
+/* Accessibility helpers shared by every module (keyboard access, live announcements,
+ * reduced motion). Single source of truth: shared/a11y.js, inlined by scripts/build_modules.py.
+ * Pure logic (keyValue) is unit-tested under node; the DOM helpers use only the standard DOM.
+ */
+var HydroA11y = (function () {
+  'use strict';
+
+  /* True when the user asked the OS/browser for less motion. Widgets must still update;
+     they just must not animate or autoplay on their own. */
+  function reducedMotion() {
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) { return false; }
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* Round to the step grid anchored at min, trimming float noise. */
+  function snap(v, min, step) {
+    var n = Math.round((v - min) / step);
+    var out = min + n * step;
+    var decimals = (String(step).split('.')[1] || '').length;
+    return parseFloat(out.toFixed(Math.min(decimals + 2, 12)));
+  }
+
+  /* WAI-ARIA slider keys. Returns the new value, or null when the key is not handled. */
+  function keyValue(key, cur, o) {
+    var step = o.step || 1, page = o.page || step * 10, v;
+    switch (key) {
+      case 'ArrowRight': case 'ArrowUp':   v = cur + step; break;
+      case 'ArrowLeft':  case 'ArrowDown': v = cur - step; break;
+      case 'PageUp':   v = cur + page; break;
+      case 'PageDown': v = cur - page; break;
+      case 'Home': v = o.min; break;
+      case 'End':  v = o.max; break;
+      default: return null;
+    }
+    return clamp(snap(v, o.min, step), o.min, o.max);
+  }
+
+  /* One polite live region for short announcements (selected cell, new scenario, ...). */
+  function announce(msg) {
+    var el = document.getElementById('hydro-announcer');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'hydro-announcer';
+      el.className = 'hydro-sr-only';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(el);
+    }
+    el.textContent = '';
+    el.textContent = String(msg);
+  }
+
+  /* Make `el` a keyboard-operable slider.
+       o = { label, min, max, step, page, get(), set(v), text(v) }
+     get() returns the current value, set(v) applies a new one (the caller redraws), text(v)
+     is the human-readable value for screen readers. Call the returned sync() after the value
+     changes by other means (mouse drag, a paired <input type=range>). */
+  function slider(el, o) {
+    el.setAttribute('role', 'slider');
+    el.setAttribute('tabindex', '0');
+    if (o.label) el.setAttribute('aria-label', o.label);
+    el.setAttribute('aria-valuemin', String(o.min));
+    el.setAttribute('aria-valuemax', String(o.max));
+    function sync() {
+      var v = o.get();
+      el.setAttribute('aria-valuenow', String(v));
+      el.setAttribute('aria-valuetext', o.text ? o.text(v) : String(v));
+    }
+    el.addEventListener('keydown', function (ev) {
+      var nv = keyValue(ev.key, o.get(), o);
+      if (nv === null) return;
+      ev.preventDefault();
+      if (nv !== o.get()) o.set(nv);
+      sync();
+    });
+    sync();
+    return { sync: sync };
+  }
+
+  /* Make a non-button element (a card, a node) operable from the keyboard: role, tab stop, and
+     Enter/Space as well as click all call fn. */
+  function activatable(el, fn, role) {
+    if (!el.getAttribute('role')) el.setAttribute('role', role || 'button');
+    if (el.getAttribute('tabindex') === null) el.setAttribute('tabindex', '0');
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fn(ev); }
+    });
+  }
+
+  /* [data-scroll="section-id"] elements scroll to that section (replaces inline onclick). */
+  function wireScrollNav() {
+    var nodes = document.querySelectorAll('[data-scroll]');
+    for (var i = 0; i < nodes.length; i++) (function (node) {
+      activatable(node, function () {
+        var t = document.getElementById(node.getAttribute('data-scroll'));
+        if (!t) return;
+        t.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        t.setAttribute('tabindex', '-1');
+        try { t.focus({ preventScroll: true }); } catch (e) {}
+      });
+    })(nodes[i]);
+  }
+
+  /* Mark readouts as polite live regions so screen readers hear changed values. */
+  function live(ids) {
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+    });
+  }
+
+  return { reducedMotion: reducedMotion, keyValue: keyValue, snap: snap, announce: announce,
+           slider: slider, live: live, activatable: activatable, wireScrollNav: wireScrollNav };
+})();
+/*@@END js:shared/a11y.js@@*/
+/*@@BEGIN js:shared/quiz.js@@*/
+/* HydroQuiz: the one checkpoint engine used by every module.
+ *
+ * Behaviour (the contract the tests pin):
+ *  - nothing about the answer is in the DOM before the first attempt (no pre-marked option, no
+ *    explanation text); the specification lives in the module's script, not the markup;
+ *  - every item can be answered again and again; a wrong attempt gets feedback for THAT answer but
+ *    never names the right one; after two wrong attempts a "Show explanation" button appears;
+ *  - a correct attempt shows the explanation; revealing an answer does not count as correct;
+ *  - fully keyboard operable (native radio group or text field + a Check button; Enter checks a
+ *    numeric answer) and announced through role=status live regions;
+ *  - numeric items take their answer from a function over the lesson's own data or code, so the
+ *    expected value can never be typed in by hand and drift from the lesson;
+ *  - completion goes to the AI-Hydro host as `artifact/quizComplete` with an explicit target
+ *    origin (the embedding window's origin), never '*'. If that origin cannot be determined, or
+ *    the page is standalone, nothing is posted.
+ *
+ * Item specification:
+ *   (prompt may be a function, so numbers quoted in the question come from the lesson's data too)
+ *   { id, type:'choice', prompt, options:[text,...], correct:index|function,
+ *     feedback:[text|null,...],            // shown when that option is chosen and wrong
+ *     explain:text|function }              // shown when correct (and on "Show explanation")
+ *   { id, type:'numeric', prompt, answer:number|function, tol:{abs,rel}, unit, format:function,
+ *     hint:text|function, explain:text|function(answer) }
+ *
+ * Single source of truth: shared/quiz.js (inlined by scripts/build_modules.py).
+ */
+var HydroQuiz = (function () {
+  'use strict';
+
+  var instances = {};
+  var lastReport = null;
+
+  function resolve(v, arg) { return typeof v === 'function' ? v(arg) : v; }
+
+  /* "0.74", "0,74", "1 350", "1,350", "−3", "12 mm", "45%" -> number; anything else -> null */
+  function parseNumber(text) {
+    var s = String(text == null ? '' : text).replace(/−/g, '-').replace(/[  ]/g, ' ').trim();
+    var m = /^([+-]?[0-9][0-9 ,.]*(?:e[+-]?[0-9]+)?|[+-]?\.[0-9]+)\s*(?:%|[A-Za-z°µμ\/²³·^ -]*)$/i.exec(s);
+    if (!m) return null;
+    var n = m[1].replace(/ /g, '');
+    if (n.indexOf('.') >= 0 && n.indexOf(',') >= 0) n = n.replace(/,/g, '');
+    else if (/^[+-]?[0-9]{1,3}(,[0-9]{3})+$/.test(n)) n = n.replace(/,/g, '');
+    else n = n.replace(',', '.');
+    if (!/^[+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(n)) return null;
+    var v = parseFloat(n);
+    return isFinite(v) ? v : null;
+  }
+
+  function tolerance(item, ans) {
+    var t = item.tol || {};
+    var abs = typeof t.abs === 'number' ? t.abs : 0;
+    var rel = typeof t.rel === 'number' ? t.rel : (typeof t.abs === 'number' ? 0 : 0.02);
+    return Math.max(abs, rel * Math.abs(ans));
+  }
+
+  function gradeChoice(item, idx) {
+    if (idx === null || idx === undefined || idx < 0) return { status: 'empty' };
+    return { status: idx === resolve(item.correct) ? 'correct' : 'incorrect', choice: idx };
+  }
+
+  function gradeNumeric(item, text) {
+    var v = parseNumber(text);
+    if (v === null) return { status: 'invalid' };
+    var ans = resolve(item.answer);
+    var tol = tolerance(item, ans);
+    var ok = Math.abs(v - ans) <= tol;
+    return { status: ok ? 'correct' : 'incorrect', value: v, answer: ans, tol: tol, direction: v > ans ? 'high' : 'low' };
+  }
+
+  function fmt(item, v) {
+    if (item.format) return item.format(v);
+    var s = Math.abs(v) >= 1000 ? String(Math.round(v)) : String(parseFloat(v.toPrecision(4)));
+    return s + (item.unit ? ' ' + item.unit : '');
+  }
+
+  function feedbackText(item, res) {
+    if (res.status === 'correct') {
+      var ex = item.type === 'numeric' ? resolve(item.explain, res.answer) : resolve(item.explain);
+      return '✓ Correct. ' + (ex || '');
+    }
+    if (item.type === 'numeric') {
+      var hint = resolve(item.hint, res.answer);
+      return '✗ Not quite: your value is too ' + res.direction + '. ' + (hint || 'Recompute it from the numbers in the lesson and try again.');
+    }
+    var fb = item.feedback && item.feedback[res.choice];
+    return '✗ Not quite. ' + (fb || 'Re-read the section above and try again.');
+  }
+
+  function revealText(item) {
+    if (item.type === 'numeric') {
+      var a = resolve(item.answer);
+      return 'Answer: ' + fmt(item, a) + '. ' + (resolve(item.explain, a) || '');
+    }
+    var c = resolve(item.correct);
+    return 'Answer: ' + item.options[c] + '. ' + (resolve(item.explain) || '');
+  }
+
+  /* A numeric constant read from the text of a code cell (e.g. `C = 0.35`), so an answer is
+     computed from the very numbers the learner reads in the cell. */
+  function sourceConstant(cellId, name) {
+    var pre = document.querySelector('[data-aihydro-cell-id="' + cellId + '"] .aihydro-source');
+    var m = pre && new RegExp('^\\s*' + name + '\\s*=\\s*([-+0-9._eE]+)', 'm').exec(pre.textContent);
+    if (!m) throw new Error('constant ' + name + ' not found in cell ' + cellId);
+    return parseFloat(m[1].replace(/_/g, ''));
+  }
+
+  /* The window that embeds this page, as an origin string, or null (standalone / unknown). */
+  function parentOrigin(win) {
+    win = win || window;
+    try { if (!win.parent || win.parent === win) return null; } catch (e) { return null; }
+    var o = null;
+    try { var a = win.location && win.location.ancestorOrigins; if (a && a.length) o = a[0]; } catch (e) { o = null; }
+    if (!o || o === 'null') {
+      try { o = win.document.referrer ? new URL(win.document.referrer).origin : null; } catch (e) { o = null; }
+    }
+    return o && o !== 'null' ? o : null;
+  }
+
+  /* artifact/quizComplete exactly as the AI-Hydro bridge sends it, but to a named origin. */
+  function postComplete(quizId, passed, score, total, win) {
+    win = win || window;
+    var origin = parentOrigin(win);
+    lastReport = { quizId: quizId, passed: passed, score: score, total: total, origin: origin, posted: false };
+    if (!origin) return false;
+    var base = win.__aihydroArtifact || {};
+    var msg = { source: 'aihydro-artifact' };
+    for (var k in base) msg[k] = base[k];
+    msg.type = 'artifact/quizComplete';
+    msg.quizId = quizId; msg.passed = passed; msg.score = score; msg.total = total;
+    try { win.parent.postMessage(msg, origin); lastReport.posted = true; } catch (e) { return false; }
+    return true;
+  }
+
+  function el(tag, props, kids) {
+    var e = document.createElement(tag);
+    if (props) for (var k in props) {
+      if (k === 'class') e.className = props[k];
+      else if (k === 'text') e.textContent = props[k];
+      else e.setAttribute(k, props[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function mount(root, spec) {
+    var quizId = spec.quizId;
+    var items = spec.items;
+    var rec = {};            // id -> { attempts, correct, revealed, node refs }
+    var list = el('ol', { 'class': 'hq-list' });
+    var summary = el('p', { 'class': 'hq-summary', role: 'status', 'aria-live': 'polite' });
+
+    root.setAttribute('class', 'hq');
+    root.setAttribute('data-hq-quiz', quizId);
+
+    function counts() {
+      var n = 0;
+      items.forEach(function (it) { if (rec[it.id].correct) n++; });
+      return n;
+    }
+    function updateSummary() {
+      var n = counts(), total = items.length;
+      summary.textContent = n === total
+        ? 'All ' + total + ' correct ✓ Checkpoint complete.'
+        : n + ' of ' + total + ' correct. Wrong answers can be changed and checked again.';
+      summary.setAttribute('data-complete', n === total ? '1' : '0');
+    }
+
+    items.forEach(function (it, qi) {
+      var r = rec[it.id] = { attempts: 0, correct: false, revealed: false, radios: [], input: null };
+      var uid = quizId + '-' + it.id;
+      var fb = el('div', { 'class': 'hq-feedback', id: uid + '-fb', role: 'status', 'aria-live': 'polite' });
+      var check = el('button', { 'class': 'hq-check', type: 'button', text: 'Check answer' });
+      var reveal = el('button', { 'class': 'hq-reveal', type: 'button', text: 'Show explanation', hidden: 'hidden' });
+      var legend = el('legend', { 'class': 'hq-prompt', text: (qi + 1) + ' · ' + resolve(it.prompt) });
+      var body;
+
+      if (it.type === 'numeric') {
+        var input = el('input', { 'class': 'hq-input', type: 'text', inputmode: 'decimal', autocomplete: 'off',
+                                  id: uid + '-in', 'aria-describedby': uid + '-fb' });
+        r.input = input;
+        input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); doCheck(); } });
+        body = el('div', { 'class': 'hq-numeric' }, [
+          el('label', { 'class': 'hq-numlabel', 'for': uid + '-in', text: 'Your answer' + (it.unit ? ' (' + it.unit + ')' : '') }),
+          input
+        ]);
+      } else {
+        body = el('div', { 'class': 'hq-options' });
+        it.options.forEach(function (text, oi) {
+          var radio = el('input', { type: 'radio', name: uid, value: String(oi), 'aria-describedby': uid + '-fb' });
+          r.radios.push(radio);
+          body.appendChild(el('label', { 'class': 'hq-opt' }, [radio, el('span', { text: text })]));
+        });
+      }
+
+      function selected() {
+        for (var i = 0; i < r.radios.length; i++) if (r.radios[i].checked) return i;
+        return -1;
+      }
+      function doCheck() {
+        var res = it.type === 'numeric' ? gradeNumeric(it, r.input.value) : gradeChoice(it, selected());
+        if (res.status === 'empty' || res.status === 'invalid') {
+          fb.textContent = res.status === 'empty' ? 'Choose an answer first, then check it.' : 'Enter a number (for example 0.74), then check it.';
+          item.setAttribute('data-state', 'pending');
+          return;
+        }
+        r.attempts++;
+        r.correct = res.status === 'correct';
+        item.setAttribute('data-state', r.correct ? 'correct' : 'incorrect');
+        fb.textContent = feedbackText(it, res);
+        check.textContent = 'Check again';
+        if (!r.correct && r.attempts >= 2) reveal.removeAttribute('hidden');
+        updateSummary();
+        postComplete(quizId, counts() === items.length, counts(), items.length);
+        if (spec.onChange) spec.onChange(api.state());
+      }
+      check.addEventListener('click', doCheck);
+      reveal.addEventListener('click', function () {
+        r.revealed = true;
+        item.setAttribute('data-state', r.correct ? 'correct' : 'revealed');
+        fb.textContent = revealText(it);
+      });
+      r.check = doCheck;
+
+      var fieldset = el('fieldset', { 'class': 'hq-fieldset' }, [
+        legend, body,
+        el('div', { 'class': 'hq-actions' }, [check, reveal]),
+        fb
+      ]);
+      var item = el('li', { 'class': 'hq-item', 'data-hq-item': it.id, 'data-state': '' }, [fieldset]);
+      list.appendChild(item);
+    });
+
+    root.appendChild(list);
+    root.appendChild(summary);
+    updateSummary();
+
+    var api = {
+      quizId: quizId,
+      state: function () {
+        var n = counts();
+        return { quizId: quizId, correct: n, total: items.length, passed: n === items.length,
+                 items: items.map(function (it) { return { id: it.id, attempts: rec[it.id].attempts, correct: rec[it.id].correct, revealed: rec[it.id].revealed }; }) };
+      },
+      /* test/programmatic hooks: answer an item then check it */
+      answer: function (id, value) {
+        var r = rec[id];
+        if (r.input) r.input.value = String(value);
+        else if (r.radios[value]) r.radios[value].checked = true;
+      },
+      check: function (id) { rec[id].check(); },
+      /* every item as the learner sees it plus the computed right answer, for tests that cross-check them independently */
+      describe: function () {
+        return items.map(function (it) {
+          return { id: it.id, type: it.type, prompt: resolve(it.prompt), options: it.options || null,
+                   expected: resolve(it.type === 'numeric' ? it.answer : it.correct),
+                   explain: it.type === 'numeric' ? resolve(it.explain, resolve(it.answer)) : resolve(it.explain) };
+        });
+      },
+      /* the computed right answer (index or number), for tests that cross-check it independently */
+      expected: function (id) {
+        for (var i = 0; i < items.length; i++) if (items[i].id === id) return resolve(items[i].type === 'numeric' ? items[i].answer : items[i].correct);
+        return undefined;
+      }
+    };
+    instances[quizId] = api;
+    return api;
+  }
+
+  return { mount: mount, parseNumber: parseNumber, gradeChoice: gradeChoice, gradeNumeric: gradeNumeric,
+           sourceConstant: sourceConstant, parentOrigin: parentOrigin, postComplete: postComplete, feedbackText: feedbackText,
+           revealText: revealText, tolerance: tolerance, instances: instances,
+           lastReport: function () { return lastReport; } };
+})();
+/*@@END js:shared/quiz.js@@*/
+/*@@BEGIN js:shared/cmap.js@@*/
+/* Perceptually uniform, colour-vision-deficiency-safe sequential colour map (viridis, 17 anchors
+ * sampled from matplotlib's viridis, CC0) plus a plain-canvas shaded-relief renderer.
+ * Replaces red-green maps: lightness rises monotonically with the value, so the map reads in
+ * greyscale and for every common form of colour blindness.
+ * Single source of truth: shared/cmap.js (inlined by scripts/build_modules.py).
+ */
+var HydroCmap = (function () {
+  'use strict';
+  var STOPS = [[68,1,84], [72,24,106], [71,45,123], [66,64,134], [59,82,139], [51,99,141], [44,114,142], [38,130,142], [33,145,140], [31,160,136], [40,174,128], [63,188,115], [94,201,98], [132,212,75], [173,220,48], [216,226,25], [253,231,37]];
+  function rgb(t) {
+    t = Math.max(0, Math.min(1, t));
+    var x = t * (STOPS.length - 1), i = Math.min(STOPS.length - 2, Math.floor(x)), f = x - i, a = STOPS[i], b = STOPS[i + 1];
+    return [Math.round(a[0] + (b[0] - a[0]) * f), Math.round(a[1] + (b[1] - a[1]) * f), Math.round(a[2] + (b[2] - a[2]) * f)];
+  }
+  function css(t) { var c = rgb(t); return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
+  /* CSS linear-gradient for a legend bar */
+  function gradient(dir) {
+    return 'linear-gradient(' + (dir || 'to right') + ', ' + STOPS.map(function (s, i) { return 'rgb(' + s.join(',') + ') ' + (100 * i / (STOPS.length - 1)).toFixed(1) + '%'; }).join(', ') + ')';
+  }
+  /* Shaded relief of a DEM (array of rows) on a 2-D canvas; cell and zUnit are in the DEM's units. */
+  function relief(canvas, dem, o) {
+    o = o || {};
+    var R = dem.length, C = dem[0].length, ctx = canvas.getContext('2d');
+    var cw = canvas.width / C, ch = canvas.height / R, cell = o.cell || 30;
+    var lo = Infinity, hi = -Infinity, r, c;
+    for (r = 0; r < R; r++) for (c = 0; c < C; c++) { if (dem[r][c] < lo) lo = dem[r][c]; if (dem[r][c] > hi) hi = dem[r][c]; }
+    var L = [-0.55, -0.55, 0.63];   /* light from the north-west, 45 degrees up */
+    for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+      var zx = (dem[r][Math.min(C - 1, c + 1)] - dem[r][Math.max(0, c - 1)]) / (2 * cell);
+      var zy = (dem[Math.min(R - 1, r + 1)][c] - dem[Math.max(0, r - 1)][c]) / (2 * cell);
+      var n = Math.sqrt(zx * zx + zy * zy + 1), shade = Math.max(0, (-zx * L[0] - zy * L[1] + L[2]) / n);
+      var base = rgb((dem[r][c] - lo) / ((hi - lo) || 1)), k = 0.35 + 0.9 * shade;
+      ctx.fillStyle = 'rgb(' + Math.min(255, Math.round(base[0] * k)) + ',' + Math.min(255, Math.round(base[1] * k)) + ',' + Math.min(255, Math.round(base[2] * k)) + ')';
+      ctx.fillRect(c * cw, r * ch, cw + 0.5, ch + 0.5);
+    }
+    if (o.streams) {
+      ctx.fillStyle = 'rgba(0,255,255,0.9)';
+      for (r = 0; r < R; r++) for (c = 0; c < C; c++) if (o.streams(r, c)) ctx.fillRect(c * cw + cw * 0.25, r * ch + ch * 0.25, cw * 0.5, ch * 0.5);
+    }
+    if (o.outlet) {
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc((o.outlet.c + 0.5) * cw, (o.outlet.r + 0.5) * ch, Math.max(3, cw * 0.5), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  return { rgb: rgb, css: css, gradient: gradient, relief: relief, STOPS: STOPS };
+})();
+/*@@END js:shared/cmap.js@@*/
+</script>
+<script>
 (function () {
   'use strict';
 
-  window.scrollToSection = function (id) {
-    var el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  function whenReady (fn) {
-    if (window.aihydro) { fn(); return; }
-    var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
-  }
+  HydroA11y.wireScrollNav();
 
   /* One D8 implementation (shared/d8.js): priority-flood fill, drop/distance directions, accumulation */
 /*@@BEGIN js:shared/d8.js@@*/
@@ -766,6 +1255,7 @@ function d8Upstream(rec, target) {
     }
 
     var curPath = null, dropCell = null, area = null;
+    var cursor = { c: (N / 2) | 0, r: (N / 2) | 0 }, focused = false;
 
     function drawState () {
       drawBase();
@@ -790,6 +1280,12 @@ function d8Upstream(rec, target) {
         ctx.fill();
       }
       drawOutlet();
+      if (focused) {                                   /* keyboard cursor: two-tone outline, visible on any cell colour */
+        ctx.lineWidth = 3; ctx.strokeStyle = '#000';
+        ctx.strokeRect(cursor.c * cW + 1.5, cursor.r * cH + 1.5, cW - 3, cH - 3);
+        ctx.lineWidth = 1.5; ctx.strokeStyle = '#fff';
+        ctx.strokeRect(cursor.c * cW + 1.5, cursor.r * cH + 1.5, cW - 3, cH - 3);
+      }
     }
 
     drawBase();
@@ -816,6 +1312,7 @@ function d8Upstream(rec, target) {
       var scX = CW / rect.width, scY = CH / rect.height;
       var ci = Math.min(N - 1, Math.max(0, Math.floor((ex - rect.left) * scX / cW)));
       var cj = Math.min(N - 1, Math.max(0, Math.floor((ey - rect.top)  * scY / cH)));
+      cursor.c = ci; cursor.r = cj;
       select(cj * N + ci);
     }
 
@@ -823,8 +1320,42 @@ function d8Upstream(rec, target) {
     canvas.addEventListener('touchend', function (e) {
       e.preventDefault(); var t = e.changedTouches[0]; handleClick(t.clientX, t.clientY);
     }, { passive: false });
+    var cursorMsg = document.getElementById('cursorMsg');
+    function describeCursor () {
+      var idx = cursor.r * N + cursor.c;
+      cursorMsg.textContent = 'Cursor: column ' + cursor.c + ', row ' + cursor.r + ' · filled elevation ' + ROUTE.filled[idx].toFixed(1) + ' m (synthetic) · '
+        + ROUTE.acc[idx] + ' cells drain through it' + (ROUTE.acc[idx] >= STREAM_MIN_CELLS ? ' (stream cell)' : '') + '. Press Enter to drop a raindrop here.';
+    }
+    canvas.addEventListener('focus', function () { focused = true; describeCursor(); drawState(); });
+    canvas.addEventListener('blur', function () { focused = false; drawState(); });
+    canvas.addEventListener('keydown', function (e) {
+      var big = e.shiftKey ? 4 : 1, moved = true;
+      if (e.key === 'ArrowLeft') cursor.c = Math.max(0, cursor.c - big);
+      else if (e.key === 'ArrowRight') cursor.c = Math.min(N - 1, cursor.c + big);
+      else if (e.key === 'ArrowUp') cursor.r = Math.max(0, cursor.r - big);
+      else if (e.key === 'ArrowDown') cursor.r = Math.min(N - 1, cursor.r + big);
+      else if (e.key === 'Home') cursor.c = 0;
+      else if (e.key === 'End') cursor.c = N - 1;
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(cursor.r * N + cursor.c); return; }
+      else moved = false;
+      if (moved) { e.preventDefault(); describeCursor(); drawState(); }
+    });
+    HydroA11y.live(['statRow']);
     var whole = document.getElementById('showWatershed');
     if (whole) whole.addEventListener('click', function () { select(OUTLET_IDX); });
+  })();
+
+  /* ── 3-D scene3d terrain: outside the AI-Hydro preview (a plain browser tab) there is no 3-D bridge,
+        so show the same terrain as a shaded-relief map drawn with the 2-D canvas ── */
+  (function () {
+    var standalone; try { standalone = window.parent === window; } catch (e) { standalone = true; }
+    if (!standalone || window.aihydro) return;
+    var fb = document.getElementById('terrainFallback'), c3 = document.getElementById('terrainCanvas');
+    if (!fb || !c3) return;
+    c3.hidden = true; fb.hidden = false;
+    HydroCmap.relief(fb, DEM, { cell: CELL_M, outlet: ROUTE.outlet, streams: function (r, c) { return ROUTE.acc[r * N + c] >= STREAM_MIN_CELLS; } });
+    document.getElementById('terrainHint').textContent = 'Shaded-relief map · the interactive 3-D view needs AI-Hydro';
+    document.getElementById('orbitHelp').textContent = 'Outside AI-Hydro this is the same terrain as a shaded-relief map seen from above (north is up).';
   })();
 
   /* ── 3-D scene3d terrain ── */
@@ -885,70 +1416,42 @@ function d8Upstream(rec, target) {
     });
   });
 
-})();
-
-/* ── Quiz wiring ─────────────────────────────────────── */
-(function wireQuiz() {
-  var MODULE_ID = 'watershed-runoff';
-  var quizEl    = document.getElementById('watershedQuiz');
-  var submitBtn = document.getElementById('quizSubmit');
-  var scoreEl   = document.getElementById('quizScore');
-  if (!quizEl || !submitBtn) return;
-
-  var questions = Array.prototype.slice.call(quizEl.querySelectorAll('.aihydro-quiz-question'));
-
-  submitBtn.addEventListener('click', function () {
-    var numCorrect = 0;
-
-    questions.forEach(function (qEl) {
-      var correct   = parseInt(qEl.getAttribute('data-answer'), 10);
-      var radios    = qEl.querySelectorAll('input[type="radio"]');
-      var feedbacks = qEl.querySelectorAll('.aihydro-quiz-feedback');
-      var selected  = -1;
-      radios.forEach(function (r) { if (r.checked) selected = parseInt(r.value, 10); });
-
-      var labels = qEl.querySelectorAll('.aihydro-quiz-option');
-      labels.forEach(function (lbl, i) {
-        lbl.classList.remove('correct', 'incorrect');
-        if (i === correct) lbl.classList.add('correct');
-        else if (selected !== -1 && i === selected) lbl.classList.add('incorrect');
-      });
-
-      feedbacks.forEach(function (fb) { fb.classList.remove('show'); });
-      if (selected !== -1 && selected !== correct) {
-        var fb = qEl.querySelector('.aihydro-quiz-feedback[data-fb="' + selected + '"]');
-        if (fb) fb.classList.add('show');
-      }
-
-      if (selected === correct) numCorrect++;
-    });
-
-    var passed = numCorrect === questions.length;
-    var score  = numCorrect / questions.length;
-
-    if (scoreEl) {
-      scoreEl.textContent = numCorrect + '/' + questions.length + (passed ? ' ✓ Complete!' : ' — try again');
-      scoreEl.style.color = passed ? '#34d399' : '#f87171';
-    }
-
-    if (passed) {
-      submitBtn.textContent = 'Module complete ✓';
-      submitBtn.style.background = 'linear-gradient(135deg,#34d399,#059669)';
-      (function wr(fn) {
-        if (window.aihydro) { fn(); return; }
-        var t = setInterval(function () { if (window.aihydro) { clearInterval(t); fn(); } }, 50);
-      })(function () {
-        if (window.aihydro && window.aihydro.quiz) {
-          window.aihydro.quiz({ moduleId: MODULE_ID, passed: true, score: score });
-        }
-      });
-      try {
-        window.parent.postMessage({
-          type: 'aihydro-quiz-complete', moduleId: MODULE_ID, passed: true, score: score
-        }, '*');
-      } catch (e) {}
-    }
+  /* ── Checkpoint: shared engine; numeric answers come from this module's own DEM and code cells ── */
+  (function () {
+  var AREA_KM2 = function () { return N * N * CELL_M * CELL_M / 1e6; };
+  function rationalQ () {
+    var C = HydroQuiz.sourceConstant('rational-method', 'C'), I = HydroQuiz.sourceConstant('rational-method', 'I_MM_H'), A = HydroQuiz.sourceConstant('rational-method', 'AREA_HA');
+    return C * I * A / 360;
+  }
+  window.__wsQuiz = HydroQuiz.mount(document.getElementById('watershedQuiz'), {
+    quizId: 'watershed-runoff-checkpoint', moduleId: 'watershed-runoff',
+    items: [
+      { id: 'q1', type: 'choice', prompt: 'The watershed divide is defined by…',
+        options: ['The deepest stream channels in the landscape', 'The topographic high points surrounding the catchment', 'Legal boundaries between landowners'],
+        correct: 1, feedback: ['Stream channels are inside the watershed: they are where water converges, not diverges.', null, 'Watershed boundaries are purely topographic; they have nothing to do with land ownership.'],
+        explain: 'The divide is the ridge line around the catchment: rain falling on either side of it drains in opposite directions.' },
+      { id: 'q2', type: 'choice', prompt: 'In the D8 algorithm, a cell\'s flow direction points toward…',
+        options: ['The neighbour with the steepest drop per unit distance', 'The average elevation of all 8 neighbours', 'The nearest stream channel'],
+        correct: 0, feedback: [null, 'Averaging does not give a direction: you need the single steepest downslope path.', 'D8 uses only local elevation differences, not global distances to streams.'],
+        explain: 'Drop divided by distance (diagonal neighbours are √2 farther) picks one of the 8 neighbours.' },
+      { id: 'q3', type: 'choice', prompt: 'Moving the stream gauge 10 km upstream would…',
+        options: ['Leave the watershed boundary unchanged', 'Expand the watershed area', 'Reduce the watershed to only the sub-catchment above the new gauge'],
+        correct: 2, feedback: ['The watershed is defined relative to the outlet: change the outlet and the boundary changes.', 'Moving upstream cuts off the area between the old and new gauge, so the watershed gets smaller, not larger.', null],
+        explain: 'Only cells whose flow path passes through the new outlet belong to its watershed (compare "Show whole watershed" with a click on a stream cell in §4).' },
+      { id: 'q4', type: 'numeric', unit: 'km²',
+        prompt: 'The DEM in §4 is 32 × 32 cells and every cell is 30 m on a side. What is the watershed area in km² (every cell drains to the outlet)? Give 3 decimals.',
+        answer: AREA_KM2, tol: { abs: 0.0005 },
+        hint: 'Area = number of cells × (cell size)², then convert m² to km² (1 km² = 1 000 000 m²).',
+        explain: function (a) { return N + ' × ' + N + ' cells × (' + CELL_M + ' m)² = ' + (a * 1e6).toFixed(0) + ' m² = ' + a.toFixed(4) + ' km².'; } },
+      { id: 'q5', type: 'numeric', unit: 'm³/s',
+        prompt: 'In the rational-method cell of §5, what peak flow Q = C · i · A / 360 (m³/s) do the cell\'s own values C, i and A give? Give 3 decimals.',
+        answer: rationalQ, tol: { abs: 0.002 },
+        hint: 'Read C, I_MM_H (mm/h) and AREA_HA (ha) in the cell, then use Q = C·i·A/360; the cell prints the same number when run.',
+        explain: function (a) { return 'Q = ' + HydroQuiz.sourceConstant('rational-method', 'C') + ' × ' + HydroQuiz.sourceConstant('rational-method', 'I_MM_H') + ' × ' + HydroQuiz.sourceConstant('rational-method', 'AREA_HA') + ' / 360 = ' + a.toFixed(3) + ' m³/s (SYNTHETIC inputs).'; } }
+    ]
   });
+  })();
+
 })();
 </script>
   <script>

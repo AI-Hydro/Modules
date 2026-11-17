@@ -1,0 +1,18 @@
+Gauge        : 01013500  Fish River near Fort Kent, ME
+Source       : CAMELS-US v1.2 snapshot of USGS NWIS daily values, parameter 00060 (extracted 2026-11-17)
+Source file  : basin_dataset_public_v1p2/usgs_streamflow/01/01013500_streamflow_qc.txt
+  sha256     : bce4b441f9bdf8b22438d9106d9b049f5bbd57f6bd455330ee9dbf3941b8e12a
+Period       : 1995-10-01 to 2000-09-30  (1827 days)
+Status       : 1399 days approved, 428 approved-estimated, 0 provisional, 0 missing
+Mean Q       : 43.81 m3/s
+Peak Q       : 305.82 m3/s on 1996-04-28
+Zero-flow    : 0 days
+P95 thresh   : 170.95 m3/s   Days above: 92 (5.0%)
+Peak month   : month 5 (mean 144.84 m3/s);  lowest month 8 (mean 13.92)
+Annual maxima (water years 1996-2000, Weibull T = (n+1)/m):
+  WY1996:    305.8 m3/s   T = 6.0 yr
+  WY1997:    294.5 m3/s   T = 3.0 yr
+  WY1998:    280.3 m3/s   T = 2.0 yr
+  WY2000:    235.9 m3/s   T = 1.5 yr
+  WY1999:    171.9 m3/s   T = 1.2 yr
+CAUTION: only 5 annual maxima, so no return period beyond about 6 years is supported.

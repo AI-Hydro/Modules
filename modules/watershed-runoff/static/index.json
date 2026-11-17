@@ -1,0 +1,18 @@
+{
+  "rational-method": {
+    "mode": "headless",
+    "source_sha256": "149a1049b01d29e402f675e873db2382f15088b10cf1fd17f880a29284f05a89",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  },
+  "scs-cn": {
+    "mode": "headless",
+    "source_sha256": "f14e36a63b15d1beb6cb9e67edc45bab8a1f0304d554c54ca5aabdc94a6be789",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  }
+}

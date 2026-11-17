@@ -2,6 +2,47 @@
 
 All notable changes to the learning modules. Versions are per module (`manifest.json` and the manifest embedded in `module.html` carry the same number).
 
+## 2026-11-17 — Wave 2: function, accessibility, repository
+
+Source: `docs/vision-2040/findings/modules-audit-2026-11-17.md` (Wave 2). Content questions from Wave 1 are unchanged; nothing about the certificate's institution wording, signature or completion logic, NEH-4 or the course name was touched.
+
+### Cross-cutting
+
+- **One bridge-ready promise.** `shared/ready.js` replaces the per-call `setInterval` in every module: `whenReady()` calls share one promise, at most one 50 ms poll exists per page (none when the bridge is already there) and it stops after about 10 s outside the preview. The dead `bindParam(...)` calls (wrong signature, they never did anything) were removed with it.
+- **One quiz engine.** `shared/quiz.js` + `shared/quiz.css` replace three engines (radio + submit that revealed the answer, one-shot buttons that locked after one try, bridge-wired blocks). Retry is always possible; nothing about the answer is in the DOM before the first attempt; a wrong answer gets feedback for that choice without naming the right one; "Show explanation" appears after two misses and never counts as correct; native radios / text field + Check button (Enter checks a numeric answer), `fieldset`/`legend`, `role=status` live regions. Completion is posted as `artifact/quizComplete` (the exact message the extension handles) with an explicit target origin taken from `location.ancestorOrigins` (the extension listens on `event.source` and does no origin check, and the iframe is sandboxed without `allow-same-origin`); `'*'` is never used and nothing is posted when the origin cannot be determined or the page is standalone. Every module with a checkpoint keeps its existing questions and gains numeric or interpretive items whose answers are computed from the page's own data or code and recomputed independently in the tests.
+- **Standalone rendering.** Each executable cell ships a pre-rendered output (`modules/<id>/static/`, produced by `scripts/render_static_outputs.py` with `python -s -E`; stored stdout plus a palette-quantised PNG, with alt text) inlined into the cell's `.aihydro-output` and replaced by the bridge on a real run. The Manim cell shows the final frame rendered with Manim; the NWIS cell says plainly it needs the network. Code panes already followed the controls without the bridge (tested). Where a map or 3-D view needs the bridge, a plain-canvas/SVG fallback is shown outside the preview (shaded relief from the DEM, a longitude/latitude sketch of the gauges and catchment, a plain-SVG flow-duration curve); no geometry is invented.
+- **Accessibility.** `shared/a11y.js`: keyboard sliders (WAI-ARIA keys) for the tangle numbers (reading-a-hydrograph) and both compare wipes; roving-tabindex grid with Enter/Space and a text list of upstream and path cells (dem-to-twi SVG cells; the `role="img"` parent that hid them is now a labelled group); keyboard cursor, text readout and `role=application` for the watershed canvas; polite live regions for readouts in every module (the bathtub readout no longer rewrites a live region every frame; a calm spoken summary follows the slider); the bathtub re-steps under reduced motion (each slider change runs 30 days, plus an "Advance 10 days" button), SMIL animation is paused, the capstone auto-play is hidden, smooth scrolling is off; visible focus rings; WCAG AA contrast fixes (axis labels, dimmed flux labels, certificate placeholder).
+- **Non-colour-only encodings.** The red/amber/green TWI map is now viridis (`shared/cmap.js`, 17 anchors sampled from matplotlib's viridis) with the value printed in each cell and the outlet outlined; flood days in the matplotlib plots are amber *and* hatched; quickflow is hatched in the baseflow plots; flux arrows differ by dash pattern as well as colour and keep their text labels; the upstream/path overlays have dashed/solid outlines and a text list.
+- **Hygiene.** The dead Leaflet normaliser (it only acts on `.folium-map`, which no module has) is gone from every module; baseflow-separation no longer ships the saved preview/editor styles, `contenteditable` cards and bridge-generated compare nodes; all inline `onclick` handlers became `addEventListener`/`data-scroll`; the double-firing print button of the certificate fires once; "unlock the next module" text is gone (nothing is gated); fonts keep the existing Google Fonts link as the only external host with system fallbacks; three.js still loads through the bridge.
+- **Repository.** `license` is in every `manifest.json`; the embedded manifest is generated from it (`build_modules.py`, one field mapping) and a test compares them; `updatedAt` is no longer hand-kept in manifests (the API takes it from git). `scripts/gen_docs.py` generates the README module table and the course page (table + prerequisite graph) with a `--check` mode; `scripts/build_api.py` builds `api/modules.json` and `api/courses.json` (from `course.json`) with git-derived `updatedAt`; the API workflow triggers on `modules/**`, `courses/**`, `shared/**` and runs it; `.github/workflows/checks.yml` runs the tests, `build_modules.py --check`, the static-output, docs and API checks, manifest validation and `scripts/check_csp.py` (only the Google Fonts hosts are allowed) on every pull request. The "certified" badge is replaced by `metadata_complete` (what the checker looks at) and `scientific_review` (`null` until a human records one); schema in `api/README.md`.
+
+Size: the eight pages grew from 671 451 to about 1.04 MB in total (the shared engine, accessibility code, pre-rendered outputs and figures; baseflow-separation also lost the saved preview styles).
+
+### baseflow-separation 0.2.0 → 0.3.0
+- Shared quiz (5 items: the three content questions, a numeric BFI at α = 0.98, and an interpretive item choosing the α whose BFI is closest to the synthetic series' known true share), keyboard compare divider, hatched quickflow with a legend, live BFI readout and meter, pre-rendered cell output.
+- The wipe layout bug (labels and divider stretched over the whole panel) is fixed.
+
+### reading-a-hydrograph 0.3.0 → 0.4.0
+- Tangle numbers are keyboard sliders (`role=slider`, arrows/Page/Home/End) wired to the range inputs; direct labels for the rising and falling limbs; hatched quickflow; live readouts; shared quiz with computed prompt for Q3, a numeric curve-number item and a numeric item on the §6 gauge BFI; pre-rendered CAMELS figure.
+
+### watershed-runoff 0.2.0 → 0.3.0
+- The routing canvas is operable by keyboard (arrow keys, Shift for four cells, Enter/Space to drop a raindrop) with a text readout of the cursor cell and the traced path; shaded-relief fallback for the 3-D terrain outside AI-Hydro; shared quiz with numeric area and rational-method items computed from the DEM and the cell's own constants; pre-rendered outputs for both design cells.
+
+### water-cycle-in-motion 0.2.0 → 0.3.0
+- Bathtub re-steps under reduced motion and no longer floods a live region; flux arrows differ by dash pattern; labelled stage slider with spoken stage text; shared quiz with a numeric condensation height computed from the dew-point cell's constants and a numeric steady-state runoff computed by running the bucket; pre-rendered dew-point output and the Manim final frame.
+
+### real-streamflow-data 0.3.0 → 0.4.0
+- Gauge cards are keyboard buttons with `aria-pressed`; flood days hatched; plain longitude/latitude sketch of the four gauges where there is no Leaflet bridge; shared quiz with a numeric P95 threshold and a data question on the largest daily flow, both computed from the bundled records; pre-rendered snapshot output.
+
+### dem-to-twi 0.3.0 → 0.4.0
+- TWI map is viridis with values in the cells and the outlet outlined (the red/green map is gone), also in the Python cell; the DEM cells form a keyboard grid (arrows, Enter/Space) with text lists of upstream and path cells; keyboard compare divider; shaded-relief and catchment-outline fallbacks; concept animation pauses under reduced motion; shared quiz whose Q3 numbers are computed by re-running the §6 pipeline in the page, plus numeric TWI items; pre-rendered outputs.
+
+### capstone-basin-story 0.3.0 → 0.4.0
+- Gauge cards are keyboard buttons; plain-SVG flow-duration curve and gauge sketch outside AI-Hydro; auto-play hidden under reduced motion, stage text announced; flood days hatched; shared quiz with prompts computed from the records (flashiness values, TWI example), a numeric Leaf River BFI and a numeric mean TWI of the synthetic hillslope; pre-rendered outputs for all four cells.
+
+### course-certificate 0.1.1 → 0.1.2
+- Print button no longer prints twice; the name preview is a polite live region; placeholder contrast raised; focus styles. Institution wording, signature and completion logic unchanged (owner decisions).
+
 ## 2026-11-17 — Wave 1: science and data honesty
 
 Source: `docs/vision-2040/findings/modules-audit-2026-11-17.md` (Wave 1 items and the cross-cutting items).

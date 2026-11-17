@@ -2,7 +2,8 @@
   "moduleId": "watershed-runoff",
   "title": "The Watershed: Where Rain Becomes Runoff",
   "description": "Define a catchment, trace D8 flow paths across a SYNTHETIC 3-D terrain (depression-filled, drop/distance routing, stream network from flow accumulation), then turn rainfall into runoff with an executable rational-method cell and an SCS curve-number cell.",
-  "version": "0.2.0",
+  "version": "0.3.0",
+  "license": "CC-BY-4.0",
   "topic": "watershed-hydrology",
   "level": "intro",
   "estimatedMinutes": 40,
@@ -33,7 +34,6 @@
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/watershed-runoff",
   "author": "Mohammad Galib, Purdue University",
   "createdAt": "2026-06-01",
-  "updatedAt": "2026-11-17",
   "downloadCount": 0,
   "githubReactions": 0,
   "discussionUrl": ""

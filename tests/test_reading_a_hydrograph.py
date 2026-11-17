@@ -18,11 +18,13 @@ def q(P, CN=75):
 def test_scs_numbers_in_text_match_formula():
     S = 25400 / 75 - 254
     assert f"{S:.1f}" in T and f"{0.2 * S:.1f}" in T
-    assert f"{q(25):.2f}" in T and f"{q(50):.2f}" in T
+    from helpers import quiz_item
+    q3 = quiz_item("reading-a-hydrograph", "q3")   # prompt and explanation are computed in the page
+    assert f"{q(25):.2f} mm" in q3["prompt"] and f"{q(50):.2f} mm" in q3["prompt"]
     assert q(25) > 0 and q(50) > 0
-    assert f"{q(50) / q(25):.0f}-fold" in T or "about 13" in T
+    assert f"{q(50) / q(25):.0f}-fold" in q3["explain"]
     assert round(q(50) / q(25)) == 13
-    assert f"{2 * q(25):.2f} mm" in T          # what proportional runoff would give
+    assert q3["expected"] == 2                    # runoff more than doubles when rainfall doubles
 
 
 def test_formula_typo_and_wrong_quiz_are_gone():

@@ -1,0 +1,2 @@
+Final frame of the animation, rendered with Manim (stored image).
+Run the cell in AI-Hydro to render the full ~15 s video (requires Manim in the kernel).

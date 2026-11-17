@@ -2,7 +2,8 @@
   "moduleId": "capstone-basin-story",
   "title": "Capstone: A Basin's Water Story",
   "description": "Synthesis capstone for the Intro to Hydrology course. Choose one of four CAMELS-US basins, compute hydrological signatures (Lyne–Hollick BFI, Richards–Baker flashiness, flow-duration curve) from five years of observed daily flow, run the TWI pipeline on a synthetic hillslope, then narrate the basin's water story through a 6-stage timeline. Every number comes from a cell or from CAMELS.",
-  "version": "0.3.0",
+  "version": "0.4.0",
+  "license": "CC-BY-4.0",
   "topic": "catchment-analysis",
   "level": "intro",
   "estimatedMinutes": 60,
@@ -37,7 +38,6 @@
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/capstone-basin-story",
   "author": "Mohammad Galib, Purdue University",
   "createdAt": "2026-06-01",
-  "updatedAt": "2026-11-17",
   "downloadCount": 0,
   "githubReactions": 0,
   "discussionUrl": ""

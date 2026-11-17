@@ -8,21 +8,35 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-<script type="application/vnd.aihydro.module+json">
+<!--@@BEGIN manifest:module@@--><script type="application/vnd.aihydro.module+json">
 {
   "id": "reading-a-hydrograph",
   "title": "Reading a Hydrograph",
-  "version": "0.3.0",
-  "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
+  "version": "0.4.0",
+  "authors": [
+    {
+      "name": "Mohammad Galib",
+      "affiliation": "Purdue University"
+    }
+  ],
   "license": "CC-BY-4.0",
   "topic": "streamflow",
   "level": "intro",
   "estimated_minutes": 30,
-  "requires": { "executable": true, "python": ["numpy", "matplotlib"] },
-  "citation": { "text": "Ladson, A. R., Brown, R., Neal, B. & Nathan, R. (2013). A standard approach to baseflow separation using the Lyne and Hollick filter. Australasian Journal of Water Resources, 17(1). doi:10.7158/13241583.2013.11465417" },
+  "requires": {
+    "executable": true,
+    "python": [
+      "numpy",
+      "matplotlib"
+    ]
+  },
+  "citation": {
+    "text": "Ladson, A. R., Brown, R., Neal, B. & Nathan, R. (2013). A standard approach to baseflow separation using the Lyne and Hollick filter. Australasian Journal of Water Resources, 17(1).",
+    "doi": "10.7158/13241583.2013.11465417"
+  },
   "ai_hydro_preview_min_version": "0.2"
 }
-</script>
+</script><!--@@END manifest:module@@-->
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -240,17 +254,6 @@ select:focus { outline:1px solid var(--cyan); }
 .run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.04em; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
 .run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
 
-/* ── Quiz ────────────────────────────────────────────── */
-.quiz-q { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text); font-size:16px; margin-bottom:14px; }
-.quiz-choices { display:flex; flex-direction:column; gap:10px; }
-.quiz-btn { text-align:left; font-family:'Nunito',sans-serif; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(15,15,30,0.7); color:var(--sub); cursor:pointer; transition:border-color 0.15s,background 0.15s; }
-.quiz-btn:hover { border-color:var(--cyan); color:var(--text); }
-.quiz-btn.correct   { border-color:#34d399; background:rgba(52,211,153,0.12); color:#d1fae5; }
-.quiz-btn.incorrect { border-color:#f87171; background:rgba(248,113,113,0.10); color:#fee2e2; }
-.quiz-feedback { margin-top:12px; padding:0; min-height:1.2em; font-size:14px; }
-.quiz-block { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border); }
-.quiz-block:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-
 /* ── References ──────────────────────────────────────── */
 .refs ol { counter-reset:r; padding:0; list-style:none; }
 .refs li { counter-increment:r; padding-left:36px; position:relative; margin-bottom:12px; font-size:14px; color:var(--sub); line-height:1.55; }
@@ -262,6 +265,44 @@ select:focus { outline:1px solid var(--cyan); }
 .prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
 .prov-item dd { font-size:13px; color:var(--sub); }
 @media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
+/*@@BEGIN css:shared/a11y.css@@*/
+/* Shared accessibility styles (inlined by scripts/build_modules.py). */
+.hydro-sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline:3px solid #00FFFF; outline-offset:2px; border-radius:6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+/*@@END css:shared/a11y.css@@*/
+/*@@BEGIN css:shared/quiz.css@@*/
+/* HydroQuiz styles (inlined by scripts/build_modules.py). Colours fall back to the AI-Hydro palette. */
+.hq { margin:0; }
+.hq-list { list-style:none; padding:0; margin:0; }
+.hq-item { margin-bottom:22px; padding-bottom:22px; border-bottom:1px dashed var(--border,rgba(125,211,252,0.15)); }
+.hq-item:last-child { border-bottom:none; }
+.hq-fieldset { border:0; min-width:0; }
+.hq-prompt { font-family:'Poppins',sans-serif; font-weight:500; color:var(--text,#fff); font-size:16px; line-height:1.5; margin-bottom:12px; padding:0; }
+.hq-options { display:flex; flex-direction:column; gap:8px; }
+.hq-opt { display:flex; align-items:flex-start; gap:10px; font-size:14px; padding:12px 16px; border-radius:12px; border:1px solid var(--border,rgba(125,211,252,0.15)); background:rgba(15,15,30,0.7); color:var(--sub,#7dd3fc); cursor:pointer; }
+.hq-opt:hover { border-color:var(--cyan,#00DDFF); color:var(--text,#fff); }
+.hq-opt input { margin-top:4px; accent-color:var(--cyan,#00DDFF); flex:0 0 auto; }
+.hq-opt:has(input:checked) { border-color:var(--cyan,#00DDFF); background:rgba(0,221,255,0.10); color:var(--text,#fff); }
+.hq-numeric { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.hq-numlabel { font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--sub,#7dd3fc); }
+.hq-input { width:10em; font-family:'JetBrains Mono',monospace; font-size:15px; padding:9px 12px; border-radius:10px; border:1px solid var(--border,rgba(125,211,252,0.35)); background:rgba(2,6,23,0.7); color:var(--text,#fff); }
+.hq-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.hq-check, .hq-reveal { font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; border-radius:999px; padding:9px 22px; cursor:pointer; }
+.hq-check { background:linear-gradient(135deg,#00A3FF,#00DDFF); color:#0a0a15; border:none; }
+.hq-reveal { background:transparent; color:var(--cyan,#00DDFF); border:1px solid var(--cyan,#00DDFF); }
+.hq-feedback { margin-top:10px; font-size:14px; line-height:1.55; min-height:1.2em; color:var(--muted,#94a3b8); }
+.hq-item[data-state="correct"] .hq-feedback { color:#86efac; border-left:4px solid #34d399; padding-left:12px; }
+.hq-item[data-state="incorrect"] .hq-feedback { color:#fca5a5; border-left:4px dashed #f87171; padding-left:12px; }
+.hq-item[data-state="revealed"] .hq-feedback { color:#e2e8f0; border-left:4px double #94a3b8; padding-left:12px; }
+.hq-summary { margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--muted,#94a3b8); }
+.hq-summary[data-complete="1"] { color:#86efac; }
+[hidden] { display:none !important; }
+/*@@END css:shared/quiz.css@@*/
 </style>
 </head>
 <body>
@@ -313,25 +354,25 @@ select:focus { outline:1px solid var(--cyan); }
 <div class="wide card" style="padding:22px 24px;">
   <h3 style="margin-bottom:16px;">The seven-step tour — click to jump</h3>
   <div class="workflow-strip">
-    <div class="wf-node" onclick="window.scrollToSection('sec-intro')" title="What is a hydrograph?">
+    <div class="wf-node" data-scroll="sec-intro" title="What is a hydrograph?">
       <div class="wf-icon">📈</div><span class="wf-label">Intro</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-anatomy')" title="Anatomy panel">
+    <div class="wf-node" data-scroll="sec-anatomy" title="Anatomy panel">
       <div class="wf-icon">🫀</div><span class="wf-label">Anatomy</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-bfi')" title="BFI explorer">
+    <div class="wf-node" data-scroll="sec-bfi" title="BFI explorer">
       <div class="wf-icon">🌊</div><span class="wf-label">Baseflow</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-storm')" title="Storm comparison">
+    <div class="wf-node" data-scroll="sec-storm" title="Storm comparison">
       <div class="wf-icon">⛈️</div><span class="wf-label">Storms</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-quiz')" title="Checkpoint">
+    <div class="wf-node" data-scroll="sec-quiz" title="Checkpoint">
       <div class="wf-icon">✓</div><span class="wf-label">Check</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-python')" title="Python cell">
+    <div class="wf-node" data-scroll="sec-python" title="Python cell">
       <div class="wf-icon">🐍</div><span class="wf-label">Python</span>
     </div>
-    <div class="wf-node" onclick="window.scrollToSection('sec-prov')" title="Provenance">
+    <div class="wf-node" data-scroll="sec-prov" title="Provenance">
       <div class="wf-icon" style="border-color:rgba(0,221,255,0.6);box-shadow:0 0 20px rgba(0,221,255,0.25);">📜</div>
       <span class="wf-label" style="color:var(--cyan);">Provenance</span>
     </div>
@@ -347,7 +388,7 @@ select:focus { outline:1px solid var(--cyan); }
 
   <div class="scrolly">
     <div class="scrolly-sticky">
-      <svg id="introSvg" viewBox="0 0 400 240" aria-label="Annotated hydrograph silhouette">
+      <svg id="introSvg" viewBox="0 0 400 240" role="img" aria-label="Annotated hydrograph silhouette; the label at the top names the limb described by the step you are reading">
         <defs>
           <linearGradient id="introFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="rgba(0,221,255,0.35)"/>
@@ -417,7 +458,7 @@ select:focus { outline:1px solid var(--cyan); }
     <button id="toggleMarkers" class="toggle-btn on" type="button">Limb markers: ON</button>
   </div>
   <div class="plot-wrap">
-    <svg id="anatomySvg" viewBox="0 0 720 320" aria-label="Hydrograph anatomy plot"></svg>
+    <svg id="anatomySvg" viewBox="0 0 720 320" role="img" aria-label="Plot of a synthetic 96-hour storm hydrograph: discharge rises after a 4-hour rainfall pulse, peaks, then recedes. Use the probe number below the plot to read the discharge at any hour."></svg>
     <div id="anatomyTip" class="plot-tooltip"></div>
   </div>
   <div class="legend">
@@ -429,8 +470,8 @@ select:focus { outline:1px solid var(--cyan); }
     <div class="legend-item"><div class="legend-swatch" style="background:rgba(125,211,252,0.55);"></div>Rainfall</div>
   </div>
   <p style="margin-top:14px;font-size:14px;">
-    Probe by dragging:
-    at hour <span class="tangle" id="t-probeHour" data-min="0" data-max="95" data-step="1" data-value="32" data-format="int" data-suffix="h"></span>
+    Probe by dragging, or focus the number and use the arrow keys:
+    at hour <span class="tangle" id="t-probeHour" data-label="Probe hour" data-min="0" data-max="95" data-step="1" data-value="32" data-format="int" data-suffix="h"></span>
     the discharge is <span id="probeQ" style="font-family:'JetBrains Mono',monospace;color:var(--cyan);font-weight:700;">—</span>.
   </p>
 </div>
@@ -450,8 +491,8 @@ select:focus { outline:1px solid var(--cyan); }
       f<sub>t</sub> ≥ 0 &nbsp;·&nbsp; b<sub>t</sub> = max(Q<sub>t</sub> − f<sub>t</sub>, 0)
     </div>
     <p>
-      Drag α inline:
-      <span class="tangle" id="t-alpha" data-min="0.900" data-max="0.995" data-step="0.005" data-value="0.925" data-format="f3"></span>
+      Drag α inline (or focus it and use the arrow keys):
+      <span class="tangle" id="t-alpha" data-label="Filter parameter alpha" data-min="0.900" data-max="0.995" data-step="0.005" data-value="0.925" data-format="f3"></span>
       → a higher α lets quickflow persist longer, so more flow is classed as quickflow and the baseflow line is lower.
       <strong>BFI</strong> = baseflow volume ÷ total volume.
     </p>
@@ -459,7 +500,7 @@ select:focus { outline:1px solid var(--cyan); }
       <label for="alphaSlider">Filter parameter, α <span id="alphaVal">0.925</span></label>
       <input id="alphaSlider" type="range" min="0.900" max="0.995" step="0.005" value="0.925">
     </div>
-    <div class="metric-row">
+    <div class="metric-row" id="bfiMetrics">
       <div class="metric"><div class="metric-label">BFI</div><div class="metric-val" id="bfiVal">—</div><div class="metric-unit">baseflow / total</div></div>
       <div class="metric"><div class="metric-label">Mean Q</div><div class="metric-val" id="meanQ">—</div><div class="metric-unit">m³/s</div></div>
       <div class="metric"><div class="metric-label">Peak Q</div><div class="metric-val" id="peakQ">—</div><div class="metric-unit">m³/s</div></div>
@@ -469,12 +510,12 @@ select:focus { outline:1px solid var(--cyan); }
     <h2>Filtered baseflow</h2>
     <p style="font-size:13px;color:var(--muted);">Drag the slider — both lines update live. The filter acts on the SYNTHETIC 96-hour event (hourly time step).</p>
     <div class="plot-wrap">
-      <svg id="bfiSvg" viewBox="0 0 600 280" aria-label="Baseflow filter result"></svg>
+      <svg id="bfiSvg" viewBox="0 0 600 280" role="img" aria-label="Total discharge, filtered baseflow (dashed) and quickflow (hatched) for the synthetic 96-hour event"></svg>
     </div>
     <div class="legend">
       <div class="legend-item"><div class="legend-swatch" style="background:var(--cyan);"></div>Total discharge</div>
       <div class="legend-item"><div class="legend-swatch" style="background:var(--base);"></div>Filtered baseflow</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:rgba(0,163,255,0.35);"></div>Quickflow (shaded)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:repeating-linear-gradient(45deg,rgba(0,163,255,0.3) 0 3px,#7dd3fc 3px 4.5px);"></div>Quickflow (hatched)</div>
     </div>
     <div class="callout tip" style="margin-top:14px;">
       <span class="callout-label">Practical default</span>
@@ -491,8 +532,8 @@ select:focus { outline:1px solid var(--cyan); }
 <div id="sec-storm" class="wide card" data-aihydro-editable="prose">
   <h2>4 · Doubling rainfall ≠ doubling peak</h2>
   <p>
-    Two storms on the same catchment. Drag the number:
-    drop <span class="tangle" id="t-rainMult" data-min="1.0" data-max="4.0" data-step="0.1" data-value="2.0" data-format="f1" data-suffix="×"></span>
+    Two storms on the same catchment. Drag the number (or focus it and use the arrow keys):
+    drop <span class="tangle" id="t-rainMult" data-label="Rainfall multiplier" data-min="1.0" data-max="4.0" data-step="0.1" data-value="2.0" data-format="f1" data-suffix="×"></span>
     as much rain on the right panel as the left, and the peak grows <em>faster</em> than linearly. In this model that comes from the
     curve-number loss: the first part of every storm (the initial abstraction) produces no runoff.
   </p>
@@ -503,15 +544,15 @@ select:focus { outline:1px solid var(--cyan); }
   <div class="grid2" style="margin:18px 0 0;">
     <div class="plot-wrap">
       <h3 style="margin-bottom:10px;">Small storm (25 mm)</h3>
-      <svg id="smallSvg" viewBox="0 0 360 220" aria-label="Small storm hydrograph"></svg>
-      <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);">
+      <svg id="smallSvg" viewBox="0 0 360 220" role="img" aria-label="Hydrograph for the 25 millimetre storm"></svg>
+      <div id="smallStats" style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);">
         Peak: <span id="smallPeak">—</span> m³/s · Quickflow volume: <span id="smallVol">—</span> m³ · Runoff: <span id="smallC">—</span>
       </div>
     </div>
     <div class="plot-wrap">
       <h3 style="margin-bottom:10px;">Large storm (<span id="largeMM">20</span> mm)</h3>
-      <svg id="largeSvg" viewBox="0 0 360 220" aria-label="Large storm hydrograph"></svg>
-      <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);">
+      <svg id="largeSvg" viewBox="0 0 360 220" role="img" aria-label="Hydrograph for the larger storm set by the rainfall multiplier"></svg>
+      <div id="largeStats" style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);">
         Peak: <span id="largePeak">—</span> m³/s · Quickflow volume: <span id="largeVol">—</span> m³ · Runoff: <span id="largeC">—</span>
       </div>
     </div>
@@ -532,68 +573,9 @@ select:focus { outline:1px solid var(--cyan); }
 <!-- ══════════════════════════════════════════════════════════ -->
 <div id="sec-quiz" class="wide card" data-aihydro-editable="prose">
   <h2>5 · Checkpoint</h2>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">Answer all three questions correctly to mark this module complete.</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">Answer every item correctly to mark this module complete. Wrong answers can be changed and checked again; the numeric answers are computed from this page's own model and data.</p>
 
-  <div class="aihydro-quiz" id="m3-quiz" data-module-id="reading-a-hydrograph">
-
-    <div class="quiz-question quiz-block" data-answer="1">
-      <p class="quiz-q">A small headwater catchment after a brief storm shows a steep, narrow hydrograph that peaks in 2 hours and is back to baseflow within 6. What does that shape tell you?</p>
-      <div class="quiz-choices" role="radiogroup" aria-label="Question 1 choices">
-        <button class="quiz-btn" type="button" data-index="0"
-          data-feedback="Larger catchments have damped, broader hydrographs because flow paths are longer and storage is higher.">
-          The catchment is large and forested
-        </button>
-        <button class="quiz-btn" type="button" data-index="1"
-          data-feedback="Exactly — short lag and rapid recession are hallmarks of a flashy, small / impervious / saturated catchment.">
-          The catchment is small and/or impervious — it's flashy
-        </button>
-        <button class="quiz-btn" type="button" data-index="2"
-          data-feedback="Shape tells you about storage and routing — not directly about the rainfall amount.">
-          The storm dropped a huge amount of rain
-        </button>
-      </div>
-      <div class="quiz-feedback"></div>
-    </div>
-
-    <div class="quiz-question quiz-block" data-answer="1">
-      <p class="quiz-q">You raise the Lyne–Hollick filter parameter from α = 0.925 to α = 0.985. What happens to the computed BFI?</p>
-      <div class="quiz-choices" role="radiogroup" aria-label="Question 2 choices">
-        <button class="quiz-btn" type="button" data-index="0"
-          data-feedback="Higher α actually strips more quickflow — the filter becomes more aggressive, leaving a lower, smoother baseflow line.">
-          BFI goes up — more of the flow is classified as baseflow
-        </button>
-        <button class="quiz-btn" type="button" data-index="1"
-          data-feedback="Right — higher α produces a smoother, lower baseflow estimate, so quickflow grabs more of the total volume and BFI drops.">
-          BFI goes down — the filter strips more quickflow and baseflow becomes a smoother, lower line
-        </button>
-        <button class="quiz-btn" type="button" data-index="2"
-          data-feedback="α changes the filter shape directly — BFI is highly sensitive to it.">
-          BFI is unchanged — it only depends on the discharge series
-        </button>
-      </div>
-      <div class="quiz-feedback"></div>
-    </div>
-
-    <div class="quiz-question quiz-block" data-answer="2">
-      <p class="quiz-q">In the curve-number model of §4 (CN = 75, S = 84.7 mm, Ia = 16.9 mm) a 25 mm storm produces 0.70 mm of runoff and a 50 mm storm produces 9.29 mm. When the rainfall doubles, the runoff depth…</p>
-      <div class="quiz-choices" role="radiogroup" aria-label="Question 3 choices">
-        <button class="quiz-btn" type="button" data-index="0"
-          data-feedback="If runoff were proportional to rain, the 50 mm storm would give about 1.40 mm; the model gives 9.29 mm.">
-          Doubles — runoff is proportional to rainfall
-        </button>
-        <button class="quiz-btn" type="button" data-index="1"
-          data-feedback="The opposite: the first 16.9 mm is lost to initial abstraction in both storms, so the extra rain is a much larger share of the runoff.">
-          Less than doubles — the soil absorbs the extra rain
-        </button>
-        <button class="quiz-btn" type="button" data-index="2"
-          data-feedback="Correct — the first 16.9 mm produces nothing and the numerator grows as (P − Ia)², so doubling the rain raises runoff depth about 13-fold here (9.29 ÷ 0.70).">
-          More than doubles (about 13× here) — the loss is a fixed first slice, so extra rain is mostly runoff
-        </button>
-      </div>
-      <div class="quiz-feedback"></div>
-    </div>
-
-  </div><!-- /.aihydro-quiz -->
+  <div id="m3-quiz"></div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════ -->
@@ -631,7 +613,15 @@ select:focus { outline:1px solid var(--cyan); }
       <button class="run-btn aihydro-run" type="button">Run ▶</button>
     </div>
     <pre class="aihydro-source" id="pySource"></pre>
-    <div class="aihydro-output" aria-live="polite"></div>
+    <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:hydrograph-camels@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">Gauge        : 01031500  Piscataquis River near Dover-Foxcroft, ME
+Source file  : basin_dataset_public_v1p2/usgs_streamflow/01/01031500_streamflow_qc.txt  (sha256 c574c4e8975e5d0d...)
+Period       : 1996-10-01 + 365 days (observed; CAMELS-US v1.2)
+Mean Q       : 17.106 m3/s  (1.922 mm/day)
+Peak Q       : 248.62 m3/s   (day 63)
+Total P      : 1215 mm   Total Q: 701 mm   Q/P = 0.578
+BFI (LH)     : 0.394   this water year only
+BFI (CAMELS) : 0.445   20-year CAMELS signature (differs: period and implementation)
+USGS QC      : 253 days approved (A), 112 approved-estimated (A:e), 0 missing</pre><div class="aihydro-static-figure"><img alt="Two-panel chart for the Piscataquis River near Dover-Foxcroft, ME, water year 1996-10-01 to 1997-09-30. Top: observed daily discharge (cyan) with a sharp peak of about 249 cubic metres per second on day 63 and a broad rise to about 120 near day 200; the dashed Lyne-Hollick baseflow (alpha 0.925) stays far below the peaks and the quickflow is the shaded gap, BFI 0.394. Bottom: basin precipitation in millimetres per day as bars hanging from the top, up to about 43 millimetres on day 63." src="data:image/png;base64,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"></div></div><!--@@END static:hydrograph-camels@@--></div>
   </div>
 </div>
 
@@ -678,7 +668,7 @@ select:focus { outline:1px solid var(--cyan); }
 <!--  PROVENANCE                                                -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div id="sec-prov" class="provenance">
-  <div class="prov-item"><dt>Module</dt><dd>reading-a-hydrograph · v0.3.0 · CC-BY-4.0</dd></div>
+  <div class="prov-item"><dt>Module</dt><dd>reading-a-hydrograph · v0.4.0 · CC-BY-4.0</dd></div>
   <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
   <div class="prov-item"><dt>SYNTHETIC parts</dt><dd>§2–§4: the 96-hour event (gamma response to a 4-hour pulse) and the curve-number storm pair (CN 75, assumed 25 km² catchment) are teaching models, not observations.</dd></div>
   <div class="prov-item"><dt>Real data (§6)</dt><dd>CAMELS-US v1.2 water year 1996-10-01 to 1997-09-30: USGS daily-mean discharge (cfs, QC flags kept) and Daymet basin-mean precipitation. Files and sha256 in <code>data/PROVENANCE.json</code>.</dd></div>
@@ -702,18 +692,437 @@ select:focus { outline:1px solid var(--cyan); }
 
 <!--@@BEGIN json:camels-wy@@--><script type="application/json" id="camels-wy">{"gauges":{"14305500":{"gauge_id":"14305500","name":"Siletz River at Siletz, OR","camels_name":"SILETZ RIVER AT SILETZ, OR","huc_02":"17","lat":44.71512,"lon":-123.88733,"area_km2":526.33,"elev_mean_m":276.16,"q_mean_mm_day":6.605015,"runoff_ratio":0.990253,"baseflow_index":0.520848,"q5_mm_day":0.343979,"q95_mm_day":24.301668,"zero_q_freq_as_distributed":0.0,"hfd_mean_doy":119.65,"p_mean_mm_day":6.67003,"pet_mean_mm_day":2.172891,"aridity":0.325769,"frac_snow":0.025741,"start":"1996-10-01","end":"1997-09-30","n":365,"q_cfs":[183.0,175.0,173.0,173.0,242.0,205.0,196.0,193.0,189.0,186.0,186.0,186.0,262.0,494.0,1210.0,764.0,591.0,1590.0,2010.0,1510.0,1150.0,1780.0,1570.0,3510.0,3980.0,3050.0,2070.0,1750.0,1660.0,1370.0,1190.0,1040.0,939.0,872.0,909.0,844.0,946.0,1110.0,992.0,910.0,843.0,785.0,874.0,1230.0,1430.0,1480.0,1740.0,2110.0,2620.0,15500.0,8490.0,4770.0,3760.0,2900.0,3760.0,3550.0,2840.0,2980.0,5340.0,4440.0,4110.0,5020.0,5560.0,5580.0,7970.0,9590.0,6210.0,6570.0,10400.0,6830.0,5400.0,4720.0,4540.0,4820.0,4110.0,3250.0,2590.0,2110.0,1780.0,1530.0,1620.0,2070.0,2260.0,2460.0,5270.0,14900.0,17800.0,13100.0,7470.0,11500.0,10600.0,10700.0,11400.0,7910.0,6110.0,4500.0,3430.0,2740.0,2480.0,2080.0,1860.0,1970.0,1750.0,1580.0,1410.0,1270.0,1160.0,1080.0,2760.0,7020.0,4310.0,3400.0,3400.0,3160.0,2740.0,2300.0,1970.0,1700.0,1540.0,2170.0,1900.0,4010.0,13700.0,10200.0,5720.0,3840.0,2890.0,2320.0,1940.0,1690.0,1460.0,1290.0,1160.0,1090.0,1290.0,1150.0,1560.0,1700.0,1540.0,1540.0,1540.0,3130.0,3000.0,2480.0,2070.0,1760.0,1530.0,1350.0,1230.0,1170.0,1050.0,1860.0,3010.0,2780.0,2540.0,2370.0,3930.0,6910.0,4840.0,4840.0,4960.0,4970.0,4370.0,3530.0,2860.0,3030.0,4970.0,4730.0,3920.0,4200.0,4430.0,3440.0,2710.0,2220.0,1880.0,1610.0,1450.0,1370.0,1520.0,1270.0,1180.0,1170.0,1140.0,1060.0,1000.0,941.0,884.0,838.0,817.0,853.0,837.0,768.0,724.0,699.0,869.0,1740.0,2400.0,1950.0,1600.0,1420.0,2260.0,7160.0,4270.0,3120.0,3320.0,2950.0,2420.0,2000.0,1710.0,1580.0,1620.0,1600.0,1600.0,1480.0,1430.0,1400.0,1280.0,1200.0,1090.0,997.0,910.0,840.0,772.0,714.0,665.0,624.0,589.0,551.0,523.0,488.0,461.0,440.0,430.0,406.0,425.0,415.0,392.0,369.0,371.0,556.0,686.0,513.0,1040.0,1210.0,943.0,859.0,860.0,761.0,690.0,634.0,584.0,541.0,504.0,484.0,522.0,492.0,435.0,405.0,381.0,376.0,401.0,358.0,340.0,445.0,637.0,786.0,626.0,548.0,508.0,466.0,440.0,428.0,397.0,391.0,366.0,343.0,321.0,308.0,299.0,289.0,279.0,434.0,397.0,367.0,317.0,292.0,276.0,264.0,254.0,242.0,239.0,230.0,218.0,215.0,211.0,204.0,195.0,190.0,183.0,177.0,171.0,168.0,163.0,160.0,155.0,151.0,148.0,145.0,142.0,138.0,132.0,124.0,119.0,118.0,116.0,114.0,111.0,109.0,108.0,107.0,105.0,105.0,106.0,108.0,129.0,117.0,104.0,159.0,186.0,189.0,245.0,183.0,216.0,173.0,142.0,129.0,126.0,116.0,109.0,106.0,102.0,100.0,95.0,91.0,91.0,93.0,94.0,93.0,121.0,428.0,1140.0,3540.0,2330.0,1530.0,1030.0,786.0,640.0,547.0,478.0,437.0,564.0,616.0,492.0,442.0,433.0],"estimated_idx":[],"prcp_mm_day":[0.0,0.0,0.0,10.73,9.47,0.0,0.0,0.0,0.0,0.84,6.48,8.24,15.76,15.04,19.07,5.25,15.73,31.74,18.27,9.68,8.44,20.69,21.2,31.22,30.51,0.0,0.0,13.05,12.06,0.0,0.0,0.0,0.0,3.51,8.85,5.6,10.51,6.82,0.0,0.0,0.0,3.22,16.94,15.75,13.42,6.58,13.72,15.34,50.49,114.48,18.27,14.52,18.46,12.64,27.9,8.55,14.47,19.25,30.36,8.28,15.49,26.33,22.09,19.45,36.88,43.13,26.79,37.39,38.89,10.2,24.09,21.19,21.18,19.75,0.07,0.0,0.0,0.0,0.0,0.0,13.28,24.96,15.05,25.1,49.36,74.52,68.63,36.02,19.63,73.13,46.48,59.81,50.97,39.4,17.14,5.84,3.5,1.85,5.79,0.0,2.73,6.16,0.0,0.0,0.0,0.0,0.0,8.3,56.03,52.71,8.1,13.52,18.98,5.03,4.85,2.53,0.0,0.0,10.56,24.61,2.97,51.47,67.99,19.97,0.0,0.0,0.0,0.0,0.0,3.15,0.0,0.0,0.0,9.88,15.7,5.57,8.91,1.14,0.0,9.69,11.39,27.35,9.21,0.0,0.0,0.0,0.0,0.56,5.39,6.45,2.94,27.73,42.69,15.52,7.27,10.24,26.82,30.21,0.0,27.77,20.84,21.22,11.6,8.07,0.0,22.64,23.51,18.52,12.52,35.85,18.07,0.0,0.0,0.0,0.0,0.0,4.86,8.28,11.77,5.49,0.84,10.26,6.35,0.0,1.17,0.0,0.0,0.0,2.79,10.62,3.98,0.0,0.0,0.0,15.74,23.91,11.86,7.72,0.0,3.95,21.54,44.77,2.83,11.88,21.63,5.42,0.0,0.0,2.76,9.13,8.86,9.47,7.62,4.57,5.19,8.44,0.0,1.35,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.11,6.29,5.23,0.0,5.91,17.15,18.05,8.69,25.36,13.34,4.78,9.58,8.86,0.0,0.0,0.0,0.0,0.0,0.0,1.76,5.07,4.17,0.0,0.0,0.0,0.0,3.18,0.0,0.0,12.08,23.1,10.55,0.0,0.0,0.0,0.0,0.0,3.0,0.0,3.09,0.0,0.0,0.0,0.0,2.72,0.0,0.81,8.97,6.95,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.72,6.79,0.0,0.0,13.81,7.33,13.88,9.78,7.23,3.32,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.06,0.0,2.06,2.93,20.8,28.19,38.42,49.98,18.06,12.19,0.0,0.0,0.0,0.0,0.0,0.0,17.56,12.59,0.0,0.0,0.0],"source_member":"basin_dataset_public_v1p2/usgs_streamflow/17/14305500_streamflow_qc.txt","source_sha256":"72cdcb7065640c4a9414b277586880a06db568431f82b652a31cf2cdc5372e34"},"01031500":{"gauge_id":"01031500","name":"Piscataquis River near Dover-Foxcroft, ME","camels_name":"Piscataquis River near Dover-Foxcroft, Maine","huc_02":"01","lat":45.17501,"lon":-69.3147,"area_km2":769.05,"elev_mean_m":247.8,"q_mean_mm_day":2.030242,"runoff_ratio":0.576289,"baseflow_index":0.445091,"q5_mm_day":0.111345,"q95_mm_day":8.010503,"zero_q_freq_as_distributed":0.0,"hfd_mean_doy":181.0,"p_mean_mm_day":3.522957,"pet_mean_mm_day":2.071324,"aridity":0.58795,"frac_snow":0.291836,"start":"1996-10-01","end":"1997-09-30","n":365,"q_cfs":[255.0,206.0,180.0,149.0,132.0,118.0,108.0,101.0,198.0,515.0,526.0,429.0,334.0,295.0,253.0,214.0,189.0,170.0,157.0,148.0,138.0,237.0,736.0,559.0,506.0,404.0,329.0,313.0,388.0,361.0,434.0,450.0,388.0,344.0,304.0,282.0,271.0,257.0,313.0,765.0,2180.0,1490.0,1030.0,782.0,570.0,406.0,370.0,338.0,333.0,345.0,361.0,372.0,355.0,332.0,268.0,248.0,209.0,268.0,316.0,325.0,316.0,291.0,6700.0,8780.0,3610.0,2090.0,1460.0,1130.0,1050.0,1220.0,1010.0,828.0,730.0,642.0,600.0,590.0,571.0,624.0,1150.0,1300.0,1530.0,917.0,698.0,642.0,662.0,1910.0,1230.0,925.0,840.0,810.0,710.0,550.0,430.0,380.0,330.0,400.0,340.0,270.0,255.0,245.0,238.0,232.0,227.0,227.0,216.0,208.0,201.0,218.0,376.0,473.0,354.0,265.0,228.0,198.0,199.0,208.0,188.0,244.0,333.0,268.0,271.0,291.0,254.0,243.0,216.0,188.0,180.0,188.0,192.0,191.0,190.0,194.0,174.0,172.0,164.0,164.0,184.0,179.0,180.0,175.0,168.0,165.0,191.0,223.0,234.0,235.0,219.0,202.0,192.0,192.0,201.0,197.0,217.0,279.0,319.0,280.0,290.0,295.0,274.0,238.0,226.0,224.0,210.0,189.0,176.0,202.0,204.0,191.0,173.0,163.0,155.0,158.0,159.0,152.0,149.0,142.0,170.0,220.0,210.0,275.0,440.0,918.0,1060.0,808.0,602.0,614.0,873.0,1220.0,1650.0,2340.0,2070.0,1610.0,1310.0,1190.0,1280.0,1140.0,1040.0,1180.0,1880.0,2940.0,4310.0,4250.0,3940.0,3390.0,3660.0,3640.0,3170.0,2970.0,2780.0,2870.0,3300.0,3220.0,3140.0,3520.0,2920.0,2450.0,2030.0,1670.0,3070.0,3000.0,2280.0,2020.0,1700.0,1430.0,1260.0,1460.0,1450.0,1710.0,2650.0,1820.0,1310.0,1120.0,995.0,834.0,727.0,624.0,558.0,541.0,471.0,401.0,346.0,309.0,302.0,288.0,261.0,229.0,204.0,184.0,173.0,161.0,153.0,146.0,132.0,117.0,115.0,155.0,153.0,126.0,106.0,93.0,87.0,362.0,532.0,307.0,385.0,467.0,339.0,237.0,218.0,191.0,153.0,125.0,108.0,96.0,96.0,91.0,334.0,396.0,247.0,163.0,122.0,117.0,277.0,272.0,189.0,143.0,125.0,111.0,93.0,82.0,72.0,63.0,55.0,51.0,47.0,43.0,39.0,37.0,35.0,33.0,33.0,31.0,28.0,26.0,24.0,23.0,23.0,22.0,21.0,21.0,22.0,21.0,21.0,20.0,23.0,64.0,89.0,78.0,83.0,64.0,56.0,50.0,43.0,66.0,60.0,60.0,80.0,98.0,78.0,66.0,61.0,66.0,105.0,161.0,324.0,232.0,170.0,182.0,258.0,199.0,143.0,111.0,89.0,78.0,74.0,77.0,90.0,111.0,114.0,102.0,85.0,70.0,63.0,57.0,62.0,109.0,132.0,106.0,93.0,87.0,76.0,67.0,61.0,69.0,133.0],"estimated_idx":[44,45,46,47,48,54,55,56,57,58,59,60,61,81,82,83,84,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180],"prcp_mm_day":[0.0,0.0,4.71,0.0,0.0,0.0,0.0,0.0,17.66,8.49,6.6,0.0,0.0,2.9,1.48,0.0,0.0,0.0,0.0,0.0,0.0,14.34,7.76,2.81,1.41,0.0,0.0,1.66,7.85,0.0,8.96,0.0,0.0,2.12,0.0,0.0,1.16,1.34,5.25,8.93,15.67,2.28,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.71,0.0,0.0,0.0,0.0,0.0,3.97,15.51,0.0,0.0,0.0,7.48,37.09,42.94,0.0,0.0,0.0,0.0,28.7,7.43,0.0,0.0,0.0,0.25,1.9,1.0,1.32,1.54,10.13,4.4,11.69,0.0,0.0,0.0,9.65,14.12,0.0,0.56,0.0,2.23,3.22,2.72,0.0,0.0,6.44,1.97,2.04,11.24,0.0,0.0,0.0,10.02,14.48,0.0,0.0,0.0,0.0,0.0,21.96,0.0,0.0,0.0,0.0,0.0,0.0,0.0,13.01,8.8,0.0,7.4,12.55,0.0,1.25,8.41,0.0,0.0,0.0,10.49,9.42,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,12.02,0.0,0.0,0.0,0.0,1.51,1.0,2.54,4.68,1.1,0.0,0.0,0.0,10.07,0.0,5.98,0.0,0.0,4.06,15.48,13.21,0.0,0.0,1.96,4.5,0.0,0.0,0.0,20.25,0.0,0.0,0.99,0.0,0.0,1.44,4.4,1.64,0.0,0.0,14.09,0.0,0.06,0.0,4.12,3.99,9.85,0.0,0.0,0.0,0.0,1.13,5.23,0.0,0.0,0.0,0.0,0.0,10.54,0.0,0.0,0.0,0.0,8.16,18.66,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.44,26.1,0.0,0.0,7.8,0.0,10.65,0.0,0.0,19.84,8.71,0.0,3.01,0.38,0.0,1.33,10.63,0.0,9.34,22.38,0.0,0.0,4.54,1.3,0.25,1.35,0.0,1.8,1.75,0.0,0.0,0.0,0.0,3.24,0.57,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.15,7.08,7.95,0.0,0.0,0.0,0.0,25.13,11.42,0.0,14.75,8.5,0.0,0.0,8.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,35.2,4.29,0.0,0.0,0.0,14.55,20.18,0.01,0.0,7.22,3.9,0.0,0.0,0.0,0.0,0.39,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.36,0.0,0.0,0.0,0.0,1.63,0.0,0.0,2.23,6.1,0.0,0.0,0.0,0.0,28.38,0.0,21.0,0.0,6.31,2.29,0.0,0.0,0.0,0.0,11.05,5.71,0.0,0.0,0.28,3.57,18.01,15.5,8.82,14.72,5.81,1.03,12.46,5.1,0.0,0.0,0.0,2.12,0.0,4.01,1.7,3.37,6.64,1.0,0.0,0.0,0.0,1.92,0.0,8.13,15.01,0.0,0.0,4.59,0.0,0.0,0.0,0.0,0.0,18.46],"source_member":"basin_dataset_public_v1p2/usgs_streamflow/01/01031500_streamflow_qc.txt","source_sha256":"c574c4e8975e5d0d09708c9b7a7eab0d33301620733810115bac81b417ab8722"},"02472000":{"gauge_id":"02472000","name":"Leaf River near Collins, MS","camels_name":"LEAF RIVER NR COLLINS, MS","huc_02":"03","lat":31.70694,"lon":-89.40694,"area_km2":1927.13,"elev_mean_m":123.24,"q_mean_mm_day":1.326192,"runoff_ratio":0.318919,"baseflow_index":0.406862,"q5_mm_day":0.11045,"q95_mm_day":5.53521,"zero_q_freq_as_distributed":0.0,"hfd_mean_doy":152.95,"p_mean_mm_day":4.158402,"pet_mean_mm_day":3.167662,"aridity":0.76175,"frac_snow":0.006015,"start":"1996-10-01","end":"1997-09-30","n":365,"q_cfs":[145.0,139.0,136.0,130.0,124.0,123.0,123.0,123.0,117.0,112.0,109.0,107.0,106.0,104.0,103.0,102.0,103.0,100.0,100.0,100.0,101.0,103.0,116.0,124.0,135.0,257.0,409.0,288.0,223.0,193.0,174.0,162.0,152.0,144.0,141.0,151.0,157.0,171.0,346.0,381.0,292.0,252.0,221.0,201.0,189.0,182.0,177.0,175.0,178.0,195.0,380.0,475.0,349.0,279.0,242.0,281.0,319.0,309.0,329.0,312.0,294.0,422.0,654.0,1070.0,613.0,419.0,344.0,304.0,278.0,259.0,245.0,234.0,229.0,229.0,311.0,291.0,280.0,490.0,1090.0,1140.0,648.0,457.0,382.0,344.0,356.0,467.0,418.0,378.0,393.0,531.0,1730.0,1200.0,1020.0,735.0,593.0,507.0,451.0,412.0,432.0,1140.0,2280.0,3110.0,3510.0,2120.0,874.0,604.0,519.0,1000.0,1470.0,1330.0,807.0,606.0,515.0,494.0,786.0,1420.0,1190.0,822.0,672.0,1040.0,2130.0,2750.0,1990.0,1020.0,724.0,604.0,561.0,645.0,883.0,745.0,1990.0,3590.0,3700.0,2490.0,1380.0,4960.0,6540.0,8490.0,6610.0,3160.0,2000.0,1080.0,825.0,1160.0,3880.0,5880.0,5370.0,3030.0,3340.0,3450.0,4150.0,3690.0,3030.0,2250.0,2120.0,1970.0,1350.0,1040.0,869.0,715.0,618.0,888.0,1020.0,931.0,1840.0,2960.0,2750.0,1840.0,1260.0,923.0,1790.0,2260.0,1760.0,1040.0,746.0,599.0,687.0,1400.0,1540.0,977.0,659.0,528.0,449.0,397.0,362.0,348.0,573.0,2970.0,3950.0,3880.0,2100.0,868.0,702.0,4340.0,5370.0,5850.0,3810.0,2220.0,1220.0,739.0,606.0,527.0,472.0,445.0,686.0,711.0,581.0,2930.0,8530.0,17500.0,26500.0,25100.0,11100.0,3710.0,2280.0,1590.0,1260.0,1040.0,889.0,780.0,681.0,594.0,528.0,481.0,446.0,413.0,380.0,348.0,322.0,297.0,582.0,1430.0,2500.0,1900.0,1440.0,1480.0,1800.0,1860.0,1550.0,2420.0,2840.0,2660.0,2960.0,2480.0,1810.0,1260.0,836.0,665.0,585.0,541.0,571.0,673.0,553.0,1110.0,2960.0,1850.0,1230.0,719.0,553.0,559.0,782.0,635.0,535.0,476.0,429.0,435.0,630.0,607.0,2520.0,4550.0,3690.0,2310.0,1900.0,2440.0,2000.0,867.0,614.0,517.0,458.0,422.0,396.0,371.0,368.0,484.0,426.0,468.0,398.0,354.0,360.0,451.0,472.0,345.0,311.0,631.0,487.0,361.0,637.0,1120.0,897.0,595.0,421.0,363.0,603.0,794.0,986.0,583.0,392.0,332.0,300.0,274.0,260.0,259.0,321.0,358.0,395.0,447.0,443.0,364.0,444.0,371.0,296.0,270.0,245.0,237.0,561.0,902.0,756.0,483.0,327.0,268.0,238.0,220.0,208.0,198.0,188.0,182.0,189.0,185.0,181.0,178.0,170.0,164.0,160.0,158.0,170.0,170.0,162.0,152.0,149.0,145.0,141.0,138.0,135.0,133.0,131.0,127.0,125.0,125.0,127.0,145.0,151.0,148.0,140.0,136.0,133.0],"estimated_idx":[],"prcp_mm_day":[0.0,0.0,0.0,0.0,0.0,0.0,0.96,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.27,0.0,0.0,0.0,0.0,11.6,0.0,14.09,35.52,8.81,0.0,0.0,3.45,0.0,0.0,0.0,0.0,0.0,0.0,2.83,0.09,27.02,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,13.61,8.96,0.0,0.0,0.0,0.0,0.0,18.9,0.0,0.0,0.0,0.0,9.51,34.94,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.92,0.0,0.0,6.5,32.91,0.0,0.0,0.0,0.0,0.0,0.0,9.65,0.3,0.0,10.61,0.0,0.77,21.48,11.12,0.77,0.0,0.0,0.0,4.32,0.0,19.85,7.16,40.2,0.0,0.0,0.0,0.0,0.0,0.0,18.54,0.0,0.0,0.0,0.0,0.0,7.53,8.99,7.36,1.23,0.0,0.0,31.94,0.0,0.0,0.0,0.0,0.0,0.0,12.43,0.78,0.0,0.0,31.5,0.0,2.47,0.0,4.59,63.24,0.07,3.16,0.0,0.0,0.0,0.0,0.0,38.84,0.0,0.0,0.0,18.21,13.21,7.54,13.56,0.0,1.68,15.12,0.0,0.0,5.48,0.0,0.0,0.0,0.0,6.84,0.0,14.99,20.77,0.0,0.0,0.0,0.0,15.64,6.39,0.0,0.0,0.0,0.0,0.0,13.73,0.0,0.0,0.0,0.0,0.02,0.0,0.0,0.0,0.0,9.39,46.56,0.0,0.0,0.0,0.0,0.0,50.85,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,23.19,0.0,0.0,56.59,44.5,49.0,0.13,0.0,0.0,0.0,11.86,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,17.93,44.94,29.39,11.9,7.08,17.83,23.35,0.39,0.0,30.77,12.4,1.79,15.81,7.69,0.0,0.0,0.0,0.0,1.56,0.0,0.0,3.53,11.94,10.55,14.06,0.0,0.0,0.0,0.0,0.0,25.4,0.0,0.0,0.0,0.0,0.0,18.13,6.92,28.68,12.8,8.31,7.95,18.52,2.47,0.0,0.0,0.0,0.0,0.05,0.0,0.0,1.32,0.0,14.11,0.0,0.0,2.36,0.0,0.0,0.0,0.0,0.0,1.62,15.88,13.47,0.0,14.06,2.51,0.0,1.38,0.0,0.0,21.96,5.95,6.84,0.0,0.0,0.0,0.0,0.0,0.0,0.0,23.99,0.88,11.22,0.0,0.0,0.73,9.25,0.0,0.0,5.3,0.0,0.0,27.16,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.94,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.74,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.14,0.06,17.95,2.13,0.0,0.0,0.0,0.0],"source_member":"basin_dataset_public_v1p2/usgs_streamflow/03/02472000_streamflow_qc.txt","source_sha256":"25cba78de612952b31ea04dbd0addaaa9666992c6bf37afaa00684344c2e4b86"}},"source":"CAMELS-US v1.2 (Newman et al. 2015; Addor et al. 2017)","units":{"q":"cfs (daily mean)","prcp":"mm/day"}}</script><!--@@END json:camels-wy@@-->
 <script>
-(function () {
+/*@@BEGIN js:shared/ready.js@@*/
+/* Bridge readiness: ONE shared promise for the whole page.
+ *
+ * window.aihydro is injected by the AI-Hydro preview bridge, sometimes after the module's own
+ * scripts have run. Every call to whenReady() waits on the same promise, so at most one 50 ms
+ * poll exists per page no matter how many handlers call it (the old per-call setInterval leaked
+ * one timer per call when no bridge was present). The poll stops after about 10 s: outside the
+ * preview (a plain browser) the bridge never arrives and the callbacks never run, which is the
+ * intended standalone behaviour. Modules must render without the bridge.
+ *
+ * Single source of truth: shared/ready.js (inlined by scripts/build_modules.py).
+ */
+function aihydroReady() {
+  if (!window.__aihydroReadyPromise) {
+    window.__aihydroReadyPromise = new Promise(function (resolve) {
+      if (window.aihydro) { resolve(window.aihydro); return; }
+      var tries = 0;
+      var t = setInterval(function () {
+        if (window.aihydro) { clearInterval(t); resolve(window.aihydro); }
+        else if (++tries >= 200) { clearInterval(t); }
+      }, 50);
+    });
+  }
+  return window.__aihydroReadyPromise;
+}
+function whenReady(fn) {
+  aihydroReady().then(function () { fn(); });
+}
+/*@@END js:shared/ready.js@@*/
+/*@@BEGIN js:shared/a11y.js@@*/
+/* Accessibility helpers shared by every module (keyboard access, live announcements,
+ * reduced motion). Single source of truth: shared/a11y.js, inlined by scripts/build_modules.py.
+ * Pure logic (keyValue) is unit-tested under node; the DOM helpers use only the standard DOM.
+ */
+var HydroA11y = (function () {
   'use strict';
 
-  /* ──────────────────────────────────────────────────────────────────
-     whenReady — polls until window.aihydro is injected by the bridge
-     ────────────────────────────────────────────────────────────────── */
-  function whenReady(fn) {
-    if (window.aihydro) { fn(); return; }
-    var t = setInterval(function () {
-      if (window.aihydro) { clearInterval(t); fn(); }
-    }, 50);
+  /* True when the user asked the OS/browser for less motion. Widgets must still update;
+     they just must not animate or autoplay on their own. */
+  function reducedMotion() {
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) { return false; }
   }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* Round to the step grid anchored at min, trimming float noise. */
+  function snap(v, min, step) {
+    var n = Math.round((v - min) / step);
+    var out = min + n * step;
+    var decimals = (String(step).split('.')[1] || '').length;
+    return parseFloat(out.toFixed(Math.min(decimals + 2, 12)));
+  }
+
+  /* WAI-ARIA slider keys. Returns the new value, or null when the key is not handled. */
+  function keyValue(key, cur, o) {
+    var step = o.step || 1, page = o.page || step * 10, v;
+    switch (key) {
+      case 'ArrowRight': case 'ArrowUp':   v = cur + step; break;
+      case 'ArrowLeft':  case 'ArrowDown': v = cur - step; break;
+      case 'PageUp':   v = cur + page; break;
+      case 'PageDown': v = cur - page; break;
+      case 'Home': v = o.min; break;
+      case 'End':  v = o.max; break;
+      default: return null;
+    }
+    return clamp(snap(v, o.min, step), o.min, o.max);
+  }
+
+  /* One polite live region for short announcements (selected cell, new scenario, ...). */
+  function announce(msg) {
+    var el = document.getElementById('hydro-announcer');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'hydro-announcer';
+      el.className = 'hydro-sr-only';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(el);
+    }
+    el.textContent = '';
+    el.textContent = String(msg);
+  }
+
+  /* Make `el` a keyboard-operable slider.
+       o = { label, min, max, step, page, get(), set(v), text(v) }
+     get() returns the current value, set(v) applies a new one (the caller redraws), text(v)
+     is the human-readable value for screen readers. Call the returned sync() after the value
+     changes by other means (mouse drag, a paired <input type=range>). */
+  function slider(el, o) {
+    el.setAttribute('role', 'slider');
+    el.setAttribute('tabindex', '0');
+    if (o.label) el.setAttribute('aria-label', o.label);
+    el.setAttribute('aria-valuemin', String(o.min));
+    el.setAttribute('aria-valuemax', String(o.max));
+    function sync() {
+      var v = o.get();
+      el.setAttribute('aria-valuenow', String(v));
+      el.setAttribute('aria-valuetext', o.text ? o.text(v) : String(v));
+    }
+    el.addEventListener('keydown', function (ev) {
+      var nv = keyValue(ev.key, o.get(), o);
+      if (nv === null) return;
+      ev.preventDefault();
+      if (nv !== o.get()) o.set(nv);
+      sync();
+    });
+    sync();
+    return { sync: sync };
+  }
+
+  /* Make a non-button element (a card, a node) operable from the keyboard: role, tab stop, and
+     Enter/Space as well as click all call fn. */
+  function activatable(el, fn, role) {
+    if (!el.getAttribute('role')) el.setAttribute('role', role || 'button');
+    if (el.getAttribute('tabindex') === null) el.setAttribute('tabindex', '0');
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fn(ev); }
+    });
+  }
+
+  /* [data-scroll="section-id"] elements scroll to that section (replaces inline onclick). */
+  function wireScrollNav() {
+    var nodes = document.querySelectorAll('[data-scroll]');
+    for (var i = 0; i < nodes.length; i++) (function (node) {
+      activatable(node, function () {
+        var t = document.getElementById(node.getAttribute('data-scroll'));
+        if (!t) return;
+        t.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        t.setAttribute('tabindex', '-1');
+        try { t.focus({ preventScroll: true }); } catch (e) {}
+      });
+    })(nodes[i]);
+  }
+
+  /* Mark readouts as polite live regions so screen readers hear changed values. */
+  function live(ids) {
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.setAttribute('aria-live', 'polite');
+      el.setAttribute('aria-atomic', 'true');
+    });
+  }
+
+  return { reducedMotion: reducedMotion, keyValue: keyValue, snap: snap, announce: announce,
+           slider: slider, live: live, activatable: activatable, wireScrollNav: wireScrollNav };
+})();
+/*@@END js:shared/a11y.js@@*/
+/*@@BEGIN js:shared/quiz.js@@*/
+/* HydroQuiz: the one checkpoint engine used by every module.
+ *
+ * Behaviour (the contract the tests pin):
+ *  - nothing about the answer is in the DOM before the first attempt (no pre-marked option, no
+ *    explanation text); the specification lives in the module's script, not the markup;
+ *  - every item can be answered again and again; a wrong attempt gets feedback for THAT answer but
+ *    never names the right one; after two wrong attempts a "Show explanation" button appears;
+ *  - a correct attempt shows the explanation; revealing an answer does not count as correct;
+ *  - fully keyboard operable (native radio group or text field + a Check button; Enter checks a
+ *    numeric answer) and announced through role=status live regions;
+ *  - numeric items take their answer from a function over the lesson's own data or code, so the
+ *    expected value can never be typed in by hand and drift from the lesson;
+ *  - completion goes to the AI-Hydro host as `artifact/quizComplete` with an explicit target
+ *    origin (the embedding window's origin), never '*'. If that origin cannot be determined, or
+ *    the page is standalone, nothing is posted.
+ *
+ * Item specification:
+ *   (prompt may be a function, so numbers quoted in the question come from the lesson's data too)
+ *   { id, type:'choice', prompt, options:[text,...], correct:index|function,
+ *     feedback:[text|null,...],            // shown when that option is chosen and wrong
+ *     explain:text|function }              // shown when correct (and on "Show explanation")
+ *   { id, type:'numeric', prompt, answer:number|function, tol:{abs,rel}, unit, format:function,
+ *     hint:text|function, explain:text|function(answer) }
+ *
+ * Single source of truth: shared/quiz.js (inlined by scripts/build_modules.py).
+ */
+var HydroQuiz = (function () {
+  'use strict';
+
+  var instances = {};
+  var lastReport = null;
+
+  function resolve(v, arg) { return typeof v === 'function' ? v(arg) : v; }
+
+  /* "0.74", "0,74", "1 350", "1,350", "−3", "12 mm", "45%" -> number; anything else -> null */
+  function parseNumber(text) {
+    var s = String(text == null ? '' : text).replace(/−/g, '-').replace(/[  ]/g, ' ').trim();
+    var m = /^([+-]?[0-9][0-9 ,.]*(?:e[+-]?[0-9]+)?|[+-]?\.[0-9]+)\s*(?:%|[A-Za-z°µμ\/²³·^ -]*)$/i.exec(s);
+    if (!m) return null;
+    var n = m[1].replace(/ /g, '');
+    if (n.indexOf('.') >= 0 && n.indexOf(',') >= 0) n = n.replace(/,/g, '');
+    else if (/^[+-]?[0-9]{1,3}(,[0-9]{3})+$/.test(n)) n = n.replace(/,/g, '');
+    else n = n.replace(',', '.');
+    if (!/^[+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(n)) return null;
+    var v = parseFloat(n);
+    return isFinite(v) ? v : null;
+  }
+
+  function tolerance(item, ans) {
+    var t = item.tol || {};
+    var abs = typeof t.abs === 'number' ? t.abs : 0;
+    var rel = typeof t.rel === 'number' ? t.rel : (typeof t.abs === 'number' ? 0 : 0.02);
+    return Math.max(abs, rel * Math.abs(ans));
+  }
+
+  function gradeChoice(item, idx) {
+    if (idx === null || idx === undefined || idx < 0) return { status: 'empty' };
+    return { status: idx === resolve(item.correct) ? 'correct' : 'incorrect', choice: idx };
+  }
+
+  function gradeNumeric(item, text) {
+    var v = parseNumber(text);
+    if (v === null) return { status: 'invalid' };
+    var ans = resolve(item.answer);
+    var tol = tolerance(item, ans);
+    var ok = Math.abs(v - ans) <= tol;
+    return { status: ok ? 'correct' : 'incorrect', value: v, answer: ans, tol: tol, direction: v > ans ? 'high' : 'low' };
+  }
+
+  function fmt(item, v) {
+    if (item.format) return item.format(v);
+    var s = Math.abs(v) >= 1000 ? String(Math.round(v)) : String(parseFloat(v.toPrecision(4)));
+    return s + (item.unit ? ' ' + item.unit : '');
+  }
+
+  function feedbackText(item, res) {
+    if (res.status === 'correct') {
+      var ex = item.type === 'numeric' ? resolve(item.explain, res.answer) : resolve(item.explain);
+      return '✓ Correct. ' + (ex || '');
+    }
+    if (item.type === 'numeric') {
+      var hint = resolve(item.hint, res.answer);
+      return '✗ Not quite: your value is too ' + res.direction + '. ' + (hint || 'Recompute it from the numbers in the lesson and try again.');
+    }
+    var fb = item.feedback && item.feedback[res.choice];
+    return '✗ Not quite. ' + (fb || 'Re-read the section above and try again.');
+  }
+
+  function revealText(item) {
+    if (item.type === 'numeric') {
+      var a = resolve(item.answer);
+      return 'Answer: ' + fmt(item, a) + '. ' + (resolve(item.explain, a) || '');
+    }
+    var c = resolve(item.correct);
+    return 'Answer: ' + item.options[c] + '. ' + (resolve(item.explain) || '');
+  }
+
+  /* A numeric constant read from the text of a code cell (e.g. `C = 0.35`), so an answer is
+     computed from the very numbers the learner reads in the cell. */
+  function sourceConstant(cellId, name) {
+    var pre = document.querySelector('[data-aihydro-cell-id="' + cellId + '"] .aihydro-source');
+    var m = pre && new RegExp('^\\s*' + name + '\\s*=\\s*([-+0-9._eE]+)', 'm').exec(pre.textContent);
+    if (!m) throw new Error('constant ' + name + ' not found in cell ' + cellId);
+    return parseFloat(m[1].replace(/_/g, ''));
+  }
+
+  /* The window that embeds this page, as an origin string, or null (standalone / unknown). */
+  function parentOrigin(win) {
+    win = win || window;
+    try { if (!win.parent || win.parent === win) return null; } catch (e) { return null; }
+    var o = null;
+    try { var a = win.location && win.location.ancestorOrigins; if (a && a.length) o = a[0]; } catch (e) { o = null; }
+    if (!o || o === 'null') {
+      try { o = win.document.referrer ? new URL(win.document.referrer).origin : null; } catch (e) { o = null; }
+    }
+    return o && o !== 'null' ? o : null;
+  }
+
+  /* artifact/quizComplete exactly as the AI-Hydro bridge sends it, but to a named origin. */
+  function postComplete(quizId, passed, score, total, win) {
+    win = win || window;
+    var origin = parentOrigin(win);
+    lastReport = { quizId: quizId, passed: passed, score: score, total: total, origin: origin, posted: false };
+    if (!origin) return false;
+    var base = win.__aihydroArtifact || {};
+    var msg = { source: 'aihydro-artifact' };
+    for (var k in base) msg[k] = base[k];
+    msg.type = 'artifact/quizComplete';
+    msg.quizId = quizId; msg.passed = passed; msg.score = score; msg.total = total;
+    try { win.parent.postMessage(msg, origin); lastReport.posted = true; } catch (e) { return false; }
+    return true;
+  }
+
+  function el(tag, props, kids) {
+    var e = document.createElement(tag);
+    if (props) for (var k in props) {
+      if (k === 'class') e.className = props[k];
+      else if (k === 'text') e.textContent = props[k];
+      else e.setAttribute(k, props[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function mount(root, spec) {
+    var quizId = spec.quizId;
+    var items = spec.items;
+    var rec = {};            // id -> { attempts, correct, revealed, node refs }
+    var list = el('ol', { 'class': 'hq-list' });
+    var summary = el('p', { 'class': 'hq-summary', role: 'status', 'aria-live': 'polite' });
+
+    root.setAttribute('class', 'hq');
+    root.setAttribute('data-hq-quiz', quizId);
+
+    function counts() {
+      var n = 0;
+      items.forEach(function (it) { if (rec[it.id].correct) n++; });
+      return n;
+    }
+    function updateSummary() {
+      var n = counts(), total = items.length;
+      summary.textContent = n === total
+        ? 'All ' + total + ' correct ✓ Checkpoint complete.'
+        : n + ' of ' + total + ' correct. Wrong answers can be changed and checked again.';
+      summary.setAttribute('data-complete', n === total ? '1' : '0');
+    }
+
+    items.forEach(function (it, qi) {
+      var r = rec[it.id] = { attempts: 0, correct: false, revealed: false, radios: [], input: null };
+      var uid = quizId + '-' + it.id;
+      var fb = el('div', { 'class': 'hq-feedback', id: uid + '-fb', role: 'status', 'aria-live': 'polite' });
+      var check = el('button', { 'class': 'hq-check', type: 'button', text: 'Check answer' });
+      var reveal = el('button', { 'class': 'hq-reveal', type: 'button', text: 'Show explanation', hidden: 'hidden' });
+      var legend = el('legend', { 'class': 'hq-prompt', text: (qi + 1) + ' · ' + resolve(it.prompt) });
+      var body;
+
+      if (it.type === 'numeric') {
+        var input = el('input', { 'class': 'hq-input', type: 'text', inputmode: 'decimal', autocomplete: 'off',
+                                  id: uid + '-in', 'aria-describedby': uid + '-fb' });
+        r.input = input;
+        input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); doCheck(); } });
+        body = el('div', { 'class': 'hq-numeric' }, [
+          el('label', { 'class': 'hq-numlabel', 'for': uid + '-in', text: 'Your answer' + (it.unit ? ' (' + it.unit + ')' : '') }),
+          input
+        ]);
+      } else {
+        body = el('div', { 'class': 'hq-options' });
+        it.options.forEach(function (text, oi) {
+          var radio = el('input', { type: 'radio', name: uid, value: String(oi), 'aria-describedby': uid + '-fb' });
+          r.radios.push(radio);
+          body.appendChild(el('label', { 'class': 'hq-opt' }, [radio, el('span', { text: text })]));
+        });
+      }
+
+      function selected() {
+        for (var i = 0; i < r.radios.length; i++) if (r.radios[i].checked) return i;
+        return -1;
+      }
+      function doCheck() {
+        var res = it.type === 'numeric' ? gradeNumeric(it, r.input.value) : gradeChoice(it, selected());
+        if (res.status === 'empty' || res.status === 'invalid') {
+          fb.textContent = res.status === 'empty' ? 'Choose an answer first, then check it.' : 'Enter a number (for example 0.74), then check it.';
+          item.setAttribute('data-state', 'pending');
+          return;
+        }
+        r.attempts++;
+        r.correct = res.status === 'correct';
+        item.setAttribute('data-state', r.correct ? 'correct' : 'incorrect');
+        fb.textContent = feedbackText(it, res);
+        check.textContent = 'Check again';
+        if (!r.correct && r.attempts >= 2) reveal.removeAttribute('hidden');
+        updateSummary();
+        postComplete(quizId, counts() === items.length, counts(), items.length);
+        if (spec.onChange) spec.onChange(api.state());
+      }
+      check.addEventListener('click', doCheck);
+      reveal.addEventListener('click', function () {
+        r.revealed = true;
+        item.setAttribute('data-state', r.correct ? 'correct' : 'revealed');
+        fb.textContent = revealText(it);
+      });
+      r.check = doCheck;
+
+      var fieldset = el('fieldset', { 'class': 'hq-fieldset' }, [
+        legend, body,
+        el('div', { 'class': 'hq-actions' }, [check, reveal]),
+        fb
+      ]);
+      var item = el('li', { 'class': 'hq-item', 'data-hq-item': it.id, 'data-state': '' }, [fieldset]);
+      list.appendChild(item);
+    });
+
+    root.appendChild(list);
+    root.appendChild(summary);
+    updateSummary();
+
+    var api = {
+      quizId: quizId,
+      state: function () {
+        var n = counts();
+        return { quizId: quizId, correct: n, total: items.length, passed: n === items.length,
+                 items: items.map(function (it) { return { id: it.id, attempts: rec[it.id].attempts, correct: rec[it.id].correct, revealed: rec[it.id].revealed }; }) };
+      },
+      /* test/programmatic hooks: answer an item then check it */
+      answer: function (id, value) {
+        var r = rec[id];
+        if (r.input) r.input.value = String(value);
+        else if (r.radios[value]) r.radios[value].checked = true;
+      },
+      check: function (id) { rec[id].check(); },
+      /* every item as the learner sees it plus the computed right answer, for tests that cross-check them independently */
+      describe: function () {
+        return items.map(function (it) {
+          return { id: it.id, type: it.type, prompt: resolve(it.prompt), options: it.options || null,
+                   expected: resolve(it.type === 'numeric' ? it.answer : it.correct),
+                   explain: it.type === 'numeric' ? resolve(it.explain, resolve(it.answer)) : resolve(it.explain) };
+        });
+      },
+      /* the computed right answer (index or number), for tests that cross-check it independently */
+      expected: function (id) {
+        for (var i = 0; i < items.length; i++) if (items[i].id === id) return resolve(items[i].type === 'numeric' ? items[i].answer : items[i].correct);
+        return undefined;
+      }
+    };
+    instances[quizId] = api;
+    return api;
+  }
+
+  return { mount: mount, parseNumber: parseNumber, gradeChoice: gradeChoice, gradeNumeric: gradeNumeric,
+           sourceConstant: sourceConstant, parentOrigin: parentOrigin, postComplete: postComplete, feedbackText: feedbackText,
+           revealText: revealText, tolerance: tolerance, instances: instances,
+           lastReport: function () { return lastReport; } };
+})();
+/*@@END js:shared/quiz.js@@*/
+</script>
+<script>
+(function () {
+  'use strict';
 
   /* ──────────────────────────────────────────────────────────────────
      CORE DATA: 96-hour synthetic event used by Sections 2 & 3
@@ -787,21 +1196,7 @@ select:focus { outline:1px solid var(--cyan); }
   /*@@CORE-END@@*/
 
   /* ────────────── helpers ────────────── */
-  window.scrollToSection = function (id) {
-    var el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  window.quizAnswer = function (btn, correct, qId, msg) {
-    var sib = btn.parentElement.querySelectorAll('.quiz-btn');
-    sib.forEach(function (b) { b.disabled = true; b.style.cursor = 'default'; });
-    btn.classList.add(correct ? 'correct' : 'incorrect');
-    var fb = document.getElementById(qId + '-fb');
-    if (fb) {
-      fb.textContent = (correct ? '✓ ' : '✗ ') + msg;
-      fb.style.color = correct ? '#86efac' : '#fca5a5';
-    }
-  };
+  HydroA11y.wireScrollNav();
 
   /* ──────────────────────────────────────────────────────────────────
      TANGLE — draggable inline numbers (Bret Victor pattern, vanilla impl)
@@ -823,13 +1218,27 @@ select:focus { outline:1px solid var(--cyan); }
       var format = el.dataset.format || 'f1';
       el.textContent = prefix + fmt(v, format) + suffix;
     }
+    var syncs = {};
     function attach(el) {
-      render(el);
-      var dragging = false, startX = 0, startV = 0;
       var min = parseFloat(el.dataset.min);
       var max = parseFloat(el.dataset.max);
       var step = parseFloat(el.dataset.step || '1');
       var sensitivity = parseFloat(el.dataset.sensitivity || ((max - min) / 200));
+      var dragging = false, startX = 0, startV = 0;
+      function text(v) { return (el.dataset.prefix || '') + fmt(v, el.dataset.format || 'f1') + (el.dataset.suffix || ''); }
+      function setValue(v) {
+        v = Math.max(min, Math.min(max, HydroA11y.snap(v, min, step)));
+        if (parseFloat(el.dataset.value) === v) return;
+        el.dataset.value = v;
+        render(el);
+        if (syncs[el.id]) syncs[el.id]();
+        (listeners[el.id] || []).forEach(function (fn) { fn(v); });
+      }
+      render(el);
+      syncs[el.id] = HydroA11y.slider(el, {
+        label: el.dataset.label || 'Adjustable number', min: min, max: max, step: step,
+        get: function () { return parseFloat(el.dataset.value); }, set: setValue, text: text
+      }).sync;
       el.addEventListener('mousedown', function (ev) {
         ev.preventDefault();
         dragging = true; startX = ev.clientX; startV = parseFloat(el.dataset.value);
@@ -837,37 +1246,18 @@ select:focus { outline:1px solid var(--cyan); }
         document.body.style.cursor = 'ew-resize';
       });
       window.addEventListener('mousemove', function (ev) {
-        if (!dragging) return;
-        var dx = ev.clientX - startX;
-        var v = startV + dx * sensitivity;
-        v = Math.round(v / step) * step;
-        v = Math.max(min, Math.min(max, v));
-        if (parseFloat(el.dataset.value) === v) return;
-        el.dataset.value = v;
-        render(el);
-        var ls = listeners[el.id] || [];
-        ls.forEach(function (fn) { fn(v); });
+        if (dragging) setValue(startV + (ev.clientX - startX) * sensitivity);
       });
       window.addEventListener('mouseup', function () {
         if (dragging) { dragging = false; el.classList.remove('dragging'); document.body.style.cursor = ''; }
       });
-      /* touch */
       el.addEventListener('touchstart', function (ev) {
         if (!ev.touches.length) return;
         dragging = true; startX = ev.touches[0].clientX; startV = parseFloat(el.dataset.value);
         el.classList.add('dragging');
       }, { passive: true });
       window.addEventListener('touchmove', function (ev) {
-        if (!dragging || !ev.touches.length) return;
-        var dx = ev.touches[0].clientX - startX;
-        var v = startV + dx * sensitivity;
-        v = Math.round(v / step) * step;
-        v = Math.max(min, Math.min(max, v));
-        if (parseFloat(el.dataset.value) === v) return;
-        el.dataset.value = v;
-        render(el);
-        var ls = listeners[el.id] || [];
-        ls.forEach(function (fn) { fn(v); });
+        if (dragging && ev.touches.length) setValue(startV + (ev.touches[0].clientX - startX) * sensitivity);
       }, { passive: true });
       window.addEventListener('touchend', function () {
         if (dragging) { dragging = false; el.classList.remove('dragging'); }
@@ -885,6 +1275,7 @@ select:focus { outline:1px solid var(--cyan); }
         var el = document.getElementById(id);
         if (!el) return;
         el.dataset.value = v; render(el);
+        if (syncs[id]) syncs[id]();
         var ls = listeners[id] || [];
         ls.forEach(function (fn) { fn(v); });
       }
@@ -1066,6 +1457,13 @@ select:focus { outline:1px solid var(--cyan); }
     var pkLab = mkSvg('text', { x: xOf(iPeak), y: yOf(EVENT_Q[iPeak]) - 12, 'text-anchor': 'middle', 'font-family': 'Poppins,sans-serif', 'font-size': '11', fill: 'var(--peak)', 'font-weight': '700' });
     pkLab.textContent = 'peak';
     markersG.appendChild(pkLab);
+    var iRm = Math.round((iRiseStart + iPeak) / 2), iFm = Math.round((iPeak + iRecession) / 2);
+    var riseLab = mkSvg('text', { x: xOf(iRm) - 8, y: yOf(EVENT_Q[iRm]) + 4, 'text-anchor': 'end', 'font-family': 'Poppins,sans-serif', 'font-size': '11', fill: 'var(--rising)', 'font-weight': '700' });
+    riseLab.textContent = 'rising limb';
+    markersG.appendChild(riseLab);
+    var fallLab = mkSvg('text', { x: xOf(iFm) + 8, y: yOf(EVENT_Q[iFm]) - 6, 'text-anchor': 'start', 'font-family': 'Poppins,sans-serif', 'font-size': '11', fill: 'var(--falling)', 'font-weight': '700' });
+    fallLab.textContent = 'falling limb';
+    markersG.appendChild(fallLab);
     svg.appendChild(markersG);
 
     /* hover cursor */
@@ -1113,6 +1511,7 @@ select:focus { outline:1px solid var(--cyan); }
     }
     tangle.bind('t-probeHour', updateProbe);
     updateProbe(32);
+    HydroA11y.live(['probeQ']);
   })();
 
   /* ──────────────────────────────────────────────────────────────────
@@ -1210,7 +1609,13 @@ function baseflowIndex(Q, base) {
     svg.appendChild(qLab);
 
     /* dynamic layers */
-    var quickFill = mkSvg('path', { id: 'bfiQuick', fill: 'rgba(0,163,255,0.30)' });
+    var defs = mkSvg('defs', {});
+    var hatch = mkSvg('pattern', { id: 'bfiHatch', width: '7', height: '7', patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' });
+    hatch.appendChild(mkSvg('rect', { width: '7', height: '7', fill: 'rgba(0,163,255,0.26)' }));
+    hatch.appendChild(mkSvg('line', { x1: '0', y1: '0', x2: '0', y2: '7', stroke: '#7dd3fc', 'stroke-width': '1.6' }));
+    defs.appendChild(hatch);
+    svg.appendChild(defs);
+    var quickFill = mkSvg('path', { id: 'bfiQuick', fill: 'url(#bfiHatch)' });
     svg.appendChild(quickFill);
     var totalPath = mkSvg('path', { d: '', fill: 'none', stroke: 'var(--cyan)', 'stroke-width': '2.2' });
     svg.appendChild(totalPath);
@@ -1246,6 +1651,7 @@ function baseflowIndex(Q, base) {
       peakQOut.textContent = peakQ.toFixed(1);
     }
     slider.addEventListener('input', redraw);
+    HydroA11y.live(['bfiMetrics']);
     /* Tangle ⇄ slider two-way sync for α */
     tangle.bind('t-alpha', function (v) {
       if (parseFloat(slider.value) !== v) { slider.value = v; redraw(); }
@@ -1332,6 +1738,7 @@ function baseflowIndex(Q, base) {
       }
     }
     slider.addEventListener('input', update);
+    HydroA11y.live(['smallStats', 'largeStats', 'peakRatio']);
     tangle.bind('t-rainMult', function (v) {
       if (parseFloat(slider.value) !== v) { slider.value = v; update(); }
     });
@@ -1454,85 +1861,46 @@ function baseflowIndex(Q, base) {
     });
   })();
 
-  /* ──────────────────────────────────────────────────────────────────
-     bindParam — persist the BFI α slider value across reloads
-     ────────────────────────────────────────────────────────────────── */
-  whenReady(function () {
-    var slider = document.getElementById('alphaSlider');
-    if (!slider) return;
-    window.aihydro.bindParam('m3-bfi-alpha', parseFloat(slider.value), function (v) {
-      slider.value = v;
-      // fire input event so the existing redraw() picks up the restored value
-      slider.dispatchEvent(new Event('input'));
-      // keep tangle in sync
-      tangle.set('t-alpha', v);
-    });
-    // mirror slider changes into bindParam store
-    slider.addEventListener('input', function () {
-      if (window.aihydro && window.aihydro.bindParam) {
-        window.aihydro.bindParam('m3-bfi-alpha', parseFloat(slider.value), null);
-      }
-    });
+  /* ─────────────────────────────────────────────────────────────────
+     Checkpoint — shared engine; numeric answers come from this page's own model and data
+     ───────────────────────────────────────────────────────────────── */
+  function gaugeBfi(id) { var q = CAMELS[id].q_cfs; return baseflowIndex(q, lyneHollick(q, 0.925)); }
+  window.__m3Quiz = HydroQuiz.mount(document.getElementById('m3-quiz'), {
+    quizId: 'reading-a-hydrograph-checkpoint', moduleId: 'reading-a-hydrograph',
+    items: [
+      { id: 'q1', type: 'choice',
+        prompt: 'A small headwater catchment after a brief storm shows a steep, narrow hydrograph that peaks in 2 hours and is back to baseflow within 6. What does that shape tell you?',
+        options: ['The catchment is large and forested', 'The catchment is small and/or impervious: it is flashy', 'The storm dropped a huge amount of rain'],
+        correct: 1,
+        feedback: ['Larger catchments have damped, broader hydrographs because flow paths are longer and storage is higher.', null, 'Shape tells you about storage and routing, not directly about the rainfall amount.'],
+        explain: 'Short lag and rapid recession are hallmarks of a flashy, small, impervious or saturated catchment.' },
+      { id: 'q2', type: 'choice',
+        prompt: 'You raise the Lyne–Hollick filter parameter from α = 0.925 to α = 0.985. What happens to the computed BFI?',
+        options: ['BFI goes up: more of the flow is classified as baseflow', 'BFI goes down: the filter strips more quickflow and baseflow becomes a smoother, lower line', 'BFI is unchanged: it only depends on the discharge series'],
+        correct: 1,
+        feedback: ['Higher α actually leaves a lower, smoother baseflow line, so less of the flow is baseflow.', null, 'α changes the filter shape directly; the BFI is highly sensitive to it.'],
+        explain: 'Higher α produces a smoother, lower baseflow estimate, so quickflow takes a larger share of the total volume and the BFI drops (move the α slider in §3 to see it).' },
+      { id: 'q3', type: 'choice',
+        prompt: function () {
+          var a = STORM.runoff(STORM.P_SMALL), b = STORM.runoff(STORM.P_SMALL * 2);
+          return 'In the curve-number model of §4 (CN = 75, S = ' + STORM.S_MM.toFixed(1) + ' mm, Ia = ' + STORM.IA_MM.toFixed(1) + ' mm) a ' + STORM.P_SMALL + ' mm storm produces ' + a.toFixed(2) + ' mm of runoff and a ' + (STORM.P_SMALL * 2) + ' mm storm produces ' + b.toFixed(2) + ' mm. When the rainfall doubles, the runoff depth…';
+        },
+        options: ['Doubles: runoff is proportional to rainfall', 'Less than doubles: the soil absorbs the extra rain', 'More than doubles: the loss is a fixed first slice, so extra rain is mostly runoff'],
+        correct: function () { var r = STORM.runoff(STORM.P_SMALL * 2) / STORM.runoff(STORM.P_SMALL); return r > 2 ? 2 : (r < 2 ? 1 : 0); },
+        feedback: ['If runoff were proportional to rain the larger storm would give only twice the smaller storm\'s runoff; compare that with the numbers above.', 'The opposite: the first part of the rain is lost to initial abstraction in both storms, so the extra rain is a much larger share of the runoff.', null],
+        explain: function () { var r = STORM.runoff(STORM.P_SMALL * 2) / STORM.runoff(STORM.P_SMALL); return 'The first ' + STORM.IA_MM.toFixed(1) + ' mm produces nothing and the numerator grows as (P − Ia)², so doubling the rain raises the runoff depth about ' + Math.round(r) + '-fold here.'; } },
+      { id: 'q4', type: 'numeric', unit: 'mm',
+        prompt: 'With the same curve-number model (CN = 75), how much runoff depth does a 40 mm storm produce? Give mm to 2 decimals.',
+        answer: function () { return STORM.runoff(40); }, tol: { abs: 0.02 },
+        hint: 'Use Q = (P − Ia)² / (P − Ia + S) with the Ia and S shown in the §4 callout.',
+        explain: function (a) { var x = 40 - STORM.IA_MM; return '(40 − ' + STORM.IA_MM.toFixed(1) + ')² / (40 − ' + STORM.IA_MM.toFixed(1) + ' + ' + STORM.S_MM.toFixed(1) + ') = ' + a.toFixed(2) + ' mm.'; } },
+      { id: 'q5', type: 'numeric',
+        prompt: 'In §6, choose the Piscataquis River (01031500). What baseflow index does the Lyne–Hollick filter (α = 0.925) give for its water year? Give 3 decimals.',
+        answer: function () { return gaugeBfi('01031500'); }, tol: { abs: 0.005 },
+        hint: 'Run the cell and read the BFI line it prints for the filter (not the CAMELS value).',
+        explain: function (a) { return 'The filter gives ' + a.toFixed(3) + ' for this one water year; CAMELS reports ' + CAMELS['01031500'].baseflow_index.toFixed(3) + ' for 1989–2009 with a different method, so the two need not agree.'; } }
+    ]
   });
-
-  /* ──────────────────────────────────────────────────────────────────
-     Canonical .aihydro-quiz wiring — posts quizComplete → CourseNavigator
-     ────────────────────────────────────────────────────────────────── */
-  (function wireQuiz() {
-    var quiz = document.getElementById('m3-quiz');
-    if (!quiz) return;
-    var questions = quiz.querySelectorAll('.quiz-question');
-    var answered = new Array(questions.length).fill(false);
-    var correct  = new Array(questions.length).fill(false);
-
-    function tryComplete() {
-      if (!answered.every(Boolean)) return;
-      var allCorrect = correct.every(Boolean);
-      var score = correct.filter(Boolean).length / correct.length;
-      whenReady(function () {
-        window.aihydro.quiz({
-          moduleId: 'reading-a-hydrograph',
-          passed: allCorrect,
-          score: score
-        });
-      });
-      // belt-and-suspenders: also postMessage for any listener on the host
-      try {
-        window.parent.postMessage({
-          type: 'aihydro-quiz-complete',
-          moduleId: 'reading-a-hydrograph',
-          passed: allCorrect,
-          score: score
-        }, '*');
-      } catch (e) { /* cross-origin guard */ }
-    }
-
-    questions.forEach(function (qEl, qi) {
-      var answer  = parseInt(qEl.dataset.answer, 10);
-      var buttons = qEl.querySelectorAll('.quiz-btn');
-      var fb      = qEl.querySelector('.quiz-feedback');
-      buttons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (answered[qi]) return;
-          answered[qi] = true;
-          var idx       = parseInt(btn.dataset.index, 10);
-          var isCorrect = (idx === answer);
-          correct[qi]   = isCorrect;
-          buttons.forEach(function (b) { b.disabled = true; b.style.cursor = 'default'; });
-          btn.classList.add(isCorrect ? 'correct' : 'incorrect');
-          if (fb) {
-            fb.textContent = (isCorrect ? '✓ ' : '✗ ') + (btn.dataset.feedback || '');
-            fb.style.color = isCorrect ? '#86efac' : '#fca5a5';
-          }
-          tryComplete();
-        });
-        /* keyboard: Enter / Space */
-        btn.addEventListener('keydown', function (ev) {
-          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); btn.click(); }
-        });
-      });
-    });
-  })();
 
 })();
 </script>

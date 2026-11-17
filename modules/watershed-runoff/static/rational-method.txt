@@ -1,0 +1,5 @@
+SYNTHETIC rational-method example
+  A = 92.16 ha (921,600 m²),  C = 0.35,  i = 40.0 mm/h
+  Q = 3.584 m³/s   (= C·i·A/360 = 3.584)
+  Valid for: steady uniform rain at least as long as the time of concentration,
+  constant C, small catchment. Not a measured flood.

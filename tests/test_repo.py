@@ -29,7 +29,7 @@ def test_manifest_and_embedded_versions_agree(mod):
     emb = embedded(mod)
     assert man["version"] == emb["version"], mod
     assert man["moduleId"] == emb["id"] == mod
-    assert man["updatedAt"] == "2026-11-17"
+    assert "updatedAt" not in man                              # the API takes it from git; no hand-kept copy
     assert f"v{man['version']}" in module_text(mod)          # footer shows the same version
 
 
