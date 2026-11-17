@@ -1,8 +1,8 @@
 {
   "moduleId": "real-streamflow-data",
   "title": "Catching the Flow: Real Streamflow Data",
-  "description": "Pull live USGS records for four curated CONUS gauges spanning flood-prone Maine to arid Arizona — or enter any gauge ID. Plot the annual regime, spot a flood event, and read a flow-duration curve. Falls back to seeded synthetic data when the network is unavailable.",
-  "version": "0.2.0",
+  "description": "Load five real water years of USGS daily streamflow for four curated CONUS gauges from a bundled CAMELS-US snapshot (offline, with source hashes and QC flags). Plot the annual regime, spot flood days and rank annual maxima with Weibull plotting positions. An optional live NWIS cell reports failures instead of substituting data.",
+  "version": "0.3.0",
   "topic": "streamflow",
   "level": "intro",
   "estimatedMinutes": 45,
@@ -27,7 +27,8 @@
     "optional": true
   },
   "citation": {
-    "text": "USGS National Water Information System (NWIS). https://waterdata.usgs.gov/"
+    "text": "Newman, A. J. et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA. Hydrol. Earth Syst. Sci., 19, 209–223. See also Addor, N. et al. (2017), Hydrol. Earth Syst. Sci., 21, 5293–5313, doi:10.5194/hess-21-5293-2017.",
+    "doi": "10.5194/hess-19-209-2015"
   },
   "isFeatured": true,
   "courseId": "intro-hydro-2026",
@@ -36,7 +37,7 @@
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/real-streamflow-data",
   "author": "Mohammad Galib, Purdue University",
   "createdAt": "2026-06-01",
-  "updatedAt": "2026-06-01",
+  "updatedAt": "2026-11-17",
   "downloadCount": 0,
   "githubReactions": 0,
   "discussionUrl": ""
