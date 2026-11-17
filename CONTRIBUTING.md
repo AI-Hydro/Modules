@@ -75,7 +75,7 @@ Without the `window.aihydro` bridge (a plain browser tab) a module must still be
 
 ## Shared code
 
-Code used by more than one module lives in `shared/` and is inlined between `@@BEGIN`/`@@END` markers by `python scripts/build_modules.py` (run it after editing `shared/`, `modules/<id>/data/`, `modules/<id>/static/` or a manifest; `--check` fails if a module is stale). Marker kinds: `js:`, `css:`, `pyjs:`, `pypre:`, `json:`, `manifest:` and `static:` (see the docstring of the script).
+Code used by more than one module lives in `shared/` and is inlined between `@@BEGIN`/`@@END` markers by `python scripts/build_modules.py` (run it after editing `shared/`, `modules/<id>/data/`, `modules/<id>/static/` or a manifest; `--check` fails if a module is stale). Marker kinds: `js:`, `css:`, `pyjs:`, `pypre:`, `json:`, `img:`, `manifest:` and `static:` (see the docstring of the script).
 
 | File | What it is |
 |---|---|
@@ -85,6 +85,14 @@ Code used by more than one module lives in `shared/` and is inlined between `@@B
 | `shared/cmap.js` | viridis colour map and shaded-relief renderer (use it instead of red-green scales) |
 | `shared/geosketch.js` | longitude/latitude SVG sketch of points and polygons |
 | `shared/lyne_hollick.*`, `shared/d8.*` | the one baseflow filter and D8 pipeline (JS and Python twins) |
+
+### 3-D scenes on real data
+
+`tools/build_scene3d.py` builds the Fish River scene of `watershed-runoff` (payload `data/fish-river-scene.json`, poster `data/fish-river-poster.png`, provenance sidecar) from the DEMO-1 evidence; it is deterministic and refuses inputs whose sha256 differs (`--check` compares the files on disk with a fresh build; CI cannot, the evidence is not in this repository, so the tests check the committed files against each other and against the page). Rules for a scene of this kind:
+
+- The page must stay under the 250 KB cap; a heightfield (Uint16 grid plus polylines) rather than glTF, built by a function of the payload so it can be rebuilt after a lost WebGL context.
+- The poster `<img>` (the `img:` marker) and a visible message are in the markup, never created by script; the live canvas replaces the poster only after the bridge's `scene3d` has drawn a frame. Anything interactive (here the drop-rain map) must also work on the poster, without the bridge.
+- Print the vertical exaggeration and the threshold of any derived channel in the scene; say what is smoothed, flat or cut off. No paths, hashes or provenance footers in the page or on the image; the sidecar carries them (repository-relative paths only). Data credits go in Sources & Further Reading.
 
 ### Checkpoints
 

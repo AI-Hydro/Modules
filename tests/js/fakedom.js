@@ -86,7 +86,7 @@ function run(html, opts) {
     document, console, Math, JSON, Date, Event: function Event(t) { this.type = t; },
     matchMedia: () => ({ matches: true }), addEventListener() {}, removeEventListener() {}, parent: { postMessage(m, o) { counters.postMessages.push([m, o]); } },
     setTimeout: (f) => { timers.push(f); return timers.length; }, clearTimeout() {},
-    setInterval: () => { counters.setInterval++; return 0; }, clearInterval() {}, requestAnimationFrame() { return 0; },
+    setInterval: () => { counters.setInterval++; return counters.setInterval; }   /* real timer ids are positive; shared/ready.js treats 0 as 'no timer' */, clearInterval() {}, requestAnimationFrame() { return 0; },
     sessionStorage: { getItem() { return null; }, setItem() {} }, location: { href: 'file:///module.html' },
     open() {}, print() {}, innerWidth: 1000,
   };

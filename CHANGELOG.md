@@ -2,6 +2,36 @@
 
 All notable changes to the learning modules. Versions are per module (`manifest.json` and the manifest embedded in `module.html` carry the same number).
 
+## 2026-11-17 — Real-basin 3-D scene (pilot P1) in watershed-runoff
+
+Owner-approved pilot of docs/vision-2040/findings/threejs-studio-feasibility-2026-11-17.md (P1). Owner ruling: the Copernicus DEM credit goes in the lesson's References, not in the scene.
+
+### watershed-runoff 0.3.0 → 0.4.0
+- New section 5, "A real basin: the Fish River, Maine (USGS 01013500)": an orbitable 3-D surface of the Copernicus GLO-30 DEM (510 m block-mean mesh, 116 × 153 cells, vertical exaggeration 10× printed in the scene), the divide outline and DEM-derived channels (pysheds 0.5, threshold 25 km², labelled as derived), and a "drop rain here" map that traces the D8 path to the outlet with the shared `shared/d8.js` on the same mesh (mouse, touch and keyboard; readout in a live region; the 3-D scene shows the path too). Caveats on the page: exaggeration, block-mean smoothing, derived channels, lakes flat in the DEM (counted from the data: 9 patches of at least 1 km², 110.8 km²), the DEM cut to the divide (the scene is an island) and map orientation. One checkpoint item (question 6): the D8 path length from the highest mesh cell to the outlet, computed from the scene data.
+- The scene works without the 3-D bridge: a plan-view poster and a status message are in the markup, the drop-rain map is plain 2-D canvas, and the poster is replaced by the live canvas only after the bridge's `scene3d` has drawn a frame (two animation frames after it resolves). With the released bridge or the hardened one (AI-Hydro PR 181) the same markup applies; `data-fallback="#fishPoster"` lets the hardened bridge hide the poster itself.
+- The synthetic sections (2, 3, 4 and the two design calculations) are unchanged; only their numbers moved (rain to runoff is now section 6, the checkpoint 7). The synthetic 3-D horseshoe is kept: it shows D8 on a terrain whose answer is known, which the real basin cannot.
+- Sources & Further Reading: Copernicus DEM (ESA & Airbus, 2022, doi:10.5270/ESA-c5d3d65) with the licence wording from the DEM's manifest.
+- Page size 109 KB → 229 KB after the review fixes (hard cap 250 KB): payload 31.3 KB, poster 42.0 KB (as base64 56.0 KB), code, markup and licence text about 31 KB.
+
+### Review fixes (same day)
+- Licence: the References entry now carries the Copernicus Article 6(b) notice and the Article 6(c) disclaimer verbatim, the licence's title ("Licence for the use of the Copernicus WorldDEM-30") and a link to its PDF; the page's License line says the §5 elevation data and poster are under that licence, not CC-BY (README and CITATIONS likewise).
+- Numbers: the drop message and the explanations give the straight-line distance to the outlet, the count of near-flat steps and that a D8 grid path is not a river length; new checkpoint item q7 (why the path from the highest cell, 171 steps and 101.4 km, is about 1.9 times the straight line). One announcement only: the stat chips are no longer a second live region.
+- Builder: the pysheds run walls the exterior (sink at the outlet, zero weights), so no accumulation leaks across the divide; outlet accumulation is 0.9991 of basin_ref (sidecar). Channels: 51 → 49 polylines; payload 31,817 → 31,316 B, poster 41,697 → 42,023 B.
+- Live state: poster, 10× label and status are set after every setup and undone on `webglcontextlost`; a bridge that gives up never leaves the label on screen.
+- `img:` marker accepts only id, class, width, height, alt and data-* attributes.
+- estimatedMinutes 40 → 50; course `estimatedHours` 7 → 8 (430 min), the lesson's course abstract mentions the Fish River scene; course-certificate 0.1.3 → 0.1.4 ("~8 Hours").
+
+### Course intro-to-hydrology 0.4.0 → 0.4.1
+- `estimatedHours` 7 → 8 (watershed-runoff 40 → 50 min, course total 430 min); the watershed-runoff abstract mentions the real Fish River 3-D scene.
+
+### course-certificate 0.1.3 → 0.1.4
+- Hours text "~7 Hours" → "~8 Hours" (course total 430 min). Wording, signature block and completion check unchanged.
+
+### Repository
+- `tools/build_scene3d.py` builds the scene deterministically from the DEMO-1 evidence (polygon and DEM verified by sha256) into `modules/watershed-runoff/data/`: `fish-river-scene.json` (the payload, inlined as a `json:` blob), `fish-river-poster.png` and `.attrs.json` (inlined by the new `img:` marker), and `fish-river-scene.provenance.json` (hydrofigs.provenance/2 style; repository-relative paths; no paths, hashes or provenance footers in the page or on the poster).
+- `scripts/build_modules.py`: new `img:<name>` marker, an `<img>` from `data/<name>.png` and `data/<name>.attrs.json`.
+- `tests/js/fakedom.js`: the fake `setInterval` returns a positive id like a real timer (id 0 made `shared/ready.js` arm a second poll when two handlers call `whenReady`).
+
 ## 2026-11-17 — Wave 3: precipitation, evapotranspiration and runoff generation
 
 Owner request, 2026-11-17: add the precipitation, evapotranspiration and runoff-generation lessons to the course. Everything in the Wave 2 changelog below is unchanged; certificate wording, signature and completion logic stay owner decisions.

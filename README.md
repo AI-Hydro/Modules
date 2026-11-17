@@ -17,7 +17,7 @@ The table is generated from `modules/*/manifest.json` by `python scripts/gen_doc
 |---|---|---|---|---|
 | [Splitting the Flow: Baseflow Separation](modules/baseflow-separation/) | Baseflow analysis | Intro | 40 min | 0.3.0 |
 | [Capstone: A Basin's Water Story](modules/capstone-basin-story/) | Catchment analysis | Intro | 60 min | 0.4.0 |
-| [Congratulations: Course Complete](modules/course-certificate/) | Course completion | Intro | 5 min | 0.1.3 |
+| [Congratulations: Course Complete](modules/course-certificate/) | Course completion | Intro | 5 min | 0.1.4 |
 | [The Shape of the Land: DEM to TWI](modules/dem-to-twi/) | Terrain analysis | Intro | 55 min | 0.4.0 |
 | [The Return Flow: Evapotranspiration and the Budyko Curve](modules/evapotranspiration-budyko/) | Evapotranspiration | Intro | 40 min | 0.1.0 |
 | [Rain and Snow: From Gauge to Basin](modules/precipitation-point-to-basin/) | Precipitation | Intro | 35 min | 0.1.0 |
@@ -25,7 +25,7 @@ The table is generated from `modules/*/manifest.json` by `python scripts/gen_doc
 | [Catching the Flow: Real Streamflow Data](modules/real-streamflow-data/) | Streamflow | Intro | 45 min | 0.4.0 |
 | [Runoff Generation: Infiltration Excess and Saturation Excess](modules/runoff-generation/) | Runoff generation | Intro | 40 min | 0.1.0 |
 | [The Water Cycle in Motion](modules/water-cycle-in-motion/) | Hydrology fundamentals | Intro | 30 min | 0.3.0 |
-| [The Watershed: Where Rain Becomes Runoff](modules/watershed-runoff/) | Watershed hydrology | Intro | 40 min | 0.3.0 |
+| [The Watershed: Where Rain Becomes Runoff](modules/watershed-runoff/) | Watershed hydrology | Intro | 50 min | 0.4.0 |
 <!-- END modules-table -->
 
 ## Contribute a module
