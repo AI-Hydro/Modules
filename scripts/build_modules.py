@@ -16,6 +16,14 @@ Marker forms (inside module.html):
       `var PY_LH = "<python source as a JS string>";` for cells built by JavaScript
   <!--@@BEGIN json:<blob>@@--> ... <!--@@END json:<blob>@@-->
       <script type="application/json" id="<blob>"> built from modules/<id>/data
+  /*@@BEGIN css:shared/quiz.css@@*/ ... /*@@END css:shared/quiz.css@@*/
+      raw copy of a shared stylesheet (same as js, for CSS)
+  <!--@@BEGIN manifest:module@@--> ... <!--@@END manifest:module@@-->
+      the embedded <script type="application/vnd.aihydro.module+json"> generated from manifest.json
+  <!--@@BEGIN static:<cell-id>@@--> ... <!--@@END static:<cell-id>@@-->
+      the pre-rendered output of an executable cell (modules/<id>/static/<cell-id>.txt / .png,
+      produced by scripts/render_static_outputs.py); shown where no kernel is attached and
+      replaced by the bridge on a real run
 
 Usage:  python scripts/build_modules.py          rewrite module.html files
         python scripts/build_modules.py --check  exit 1 if any file is out of date
@@ -23,6 +31,7 @@ Usage:  python scripts/build_modules.py          rewrite module.html files
 from __future__ import annotations
 
 import argparse
+import base64
 import csv
 import html
 import json
@@ -75,9 +84,71 @@ def build_blob(module_dir: Path, name: str) -> str:
     return f'<script type="application/json" id="{name}">{text}</script>'
 
 
+def embedded_manifest(man: dict) -> dict:
+    """The embedded block, in the field names the AI-Hydro preview reads, derived from manifest.json.
+
+    manifest.json keeps the marketplace/API names (moduleId, estimatedMinutes, author); the preview
+    reads id, estimated_minutes, authors[]. One source, one mapping, so they cannot disagree.
+    """
+    name, _, affiliation = man["author"].partition(",")
+    author = {"name": name.strip()}
+    if affiliation.strip():
+        author["affiliation"] = affiliation.strip()
+    emb = {
+        "id": man["moduleId"],
+        "title": man["title"],
+        "version": man["version"],
+        "authors": [author],
+        "license": man["license"],
+        "topic": man["topic"],
+        "level": man["level"],
+        "estimated_minutes": man["estimatedMinutes"],
+        "requires": man["requires"],
+    }
+    if "citation" in man:
+        emb["citation"] = man["citation"]
+    emb["ai_hydro_preview_min_version"] = "0.2"
+    return emb
+
+
+STRICT_STATIC = True   # render_static_outputs.py turns this off to build before outputs exist
+
+
+def static_block(module_dir: Path, cell: str) -> str:
+    sdir = module_dir / "static"
+    txt = sdir / f"{cell}.txt"
+    png = sdir / f"{cell}.png"
+    if not txt.exists() and not png.exists():
+        if not STRICT_STATIC:
+            return ""
+        raise SystemExit(f"{module_dir.name}: no static output for cell {cell!r} (run scripts/render_static_outputs.py)")
+    parts = ['<div class="aihydro-static" data-static-output="prerendered">',
+             '<div class="aihydro-static-note">Pre-rendered output with the default settings. '
+             'Run the cell in AI-Hydro to recompute it.</div>']
+    if txt.exists():
+        parts.append('<pre class="aihydro-stdout">' + html.escape(txt.read_text(encoding="utf-8").rstrip("\n"), quote=False) + "</pre>")
+    if png.exists():
+        alt_path = sdir / "alt.json"
+        if not alt_path.exists() and not STRICT_STATIC:
+            alt = ""
+        else:
+            alt = json.loads(alt_path.read_text(encoding="utf-8"))[cell]
+        b64 = base64.b64encode(png.read_bytes()).decode("ascii")
+        parts.append('<div class="aihydro-static-figure"><img alt="' + html.escape(alt, quote=True)
+                     + '" src="data:image/png;base64,' + b64 + '"></div>')
+    parts.append("</div>")
+    return "".join(parts)
+
+
 def render(kind: str, arg: str, module_dir: Path) -> str:
     toks = arg.split()
-    if kind == "js":
+    if kind == "manifest":
+        man = json.loads((module_dir / "manifest.json").read_text(encoding="utf-8"))
+        return ('<script type="application/vnd.aihydro.module+json">\n'
+                + json.dumps(embedded_manifest(man), indent=2, ensure_ascii=False) + "\n</script>")
+    if kind == "static":
+        return static_block(module_dir, toks[0])
+    if kind in ("js", "css"):
         return "\n" + (ROOT / toks[0]).read_text().rstrip("\n") + "\n"
     if kind == "pypre":
         return html.escape((ROOT / toks[0]).read_text().rstrip("\n"), quote=False)
