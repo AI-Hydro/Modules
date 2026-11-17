@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from helpers import MODULES, ROOT, module_text, scripts
+from helpers import MODULES, ROOT, extract_dois, module_text, scripts
 
 IDS = sorted(p.name for p in MODULES.iterdir() if p.is_dir())
 
@@ -25,6 +25,11 @@ def test_every_course_module_exists_and_every_directory_has_a_manifest():
         assert (MODULES / m["id"] / "module.html").exists(), m["id"]
     for mod in IDS:
         assert (MODULES / mod / "manifest.json").exists(), mod
+    # the module directories and the course are the same set, in the manifests' courseOrder
+    assert sorted(m["id"] for m in course["modules"]) == IDS
+    for i, m in enumerate(course["modules"], 1):
+        man = json.loads((MODULES / m["id"] / "manifest.json").read_text())
+        assert man["courseOrder"] == i, m["id"]
 
 
 @pytest.mark.parametrize("mod", IDS)
@@ -64,9 +69,11 @@ def test_self_contained_no_new_script_hosts(mod):
 
 def test_every_module_status_synthetic_is_labelled():
     # modules that still contain synthetic content say SYNTHETIC; modules with real data say where it comes from
-    for mod in ["baseflow-separation", "watershed-runoff", "dem-to-twi", "capstone-basin-story", "reading-a-hydrograph"]:
+    for mod in ["baseflow-separation", "watershed-runoff", "dem-to-twi", "capstone-basin-story", "reading-a-hydrograph",
+                "precipitation-point-to-basin", "runoff-generation"]:
         assert "SYNTHETIC" in module_text(mod), mod
-    for mod in ["real-streamflow-data", "capstone-basin-story", "reading-a-hydrograph"]:
+    for mod in ["real-streamflow-data", "capstone-basin-story", "reading-a-hydrograph",
+                "precipitation-point-to-basin", "evapotranspiration-budyko", "runoff-generation"]:
         assert "CAMELS" in module_text(mod)
 
 
@@ -101,14 +108,25 @@ def test_gauge_names_match_camels():
     assert "Fish River" in meta["01013500"]["camels_name"]
 
 
+def test_doi_extraction_matches_sici_style_dois_in_full():
+    a = "10.1175/1520-0493(1911)39<1082b:PAFLA>2.0.CO;2"
+    b = "10.1175/1520-0493(1972)100<0081:OTAOSH>2.3.CO;2"
+    html_text = (
+        '<a href="https://doi.org/10.1175/1520-0493(1911)39%3C1082b:PAFLA%3E2.0.CO;2">DOI: '
+        "10.1175/1520-0493(1911)39&lt;1082b:PAFLA&gt;2.0.CO;2</a> and "
+        '<a href="https://doi.org/10.1175%2F1520-0493(1972)100%3C0081:OTAOSH%3E2.3.CO;2">x</a> '
+        "10.1175/1520-0493(1972)100&lt;0081:OTAOSH&gt;2.3.CO;2. Plain 10.5194/hess-19-209-2015."
+    )
+    assert extract_dois(html_text) == {a, b, "10.5194/hess-19-209-2015"}
+
+
 def test_every_doi_in_the_modules_passed_the_gate():
     gate = (ROOT / "CITATIONS.verified.md").read_text()
     passed = set(re.findall(r"\| (10\.[^ |]+) \| PASS \|", gate))
     seen = set()
     for mod in IDS:
         t = module_text(mod)
-        for d in re.findall(r"10\.\d{4,}/[A-Za-z0-9._;()/:-]+[A-Za-z0-9)]", t):
-            seen.add(d.rstrip("."))
+        seen.update(extract_dois(t))
     passed_l = {p.lower() for p in passed}
     unknown = {d for d in seen if d.lower() not in passed_l}
     assert not unknown, unknown

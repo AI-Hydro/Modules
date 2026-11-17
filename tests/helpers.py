@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import urllib.parse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -95,3 +96,12 @@ def quiz_dump() -> dict:
 
 def quiz_item(mod: str, item_id: str) -> dict:
     return next(i for i in quiz_dump()[mod]["items"] if i["id"] == item_id)
+
+
+# A DOI body may contain SICI-style punctuation (< > ( ) ;). In HTML those appear as &lt; &gt;
+# entities or %XX escapes, so match them in full and normalise before comparing with the ledger.
+_DOI_RE = re.compile(r"10\.\d{4,}/(?:[A-Za-z0-9._;()/:-]|&lt;|&gt;|&#\d+;|&#x[0-9A-Fa-f]+;|%[0-9A-Fa-f]{2})+")
+
+
+def extract_dois(text):
+    return {urllib.parse.unquote(html.unescape(m)).rstrip(".,;") for m in _DOI_RE.findall(text)}

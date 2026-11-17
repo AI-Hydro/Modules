@@ -25,9 +25,9 @@ The gate confirms that a work exists and the DOI/title/year/authors are consiste
 | Cunnane (1978) | 10.1016/0022-1694(78)90017-3 | PASS | 3 (crossref, openalex, semantic_scholar) | Unbiased plotting positions — A review / Journal of Hydrology / 1978 | real-streamflow-data |
 | Trenberth et al. (2007) | 10.1175/JHM600.1 | PASS | 3 (crossref, openalex, semantic_scholar) | Estimates of the Global Water Budget and Its Annual Cycle Using Observational and Model Data / Journal of Hydrometeorology / 2007 | water-cycle-in-motion |
 
-## Wave 3 lessons (in progress)
+## Wave 3 lessons (2026-11-17)
 
-Each packet adds one row per DOI that passes `verify_citation.py --doi <DOI>`; a DOI that fails is removed from the page together with its claim. The placeholder row is deleted when the first real row is added. Rows live only in the packet's own table.
+One table per lesson (same columns as the table above, so the repository scan `test_every_doi_in_the_modules_passed_the_gate` reads all of them). Each row is a DOI that passes `verify_citation.py --doi <DOI>`; a DOI that fails is removed from the page together with its claim.
 
 ### precipitation-point-to-basin
 
@@ -53,7 +53,7 @@ Newman et al. (2015) and Addor et al. (2017) are cited by the lesson as data cre
 Notes for human review (evapotranspiration-budyko):
 
 - The gate confirms existence and DOI/title/year/author consistency only. Volume and page numbers are not given in the lesson's reference list for these five works for that reason.
-- Priestley & Taylor (1972): the DOI contains `<` and `>`. The lesson links it with those characters percent-encoded and shows it with the slash as an HTML entity (`&#47;`) so that the repository scan `test_every_doi_in_the_modules_passed_the_gate`, whose pattern stops at `<`, does not match a truncated prefix of it. The scan pattern needs fixing in Phase B (it would also reject the Thiessen 1911 DOI of the precipitation lesson). Attribution wording: α = 1.26 is described as "the value associated with Priestley & Taylor (1972) for a wet surface"; written from the index record, not from the full text.
+- Priestley & Taylor (1972): the DOI contains `<` and `>`. The page shows it as written (`&lt;`/`&gt;` markup) and links it with `<`/`>` percent-encoded; the repository scan normalises HTML entities and percent-encoding and matches the whole DOI. Attribution wording: α = 1.26 is described as "the value associated with Priestley & Taylor (1972) for a wet surface"; written from the index record, not from the full text.
 - Zhang et al. (2004): used for "the Fu form of the Budyko curve with the parameter written ω". Web records say Fu's model is the starting point of that paper; the full text was not read. Fu (1981) itself is deliberately not cited.
 - Zhang, Dawes & Walker (2001): title-level claim only (mean annual evapotranspiration responds to vegetation).
 - Thornton et al. (1997): cited only as the Daymet reference.
@@ -84,6 +84,16 @@ runoff-generation notes (gate run 2026-11-17, `verify_citation.py --doi <DOI>`; 
 - **Rejected DOI.** The plan listed `10.1016/j.jhydrol.2006.03.006` for Merz et al. (2006). The gate passes that DOI (3 indexes) but it resolves to a different paper, Arp et al., *Surface-water hydrodynamics and regimes of a small mountain stream–lake ecosystem* (J. Hydrol. 2006). It is not cited anywhere. The title search for *Spatio-temporal variability of event runoff coefficients* (Merz) returned `10.1016/j.jhydrol.2006.06.008`, which passes with 3 indexes and matching authors, and is the DOI used.
 - **Claims are kept to what the titles support:** Horton (infiltration in the hydrologic cycle; the infiltration-excess attribution), Dunne & Black (partial-area contributions to storm runoff; the saturation-excess attribution), Green & Ampt and Mein & Larson (infiltration models; the Mein & Larson ponding-time formula for a steady rain), Merz et al. and Blume et al. (event runoff coefficients), Cosby et al. (named only as one of the sources the CAMELS attribute documentation lists for soil_conductivity; read from `camels_attributes_v2.0.pdf`), Thornton et al. (credit for the Daymet forcing). No result from these papers is quoted.
 - **Flagged for human review:** volume, issue and page numbers in the lesson's reference list were written from index records and memory; the gate does not check them (the start pages of the AGU papers agree with their DOI suffixes).
+
+### Wave 3 references without a DOI: owner decision pending
+
+Each is shown on its page in a block marked "Reference without DOI — pending owner decision" (the same treatment as NEH-4 above). None of them can be gate-verified; the owner decides whether they stay.
+
+| Reference | Lesson | Used for |
+|---|---|---|
+| USDA-SCS (1972), *National Engineering Handbook, Section 4: Hydrology* (NEH-4) | watershed-runoff (existing) | curve-number definitions |
+| Allen, R. G., Pereira, L. S., Raes, D. & Smith, M. (1998), FAO Irrigation and Drainage Paper 56 | evapotranspiration-budyko | extraterrestrial radiation, net radiation, Δ and γ expressions |
+| Budyko, M. I. (1974), *Climate and Life*, Academic Press | evapotranspiration-budyko | the two limits and the idea of Budyko space |
 
 ## Failed the gate (removed, together with the claims that depended on them)
 

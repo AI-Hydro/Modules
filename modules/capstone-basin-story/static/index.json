@@ -9,7 +9,7 @@
   },
   "capstone-signatures": {
     "mode": "headless",
-    "source_sha256": "b33f2ad722528fb1f7411b0a5b347363c35ebcb25959e1d7267911047095cca7",
+    "source_sha256": "9ebb2741d15c7c145411f2a96d71bba67b031e6c2a5a80206fc8049a1a003ac8",
     "figures": 1,
     "python": "3.13.2",
     "numpy": "2.4.6",

@@ -2,7 +2,21 @@
 
 All notable changes to the learning modules. Versions are per module (`manifest.json` and the manifest embedded in `module.html` carry the same number).
 
-## Wave 3 — new lessons (in progress)
+## 2026-11-17 — Wave 3: precipitation, evapotranspiration and runoff generation
+
+Owner request, 2026-11-17: add the precipitation, evapotranspiration and runoff-generation lessons to the course. Everything in the Wave 2 changelog below is unchanged; certificate wording, signature and completion logic stay owner decisions.
+
+### Course intro-to-hydrology 0.3.0 → 0.4.0
+- Three lessons added after the water cycle: precipitation-point-to-basin (order 2), evapotranspiration-budyko (3), runoff-generation (4). Prerequisites: precipitation needs water-cycle-in-motion; evapotranspiration-budyko and runoff-generation need precipitation; watershed-runoff now needs runoff-generation. Course abstract says ten learning modules; estimatedHours 5 → 7 (420 min of lessons); new tags precipitation, evapotranspiration, Budyko, runoff-generation, infiltration.
+- `courseOrder` in the manifests: watershed-runoff 5, reading-a-hydrograph 6, baseflow-separation 7, real-streamflow-data 8, dem-to-twi 9, capstone-basin-story 10, course-certificate 11. Numbered cross-references in the older lessons ("Module 5", "M6", "Modules 5 and 7") follow the new numbers; water-cycle-in-motion says "the next nine modules".
+
+### course-certificate 0.1.2 → 0.1.3
+- Counts follow the course: "All ten learning modules done", "10 Learning Modules · ~7 Hours", "Requires completion of all 10 course modules", share text "10 modules". Institution wording, signature block and completion check are unchanged and still owner decisions.
+
+### Repository
+- `test_every_doi_in_the_modules_passed_the_gate` now matches DOIs that contain `<`, `>`, `(`, `)`, `;` in full (SICI-style, e.g. Thiessen 1911, Priestley & Taylor 1972), after normalising HTML entities and percent-encoding; regression test added. The two lessons that worked around the old pattern show those DOIs as written.
+- Module set must equal the course's module set and the manifests' `courseOrder` must equal the position in `course.json`; the SYNTHETIC-label test covers the new lessons.
+
 
 ### precipitation-point-to-basin new → 0.1.0
 - New lesson, "Rain and Snow: From Gauge to Basin" (topic precipitation, 35 min). A gauge is a point (a computed funnel-to-basin ratio); a SYNTHETIC 60 × 60 km storm field with six gauges G1 to G6 (toggle buttons with `aria-pressed`, IDW power slider, map radio group) compares the arithmetic mean, Thiessen polygons and inverse-distance weighting against a known true mean, with a Thiessen raster labelled by region and a weights table; four real CAMELS-US basins (basin cards) show the daily exceedance curve, wet-day share, high-precipitation days, longest dry spell and largest day for water years 1996 to 2000, the 20-water-year monthly regime with DJF and JJA shares, and the snow fraction against a rain/snow temperature threshold (−2 to +3 °C) with CAMELS `frac_snow` beside it as a reference; a reproduction check recomputes CAMELS `p_mean` from 20 years of monthly totals and `high_prec_freq` from five years of daily values and says what differs (the period).

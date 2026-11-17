@@ -344,7 +344,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     <span class="callout-label">Follow the arrow — runoff</span>
     In <strong>Module 1</strong> you traced a water molecule ending as surface runoff. This module reads what happens next:
     that runoff arrives at a stream gauge and traces a shape in time — the <em>hydrograph</em>.
-    When you're done here, <strong>Module 4</strong> goes deeper: splitting that shape into baseflow vs quickflow.
+    When you're done here, <strong>Module 7</strong> goes deeper: splitting that shape into baseflow vs quickflow.
   </div>
 </div>
 
@@ -672,7 +672,7 @@ USGS QC      : 253 days approved (A), 112 approved-estimated (A:e), 0 missing</p
   <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
   <div class="prov-item"><dt>SYNTHETIC parts</dt><dd>§2–§4: the 96-hour event (gamma response to a 4-hour pulse) and the curve-number storm pair (CN 75, assumed 25 km² catchment) are teaching models, not observations.</dd></div>
   <div class="prov-item"><dt>Real data (§6)</dt><dd>CAMELS-US v1.2 water year 1996-10-01 to 1997-09-30: USGS daily-mean discharge (cfs, QC flags kept) and Daymet basin-mean precipitation. Files and sha256 in <code>data/PROVENANCE.json</code>.</dd></div>
-  <div class="prov-item"><dt>Baseflow filter</dt><dd>Lyne–Hollick, 3 passes, α = 0.925 in §6, reflected 30 steps (shared with Modules 4, 5 and 7).</dd></div>
+  <div class="prov-item"><dt>Baseflow filter</dt><dd>Lyne–Hollick, 3 passes, α = 0.925 in §6, reflected 30 steps (shared with Modules 7, 8 and 10).</dd></div>
   <div class="prov-item"><dt>Environment</dt><dd>Python (numpy, matplotlib) via AI-Hydro preview kernel.</dd></div>
 </div>
 
@@ -1800,7 +1800,7 @@ function baseflowIndex(Q, base) {
       'Q_MM = Q * 86400.0 / (AREA_KM2 * 1e6) * 1000.0',
       'days = np.arange(len(Q))',
       '',
-      '# ─── Lyne–Hollick filter, 3 passes, α = 0.925 (same code as Module 4)',
+      '# ─── Lyne–Hollick filter, 3 passes, α = 0.925 (same code as Module 7)',
       PY_LH,
       'ALPHA = 0.925',
       'base = np.array(lyne_hollick(Q, ALPHA))',

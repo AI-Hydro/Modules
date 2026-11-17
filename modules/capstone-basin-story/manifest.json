@@ -33,7 +33,7 @@
   },
   "isFeatured": true,
   "courseId": "intro-hydro-2026",
-  "courseOrder": 7,
+  "courseOrder": 10,
   "downloadUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/capstone-basin-story/module.html",
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/capstone-basin-story",
   "author": "Mohammad Galib, Purdue University",

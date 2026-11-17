@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from helpers import MODULES, ROOT, core_block, json_blob, module_text, quiz_item, run_node, run_python
+from helpers import MODULES, ROOT, core_block, extract_dois, json_blob, module_text, quiz_item, run_node, run_python
 
 MOD = "precipitation-point-to-basin"
 T = module_text(MOD)
@@ -359,10 +359,10 @@ def test_references_are_the_gated_dois_and_the_thiessen_doi_is_not_truncated_by_
     for doi in ["10.1175/1520-0493(1911)39<1082b:PAFLA>2.0.CO;2", "10.1145/800186.810616", "10.1016/S0022-1694(96)03128-9", "10.1038/s41467-018-03629-7",
                 "10.5194/hess-19-209-2015", "10.5194/hess-21-5293-2017"]:
         assert doi in passed, doi
-    seen = {d.rstrip(".") for d in re.findall(r"10\.\d{4,}/[A-Za-z0-9._;()/:-]+[A-Za-z0-9)]", T)}
+    seen = extract_dois(T)
     assert {d.lower() for d in seen} <= {p.lower() for p in passed}
-    # the Thiessen DOI is written percent-encoded in the link and with an entity for the slash in the text
-    assert "10.1175%2F1520-0493(1911)39%3C1082b%3APAFLA%3E2.0.CO%3B2" in T and "10.1175&#47;1520-0493(1911)39&lt;1082b:PAFLA&gt;2.0.CO;2" in T
+    # the Thiessen DOI is shown as written (markup-escaped) and linked with < and > percent-encoded
+    assert "10.1175/1520-0493(1911)39%3C1082b:PAFLA%3E2.0.CO;2" in T and "10.1175/1520-0493(1911)39&lt;1082b:PAFLA&gt;2.0.CO;2" in T
     # claims that were dropped or never allowed
     for banned in ("Fu (1981)", "Fu, B.", "10.2307", "Budyko", "FAO-56"):
         assert banned not in T, banned

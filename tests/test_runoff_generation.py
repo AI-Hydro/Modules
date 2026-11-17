@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from helpers import MODULES, ROOT, SHARED, core_block, json_blob, module_text, quiz_item, run_node, run_python, shared_js, static_cell_sources
+from helpers import MODULES, ROOT, SHARED, core_block, extract_dois, json_blob, module_text, quiz_item, run_node, run_python, shared_js, static_cell_sources
 
 MOD = "runoff-generation"
 T = module_text(MOD)
@@ -488,7 +488,7 @@ def test_every_doi_is_the_verified_one_and_ledger_rows_exist():
     sec = gate[gate.index("### runoff-generation"):]
     sec = sec[:sec.index("\n## ", 1)] if "\n## " in sec[1:] else sec
     passed = set(re.findall(r"\| (10\.[^ |]+) \| PASS \|", sec))
-    dois = {d.rstrip(".") for d in re.findall(r"10\.\d{4,}/[A-Za-z0-9._;()/:-]+[A-Za-z0-9)]", T)}
+    dois = extract_dois(T)
     own = {"10.1029/TR014i001p00446", "10.1029/WR006i005p01296", "10.1017/S0021859600001441", "10.1029/WR009i002p00384",
            "10.1016/j.jhydrol.2006.06.008", "10.1623/hysj.52.5.843", "10.1029/WR020i006p00682", "10.1016/S0022-1694(96)03128-9"}
     assert own <= dois and own <= passed, own - passed
