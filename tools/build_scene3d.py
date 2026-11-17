@@ -236,12 +236,17 @@ def shoelace_m2(xy_m):
 
 
 # ---- channels with pysheds ------------------------------------------------------------------------------
-def derive_channels(dem30, x0, y0):
+def derive_channels(dem30, x0, y0, gauge_xy, basin_km2):
     """Channel polylines from D8 flow accumulation of the 90 m DEM; threshold in km2.
 
     pysheds: fill_pits, fill_depressions, resolve_flats, D8 flow direction, accumulation. A channel cell is a
     cell with at least CHANNEL_THRESHOLD_KM2 draining through it. Segments start at channel heads and
     confluences and end at the next confluence (or the outlet), so they join without gaps.
+
+    The cells outside the divide are a wall above every terrain cell, except the exterior neighbours of the outlet
+    cell (the lowest boundary cell within 3 km of the gauge), which are a sink: water can leave the basin only
+    through its outlet, and exterior cells carry weight 0 in the accumulation, so nothing leaks across the divide
+    in either direction. Only the 8-connected component of the outlet is kept.
     """
     import pyproj
     from affine import Affine
@@ -250,8 +255,21 @@ def derive_channels(dem30, x0, y0):
     f = int(round(CHANNEL_CELL_M / WARP_CELL_M))
     r, c = dem30.shape[0] // f, dem30.shape[1] // f
     b = block_mean(dem30[: r * f, : c * f], f, 0.5)
+    from scipy import ndimage
     nodata = -9999.0
-    arr = np.where(np.isfinite(b), b, nodata).astype("float64")
+    valid = np.isfinite(b)
+    edge = valid & ~ndimage.binary_erosion(valid, structure=np.ones((3, 3), int), border_value=0)
+    er, ec = np.nonzero(edge)
+    d = np.hypot(x0 + (ec + 0.5) * CHANNEL_CELL_M - gauge_xy[0], y0 - (er + 0.5) * CHANNEL_CELL_M - gauge_xy[1])
+    k = int(np.argmin(np.where(d <= 3000.0, b[er, ec], np.inf)))
+    out_rc = (int(er[k]), int(ec[k]))
+    lab, _ = ndimage.label(valid, structure=np.ones((3, 3), int))
+    valid = lab == lab[out_rc]
+    zlo, zhi = float(np.nanmin(np.where(valid, b, np.nan))), float(np.nanmax(np.where(valid, b, np.nan)))
+    arr = np.where(valid, b, zhi + 1000.0).astype("float64")
+    sink = np.zeros_like(valid)
+    sink[max(out_rc[0] - 1, 0):out_rc[0] + 2, max(out_rc[1] - 1, 0):out_rc[1] + 2] = True
+    arr[sink & ~valid] = zlo - 100.0
     vf = ViewFinder(affine=Affine(CHANNEL_CELL_M, 0, x0, 0, -CHANNEL_CELL_M, y0), shape=arr.shape, nodata=nodata,
                     crs=pyproj.CRS.from_epsg(5070))
     dem = Raster(arr, vf)
@@ -261,10 +279,11 @@ def derive_channels(dem30, x0, y0):
     inflated = grid.resolve_flats(flooded)
     dirmap = (64, 128, 1, 2, 4, 8, 16, 32)        # N NE E SE S SW W NW (pysheds default)
     fdir = grid.flowdir(inflated, dirmap=dirmap, nodata_out=0)
-    acc = np.asarray(grid.accumulation(fdir, dirmap=dirmap))
+    wts = Raster(valid.astype("float64"), vf)
+    acc = np.asarray(grid.accumulation(fdir, weights=wts, dirmap=dirmap))
     fd = np.asarray(fdir)
     thr = CHANNEL_THRESHOLD_KM2 * 1e6 / (CHANNEL_CELL_M ** 2)
-    chan = (acc >= thr) & (arr != nodata)
+    chan = (acc >= thr) & valid
     offs = {64: (-1, 0), 128: (-1, 1), 1: (0, 1), 2: (1, 1), 4: (1, 0), 8: (1, -1), 16: (0, -1), 32: (-1, -1)}
     R, C = chan.shape
     ds = {}
@@ -291,7 +310,9 @@ def derive_channels(dem30, x0, y0):
                 break
         if len(path) >= 2:
             lines.append([(x0 + (j + 0.5) * CHANNEL_CELL_M, y0 - (i + 0.5) * CHANNEL_CELL_M) for i, j in path])
-    return lines, int(chan.sum()), float(thr), int(acc.max())
+    # the cell that drains to the sink (the outlet of the basin) holds the largest accumulation of all terrain cells
+    out_frac = float(acc[valid].max()) * CHANNEL_CELL_M ** 2 / 1e6 / basin_km2
+    return lines, int(chan.sum()), float(thr), int(acc[valid].max()), out_frac
 
 
 def flat_patches(dem30):
@@ -431,7 +452,7 @@ def build(evidence: Path):
     area_payload = shoelace_m2([(x * UNIT_M, y * UNIT_M) for x, y in ring_u]) / 1e6
 
     # channels
-    lines_m, n_chan_cells, thr_cells, acc_max = derive_channels(dem30, gx0, gy0)
+    lines_m, n_chan_cells, thr_cells, acc_max, out_frac = derive_channels(dem30, gx0, gy0, (gx, gy), float(inp["ref"]["area_km2"]))
     line_u = []
     for ln in lines_m:
         s = dp_simplify(ln, CHANNEL_TOL_M)
@@ -478,7 +499,7 @@ def build(evidence: Path):
                 f"terrain outside the divide."),
     }
 
-    sidecar = provenance(inp, payload, png, hq, BLOCK, dropped, ncomp, n_chan_cells, thr_cells, acc_max,
+    sidecar = provenance(inp, payload, png, hq, BLOCK, dropped, ncomp, n_chan_cells, thr_cells, acc_max, out_frac,
                          area_exact, area_payload, len(line_u), sum(len(l) for l in line_u))
     files = {
         "fish-river-scene.json": dump(payload),
@@ -492,7 +513,7 @@ def build(evidence: Path):
                        flats=(n_flat, flat_km2), conv=conv, dropped=dropped, ncomp=ncomp)
 
 
-def provenance(inp, payload, png, hq, block, dropped, ncomp, n_chan_cells, thr_cells, acc_max, area_exact,
+def provenance(inp, payload, png, hq, block, dropped, ncomp, n_chan_cells, thr_cells, acc_max, out_frac, area_exact,
                area_payload, n_lines, n_vertices):
     import matplotlib, PIL, pysheds, pyproj, rasterio, scipy, shapely, xarray
     me = Path(__file__).resolve()
@@ -526,7 +547,9 @@ def provenance(inp, payload, png, hq, block, dropped, ncomp, n_chan_cells, thr_c
             "disconnected_cells_dropped": dropped, "components_before": ncomp,
             "channels": {"tool": "pysheds " + pysheds.__version__ + " (fill_pits, fill_depressions, resolve_flats, flowdir D8, accumulation)",
                          "dem_cell_m": CHANNEL_CELL_M, "threshold_km2": CHANNEL_THRESHOLD_KM2,
-                         "threshold_cells": thr_cells, "channel_cells": n_chan_cells, "max_accumulation_cells": acc_max,
+                         "threshold_cells": thr_cells, "channel_cells": n_chan_cells, "max_accumulation_cells_in_basin": acc_max,
+                         "outlet_accumulation_fraction_of_basin_ref": out_frac,
+                         "exterior": "wall above all terrain, sink at the outlet, weight 0 in accumulation",
                          "polylines": n_lines, "vertices_after_simplify": n_vertices,
                          "simplify": "Douglas-Peucker, %g m" % CHANNEL_TOL_M},
             "outline": {"simplify": "Douglas-Peucker, %g m" % OUTLINE_TOL_M, "unit_m": UNIT_M,

@@ -112,7 +112,7 @@
     "moduleId": "course-certificate",
     "title": "Congratulations: Course Complete",
     "description": "Collect your name, preview a branded certificate of completion, and print or save it as a permanent record of finishing the Introduction to Hydrology course.",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "license": "CC-BY-4.0",
     "topic": "course-completion",
     "level": "intro",
@@ -538,7 +538,7 @@
     "license": "CC-BY-4.0",
     "topic": "watershed-hydrology",
     "level": "intro",
-    "estimatedMinutes": 40,
+    "estimatedMinutes": 50,
     "tags": [
       "watershed",
       "catchment",

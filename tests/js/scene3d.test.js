@@ -143,6 +143,9 @@ test('keyboard: arrows move the cursor, Enter drops, the result is in the live r
   assert.match(els.fishStatLen.textContent, /^[\d.]+ km$/);
   assert.match(els.fishStatArea.textContent, /^[\d.]+ km²$/);
   assert.match(els.fishCursorMsg.textContent, /^Cursor: column \d+, row \d+/);
+  assert.match(els.fishMsg.textContent, /The straight line to the outlet is [\d.]+ km\./);
+  assert.match(els.fishMsg.textContent, /A D8 path along a grid is not a river length\./);
+  assert.equal(els.fishStatRow ? els.fishStatRow.getAttribute('aria-live') : null, null, 'one announcement only: #fishMsg is the live region');
   /* the top-left corner of the grid is outside the divide */
   map.dispatch('keydown', { key: 'Home', shiftKey: false, preventDefault() {} });
   for (let i = 0; i < 40; i++) map.dispatch('keydown', { key: 'ArrowUp', shiftKey: true, preventDefault() {} });
@@ -171,4 +174,65 @@ test('the checkpoint item answers from the scene data and the page mounts', () =
   assert.ok(q6 && q6.type === 'numeric');
   assert.ok(Math.abs(q6.expected - f.trace(f.highest).length_km) < 1e-12);
   assert.match(q6.explain, /steps \(\d+ straight of 0\.51 km, \d+ diagonal of 0\.72 km\)/);
+});
+
+/* ── live vs poster state ─────────────────────────────────────────────────────────────────────── */
+function liveHarness(extra) {
+  const THREE = fakeTHREE();
+  const harness = { setups: [], THREE };
+  const globals = { THREE, requestAnimationFrame: (f) => { f(); return 1; },
+    aihydro: { scene3d(opts) {
+      const c = fakeCtx(opts.canvas, THREE); opts.setup(c);
+      if (opts.canvas.id === 'fishCanvas') { harness.opts = opts; harness.setups.push(c); }     /* the page also draws the synthetic scene */
+      return Promise.resolve(c); } } };
+  const r = run(T, { globals });
+  return Object.assign(harness, r);
+}
+
+test('live state: poster hidden, 10x label shown, status live; a lost context brings the poster back and hides the label', async () => {
+  const h = liveHarness();
+  await settle();
+  const { els } = h, canvas = h.setups[0].canvas;
+  assert.equal(els.fishPoster.hidden, true);
+  assert.equal(els.fishLabel.hidden, false, 'the 10x label is on a live scene');
+  assert.equal(canvas.getAttribute('aria-hidden'), null);
+  assert.match(els.fishStatus.textContent, /Heights are drawn 10 times too steep/);
+  canvas.dispatch('webglcontextlost');
+  assert.equal(els.fishPoster.hidden, false);
+  assert.equal(els.fishPoster.style.display, '');
+  assert.equal(els.fishLabel.hidden, true, 'no label without a scene');
+  assert.equal(canvas.getAttribute('aria-hidden'), 'true');
+  assert.match(els.fishStatus.textContent, /graphics context was lost/);
+});
+
+test('after a rebuild (the bridge runs setup again on a fresh canvas) the live state and the label come back', async () => {
+  const h = liveHarness();
+  await settle();
+  h.setups[0].canvas.dispatch('webglcontextlost');
+  const fresh = fakeCtx(h.opts.canvas, h.THREE);
+  fresh.canvas = require('./fakedom').makeElement('fishCanvas', {});
+  h.opts.setup(fresh);
+  assert.equal(h.els.fishPoster.hidden, true);
+  assert.equal(h.els.fishLabel.hidden, false, 'the 10x label is on the rebuilt scene too');
+  assert.match(h.els.fishStatus.textContent, /Drag to orbit/);
+  /* the old canvas's late events no longer matter */
+  h.setups[0].canvas.dispatch('webglcontextlost');
+  assert.equal(h.els.fishPoster.hidden, true);
+  fresh.canvas.dispatch('webglcontextlost');
+  assert.equal(h.els.fishPoster.hidden, false);
+  assert.equal(h.els.fishLabel.hidden, true);
+});
+
+test('the bridge gives up (scene disposed, or its own fallback shown) before the first frame: no label, poster stays', async () => {
+  for (const giveUp of [(c) => { c.scene = null; }, (c) => { c.canvas.style.display = 'none'; }]) {
+    const THREE = fakeTHREE(); let later = null;
+    const globals = { THREE, requestAnimationFrame: (f) => { later = later || []; later.push(f); return 1; },
+      aihydro: { scene3d(opts) { const c = fakeCtx(opts.canvas, THREE); opts.setup(c); giveUp(c); return Promise.resolve(c); } } };
+    const { els, getEl } = run(T, { globals });
+    getEl('fishLabel').hidden = true;                      /* as in the markup; the fake DOM does not parse the attribute */
+    await settle();
+    for (let i = 0; i < 4 && later && later.length; i++) { const q = later.splice(0); q.forEach((f) => f()); }
+    assert.equal((els.fishPoster || getEl('fishPoster')).hidden, false);
+    assert.equal(getEl('fishLabel').hidden, true, 'label stays hidden');
+  }
 });

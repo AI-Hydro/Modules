@@ -161,6 +161,25 @@ def test_copernicus_credit_is_in_the_references_with_the_manifest_licence_not_in
     assert "10.5270/ESA-c5d3d65" in (ROOT / "CITATIONS.verified.md").read_text(encoding="utf-8")
 
 
+ART_6B = ("produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 "
+          "provided under COPERNICUS by the European Union and ESA; all rights reserved")
+ART_6C = ("The organisations in charge of the Copernicus programme by law or by delegation do not incur any liability "
+          "for any use of the Copernicus WorldDEM-30")
+LICENCE_PDF = "https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/DEM/resources/license/License-COPDEM-30.pdf"
+
+
+def test_copernicus_licence_notices_are_verbatim_in_the_references_and_the_licence_line_says_not_cc_by():
+    refs = T[T.index('id="sec-prov"'):]
+    assert ART_6B in refs and ART_6C in refs
+    assert "Licence for the use of the Copernicus WorldDEM-30" in refs and LICENCE_PDF in refs
+    line = re.search(r"<dt>License</dt><dd>(.*?)</dd>", refs, re.S)[1]
+    assert "not CC-BY" in line and "§5" in line and LICENCE_PDF in line
+    assert ART_6B not in T[:T.index('id="sec-prov"')] and ART_6C not in T[:T.index('id="sec-prov"')], "notices are in the References, not in the scene"
+    for doc in ("modules/watershed-runoff/README.md", "CITATIONS.verified.md", "DECISIONS.md"):
+        text = (ROOT / doc).read_text(encoding="utf-8")
+        assert ART_6B in text and ART_6C in text, doc
+
+
 def test_synthetic_content_and_labels_remain():
     assert "SYNTHETIC" in T and "Orbit a SYNTHETIC watershed in 3-D" in T
     assert 'id="terrainCanvas"' in T and 'id="routingCanvas"' in T
@@ -198,7 +217,13 @@ def test_checkpoint_answer_is_the_independent_path_length_from_the_highest_cell(
         diag = (a // C != b // C) and (a % C != b % C)
         length += cell * (2 ** 0.5 if diag else 1.0)
     assert quiz_item(MOD, "q6")["expected"] == pytest.approx(length / 1000, abs=1e-9)
-    assert 20 < length / 1000 < 400
+    assert len(path) - 1 == 171 and round(length / 1000, 1) == 101.4, (len(path) - 1, length / 1000)   # pinned
+    o = P["outlet"]
+    straight = float(np.hypot(hi // C - o["r"], hi % C - o["c"])) * cell / 1000
+    q7 = quiz_item(MOD, "q7")
+    assert q7["type"] == "choice" and q7["expected"] == 2 and f"{length / 1000 / straight:.1f} times the straight-line" in q7["prompt"]
+    assert f"Straight line {straight:.1f} km" in q7["explain"] and "not a river length" in q7["explain"]
+    assert "not a river length" in quiz_item(MOD, "q6")["explain"] and f"the straight line is {straight:.1f} km" in quiz_item(MOD, "q6")["explain"]
     assert "Give 1 decimal" in quiz_item(MOD, "q6")["prompt"] and "highest cell" in quiz_item(MOD, "q6")["prompt"]
 
 
@@ -218,6 +243,10 @@ def test_sidecar_describes_the_committed_outputs_and_is_scrubbed():
     prm = s["parameters"]
     assert prm["channels"]["threshold_km2"] == 25.0 and prm["vertical_exaggeration"] == 10 and prm["mesh_cell_m"] == 510
     assert prm["channels"]["tool"].startswith("pysheds 0.5")
+    # the exterior is walled: nothing leaks across the divide, and the outlet collects (almost) the whole basin_ref area
+    ch = prm["channels"]
+    assert "wall" in ch["exterior"] and 0.99 <= ch["outlet_accumulation_fraction_of_basin_ref"] <= 1.001, ch["outlet_accumulation_fraction_of_basin_ref"]
+    assert ch["max_accumulation_cells_in_basin"] * ch["dem_cell_m"] ** 2 / 1e6 <= BASIN_REF_AREA_KM2 * 1.001
     assert all(c["ok"] for c in s["checks"])
 
 
@@ -257,3 +286,24 @@ def test_block_mean_and_run_codecs_round_trip():
     assert (build_scene3d.runs_decode(build_scene3d.runs_encode(mask), 9).reshape(3, 3) == mask).all()
     pts = [(10, 20), (13, 18), (13, 30)]
     assert build_scene3d.dec_line(build_scene3d.enc_line(pts)) == pts
+
+
+def test_img_marker_allows_only_a_whitelist_of_attributes(tmp_path):
+    import build_modules
+    d = tmp_path / "m"
+    (d / "data").mkdir(parents=True)
+    (d / "data" / "p.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+    (d / "module.html").write_text("<!--@@BEGIN img:p@@--><!--@@END img:p@@-->")
+    ok = {"id": "x", "class": "c", "width": 3, "height": 4, "alt": "a<b", "data-aihydro-scene3d-fallback": ""}
+    (d / "data" / "p.attrs.json").write_text(json.dumps(ok))
+    out = build_modules.process(d / "module.html")
+    assert 'alt="a&lt;b"' in out and " data-aihydro-scene3d-fallback " in out and out.count(" src=") == 1
+    for bad in ("src", "onload", "onerror", "style", "href", "srcset", "Data-x", "data-"):
+        (d / "data" / "p.attrs.json").write_text(json.dumps({**ok, bad: "x"}))
+        with pytest.raises(SystemExit):
+            build_modules.process(d / "module.html")
+
+
+def test_page_says_a_d8_path_is_not_a_river_length_and_gives_the_straight_line():
+    assert T.count("A D8 path along a grid is not a river length.") >= 3        # drop message, q6 and q7 explanations
+    assert "The straight line to the outlet is" in T

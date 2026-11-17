@@ -75,28 +75,30 @@
       "sha256": "7a2a1a2e5599de6dbb670dee42c4674de006861d3b2dba6e93406d674ee634aa"
     },
     {
-      "bytes": 41697,
+      "bytes": 42023,
       "file": "fish-river-poster.png",
-      "sha256": "8ed8f655643821a0960b175efb2bbfce01ac558370ada614589beb6d5170b490"
+      "sha256": "223d646abbca9ce4532eafa16adaf5d9d04f3b35d10c74c15b8eb3d27b114178"
     },
     {
-      "bytes": 31817,
+      "bytes": 31316,
       "file": "fish-river-scene.json",
-      "sha256": "baf6f0dd632d1f7ac694c3148dc3546228e750f205da4224396b3c32454eed4d"
+      "sha256": "bf283d4a28cd4489c5ed71225341aed812b7084886cbaeea5e385e36fd3ddb47"
     }
   ],
   "parameters": {
     "block_mean_factor": 17,
     "channels": {
-      "channel_cells": 3071,
+      "channel_cells": 3731,
       "dem_cell_m": 90.0,
-      "max_accumulation_cells": 280974,
-      "polylines": 51,
+      "exterior": "wall above all terrain, sink at the outlet, weight 0 in accumulation",
+      "max_accumulation_cells_in_basin": 278586,
+      "outlet_accumulation_fraction_of_basin_ref": 0.9991278365328995,
+      "polylines": 49,
       "simplify": "Douglas-Peucker, 120 m",
       "threshold_cells": 3086.41975308642,
       "threshold_km2": 25.0,
       "tool": "pysheds 0.5 (fill_pits, fill_depressions, resolve_flats, flowdir D8, accumulation)",
-      "vertices_after_simplify": 363
+      "vertices_after_simplify": 287
     },
     "components_before": 1,
     "crs": "EPSG:5070",
@@ -129,7 +131,7 @@
   },
   "schema": "hydrofigs.provenance/2",
   "script": "tools/build_scene3d.py",
-  "script_sha256": "6a6add3a0d8a3cb1afaa7778d138e2efe39ac683e3a04e30b7023733654f1a92",
+  "script_sha256": "9b15f7cf892b85363709665b3b02e80a70581cc4ab4c77cc885741b1bae895d7",
   "synthetic": false,
   "synthetic_label": null
 }
