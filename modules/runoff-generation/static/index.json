@@ -9,7 +9,7 @@
   },
   "event-runoff-ratios": {
     "mode": "headless",
-    "source_sha256": "d99b7a8dd3ccfc79abf6070e59efdef4559c1f437352422ec2e6277e08b58bd6",
+    "source_sha256": "599ca1e59d9819cee60b9f1e219101cec5870e20f85c75982bbd635c20d65299",
     "figures": 1,
     "python": "3.13.2",
     "numpy": "2.4.6",

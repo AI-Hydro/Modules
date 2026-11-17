@@ -285,10 +285,7 @@ def independent_events(b, thr_h=1000):
         if idx + 1 < len(starts):
             last = min(last, starts[idx + 1] - 1)
         last = min(last, n - 1)
-        run = 0
-        while d + run <= last and P[d + run] >= 100:
-            run += 1
-        pe = P[d:d + run].sum() / 100.0
+        pe = P[d:last + 1].sum() / 100.0
         qf = float((qmm[d:last + 1] - base[d:last + 1]).sum())
         ev.append(dict(d=d, end=last, P=pe, ant=P[d - 7:d].sum() / 100.0, qf=qf, rc=qf / pe))
     return ev
@@ -378,7 +375,7 @@ def test_default_event_cell_output_is_the_siletz_numbers_in_the_page():
     txt = (MODULES / MOD / "static" / "event-runoff-ratios.txt").read_text()
     s = js_events("14305500")
     assert f"N = {s['n']} " in txt and f"{s['medianRC']:.3f}" in txt
-    assert "Q/P = 1.064" in txt                                             # the Daymet/gauge balance is shown, not hidden
+    assert "Q/P = 1.064" in txt and f"events with RC > 1: {s['nAbove1']}" in txt                                             # the Daymet/gauge balance is shown, not hidden
 
 
 def test_cells_declare_their_status_and_use_only_numpy_and_matplotlib():
@@ -461,7 +458,7 @@ def test_numbers_in_toggle_label_and_figure_alt_text_are_the_computed_ones():
     rcs = [e["rc"] for e in s["events"]]
     a = alt["event-runoff-ratios"]
     assert f"{s['n']} rain events" in a and f"{s['medianRC']:.3f}" in a
-    assert min(rcs) >= 0 and round(max(rcs), 1) == 1.5 and "about 0 to about 1.5" in a
+    assert min(rcs) >= 0 and round(max(rcs), 1) == 1.4 and "about 0 to about 1.4" in a
     assert s["nEst"] == 1 and "the one event whose window includes an estimated-flow day" in a
 
 
@@ -534,3 +531,11 @@ def test_extractor_reproduces_the_bundled_data_byte_for_byte():
         assert r.returncode == 0, r.stderr
         for name in ("runoff-events.json", "PROVENANCE.json"):
             assert (Path(td) / "modules" / MOD / "data" / name).read_bytes() == (D / name).read_bytes(), name
+
+
+def test_event_rain_covers_the_same_window_as_the_quickflow_and_no_by_construction_wording():
+    for g in GIDS:
+        for e in js_events(g)["events"]:
+            P = np.array(BLOB["basins"][g]["prcp_hundredths_mm"])
+            assert e["P"] == pytest.approx(P[e["d"]:e["end"] + 1].sum() / 100.0, abs=1e-9)
+    assert "by construction" not in T and "all rain from the start day to the window end" in T
