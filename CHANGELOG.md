@@ -13,6 +13,9 @@ Owner request, 2026-11-17: add the precipitation, evapotranspiration and runoff-
 ### course-certificate 0.1.2 → 0.1.3
 - Counts follow the course: "All ten learning modules done", "10 Learning Modules · ~7 Hours", "Requires completion of all 10 course modules", share text "10 modules". Institution wording, signature block and completion check are unchanged and still owner decisions.
 
+### Review fixes (same day)
+- precipitation-point-to-basin: figure alt text now describes the one map the cell draws; gauge labels near the right edge no longer clip; one quiz hint and the reproduction note reworded. runoff-generation and evapotranspiration-budyko: hints reworded to point at where to look; a neutral note of possible reasons next to events with RC above 1 and points outside the Budyko limits.
+
 ### Repository
 - `test_every_doi_in_the_modules_passed_the_gate` now matches DOIs that contain `<`, `>`, `(`, `)`, `;` in full (SICI-style, e.g. Thiessen 1911, Priestley & Taylor 1972), after normalising HTML entities and percent-encoding; regression test added. The two lessons that worked around the old pattern show those DOIs as written.
 - Module set must equal the course's module set and the manifests' `courseOrder` must equal the position in `course.json`; the SYNTHETIC-label test covers the new lessons.
@@ -29,6 +32,7 @@ Owner request, 2026-11-17: add the precipitation, evapotranspiration and runoff-
 - Real data: Daymet water year 1997 (dayl, srad, tmax, tmin, vp) for four CAMELS basins, and aridity / runoff_ratio / frac_snow for 671 gauges (`data/et-budyko.json`, 64.8 KB with provenance; extractor `--only evapotranspiration-budyko`).
 - PET two ways (Hargreaves–Samani; Priestley–Taylor with the net-radiation budget shown step by step, α slider), checked against the tabulated `pet_mean` as a reproduction check with the period/method differences stated.
 - Long-term AET from E = P − Q; Budyko space with 670 basins, both limits, a Fu curve with an ω slider and an in-lesson least-squares fit; points outside the limits are read as assumptions that do not hold, not as data problems.
+- Page size is about 221 KB, over the 200 KB target and under the 250 KB cap; it was not trimmed because it carries the inlined 670-basin table, the forcing blob and two figures.
 - Two executable cells (`pet-two-ways`, `budyko-camels`) with pre-rendered outputs; seven-item checkpoint with computed answers; five DOIs gate-verified, two handbooks without DOI marked pending the owner's decision.
 
 ### runoff-generation new → 0.1.0

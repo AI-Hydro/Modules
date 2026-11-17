@@ -224,7 +224,7 @@ def test_reproduction_check_p_mean_within_1e_3_and_high_prec_freq_difference_is_
     note = run_page_note("reproNote")
     assert f"within {dmax:.6f} mm/day" in note and f"is {hmax:.1f} days per year" in note
     assert f"range from {min(allwy)} to {max(allwy)} days" in note
-    assert "period, not the data, differs" in note
+    assert "the period, and so the mean that sets the threshold, differs" in note
 
 
 def run_page_note(element_id: str) -> str:

@@ -1563,7 +1563,8 @@ function baseflowIndex(Q, base) {
     svg.setAttribute('aria-label', 'Scatter of event runoff coefficient against rain over the previous 7 days for ' + b.name + ': ' + s.n + ' events, median coefficient ' + f3(s.medianRC) +
       ', rank correlation ' + f2(s.rho) + '. The readout and table give the same numbers as text.');
     $('evReadout').textContent =
-      b.name + ' · ' + s.n + ' events (' + s.nEst + ' with an estimated-flow day in the window) · median RC ' + f3(s.medianRC) + ' · ' + s.nAbove1 + ' above 1\n' +
+      b.name + ' · ' + s.n + ' events (' + s.nEst + ' with an estimated-flow day in the window) · median RC ' + f3(s.medianRC) + ' · ' + s.nAbove1 + ' above 1' +
+      (s.nAbove1 > 0 ? ' (more quickflow than rain in the window; possible reasons, none tested here: rain that fell unevenly over the basin or beyond the gauge-based average, water already moving from earlier rain, a window that ends before the response does)' : '') + '\n' +
       'Q/P over the five years: ' + f3(s.sumQ / s.sumP) + ' (CAMELS runoff_ratio ' + f3(b.runoff_ratio) + ', 1989–2009: another period, context only)';
     $('evReadout').style.whiteSpace = 'pre-line';
     var rows = s.events.slice().sort(function (p, q) { return q.P - p.P || p.d - q.d; }).slice(0, 5), html = '';
@@ -1821,7 +1822,7 @@ function baseflowIndex(Q, base) {
         options: ['Infiltration excess', 'Saturation excess', 'No runoff: the rain is slower than Ks, so everything infiltrates'],
         correct: function () { var m = gaRun(Q1.i, Q1.T, Q1.D).mech; return m === 'IE' ? 0 : (m === 'SE' ? 1 : 2); },
         feedback: ['Compare the rain rate with Ks first: can a rate below Ks exceed the infiltration capacity?', null,
-          'Ks limits how fast water can enter, not how much room is left. Set the deficit slider to 10 mm and read the mass balance.'],
+          'Set the deficit slider in §3 to different values and read the mass-balance line: which of its terms are nonzero?'],
         explain: function () { var r = gaRun(Q1.i, Q1.T, Q1.D); return 'The rain (' + r.P.toFixed(0) + ' mm in all) is slower than Ks, so R_IE = ' + r.RIE.toFixed(2) + ' mm, but the store holds only ' + Q1.D + ' mm; the remaining ' + r.RSE.toFixed(1) + ' mm is saturation-excess runoff.'; } },
       { id: 'q2', type: 'numeric', unit: 'min',
         prompt: function () { return 'For the default storm of §2 (i = ' + DEF.i + ' mm/h on the column with Ks = ' + KS + ' mm/h and ψΔθ = ' + M + ' mm), how long after the rain begins does the surface start to pond? Give minutes.'; },
@@ -1837,7 +1838,7 @@ function baseflowIndex(Q, base) {
         prompt: function () { return 'On the §5 hillslope with the default start, a ' + Q4P + ' mm storm saturates ' + (100 * satFracAt(Q4P)).toFixed(0) + '% of the columns. Which change enlarges the saturated area?'; },
         options: ['A storm 10 mm shallower on the same slope', 'A storm 10 mm deeper on the same slope', 'Neither: the saturated area is fixed by the slope, not by the storm'],
         correct: function () { var a = satFracAt(Q4P - 10), b = satFracAt(Q4P + 10), base = satFracAt(Q4P); return b > base ? 1 : (a > base ? 0 : 2); },
-        feedback: ['A shallower storm fills fewer stores. Compare the saturated counts in the readout at two depths.', null,
+        feedback: ['Move the storm-depth slider in §5 and compare the saturated counts in the readout at the depths in the options.', null,
           'Move the storm-depth slider and watch the S marks: the count is not fixed.'],
         explain: function () { return 'At ' + (Q4P - 10) + ', ' + Q4P + ' and ' + (Q4P + 10) + ' mm the saturated fractions are ' + [satFracAt(Q4P - 10), satFracAt(Q4P), satFracAt(Q4P + 10)].map(f2).join(', ') + ': more rain fills the stores of more columns, starting at the stream.'; } },
       { id: 'q5', type: 'numeric',
@@ -1858,7 +1859,7 @@ function baseflowIndex(Q, base) {
                   'Infiltration excess only happens on days with snow'],
         correct: 1,
         feedback: ['Daily records are widely used; the issue is what they can resolve, not whether they are usable.', null,
-          'Snow is not required: think about what a daily total does to a rain rate.'],
+          'Return to §1 and compare the quantity infiltration capacity is measured against with the quantity a daily record provides.'],
         explain: 'The 24-hour mean rate of even the largest day in §6 hides how much of it fell in a burst; the mechanism is set by that short-time rate against capacity.' }
     ]
   });

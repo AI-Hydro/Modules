@@ -35,3 +35,5 @@ The owner asked for these lessons to be added to the course (2026-11-17), so the
 - **References without DOI** (FAO-56, Budyko 1974, NEH-4) sit in blocks marked "Reference without DOI — pending owner decision"; Fu (1981) is not cited, the Fu form is cited through Zhang et al. (2004).
 - **DOI scan.** `test_every_doi_in_the_modules_passed_the_gate` normalises HTML entities and percent-encoding and matches SICI-style DOIs (`<`, `>`, `(`, `)`, `;`) in full. The two lessons that had worked around the old pattern now show their DOIs as written.
 - **Numbered cross-references** in the older lessons ("Module 5", "M6") follow the new order; lessons otherwise point to topics by name where they can.
+- **Page size.** The evapotranspiration-budyko page is about 221 KB (220,758 bytes before the fixes below), over the 200 KB target and under the 250 KB hard cap. It was not trimmed: the size comes from the inlined 670-basin table, the four-basin Daymet forcing blob and the two pre-rendered figures, all of which the lesson computes from.
+

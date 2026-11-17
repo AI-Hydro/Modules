@@ -1,7 +1,7 @@
 {
   "areal-precip": {
     "mode": "headless",
-    "source_sha256": "105d7ed8e541961bc729fc376a192d64db9d93bd4b5f606120f28ab763ae73c5",
+    "source_sha256": "c3d5ae15e8e8fbc2286a79f638998d0869e8dbb6a5e306a86550d8ad418016fa",
     "figures": 1,
     "python": "3.13.2",
     "numpy": "2.4.6",

@@ -560,7 +560,7 @@ calibrated for each catchment there (Addor et al. 2017), and radiation built fro
     <span class="callout-label">Reading points that fall outside the limits</span>
     A point above the limits, or below E / P = 0, is not a violation of physics: E / P here is a <em>derived</em> number, 1 − Q / P, and it carries the assumptions of §4
     (storage change near zero over the average, no water crossing the divide) plus the idea that an annual-mean aridity index captures the climate (snow storage and out-of-phase seasons break that).
-    A point outside the limits therefore says those assumptions do not hold for that basin and period. This lesson counts such basins; it does not decide which assumption fails.
+    A point outside the limits therefore says those assumptions do not hold for that basin and period. This lesson counts such basins; it does not decide which assumption fails. Possible reasons, none tested here: water that crosses the divide underground, records that cover different periods, a short record, or a gauged area that differs from the area the forcing describes. The Siletz River point (E/P near 0.01 in the cell output of §5) is the kind of point this note is about.
   </div>
 
   <div class="callout agent">
@@ -1770,7 +1770,7 @@ plt.tight_layout()`;
                   'The water balance no longer applies to that basin, so its precipitation and streamflow cannot be compared',
                   'Evapotranspiration has become negative for that basin, so it should be removed from the plot'],
         correct: 0,
-        feedback: [null, 'The water balance always holds; what can fail is the shortcut E ≈ P − Q that turns it into a single number.',
+        feedback: [null, 'Reread §4: which step turns the water balance into a single long-term number, and what does that step assume?',
                    'E / P here is a derived quantity, 1 − Q / P, not a measured flux. Removing the point would hide exactly the thing to be understood.'],
         explain: 'E / P in this plot is computed as 1 − Q / P, so it inherits the steady-state and closed-basin assumptions of §4. A point outside the limits shows that those assumptions do not describe that basin over the averaging period. The lesson does not say which one fails.' }
     ]
