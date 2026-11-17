@@ -25,6 +25,28 @@ The gate confirms that a work exists and the DOI/title/year/authors are consiste
 | Cunnane (1978) | 10.1016/0022-1694(78)90017-3 | PASS | 3 (crossref, openalex, semantic_scholar) | Unbiased plotting positions — A review / Journal of Hydrology / 1978 | real-streamflow-data |
 | Trenberth et al. (2007) | 10.1175/JHM600.1 | PASS | 3 (crossref, openalex, semantic_scholar) | Estimates of the Global Water Budget and Its Annual Cycle Using Observational and Model Data / Journal of Hydrometeorology / 2007 | water-cycle-in-motion |
 
+## Wave 3 lessons (in progress)
+
+Each packet adds one row per DOI that passes `verify_citation.py --doi <DOI>`; a DOI that fails is removed from the page together with its claim. The placeholder row is deleted when the first real row is added. Rows live only in the packet's own table.
+
+### precipitation-point-to-basin
+
+| Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
+|---|---|---|---|---|---|
+| _pending (P1)_ | _none yet_ | _not run_ | 0 | _placeholder_ | precipitation-point-to-basin |
+
+### evapotranspiration-budyko
+
+| Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
+|---|---|---|---|---|---|
+| _pending (P2)_ | _none yet_ | _not run_ | 0 | _placeholder_ | evapotranspiration-budyko |
+
+### runoff-generation
+
+| Reference | DOI | Gate | Indexes matched | Index title / venue / year | Used in |
+|---|---|---|---|---|---|
+| _pending (P3)_ | _none yet_ | _not run_ | 0 | _placeholder_ | runoff-generation |
+
 ## Failed the gate (removed, together with the claims that depended on them)
 
 | Reference | Gate result | Action |

@@ -2,6 +2,17 @@
 
 All notable changes to the learning modules. Versions are per module (`manifest.json` and the manifest embedded in `module.html` carry the same number).
 
+## Wave 3 — new lessons (in progress)
+
+### precipitation-point-to-basin new → 0.1.0
+- pending
+
+### evapotranspiration-budyko new → 0.1.0
+- pending
+
+### runoff-generation new → 0.1.0
+- pending
+
 ## 2026-11-17 — Wave 2: function, accessibility, repository
 
 Source: `docs/vision-2040/findings/modules-audit-2026-11-17.md` (Wave 2). Content questions from Wave 1 are unchanged; nothing about the certificate's institution wording, signature or completion logic, NEH-4 or the course name was touched.

@@ -17,7 +17,12 @@ Writes, under modules/<id>/data/:
 Nothing is downloaded. Usage:
 
   python scripts/extract_camels.py \
-      --camels-root /path/to/camels_us  [--repo .]
+      --camels-root /path/to/camels_us  [--repo .] [--only MODULE ...]
+
+--only MODULE (repeatable) limits the run to the named modules (any module id the script knows:
+the legacy ones above or a key of LESSON_EXTRACTORS); without it everything is extracted.
+Per-lesson extractors (Wave 3 and later) live in the LESSON_EXTRACTORS registry near the end of
+this file, each in its own BEGIN/END block so parallel authors never touch the same lines.
 
 Units are kept exactly as distributed (flow in cubic feet per second, precipitation
 in mm/day); conversions happen in the module code and are written there.
@@ -62,6 +67,8 @@ FIVE_YEAR_MODULES = {
 }
 WY_MODULES = {"reading-a-hydrograph": ["14305500", "01031500", "02472000"]}
 META_ONLY_MODULES = {"dem-to-twi": ["01031500"]}
+
+DEFAULT_ATTRIBUTE_FILES = ("camels_name.txt", "camels_topo.txt", "camels_hydro.txt", "camels_clim.txt")
 
 CITATIONS = [
     "Newman, A. J., Clark, M. P., Sampson, K., Wood, A., Hay, L. E., Bock, A., "
@@ -109,6 +116,26 @@ def parse_forcing(raw: bytes):
     return header, out
 
 
+def parse_forcing_full(raw: bytes) -> dict:
+    """Every column of a Daymet basin-mean forcing file, plus the three header values.
+
+    Returns {"lat": deg, "elev_m": m, "area_m2": m2, "dates": [date], "cols": {name: [float]}} with
+    the column names as distributed after stripping units: dayl (s), prcp (mm/day), srad (W/m2),
+    swe (mm), tmax (C), tmin (C), vp (Pa). Values are floats exactly as parsed (no rounding).
+    """
+    lines = raw.decode().splitlines()
+    lat, elev, area = (float(lines[i].split()[0]) for i in range(3))
+    names = ["dayl", "prcp", "srad", "swe", "tmax", "tmin", "vp"]
+    dates: list[dt.date] = []
+    cols: dict[str, list[float]] = {n: [] for n in names}
+    for line in lines[4:]:
+        p = line.split()
+        dates.append(dt.date(int(p[0]), int(p[1]), int(p[2])))
+        for k, n in enumerate(names):
+            cols[n].append(float(p[4 + k]))
+    return {"lat": lat, "elev_m": elev, "area_m2": area, "dates": dates, "cols": cols}
+
+
 def clip(series, start: str, end: str):
     s, e = dt.date.fromisoformat(start), dt.date.fromisoformat(end)
     return [r for r in series if s <= r[0] <= e]
@@ -126,23 +153,104 @@ def num(x: str, nd: int = 6):
     return round(float(x), nd)
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--camels-root", required=True, type=Path)
-    ap.add_argument("--repo", type=Path, default=Path(__file__).resolve().parent.parent)
-    ap.add_argument("--extracted-on", default=dt.date.today().isoformat(),
-                    help="date recorded in PROVENANCE.json (default: today)")
-    a = ap.parse_args()
-    root, repo = a.camels_root, a.repo
+class Extraction:
+    """One extraction run: the CAMELS root, the repo, and read-only cached access to its files.
 
-    names = read_attr(root / "camels_name.txt")
-    topo = read_attr(root / "camels_topo.txt")
-    hydro = read_attr(root / "camels_hydro.txt")
-    clim = read_attr(root / "camels_clim.txt")
-    attr_sha = {
-        n: sha256_bytes((root / n).read_bytes())
-        for n in ("camels_name.txt", "camels_topo.txt", "camels_hydro.txt", "camels_clim.txt")
-    }
+    Lesson extractors receive one of these. Everything is lazy, so a run restricted with --only never
+    opens a file it does not need.
+
+      ctx.attr(name)            {gauge_id: row} for any attribute file, e.g. "camels_soil.txt",
+                                "camels_vege.txt" (gauge_id zero-padded to 8; values are raw strings)
+      ctx.attr_sha(name)        sha256 of that file's bytes
+      ctx.huc(gauge)            two-digit HUC string of a gauge (from camels_name.txt)
+      ctx.flow(gauge)           (member, sha256, [(date, q_cfs, qc_flag)])
+      ctx.forcing(gauge)        (member, sha256, {date: prcp}, header_lines)  (legacy form)
+      ctx.forcing_full(gauge)   (member, sha256, parse_forcing_full(...))
+      ctx.prov_base(module_id, attribute_files=None)   provenance skeleton; attribute_files lists the
+                                attribute files actually read (default: the four legacy ones)
+      ctx.module_dir(module_id) Path of modules/<id>/data (not created)
+    """
+
+    def __init__(self, root: Path, repo: Path, extracted_on: str):
+        self.root, self.repo, self.extracted_on = root, repo, extracted_on
+        self._attr: dict[str, dict] = {}
+        self._sha: dict[str, str] = {}
+        self._zip = None
+        self._flow: dict[str, tuple] = {}
+        self._forc: dict[str, tuple] = {}
+        self._forc_full: dict[str, tuple] = {}
+
+    def attr(self, name: str) -> dict:
+        if name not in self._attr:
+            self._attr[name] = read_attr(self.root / name)
+        return self._attr[name]
+
+    def attr_sha(self, name: str) -> str:
+        if name not in self._sha:
+            self._sha[name] = sha256_bytes((self.root / name).read_bytes())
+        return self._sha[name]
+
+    def huc(self, gauge: str) -> str:
+        return self.attr("camels_name.txt")[gauge]["huc_02"].strip().zfill(2)
+
+    @property
+    def zf(self) -> zipfile.ZipFile:
+        if self._zip is None:
+            self._zip = zipfile.ZipFile(self.root / ZIP_NAME)  # opened read-only
+        return self._zip
+
+    def flow(self, g: str):
+        if g not in self._flow:
+            member = FLOW_MEMBER.format(huc=self.huc(g), gauge=g)
+            raw = self.zf.read(member)
+            self._flow[g] = (member, sha256_bytes(raw), parse_flow(raw))
+        return self._flow[g]
+
+    def forcing(self, g: str):
+        if g not in self._forc:
+            member = FORC_MEMBER.format(huc=self.huc(g), gauge=g)
+            raw = self.zf.read(member)
+            header, series = parse_forcing(raw)
+            self._forc[g] = (member, sha256_bytes(raw), series, header)
+        return self._forc[g]
+
+    def forcing_full(self, g: str):
+        if g not in self._forc_full:
+            member = FORC_MEMBER.format(huc=self.huc(g), gauge=g)
+            raw = self.zf.read(member)
+            self._forc_full[g] = (member, sha256_bytes(raw), parse_forcing_full(raw))
+        return self._forc_full[g]
+
+    def module_dir(self, module_id: str) -> Path:
+        return self.repo / "modules" / module_id / "data"
+
+    def prov_base(self, module_id: str, attribute_files=None) -> dict:
+        files = DEFAULT_ATTRIBUTE_FILES if attribute_files is None else tuple(attribute_files)
+        return {
+            "module": module_id,
+            "dataset": "CAMELS-US v1.2 (basin_timeseries_v1p2_metForcing_obsFlow + attribute files)",
+            "camels_root_relative_sources": {
+                "attribute_files": {n: {"sha256": self.attr_sha(n)} for n in files},
+                "archive": ZIP_NAME,
+            },
+            "extraction_script": "scripts/extract_camels.py",
+            "extracted_on": self.extracted_on,
+            "citations": CITATIONS,
+            "licence_note": (
+                "CAMELS-US streamflow originates from USGS NWIS (public domain); "
+                "forcing is Daymet basin means as distributed by CAMELS."
+            ),
+            "access": "read-only local copy; no network access during extraction",
+        }
+
+
+# ---- legacy modules (Waves 1-2): output must stay byte-identical -------------------------------
+def extract_legacy(ctx: Extraction, want) -> None:
+    repo = ctx.repo
+    names = ctx.attr("camels_name.txt")
+    topo = ctx.attr("camels_topo.txt")
+    hydro = ctx.attr("camels_hydro.txt")
+    clim = ctx.attr("camels_clim.txt")
 
     meta = {}
     for g, disp in GAUGES.items():
@@ -169,46 +277,12 @@ def main() -> int:
             "frac_snow": num(c["frac_snow"]),
         }
 
-    zpath = root / ZIP_NAME
-    zf = zipfile.ZipFile(zpath)  # opened read-only
-    flow_cache: dict[str, tuple[str, str, list]] = {}
-    forc_cache: dict[str, tuple[str, str, dict, list]] = {}
-
-    def flow(g: str):
-        if g not in flow_cache:
-            member = FLOW_MEMBER.format(huc=meta[g]["huc_02"], gauge=g)
-            raw = zf.read(member)
-            flow_cache[g] = (member, sha256_bytes(raw), parse_flow(raw))
-        return flow_cache[g]
-
-    def forcing(g: str):
-        if g not in forc_cache:
-            member = FORC_MEMBER.format(huc=meta[g]["huc_02"], gauge=g)
-            raw = zf.read(member)
-            header, series = parse_forcing(raw)
-            forc_cache[g] = (member, sha256_bytes(raw), series, header)
-        return forc_cache[g]
-
-    def prov_base(module_id: str) -> dict:
-        return {
-            "module": module_id,
-            "dataset": "CAMELS-US v1.2 (basin_timeseries_v1p2_metForcing_obsFlow + attribute files)",
-            "camels_root_relative_sources": {
-                "attribute_files": {n: {"sha256": s} for n, s in attr_sha.items()},
-                "archive": ZIP_NAME,
-            },
-            "extraction_script": "scripts/extract_camels.py",
-            "extracted_on": a.extracted_on,
-            "citations": CITATIONS,
-            "licence_note": (
-                "CAMELS-US streamflow originates from USGS NWIS (public domain); "
-                "forcing is Daymet basin means as distributed by CAMELS."
-            ),
-            "access": "read-only local copy; no network access during extraction",
-        }
+    flow, forcing, prov_base = ctx.flow, ctx.forcing, ctx.prov_base
 
     # ---- five-year flow modules -------------------------------------------------
     for mod, gauges in FIVE_YEAR_MODULES.items():
+        if not want(mod):
+            continue
         d = repo / "modules" / mod / "data"
         prov = prov_base(mod)
         prov["series"] = {}
@@ -240,6 +314,8 @@ def main() -> int:
 
     # ---- one-water-year flow + precipitation module ------------------------------
     for mod, gauges in WY_MODULES.items():
+        if not want(mod):
+            continue
         d = repo / "modules" / mod / "data"
         prov = prov_base(mod)
         prov["series"] = {}
@@ -272,6 +348,8 @@ def main() -> int:
 
     # ---- metadata-only modules ---------------------------------------------------
     for mod, gauges in META_ONLY_MODULES.items():
+        if not want(mod):
+            continue
         d = repo / "modules" / mod / "data"
         d.mkdir(parents=True, exist_ok=True)
         prov = prov_base(mod)
@@ -279,6 +357,87 @@ def main() -> int:
         (d / "camels_gauges.json").write_text(
             json.dumps({g: meta[g] for g in gauges}, indent=1) + "\n")
         (d / "PROVENANCE.json").write_text(json.dumps(prov, indent=1) + "\n")
+
+
+# ---- per-lesson extractors (Wave 3+) ----------------------------------------------------------
+# Each lesson owns exactly one BEGIN/END block below and the one registry line for it; blocks are
+# separated by unchanged spacer lines so parallel edits merge cleanly. An extractor is
+# `def extract_<id_underscored>(ctx: Extraction) -> None`; it writes only under modules/<id>/data/
+# (use ctx.module_dir(id), ctx.attr(...), ctx.flow(g), ctx.forcing_full(g), ctx.prov_base(id,
+# attribute_files=[...]) ) and must be deterministic (no clock, no random; ctx.extracted_on only).
+#
+#
+#
+#
+#
+#
+# ==== BEGIN extract_precipitation_point_to_basin (packet P1 owns) ====
+def extract_precipitation_point_to_basin(ctx: Extraction) -> None:
+    """Stub: packet P1 fills this in."""
+    return None
+# ==== END extract_precipitation_point_to_basin ====
+#
+#
+#
+#
+#
+#
+# ==== BEGIN extract_evapotranspiration_budyko (packet P2 owns) ====
+def extract_evapotranspiration_budyko(ctx: Extraction) -> None:
+    """Stub: packet P2 fills this in."""
+    return None
+# ==== END extract_evapotranspiration_budyko ====
+#
+#
+#
+#
+#
+#
+# ==== BEGIN extract_runoff_generation (packet P3 owns) ====
+def extract_runoff_generation(ctx: Extraction) -> None:
+    """Stub: packet P3 fills this in."""
+    return None
+# ==== END extract_runoff_generation ====
+#
+#
+#
+#
+#
+#
+# Registry: module id -> extractor, in run order. One line per lesson.
+LESSON_EXTRACTORS = {
+    "precipitation-point-to-basin": extract_precipitation_point_to_basin,
+    "evapotranspiration-budyko": extract_evapotranspiration_budyko,
+    "runoff-generation": extract_runoff_generation,
+}
+
+LEGACY_MODULES = [*FIVE_YEAR_MODULES, *WY_MODULES, *META_ONLY_MODULES]
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--camels-root", required=True, type=Path)
+    ap.add_argument("--repo", type=Path, default=Path(__file__).resolve().parent.parent)
+    ap.add_argument("--extracted-on", default=dt.date.today().isoformat(),
+                    help="date recorded in PROVENANCE.json (default: today)")
+    ap.add_argument("--only", action="append", metavar="MODULE",
+                    help="extract only this module (repeatable); default: all")
+    a = ap.parse_args()
+    known = [*LEGACY_MODULES, *LESSON_EXTRACTORS]
+    for m in a.only or []:
+        if m not in known:
+            ap.error(f"unknown module {m!r}; known: {', '.join(known)}")
+    sel = set(a.only) if a.only else None
+
+    def want(mod: str) -> bool:
+        return sel is None or mod in sel
+
+    ctx = Extraction(a.camels_root, a.repo, a.extracted_on)
+    if any(want(m) for m in LEGACY_MODULES):
+        extract_legacy(ctx, want)
+    for mod, fn in LESSON_EXTRACTORS.items():
+        if want(mod):
+            fn(ctx)
 
     print("extracted OK", file=sys.stderr)
     return 0

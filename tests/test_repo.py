@@ -19,8 +19,12 @@ def embedded(mod):
     return json.loads(m.group(1))
 
 
-def test_eight_modules():
-    assert len(IDS) == 8
+def test_every_course_module_exists_and_every_directory_has_a_manifest():
+    course = json.loads((ROOT / "courses/intro-to-hydrology/course.json").read_text())
+    for m in course["modules"]:
+        assert (MODULES / m["id"] / "module.html").exists(), m["id"]
+    for mod in IDS:
+        assert (MODULES / mod / "manifest.json").exists(), mod
 
 
 @pytest.mark.parametrize("mod", IDS)
