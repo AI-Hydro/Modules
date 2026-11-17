@@ -14,7 +14,7 @@
 {
   "id": "dem-to-twi",
   "title": "The Shape of the Land: DEM to TWI",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "authors": [
     {
       "name": "Mohammad Galib",
@@ -609,7 +609,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   <p id="dem3dDesc" class="hydro-sr-only">Elevations fall from the north-west corner (92 metres) to the south edge, where the lowest edge cell (66 metres, row 4 column 2) is the outlet. The grid of numbers in section 3 lists every elevation.</p>
   <p id="dem3dHelp" style="font-size:13px; color:var(--muted); margin-top:8px;">
     Reduced-motion mode: 3D scene renders as static once pointer leaves.
-    The same pipeline runs in <code>scene3d</code> for the TWI heatmap in the Capstone (Module 10).
+    This view shows elevation only; it is not a TWI map.
   </p>
 </div>
 
@@ -926,7 +926,7 @@ Wettest cell: TWI 16.30 with 400 cells draining through it</pre><div class="aihy
   </div>
   <div class="callout tip" style="margin-top:12px;">
     <span class="callout-label">Next step</span>
-    In the <strong>Module 10 Capstone</strong> you will run this same pipeline on a synthetic hillslope alongside the real streamflow signatures of four CAMELS gauges.
+    The <strong>Module 10 Capstone</strong> runs the same steps (depression filling, D8, accumulation, slope, TWI) in a Python cell on a different synthetic hillslope (24×24 cells), next to the real streamflow signatures of four CAMELS gauges. It does not use the 3-D view.
   </div>
 </div>
 
@@ -982,7 +982,7 @@ Wettest cell: TWI 16.30 with 400 cells draining through it</pre><div class="aihy
 <!--  PROVENANCE                                                -->
 <!-- ══════════════════════════════════════════════════════════ -->
 <div class="provenance">
-  <div class="prov-item"><dt>Module</dt><dd>dem-to-twi · v0.4.0 · CC-BY-4.0</dd></div>
+  <div class="prov-item"><dt>Module</dt><dd>dem-to-twi · v0.4.1 · CC-BY-4.0</dd></div>
   <div class="prov-item"><dt>Authors</dt><dd>Mohammad Galib, Purdue University</dd></div>
   <div class="prov-item"><dt>SYNTHETIC data</dt><dd>The 5×5 DEM (10 m cells assumed) and the 20×20 hillslope (30 m cells assumed) are teaching surfaces; every TWI, direction and accumulation on this page is computed from them by the shared D8 code.</dd></div>
   <div class="prov-item"><dt>Real catchment</dt><dd>USGS 01031500 — gauge name, coordinates (45.17501, −69.3147) and area from CAMELS-US v1.2 (<code>data/camels_gauges.json</code>, sha256 in <code>data/PROVENANCE.json</code>). No TWI is drawn on the real map.</dd></div>
