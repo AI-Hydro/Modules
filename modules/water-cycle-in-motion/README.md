@@ -2,7 +2,7 @@
 
 **Level:** Intro · **Time:** ~30 min · **License:** CC-BY-4.0 · **Course:** [Introduction to Hydrology](../intro-to-hydrology/)
 
-Trace a water molecule through all six fluxes — evaporation, transpiration, condensation, precipitation, infiltration, runoff — via a Manim animation and a draggable SVG timeline. Run the Python cell to watch the cycle come to life, then use the mass-balance simulator to see why precipitation must equal ET + R + ΔS.
+Trace a water molecule through all six fluxes — evaporation, transpiration, condensation, precipitation, infiltration, runoff — via a Manim animation and a slider-driven cycle diagram. Compute the dew-point and dry-adiabatic lapse rates from physical constants, then use a mass-conserving bucket to see why P = ET + R + ΔS.
 
 ## What you'll learn
 
@@ -10,7 +10,7 @@ See the module itself — open it in AI-Hydro's HTML Preview panel.
 
 ## Requirements
 
-Python packages: `manim` _(optional — falls back to synthetic data if absent)_
+Python packages: `manim` (optional, for the animation); the lapse-rate cell uses only the standard library.
 
 ## Citation
 

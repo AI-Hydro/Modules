@@ -12,7 +12,7 @@
 {
   "id": "water-cycle-in-motion",
   "title": "The Water Cycle in Motion",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
   "license": "CC-BY-4.0",
   "topic": "hydrology-fundamentals",
@@ -465,8 +465,8 @@ class WaterCycle(Scene):
 <div id="sec-fluxes" class="wide card" data-aihydro-editable="prose">
   <h2>2 · The six fluxes — one by one</h2>
   <p>
-    The hydrologic cycle is simply <strong>six named arrows</strong> connecting four
-    stores: the ocean, the atmosphere, the soil, and the snowpack.
+    The hydrologic cycle is simply <strong>six named arrows</strong> connecting the stores:
+    the ocean, the atmosphere and the land (soil and groundwater). Snow and ice are a further, seasonal store that this module leaves out.
     Scroll down to reveal each flux.
   </p>
 
@@ -477,15 +477,15 @@ class WaterCycle(Scene):
       <div class="flux-name">Evaporation</div>
       <div class="flux-symbol" style="color:#00A3FF;">E</div>
       <div class="flux-def">Liquid water at the ocean or lake surface gains enough energy from sunlight to escape as vapour — no plant needed.</div>
-      <div class="flux-mag">Global mean: ~1 200 mm yr⁻¹ over ocean</div>
+      <div class="flux-mag">Magnitudes: see Trenberth et al. (2007) — none are quoted here</div>
     </div>
 
     <div class="flux-card" style="border-left-color:#34d399;" data-aihydro-editable="prose">
       <span class="flux-icon">🌿⬆️</span>
       <div class="flux-name">Transpiration</div>
       <div class="flux-symbol" style="color:#34d399;">T</div>
-      <div class="flux-def">Plants pump water from the soil through their roots and release it as vapour through tiny pores called stomata. Over forested land, <em>T</em> often exceeds direct <em>E</em>.</div>
-      <div class="flux-mag">≈ 40 % of terrestrial ET</div>
+      <div class="flux-def">Plants pump water from the soil through their roots and release it as vapour through tiny pores called stomata. Together with evaporation from soil and wet surfaces it forms evapotranspiration, <em>ET</em>.</div>
+      <div class="flux-mag">Share of ET: varies by ecosystem and is debated — not quoted here</div>
     </div>
 
     <div class="flux-card" style="border-left-color:#ddddff;" data-aihydro-editable="prose">
@@ -493,7 +493,7 @@ class WaterCycle(Scene):
       <div class="flux-name">Condensation</div>
       <div class="flux-symbol" style="color:#ddddff;">—</div>
       <div class="flux-def">Rising moist air cools. When it reaches the <strong>dew point</strong>, vapour condenses onto tiny aerosols forming cloud droplets. No flux symbol — it's the process inside the cloud store.</div>
-      <div class="flux-mag">≈ Dew point ↓ 1 °C per 100 m ascent</div>
+      <div class="flux-mag">Rising air cools 9.76 K/km; its dew point falls only 1.75 K/km (computed in the cell below)</div>
     </div>
 
     <div class="flux-card" style="border-left-color:#60a5fa;" data-aihydro-editable="prose">
@@ -501,7 +501,7 @@ class WaterCycle(Scene):
       <div class="flux-name">Precipitation</div>
       <div class="flux-symbol" style="color:#60a5fa;">P</div>
       <div class="flux-def">Cloud droplets collide, coalesce and fall when large enough. Rain, snow, sleet, hail — all precipitation. It is the <em>input</em> flux in the land-surface water balance.</div>
-      <div class="flux-mag">Global mean: ≈ 1 000 mm yr⁻¹ land</div>
+      <div class="flux-mag">Land totals differ by dataset — see Trenberth et al. (2007)</div>
     </div>
 
     <div class="flux-card" style="border-left-color:#a78bfa;" data-aihydro-editable="prose">
@@ -509,7 +509,7 @@ class WaterCycle(Scene):
       <div class="flux-name">Infiltration</div>
       <div class="flux-symbol" style="color:#a78bfa;">f</div>
       <div class="flux-def">Rain that reaches the soil surface and soaks downward under gravity and capillary suction. Infiltrated water may become groundwater or be taken up by roots — it does <em>not</em> reach the stream immediately.</div>
-      <div class="flux-mag">Rate: 1–300 mm hr⁻¹ depending on soil</div>
+      <div class="flux-mag">Rate: orders of magnitude between soils; depends on texture, cover and wetness</div>
     </div>
 
     <div class="flux-card" style="border-left-color:#00FFFF;" data-aihydro-editable="prose">
@@ -517,18 +517,54 @@ class WaterCycle(Scene):
       <div class="flux-name">Runoff</div>
       <div class="flux-symbol" style="color:#00FFFF;">R</div>
       <div class="flux-def">Rain (or snowmelt) that does not infiltrate flows overland as <strong>surface runoff</strong>. Lateral groundwater that emerges at the stream bank becomes <strong>baseflow</strong>. Together they are the discharge, <em>Q</em>.</div>
-      <div class="flux-mag">World rivers: ≈ 40 000 km³ yr⁻¹</div>
+      <div class="flux-mag">Global river discharge: see Trenberth et al. (2007)</div>
     </div>
   </div>
 
   <div class="callout" style="margin-top:22px;">
     <span class="callout-label">The balance equation</span>
-    Over a long enough period for a <em>closed</em> catchment:
+    For any period and a <em>closed</em> catchment, mass is conserved:
     <strong style="color:var(--bright); font-size:18px; display:block; margin:10px 0; font-family:'JetBrains Mono',monospace;">
       P = ET + R + ΔS
     </strong>
     Precipitation equals evapotranspiration plus runoff plus the change in
-    storage. This single equation underlies everything in the next six modules.
+    storage. Only over many years does <em>ΔS</em> average to about zero, leaving P ≈ ET + R; over a single storm or season it does not.
+    This single equation underlies everything in the next six modules.
+  </div>
+
+  <h3 style="margin-top:20px;">Why clouds form where they do — computed from physical constants</h3>
+  <p style="font-size:14px;">
+    A rising, unsaturated air parcel cools at the <strong>dry adiabatic</strong> rate g/c<sub>p</sub>. Its dew point falls much more slowly: the vapour pressure follows the
+    pressure (mixing ratio is conserved) while the saturation curve follows the Clausius–Clapeyron relation. The cell computes both and the height where they meet (the condensation level)
+    for an <strong>assumed</strong> surface state of 15 °C air with a 10 °C dew point.
+  </p>
+  <div class="aihydro-cell" data-aihydro-cell-id="dewpoint-lapse" data-language="python">
+    <div class="aihydro-cell-header">
+      <span class="aihydro-cell-lang">python</span>
+      <span class="aihydro-cell-desc">Dry-adiabatic and dew-point lapse rates · condensation level</span>
+      <button class="aihydro-run" type="button">▶ Run</button>
+    </div>
+    <pre class="aihydro-source">import math
+
+# Physical constants (standard values) and an ASSUMED example surface state
+g  = 9.80665      # m/s²
+cp = 1005.0       # J/(kg·K), dry air
+Rd = 287.05       # J/(kg·K), dry air
+Rv = 461.5        # J/(kg·K), water vapour
+Lv = 2.5e6        # J/kg, latent heat of vaporisation (approximate)
+T  = 288.15       # K  (15 °C)  assumed air temperature
+Td = 283.15       # K  (10 °C)  assumed dew point
+
+dry_adiabatic = g / cp * 1000.0                                  # K per km
+# d ln e/dz = d ln p/dz = -g/(Rd T);  d ln es/dTd = Lv/(Rv Td²)
+dewpoint_lapse = (g / (Rd * T)) * (Rv * Td**2 / Lv) * 1000.0      # K per km
+lcl_km = (T - Td) / (dry_adiabatic - dewpoint_lapse)
+
+print(f"Dry adiabatic lapse rate : {dry_adiabatic:.2f} K/km  ({dry_adiabatic/10:.2f} K per 100 m)")
+print(f"Dew-point lapse rate     : {dewpoint_lapse:.2f} K/km  ({dewpoint_lapse/10:.2f} K per 100 m)")
+print(f"Condensation level (T - Td = {T - Td:.0f} K): about {lcl_km*1000:.0f} m above the surface")
+print("Assumed surface state; the lapse rates are computed, not measured.")</pre>
+    <div class="aihydro-output" aria-live="polite"></div>
   </div>
 </div>
 
@@ -538,10 +574,10 @@ class WaterCycle(Scene):
 <div id="sec-balance" class="wide card glow" data-aihydro-editable="prose">
   <h2>3 · The bathtub: mass balance in action</h2>
   <p>
-    Imagine the catchment as a <strong>leaky bucket</strong>. Rain fills it from
+    Imagine the catchment as a <strong>leaky bucket</strong> (a SYNTHETIC teaching model with an assumed 100 mm capacity). Rain fills it from
     above; evaporation and runoff drain it. Drag the <em>Precipitation</em> slider
     to fill faster or slower — watch storage rise, overflow as runoff, or empty
-    during a drought.
+    during a drought. The model conserves mass: the change in storage always equals P − ET − R.
   </p>
 
   <div class="grid2">
@@ -552,7 +588,7 @@ class WaterCycle(Scene):
         <input type="range" min="0" max="10" step="0.1" value="3.0" id="precipSlider">
       </div>
       <div class="param-block">
-        <label>Evapotranspiration (ET) <span style="color:var(--green);">2.0 mm day⁻¹</span></label>
+        <label>Evapotranspiration (ET) <span style="color:var(--green);">2.0 mm day⁻¹ (assumed)</span></label>
         <div style="height:8px;background:rgba(52,211,153,0.15);border-radius:4px;border:1px solid rgba(52,211,153,0.3);">
           <div style="width:20%;height:100%;background:var(--green);border-radius:4px;opacity:0.6;"></div>
         </div>
@@ -560,22 +596,26 @@ class WaterCycle(Scene):
       </div>
 
       <!-- Live balance display -->
-      <div style="background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:14px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:14px;margin-top:8px;">
+      <div style="background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:14px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:14px;margin-top:8px;" role="status" aria-live="polite">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
           <span style="color:var(--muted);">P</span>
           <span id="bP" style="color:#60a5fa;">3.0 mm/d</span>
         </div>
         <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
           <span style="color:var(--muted);">ET</span>
-          <span style="color:var(--green);">2.0 mm/d</span>
+          <span id="bET" style="color:var(--green);">2.0 mm/d</span>
         </div>
         <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-          <span style="color:var(--muted);">R (overflow)</span>
+          <span style="color:var(--muted);">R (runoff + spill)</span>
           <span id="bR" style="color:var(--cyan);">0.0 mm/d</span>
         </div>
         <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;">
-          <span style="color:var(--muted);">ΔS / day</span>
-          <span id="bDS" style="color:var(--bright);font-weight:700;">+1.0</span>
+          <span style="color:var(--muted);">ΔS = P − ET − R</span>
+          <span id="bDS" style="color:var(--bright);font-weight:700;">+1.0 mm/d</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <span style="color:var(--muted);">Storage S</span>
+          <span id="bS" style="color:var(--cyan);">45.0 mm</span>
         </div>
       </div>
     </div>
@@ -592,9 +632,9 @@ class WaterCycle(Scene):
 <div id="sec-scrub" class="wide card" data-aihydro-editable="prose">
   <h2>4 · Scrub the cycle — stop time on any flux</h2>
   <p>
-    The controls below drive a cycle diagram frame-by-frame. Each stage
+    The slider below (and, inside AI-Hydro, the timeline player) drives a cycle diagram frame-by-frame. Each stage
     illuminates one flux so you can linger exactly where you want. Works
-    with or without Manim.
+    with or without Manim and without the bridge.
   </p>
 
   <!-- Cycle SVG — the timeline target -->
@@ -709,6 +749,11 @@ class WaterCycle(Scene):
 
   <!-- Timeline host — aihydro.timeline mounts here -->
   <div id="timelineMount"></div>
+  <!-- Always-available scrubber: works without the AI-Hydro bridge -->
+  <div class="param-block" style="max-width:560px;margin:14px auto 0;">
+    <label for="stageRange">Stage <span id="stageRangeVal">0 / 6</span></label>
+    <input type="range" id="stageRange" min="0" max="6" step="1" value="0" aria-label="Water-cycle stage, 0 to 6">
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════ -->
@@ -730,11 +775,11 @@ class WaterCycle(Scene):
     </div>
 
     <div class="aihydro-quiz-question" data-answer="1">
-      <p class="q-text">2 · Over many years, the water balance for a closed catchment is: P equals…</p>
+      <p class="q-text">2 · The water balance of a closed catchment is: P equals…</p>
       <label class="aihydro-quiz-option"><input type="radio" name="q2" value="0"> Runoff only (R)</label>
       <label class="aihydro-quiz-option"><input type="radio" name="q2" value="1"> ET + R + ΔS</label>
       <label class="aihydro-quiz-option"><input type="radio" name="q2" value="2"> ET only</label>
-      <div class="aihydro-quiz-feedback" data-fb="0">Runoff only ignores ET and changes in soil/groundwater storage.</div>
+      <div class="aihydro-quiz-feedback" data-fb="0">Runoff only ignores ET and changes in soil/groundwater storage. (ΔS averages to about zero only over many years.)</div>
       <div class="aihydro-quiz-feedback" data-fb="2">ET only ignores runoff and storage — valid only if R = 0 and ΔS = 0, which never holds in practice.</div>
     </div>
 
@@ -758,9 +803,9 @@ class WaterCycle(Scene):
 <div id="sec-prov" class="wide card refs" data-aihydro-editable="prose">
   <h2>Sources &amp; Further Reading</h2>
   <ol>
-    <li><em>Dingman, S. L. (2015). Physical Hydrology, 3rd ed.</em> Waveland Press. — The mass-balance equation and flux definitions follow Chapter 2.</li>
-    <li><em>USGS Water Science School.</em> <a href="https://www.usgs.gov/special-topics/water-science-school/science/water-cycle" target="_blank" rel="noopener">The Water Cycle</a> — Plain-language flux descriptions and global magnitudes.</li>
-    <li><em>Trenberth, K. E., Smith, L., Qian, T., Dai, A., &amp; Fasullo, J. (2007).</em> Estimates of the Global Water Budget and Its Annual Cycle Using Observational and Model Data. <em>Journal of Hydrometeorology</em>, 8(4), 758–769. — Source for global mean evaporation and runoff magnitudes.</li>
+    <li><em>Dingman, S. L. (2015). Physical Hydrology, 3rd ed.</em> Waveland Press (book; no DOI) — the mass-balance equation and flux definitions.</li>
+    <li><em>USGS Water Science School.</em> <a href="https://www.usgs.gov/special-topics/water-science-school/science/water-cycle" target="_blank" rel="noopener">The Water Cycle</a> — plain-language flux descriptions.</li>
+    <li><em>Trenberth, K. E., Smith, L., Qian, T., Dai, A., &amp; Fasullo, J. (2007).</em> Estimates of the Global Water Budget and Its Annual Cycle Using Observational and Model Data. <em>Journal of Hydrometeorology</em>, 8(4), 758–769. doi:10.1175/JHM600.1 — where to find sourced global flux magnitudes; this module quotes none.</li>
   </ol>
 
   <dl class="provenance">
@@ -774,7 +819,7 @@ class WaterCycle(Scene):
     </div>
     <div class="prov-item">
       <dt>Module ID</dt>
-      <dd><code>water-cycle-in-motion</code> · v0.1.1</dd>
+      <dd><code>water-cycle-in-motion</code> · v0.2.0</dd>
     </div>
     <div class="prov-item">
       <dt>Course</dt>
@@ -782,7 +827,7 @@ class WaterCycle(Scene):
     </div>
     <div class="prov-item">
       <dt>Data sources</dt>
-      <dd>No external data — all illustrations are synthetic / schematic</dd>
+      <dd>No external data. Schematic illustrations and a SYNTHETIC mass-conserving bucket; the only numbers shown are computed in the page or from physical constants (dew-point cell).</dd>
     </div>
     <div class="prov-item">
       <dt>Animation</dt>
@@ -844,42 +889,54 @@ class WaterCycle(Scene):
     cards.forEach(function (c) { io.observe(c); });
   })();
 
-  /* ── Bathtub mass-balance canvas sim ─────────────────── */
+  /* ── Bathtub mass-balance canvas sim (SYNTHETIC bucket, mass-conserving, mm) ── */
+  /*@@CORE-BEGIN@@*/
+  /* One bucket step. Storage S is in mm of water; P, ET, R are in mm/day; dt in days.
+     Identity guaranteed by construction: S1 − S0 = (P − ET − R)·dt. Nothing is created
+     or destroyed: ET cannot exceed what is there, and anything above the capacity spills as runoff. */
+  var BUCKET = { thr: 80, k: 0.3, cap: 100 };   /* mm, 1/day, mm — teaching values, not measurements */
+  function stepBucket(S, P, ET, dt, p) {
+    p = p || BUCKET;
+    var inflow = P * dt;
+    var etOut  = Math.min(ET * dt, S + inflow);
+    var rOut   = Math.min(p.k * Math.max(0, S - p.thr) * dt, S + inflow - etOut);
+    var S1 = S + inflow - etOut - rOut, spill = 0;
+    if (S1 > p.cap) { spill = S1 - p.cap; S1 = p.cap; }
+    return { S: S1, ET: etOut / dt, R: (rOut + spill) / dt, dS: (S1 - S) / dt };
+  }
+  /*@@CORE-END@@*/
+
   (function initBathtub() {
     var canvas = document.getElementById('bathtubCanvas');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     var W = canvas.width, H = canvas.height;
-    var storage = 45;      /* % full (0-100) */
-    var THRESHOLD = 80;    /* overflow at 80% */
+    var storage = 45;      /* mm of water in the bucket (capacity 100 mm) */
     var ET = 2.0;
     var precip = 3.0;
     var lastTs = null;
-    var simDt = 0.016;     /* ~60fps in sim-seconds → 1 day = ~60 s wall time */
-    var SPEED = 4.0;       /* compression factor */
+    var SPEED = 4.0;       /* model days per wall-clock second */
+    var last = { R: 0, dS: 0, ET: ET };
 
     var slider = document.getElementById('precipSlider');
     var pValEl = document.getElementById('pVal');
     var bPEl   = document.getElementById('bP');
+    var bETEl  = document.getElementById('bET');
     var bREl   = document.getElementById('bR');
     var bDSEl  = document.getElementById('bDS');
+    var bSEl   = document.getElementById('bS');
 
-    function bindSlider() {
-      if (slider) {
-        slider.addEventListener('input', function () {
-          precip = parseFloat(slider.value);
-          pValEl.textContent = precip.toFixed(1);
-          bPEl.textContent   = precip.toFixed(1) + ' mm/d';
-          /* also push to aihydro.bindParam if available */
-          if (window.aihydro && window.aihydro.bindParam) {
-            window.aihydro.bindParam('precip', precip, null);
-          }
-        });
-      }
+    if (slider) {
+      slider.addEventListener('input', function () {
+        precip = parseFloat(slider.value);
+        pValEl.textContent = precip.toFixed(1);
+        bPEl.textContent   = precip.toFixed(1) + ' mm/d';
+        if (window.aihydro && window.aihydro.bindParam) {
+          window.aihydro.bindParam('precip', precip, null);
+        }
+      });
     }
-    bindSlider();
 
-    /* Listen for bindParam changes from the outside */
     whenReady(function () {
       if (window.aihydro && window.aihydro.bindParam) {
         window.aihydro.bindParam('precip', precip, function (v) {
@@ -891,35 +948,37 @@ class WaterCycle(Scene):
       }
     });
 
+    function readouts() {
+      bETEl.textContent = last.ET.toFixed(1) + ' mm/d';
+      bREl.textContent  = last.R.toFixed(1) + ' mm/d';
+      var dS = precip - last.ET - last.R;          /* exactly the balance P − ET − R */
+      bDSEl.textContent = (dS >= 0 ? '+' : '') + dS.toFixed(1) + ' mm/d';
+      bDSEl.style.color = dS > 0 ? 'var(--bright)' : dS < 0 ? '#f87171' : 'var(--cyan)';
+      bSEl.textContent  = storage.toFixed(1) + ' mm';
+    }
+
     function draw() {
       ctx.clearRect(0, 0, W, H);
-
-      /* Sky */
       var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.45);
       skyGrad.addColorStop(0, '#0a0f24');
       skyGrad.addColorStop(1, '#0f1e38');
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, W, H * 0.45);
-
-      /* Ground */
       ctx.fillStyle = '#1a2b1a';
       ctx.fillRect(0, H * 0.45, W, H * 0.55);
 
-      /* Bucket outline */
       var bx = 80, by = 30, bw = W - 160, bh = H - 60;
       ctx.strokeStyle = 'rgba(0,221,255,0.6)';
       ctx.lineWidth = 2.5;
       ctx.strokeRect(bx, by, bw, bh);
 
-      /* Water fill */
-      var waterLevel = by + bh - (storage / 100) * bh;
+      var waterLevel = by + bh - (storage / BUCKET.cap) * bh;
       var waterGrad = ctx.createLinearGradient(0, waterLevel, 0, by + bh);
       waterGrad.addColorStop(0, 'rgba(0,163,255,0.55)');
       waterGrad.addColorStop(1, 'rgba(0,68,136,0.80)');
       ctx.fillStyle = waterGrad;
       ctx.fillRect(bx + 1, waterLevel, bw - 2, by + bh - waterLevel - 1);
 
-      /* Water surface shimmer */
       ctx.save();
       ctx.strokeStyle = 'rgba(0,255,255,0.55)';
       ctx.lineWidth = 1.5;
@@ -932,13 +991,11 @@ class WaterCycle(Scene):
       ctx.stroke();
       ctx.restore();
 
-      /* Storage % label */
       ctx.fillStyle = 'rgba(0,221,255,0.9)';
       ctx.font = 'bold 13px "JetBrains Mono",monospace';
       ctx.textAlign = 'right';
-      ctx.fillText('S = ' + storage.toFixed(0) + '%', bx + bw - 8, waterLevel - 6);
+      ctx.fillText('S = ' + storage.toFixed(0) + ' mm', bx + bw - 8, waterLevel - 6);
 
-      /* ── Rain drops (above bucket) ── */
       var numDrops = Math.round(precip * 2);
       ctx.fillStyle = 'rgba(96,165,250,0.75)';
       for (var i = 0; i < numDrops; i++) {
@@ -949,7 +1006,6 @@ class WaterCycle(Scene):
         ctx.fill();
       }
 
-      /* ── ET arrow (upward from water surface) ── */
       ctx.strokeStyle = 'rgba(52,211,153,0.75)';
       ctx.fillStyle   = 'rgba(52,211,153,0.75)';
       ctx.lineWidth = 2.5;
@@ -967,13 +1023,11 @@ class WaterCycle(Scene):
       ctx.textAlign = 'center';
       ctx.fillText('ET', etX, by - 20);
 
-      /* ── Runoff arrow (right side overflow) ── */
-      var R = Math.max(0, (storage - THRESHOLD) * 0.3);
-      if (R > 0) {
+      if (last.R > 0) {
         ctx.strokeStyle = 'rgba(0,255,255,0.85)';
         ctx.fillStyle   = 'rgba(0,255,255,0.85)';
         ctx.lineWidth = 2.5;
-        var roY = by + (1 - THRESHOLD / 100) * bh;
+        var roY = by + (1 - BUCKET.thr / BUCKET.cap) * bh;
         ctx.beginPath();
         ctx.moveTo(bx + bw, roY);
         ctx.lineTo(bx + bw + 32, roY + 12);
@@ -986,8 +1040,6 @@ class WaterCycle(Scene):
         ctx.font = '11px "Poppins",sans-serif';
         ctx.textAlign = 'left';
         ctx.fillText('R', bx + bw + 20, roY + 8);
-
-        /* overflow line */
         ctx.strokeStyle = 'rgba(0,255,255,0.25)';
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
@@ -996,28 +1048,31 @@ class WaterCycle(Scene):
         ctx.stroke();
         ctx.setLineDash([]);
       }
+      readouts();
+    }
 
-      /* ── Balance readout ── */
-      var dS = (precip - ET - R).toFixed(1);
-      bREl.textContent = R.toFixed(1) + ' mm/d';
-      bDSEl.textContent = (parseFloat(dS) >= 0 ? '+' : '') + dS;
-      bDSEl.style.color = parseFloat(dS) > 0 ? 'var(--bright)' : parseFloat(dS) < 0 ? '#f87171' : 'var(--cyan)';
+    function advance(days) {
+      /* sub-step so that k·dt stays small; storage and fluxes stay consistent */
+      var left = days;
+      while (left > 1e-9) {
+        var dt = Math.min(0.05, left);
+        var s = stepBucket(storage, precip, ET, dt);
+        storage = s.S; last = s; left -= dt;
+      }
     }
 
     function step(ts) {
       if (lastTs === null) lastTs = ts;
-      var wall = (ts - lastTs) / 1000;
+      var wall = Math.min((ts - lastTs) / 1000, 0.25);
       lastTs = ts;
-      var R = Math.max(0, (storage - THRESHOLD) * 0.3);
-      var dS = (precip - ET - R) * wall * SPEED;
-      storage = Math.min(100, Math.max(0, storage + dS));
+      advance(wall * SPEED);
       draw();
       requestAnimationFrame(step);
     }
 
     /* Respect prefers-reduced-motion */
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      draw();
+      advance(0.05); draw();
     } else {
       requestAnimationFrame(step);
     }
@@ -1055,7 +1110,15 @@ class WaterCycle(Scene):
     });
     var lbl = document.getElementById('stageLabel');
     if (lbl) lbl.textContent = stage.label;
+    var rng = document.getElementById('stageRange');
+    if (rng) { rng.value = Math.min(idx, STAGES.length - 1); }
+    var rv = document.getElementById('stageRangeVal');
+    if (rv) rv.textContent = Math.min(idx, STAGES.length - 1) + ' / ' + (STAGES.length - 1);
   }
+  (function wireStageRange() {
+    var rng = document.getElementById('stageRange');
+    if (rng) rng.addEventListener('input', function () { setStage(parseInt(rng.value, 10)); });
+  })();
 
   whenReady(function () {
     if (!window.aihydro || !window.aihydro.timeline) return;
