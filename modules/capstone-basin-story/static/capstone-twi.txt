@@ -1,0 +1,4 @@
+Mean TWI : 7.62  |  Std : 1.31   (576 cells, SYNTHETIC)
+Terciles : lower 7.00 | upper 7.98   (relative classes; absolute thresholds depend on DEM resolution)
+Cells raised by depression filling (> 1 mm): 0
+Saturation-excess runoff is most likely in the upper-tercile cells (TWI > 7.98)

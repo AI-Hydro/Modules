@@ -1,0 +1,4 @@
+Dry adiabatic lapse rate : 9.76 K/km  (0.98 K per 100 m)
+Dew-point lapse rate     : 1.75 K/km  (0.18 K per 100 m)
+Condensation level (T - Td = 5 K): about 625 m above the surface
+Assumed surface state; the lapse rates are computed, not measured.

@@ -1,8 +1,9 @@
 {
   "moduleId": "water-cycle-in-motion",
   "title": "The Water Cycle in Motion",
-  "description": "Trace a water molecule through all six fluxes — evaporation, transpiration, condensation, precipitation, infiltration, runoff — via a Manim animation and a draggable SVG timeline. Run the Python cell to watch the cycle come to life, then use the mass-balance simulator to see why precipitation must equal ET + R + ΔS.",
-  "version": "0.1.0",
+  "description": "Trace a water molecule through all six fluxes — evaporation, transpiration, condensation, precipitation, infiltration, runoff — via a Manim animation and a slider-driven cycle diagram. Compute the dew-point and dry-adiabatic lapse rates from physical constants, then use a mass-conserving bucket to see why P = ET + R + ΔS.",
+  "version": "0.3.0",
+  "license": "CC-BY-4.0",
   "topic": "hydrology-fundamentals",
   "level": "intro",
   "estimatedMinutes": 30,
@@ -35,7 +36,6 @@
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/water-cycle-in-motion",
   "author": "Mohammad Galib, Purdue University",
   "createdAt": "2026-06-01",
-  "updatedAt": "2026-06-01",
   "downloadCount": 0,
   "githubReactions": 0,
   "discussionUrl": ""

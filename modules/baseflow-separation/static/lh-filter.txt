@@ -1,0 +1,4 @@
+α = 0.925
+BFI (filter)   = 0.7419  (74.2% of flow classed as baseflow)
+BFI (true)     = 0.7515  (known only because this series is synthetic)
+Mean Q = 2.66  |  Mean base = 1.97  (synthetic units)

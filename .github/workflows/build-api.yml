@@ -1,10 +1,16 @@
 name: Build Modules API
 
+# Regenerates api/modules.json and api/courses.json with scripts/build_api.py (the same code a local
+# run uses). Triggered by anything that can change what the API says: module sources and manifests,
+# course definitions and the shared code that is inlined into modules. The daily run only refreshes
+# GitHub reaction counts.
 on:
   push:
     branches: [main]
     paths:
-      - 'modules/**/manifest.json'
+      - 'modules/**'
+      - 'courses/**'
+      - 'shared/**'
   schedule:
     # Refresh reaction counts daily at 06:00 UTC
     - cron: '0 6 * * *'
@@ -19,50 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # updatedAt comes from the last git commit touching each module
 
-      - name: Build api/modules.json from manifests
-        run: |
-          python3 - <<'EOF'
-          import json, os, glob
-          from datetime import datetime
-
-          manifests = sorted(glob.glob("modules/**/manifest.json", recursive=True))
-          items = []
-          for path in manifests:
-              with open(path) as f:
-                  data = json.load(f)
-              module_id = data.get("moduleId") or os.path.basename(os.path.dirname(path))
-              data["moduleId"] = module_id
-              if not data.get("downloadUrl"):
-                  data["downloadUrl"] = f"https://raw.githubusercontent.com/AI-Hydro/Modules/main/modules/{module_id}/module.html"
-              if not data.get("githubUrl"):
-                  data["githubUrl"] = f"https://github.com/AI-Hydro/Modules/tree/main/modules/{module_id}"
-              if not data.get("createdAt"):
-                  data["createdAt"] = datetime.now().strftime("%Y-%m-%d")
-              data["updatedAt"] = datetime.now().strftime("%Y-%m-%d")
-              # Preserve existing reaction/download counts if already in api/modules.json
-              existing_path = "api/modules.json"
-              if os.path.exists(existing_path):
-                  with open(existing_path) as ef:
-                      existing = {e["moduleId"]: e for e in json.load(ef)}
-                  prev = existing.get(module_id, {})
-                  data.setdefault("downloadCount", prev.get("downloadCount", 0))
-                  data.setdefault("githubReactions", prev.get("githubReactions", 0))
-                  data.setdefault("discussionUrl", prev.get("discussionUrl", ""))
-              else:
-                  data.setdefault("downloadCount", 0)
-                  data.setdefault("githubReactions", 0)
-                  data.setdefault("discussionUrl", "")
-              data.setdefault("isFeatured", False)
-              items.append(data)
-
-          os.makedirs("api", exist_ok=True)
-          with open("api/modules.json", "w") as f:
-              json.dump(items, f, indent=2)
-          print(f"Built api/modules.json with {len(items)} module(s):")
-          for item in items:
-              print(f"  - {item['moduleId']}: {item['title']}")
-          EOF
+      - name: Build api/modules.json and api/courses.json
+        run: python3 scripts/build_api.py
 
       - name: Scrape GitHub Discussion reactions
         env:
@@ -85,9 +52,7 @@ jobs:
           for item in items:
               module_id = item["moduleId"]
               title = item.get("title", module_id)
-              discussion_url = item.get("discussionUrl", "")
 
-              # Find or create a discussion for this module
               search_result = subprocess.run(
                   ["gh", "api", f"repos/{repo}/discussions",
                    "--jq", f'[.[] | select(.title == "Module: {title}")] | first'],
@@ -122,72 +87,20 @@ jobs:
           if updated:
               with open(api_path, "w") as f:
                   json.dump(items, f, indent=2)
+                  f.write("\n")
               print("Updated reaction counts in api/modules.json")
           else:
               print("No reaction count changes")
-          EOF
-
-      - name: Certify modules and inject into api/modules.json (Phase 3.3)
-        run: |
-          python3 - <<'EOF'
-          import json
-          from datetime import datetime, timezone
-
-          today = datetime.now(timezone.utc).date().isoformat()
-
-          def certify(module):
-              passed, failed = [], []
-              citation = module.get("citation") or {}
-              ctext = citation.get("text", "").strip() if isinstance(citation, dict) else str(citation).strip()
-              if ctext:
-                  passed.append("citation")
-              else:
-                  failed.append("citation: missing or has no text")
-              desc = module.get("description") or ""
-              if isinstance(desc, str) and desc.strip():
-                  passed.append("description")
-              else:
-                  failed.append("description: missing or empty")
-              tags = module.get("tags") or []
-              if isinstance(tags, list) and len(tags) > 0:
-                  passed.append("tags")
-              else:
-                  failed.append("tags: missing or empty list")
-              mins = module.get("estimatedMinutes") or 0
-              if isinstance(mins, int) and mins > 0:
-                  passed.append("estimatedMinutes")
-              else:
-                  failed.append("estimatedMinutes: missing or not a positive integer")
-              ok = len(failed) == 0
-              return {"certified": ok, "certified_at": today if ok else None,
-                      "checks_passed": passed, "checks_failed": failed}
-
-          with open("api/modules.json") as f:
-              modules = json.load(f)
-
-          n_ok = 0
-          for module in modules:
-              cert = certify(module)
-              module["certification"] = cert
-              if cert["certified"]:
-                  n_ok += 1
-                  print(f"  PASS  {module.get('moduleId', '?')}")
-              else:
-                  print(f"  FAIL  {module.get('moduleId', '?')}: {cert['checks_failed']}")
-
-          with open("api/modules.json", "w") as f:
-              json.dump(modules, f, indent=2)
-          print(f"\n{n_ok}/{len(modules)} modules certified")
           EOF
 
       - name: Commit updated API
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add api/modules.json
+          git add api/modules.json api/courses.json
           if git diff --staged --quiet; then
-            echo "No changes to api/modules.json"
+            echo "No changes to the API files"
           else
-            git commit -m "ci: rebuild api/modules.json [skip ci]"
+            git commit -m "ci: rebuild api/modules.json and api/courses.json [skip ci]"
             git push
           fi

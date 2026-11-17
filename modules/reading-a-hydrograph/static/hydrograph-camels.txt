@@ -1,0 +1,9 @@
+Gauge        : 01031500  Piscataquis River near Dover-Foxcroft, ME
+Source file  : basin_dataset_public_v1p2/usgs_streamflow/01/01031500_streamflow_qc.txt  (sha256 c574c4e8975e5d0d...)
+Period       : 1996-10-01 + 365 days (observed; CAMELS-US v1.2)
+Mean Q       : 17.106 m3/s  (1.922 mm/day)
+Peak Q       : 248.62 m3/s   (day 63)
+Total P      : 1215 mm   Total Q: 701 mm   Q/P = 0.578
+BFI (LH)     : 0.394   this water year only
+BFI (CAMELS) : 0.445   20-year CAMELS signature (differs: period and implementation)
+USGS QC      : 253 days approved (A), 112 approved-estimated (A:e), 0 missing

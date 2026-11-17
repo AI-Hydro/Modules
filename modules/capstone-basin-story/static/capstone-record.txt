@@ -1,0 +1,6 @@
+Gauge    : 01013500  Fish River near Fort Kent, ME
+Source   : basin_dataset_public_v1p2/usgs_streamflow/01/01013500_streamflow_qc.txt  (sha256 bce4b441f9bdf8b2...)
+Period   : 1995-10-01 to 2000-09-30  (1827 days, 5 water years; 1399 approved, 428 approved-estimated)
+Mean Q   : 43.81 m³/s  =  1.680 mm/day over 2252.7 km²
+Peak Q   : 305.82 m³/s on 1996-04-28
+P95 flood: 170.95 m³/s  | days above: 92 (5.0%)

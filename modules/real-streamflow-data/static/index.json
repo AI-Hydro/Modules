@@ -1,0 +1,14 @@
+{
+  "streamflow-fetch": {
+    "mode": "headless",
+    "source_sha256": "ece465bf010bd1fb8089e0e501110519eb2fa63637ccc78c799377c46a3efb2a",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  },
+  "streamflow-nwis": {
+    "mode": "text",
+    "source_sha256": "0eb3a98a5a85bd43f40c00ec87996ad134b559cc973a1627737458be2fecdbdb"
+  }
+}

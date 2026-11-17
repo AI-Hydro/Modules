@@ -1,0 +1,111 @@
+{
+ "module": "capstone-basin-story",
+ "dataset": "CAMELS-US v1.2 (basin_timeseries_v1p2_metForcing_obsFlow + attribute files)",
+ "camels_root_relative_sources": {
+  "attribute_files": {
+   "camels_name.txt": {
+    "sha256": "f3a85272cd934c6e12386db5f21979675fc891844250a335135786ad9a2de445"
+   },
+   "camels_topo.txt": {
+    "sha256": "b64ca9923bcaccf21dde33137903797919e8d6732edd7849f8534e0ddcbec8e8"
+   },
+   "camels_hydro.txt": {
+    "sha256": "7dcae3ea8c28e6485fc9e39b3c5e8bb509d6354ebe9b0b98873ec47fa36e3c41"
+   },
+   "camels_clim.txt": {
+    "sha256": "6a3a80256afbaea13f59f279c174d3c010156b826ffb53a4cfb5508814404f5f"
+   }
+  },
+  "archive": "basin_timeseries_v1p2_metForcing_obsFlow.zip"
+ },
+ "extraction_script": "scripts/extract_camels.py",
+ "extracted_on": "2026-11-17",
+ "citations": [
+  "Newman, A. J., Clark, M. P., Sampson, K., Wood, A., Hay, L. E., Bock, A., Viger, R. J., Blodgett, D., Brekke, L., Arnold, J. R., Hopson, T., and Duan, Q. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA: data set characteristics and assessment of regional variability in hydrologic model performance. Hydrol. Earth Syst. Sci., 19, 209-223. doi:10.5194/hess-19-209-2015",
+  "Addor, N., Newman, A. J., Mizukami, N., and Clark, M. P. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293-5313. doi:10.5194/hess-21-5293-2017"
+ ],
+ "licence_note": "CAMELS-US streamflow originates from USGS NWIS (public domain); forcing is Daymet basin means as distributed by CAMELS.",
+ "access": "read-only local copy; no network access during extraction",
+ "series": {
+  "01013500": {
+   "file": "data/01013500_q.csv",
+   "source_member": "basin_dataset_public_v1p2/usgs_streamflow/01/01013500_streamflow_qc.txt",
+   "source_member_sha256": "bce4b441f9bdf8b22438d9106d9b049f5bbd57f6bd455330ee9dbf3941b8e12a",
+   "period": [
+    "1995-10-01",
+    "2000-09-30"
+   ],
+   "n_days": 1827,
+   "units": "cubic feet per second (daily mean), as distributed",
+   "usgs_qc_flags": {
+    "A": 1399,
+    "A:e": 428
+   },
+   "flag_meaning": {
+    "A": "approved by USGS",
+    "A:e": "approved by USGS, estimated value",
+    "M": "missing (none in this slice)"
+   }
+  },
+  "14305500": {
+   "file": "data/14305500_q.csv",
+   "source_member": "basin_dataset_public_v1p2/usgs_streamflow/17/14305500_streamflow_qc.txt",
+   "source_member_sha256": "72cdcb7065640c4a9414b277586880a06db568431f82b652a31cf2cdc5372e34",
+   "period": [
+    "1995-10-01",
+    "2000-09-30"
+   ],
+   "n_days": 1827,
+   "units": "cubic feet per second (daily mean), as distributed",
+   "usgs_qc_flags": {
+    "A": 1825,
+    "A:e": 2
+   },
+   "flag_meaning": {
+    "A": "approved by USGS",
+    "A:e": "approved by USGS, estimated value",
+    "M": "missing (none in this slice)"
+   }
+  },
+  "09484000": {
+   "file": "data/09484000_q.csv",
+   "source_member": "basin_dataset_public_v1p2/usgs_streamflow/15/09484000_streamflow_qc.txt",
+   "source_member_sha256": "a2fe9ede3c67b5ae67845c4462c22b3ece454db980cabc82deab4d724b143f06",
+   "period": [
+    "1995-10-01",
+    "2000-09-30"
+   ],
+   "n_days": 1827,
+   "units": "cubic feet per second (daily mean), as distributed",
+   "usgs_qc_flags": {
+    "A": 1599,
+    "A:e": 228
+   },
+   "flag_meaning": {
+    "A": "approved by USGS",
+    "A:e": "approved by USGS, estimated value",
+    "M": "missing (none in this slice)"
+   }
+  },
+  "02472000": {
+   "file": "data/02472000_q.csv",
+   "source_member": "basin_dataset_public_v1p2/usgs_streamflow/03/02472000_streamflow_qc.txt",
+   "source_member_sha256": "25cba78de612952b31ea04dbd0addaaa9666992c6bf37afaa00684344c2e4b86",
+   "period": [
+    "1995-10-01",
+    "2000-09-30"
+   ],
+   "n_days": 1827,
+   "units": "cubic feet per second (daily mean), as distributed",
+   "usgs_qc_flags": {
+    "A": 1807,
+    "A:e": 20
+   },
+   "flag_meaning": {
+    "A": "approved by USGS",
+    "A:e": "approved by USGS, estimated value",
+    "M": "missing (none in this slice)"
+   }
+  }
+ }
+}

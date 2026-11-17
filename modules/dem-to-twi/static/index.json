@@ -1,0 +1,18 @@
+{
+  "twi-point": {
+    "mode": "headless",
+    "source_sha256": "d0270a6285944868684ea2264d5636f752e5858b9f40b2f5bd075380feee29f3",
+    "figures": 0,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  },
+  "twi-grid": {
+    "mode": "headless",
+    "source_sha256": "d483a07698852dfe06cf2596922f3c9e9da9ecfa461d57dd2bb23cc4364e9145",
+    "figures": 1,
+    "python": "3.13.2",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.8"
+  }
+}

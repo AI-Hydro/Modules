@@ -1,8 +1,9 @@
 {
   "moduleId": "reading-a-hydrograph",
   "title": "Reading a Hydrograph",
-  "description": "Anatomy of a storm hydrograph — rising limb, peak, recession — with an interactive BFI explorer, a storm-pair comparison revealing non-linear runoff response, and a live Python cell that generates CAMELS-style annual hydrographs for three contrasting gauges.",
-  "version": "0.2.0",
+  "description": "Anatomy of a storm hydrograph — rising limb, peak, recession — with an interactive BFI explorer on a synthetic event, a curve-number storm-pair comparison showing non-linear runoff response, and a live Python cell that plots a real CAMELS-US water year (observed flow and basin precipitation) for three contrasting gauges.",
+  "version": "0.4.0",
+  "license": "CC-BY-4.0",
   "topic": "streamflow",
   "level": "intro",
   "estimatedMinutes": 30,
@@ -24,7 +25,8 @@
     ]
   },
   "citation": {
-    "text": "Lyne, V. & Hollick, M. (1979). Stochastic time-variable rainfall-runoff modelling. Inst. Eng. Australia Nat. Conf. Publ. 79/10, 89–93."
+    "text": "Ladson, A. R., Brown, R., Neal, B. & Nathan, R. (2013). A standard approach to baseflow separation using the Lyne and Hollick filter. Australasian Journal of Water Resources, 17(1).",
+    "doi": "10.7158/13241583.2013.11465417"
   },
   "isFeatured": true,
   "courseId": "intro-hydro-2026",
@@ -33,7 +35,6 @@
   "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/modules/reading-a-hydrograph",
   "author": "Mohammad Galib, Purdue University",
   "createdAt": "2026-05-18",
-  "updatedAt": "2026-06-01",
   "downloadCount": 0,
   "githubReactions": 0,
   "discussionUrl": ""

@@ -1,0 +1,30 @@
+{
+ "module": "dem-to-twi",
+ "dataset": "CAMELS-US v1.2 (basin_timeseries_v1p2_metForcing_obsFlow + attribute files)",
+ "camels_root_relative_sources": {
+  "attribute_files": {
+   "camels_name.txt": {
+    "sha256": "f3a85272cd934c6e12386db5f21979675fc891844250a335135786ad9a2de445"
+   },
+   "camels_topo.txt": {
+    "sha256": "b64ca9923bcaccf21dde33137903797919e8d6732edd7849f8534e0ddcbec8e8"
+   },
+   "camels_hydro.txt": {
+    "sha256": "7dcae3ea8c28e6485fc9e39b3c5e8bb509d6354ebe9b0b98873ec47fa36e3c41"
+   },
+   "camels_clim.txt": {
+    "sha256": "6a3a80256afbaea13f59f279c174d3c010156b826ffb53a4cfb5508814404f5f"
+   }
+  },
+  "archive": "basin_timeseries_v1p2_metForcing_obsFlow.zip"
+ },
+ "extraction_script": "scripts/extract_camels.py",
+ "extracted_on": "2026-11-17",
+ "citations": [
+  "Newman, A. J., Clark, M. P., Sampson, K., Wood, A., Hay, L. E., Bock, A., Viger, R. J., Blodgett, D., Brekke, L., Arnold, J. R., Hopson, T., and Duan, Q. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA: data set characteristics and assessment of regional variability in hydrologic model performance. Hydrol. Earth Syst. Sci., 19, 209-223. doi:10.5194/hess-19-209-2015",
+  "Addor, N., Newman, A. J., Mizukami, N., and Clark, M. P. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. Hydrol. Earth Syst. Sci., 21, 5293-5313. doi:10.5194/hess-21-5293-2017"
+ ],
+ "licence_note": "CAMELS-US streamflow originates from USGS NWIS (public domain); forcing is Daymet basin means as distributed by CAMELS.",
+ "access": "read-only local copy; no network access during extraction",
+ "series": {}
+}

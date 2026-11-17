@@ -8,20 +8,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-<script type="application/vnd.aihydro.module+json">
+<!--@@BEGIN manifest:module@@--><script type="application/vnd.aihydro.module+json">
 {
   "id": "course-certificate",
   "title": "Congratulations: Course Complete",
-  "version": "0.1.0",
-  "authors": [{ "name": "Mohammad Galib", "affiliation": "Purdue University" }],
+  "version": "0.1.2",
+  "authors": [
+    {
+      "name": "Mohammad Galib",
+      "affiliation": "Purdue University"
+    }
+  ],
   "license": "CC-BY-4.0",
   "topic": "course-completion",
   "level": "intro",
   "estimated_minutes": 5,
-  "requires": { "executable": false },
+  "requires": {
+    "executable": false
+  },
+  "citation": {
+    "text": "AI-Hydro Learning Hub — Introduction to Hydrology (2026)."
+  },
   "ai_hydro_preview_min_version": "0.2"
 }
-</script>
+</script><!--@@END manifest:module@@-->
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -171,7 +181,7 @@ a:hover { border-bottom-color:var(--cyan); }
   padding-bottom:8px;
   transition:color 0.2s;
 }
-.cert-body .recipient.placeholder { color:rgba(0,221,255,0.35); border-bottom-color:rgba(0,221,255,0.15); }
+.cert-body .recipient.placeholder { color:rgba(0,221,255,0.65); border-bottom-color:rgba(0,221,255,0.15); }
 .cert-course {
   font-family:'Poppins',sans-serif; font-weight:600;
   font-size:18px; color:var(--text); margin-top:4px;
@@ -248,7 +258,7 @@ a:hover { border-bottom-color:var(--cyan); }
   box-shadow:0 0 24px rgba(0,221,255,0.15);
 }
 .name-input::placeholder {
-  color:rgba(0,221,255,0.30); font-weight:500;
+  color:rgba(0,221,255,0.65); font-weight:500;
 }
 
 /* ── Share & Print row ─────────────────────────────────── */
@@ -348,6 +358,16 @@ a:hover { border-bottom-color:var(--cyan); }
   .check-icon { background:#003366 !important; color:white !important; }
   @page { size: letter; margin: 0.3in; }
 }
+/*@@BEGIN css:shared/a11y.css@@*/
+/* Shared accessibility styles (inlined by scripts/build_modules.py). */
+.hydro-sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline:3px solid #00FFFF; outline-offset:2px; border-radius:6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+/*@@END css:shared/a11y.css@@*/
 </style>
 </head>
 <body>
@@ -379,7 +399,7 @@ a:hover { border-bottom-color:var(--cyan); }
 
   <h1>You did it. <span class="gradient-text">Course complete.</span></h1>
   <p class="hero-sub">
-    All seven modules done — from a Manim water-cycle animation to a full basin
+    All seven learning modules done — from a Manim water-cycle animation to a full basin
     characterisation. Enter your name below to generate your certificate.
   </p>
   <div class="instruction">
@@ -403,11 +423,11 @@ a:hover { border-bottom-color:var(--cyan); }
 <div class="share-row">
   <div class="print-btn-wrap">
     <button class="print-btn" type="button" id="printBtn"
-            onclick="window._aihydroPrint()"
             title="Prints directly; use browser 'Save as PDF' to get a PDF file">
       🖨 Print / Save as PDF
     </button>
     <span class="print-hint">Opens browser print dialog → choose "<strong>Save as PDF</strong>"</span>
+    <button class="print-btn" type="button" id="openBrowserBtn" hidden title="Open this page in your system browser">🌐 Open in browser</button>
   </div>
   <div class="share-btns">
     <span class="share-label">Share</span>
@@ -458,7 +478,7 @@ a:hover { border-bottom-color:var(--cyan); }
       <span class="cert-course-icon">💧</span>
       Introduction to Hydrology
     </div>
-    <div class="cert-course-sub">AI-Hydro Interactive Course · 7 Modules · ~5 Hours</div>
+    <div class="cert-course-sub">AI-Hydro Interactive Course · 7 Learning Modules · ~5 Hours</div>
   </div>
 
   <!-- Module checklist -->
@@ -497,7 +517,7 @@ a:hover { border-bottom-color:var(--cyan); }
 <div class="wide card provenance" style="margin-top:14px;">
   <div class="prov-item">
     <dt>Module</dt>
-    <dd><code>course-certificate</code> · v0.1.0 · CC-BY-4.0</dd>
+    <dd><code>course-certificate</code> · v0.1.2 · CC-BY-4.0</dd>
   </div>
   <div class="prov-item">
     <dt>Author</dt>
@@ -560,7 +580,14 @@ a:hover { border-bottom-color:var(--cyan); }
   }
 
   /* ── Share & Print handlers (VS Code webview safe) ─── */
-  var vscodeApi = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null;
+  /* acquireVsCodeApi may be called only once per webview: acquire here and share via window */
+  var vscodeApi = (function () {
+    if (window.__aihydroVsCodeApi !== undefined) return window.__aihydroVsCodeApi;
+    var api = null;
+    try { api = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null; } catch (e) { api = null; }
+    window.__aihydroVsCodeApi = api;
+    return api;
+  })();
 
   window._aihydroOpenShare = function (platform) {
     var url;
@@ -594,6 +621,16 @@ a:hover { border-bottom-color:var(--cyan); }
   if (printBtn) {
     printBtn.addEventListener('click', window._aihydroPrint);
   }
+  /* "Open in browser" is now an explicit button (it used to fire on load); shown only inside the VS Code webview */
+  var browserBtn = document.getElementById('openBrowserBtn');
+  if (browserBtn) {
+    if (vscodeApi) {
+      browserBtn.hidden = false;
+      browserBtn.addEventListener('click', function () {
+        vscodeApi.postMessage({ command: 'openInBrowser', url: window.location.href });
+      });
+    }
+  }
   var liBtn = document.getElementById('shareLinkedIn');
   if (liBtn) {
     liBtn.addEventListener('click', function(e) { e.preventDefault(); window._aihydroOpenShare('linkedin'); });
@@ -622,16 +659,5 @@ a:hover { border-bottom-color:var(--cyan); }
   })();
 </script>
 
-  <script>
-  /* Auto-open certificate in external browser on first load inside AI-Hydro preview */
-  (function(){
-    if (sessionStorage.getItem('aihydro_cert_opened_browser')) return;
-    var api = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null;
-    if (!api) return;  /* not inside VS Code webview — nothing to do */
-    sessionStorage.setItem('aihydro_cert_opened_browser', '1');
-    /* Post to extension: open current file:// URL in system browser */
-    api.postMessage({ command: 'openInBrowser', url: window.location.href });
-  })();
-</script>
 </body>
 </html>
