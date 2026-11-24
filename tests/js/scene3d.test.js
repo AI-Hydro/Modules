@@ -21,9 +21,10 @@ function fakeTHREE() {
   class Attr { constructor(a, n) { this.array = a; this.itemSize = n; } }
   class Mat { constructor(o) { this.o = o; } dispose() {} }
   class Mesh extends Obj { constructor(g, m) { super(); this.geometry = g; this.material = m; } }
+  class Light extends Obj { constructor(c, i) { super(); this.color = c; this.intensity = i; this.isLight = true; } }
   return { Scene: Obj, Group: Obj, Mesh, Line: Mesh, LineSegments: Mesh, Points: Mesh, PointsMaterial: Mat, BufferGeometry: Geo, SphereGeometry: class extends Geo {},
     Float32BufferAttribute: Attr, MeshLambertMaterial: Mat, MeshBasicMaterial: Mat, LineBasicMaterial: Mat,
-    AmbientLight: Obj, DirectionalLight: Obj, DoubleSide: 2 };
+    AmbientLight: Light, DirectionalLight: Light, Color: class { constructor(c) { this.c = c; } }, DoubleSide: 2 };
 }
 function fakeCtx(canvas, THREE, lost) {
   return { THREE, scene: new THREE.Scene(), camera: { position: { set() {} } }, controls: { target: { set() {} }, update() {} },
@@ -234,5 +235,28 @@ test('the bridge gives up (scene disposed, or its own fallback shown) before the
     for (let i = 0; i < 4 && later && later.length; i++) { const q = later.splice(0); q.forEach((f) => f()); }
     assert.equal((els.fishPoster || getEl('fishPoster')).hidden, false);
     assert.equal(getEl('fishLabel').hidden, true, 'label stays hidden');
+  }
+});
+
+/* ---- theme: the stage is the dark plate in every theme and the lights are white (no blue/cyan tint) ---- */
+function tokenStyle() {
+  const css = H.read('shared/theme.css'), root = /:root\s*\{([^}]*)\}/.exec(css)[1], tok = {};
+  for (const m of root.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) tok[m[1]] = m[2].trim();
+  return { tok, getComputedStyle: () => ({ getPropertyValue: (n) => tok[n] || '' }) };
+}
+
+test('the Fish River scene and the horseshoe scene use the plate stage and white untinted lights', async () => {
+  const { tok, getComputedStyle } = tokenStyle();
+  const THREE = fakeTHREE(); const scenes = [];
+  const globals = { THREE, getComputedStyle, requestAnimationFrame: (f) => { f(); return 1; },
+    aihydro: { scene3d(opts) { const c = fakeCtx(opts.canvas, THREE); opts.setup(c); scenes.push(c); return Promise.resolve(c); } } };
+  run(T, { globals });
+  await settle();
+  assert.ok(scenes.length >= 2, 'both scenes were set up (horseshoe and Fish River)');
+  for (const c of scenes) {
+    const lights = c.scene.children.filter((o) => o.isLight);
+    assert.ok(lights.length >= 2, 'ambient and key light');
+    for (const l of lights) assert.equal(l.color, tok['--hy-plate-line'], 'white light, never the bridge\'s blue or cyan');
+    assert.equal(c.scene.background && c.scene.background.c, tok['--hy-plate'], 'stage is the plate colour');
   }
 });

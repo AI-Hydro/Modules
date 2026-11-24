@@ -409,7 +409,7 @@ def test_estimated_minutes_and_manifest():
     man = json.loads((MODULES / MOD / "manifest.json").read_text())
     assert man["estimatedMinutes"] == 40 and man["courseOrder"] == 3 and man["topic"] == "evapotranspiration"
     assert man["requires"] == {"executable": True, "python": ["numpy", "matplotlib"]}
-    assert man["createdAt"] == "2026-11-17" and man["courseId"] == "intro-hydro-2026" and man["version"] == "0.1.0"
+    assert man["createdAt"] == "2026-11-17" and man["courseId"] == "intro-hydro-2026" and man["version"] == "0.1.1"
 
 
 def test_agent_callouts_name_only_tools_that_exist():

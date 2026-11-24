@@ -1,0 +1,188 @@
+/* Shared theme tokens (inlined by scripts/build_modules.py). Light is the default.
+ * Precedence: html[data-aihydro-theme] (set by the Studio host) > forced-colors > prefers-color-scheme > light.
+ * Values are the ones measured in docs/vision-2040/findings/module-theme-study-2026-11-24.md and are gated by
+ * tests/test_theme_tokens.py (text >= 4.5:1, body >= 7:1, graphics >= 3:1, series CVD separation).
+ * Lessons use only the --hy-* tokens (plus the legacy aliases at the end of the first block); a new hard-coded
+ * colour in module.html is blocked by the ratchet in tests/test_theme_ratchet.py. */
+
+/* ---- light: the default when there is no host signal ---- */
+:root {
+  color-scheme: light;
+  --hy-bg:#ffffff; --hy-surface:#f3f6f9; --hy-inset:#ffffff; --hy-surface-2:#e8eef4;
+  --hy-fg:#1b2430; --hy-heading:#0b1320; --hy-fg-muted:#4a5868;
+  --hy-link:#005a9e; --hy-accent:#00668a; --hy-accent-strong:#004a66;
+  --hy-border:#d0d7de; --hy-axis:#57606a; --hy-grid:rgba(27,36,48,0.10);
+  --hy-ok:#176d30; --hy-warn:#8a5300; --hy-err:#c62828;
+  --hy-stage:#eef1f4; --hy-outline:#1b2430;
+  --hy-series-1:#0072b2; --hy-series-2:#c25400; --hy-series-3:#007a5a; --hy-series-4:#a8507f; --hy-series-5:#1b2430;
+  --hy-dash-1:none; --hy-dash-2:none; --hy-dash-3:none; --hy-dash-4:none; --hy-dash-5:none;
+  --hy-rain:#3b8cc0;
+  --hy-accent-soft:rgba(0,102,138,0.08); --hy-accent-line:rgba(0,102,138,0.25); --hy-accent-edge:rgba(0,102,138,0.6);
+  --hy-link-soft:rgba(0,90,158,0.07); --hy-ok-soft:rgba(26,127,55,0.08);
+  --hy-glow-1:rgba(0,114,178,0.07); --hy-glow-2:rgba(0,102,138,0.04);
+  --hy-shadow:0 8px 24px rgba(27,36,48,0.10);
+  --hy-tip-bg:#1b2430; --hy-tip-fg:#e6edf3; --hy-tip-border:#4a5868;
+  --hy-btn-1:#00668a; --hy-btn-2:#005a9e; --hy-on-accent:#ffffff;
+  --hy-brand-1:#00668a; --hy-brand-2:#0072b2;
+  --hy-logo-a:#00A3FF; --hy-logo-b:#00DDFF; --hy-logo-eye:#1a1a2e;
+  --hy-figure-bg:#ffffff; --hy-figure-fg:#1b2430;
+  /* "plate" tokens: maps, 3-D stages and diagram panels that keep a dark ground in every theme (the baked
+     Fish River poster is drawn on it, and no single background gives both viridis ends 3:1; see the study, section 3.3).
+     Theme-independent on purpose: they are not restated in the themed blocks below. */
+  --hy-plate:#0a1622; --hy-plate-fg:#e2e8f0; --hy-plate-muted:#b4c0ce; --hy-plate-ink:#000000;
+  --hy-plate-line:#ffffff; --hy-plate-path:rgba(255,255,255,0.9); --hy-plate-stream:#00ffff; --hy-plate-stream-soft:rgba(0,221,255,0.75);
+  --hy-plate-drop:#f87171; --hy-plate-focus:#fde047; --hy-plate-ok:#34d399; --hy-plate-blue:#60a5fa;
+  --hy-plate-area:rgba(251,191,36,0.38); --hy-plate-shade:rgba(0,0,0,0.6); --hy-plate-edge:rgba(0,221,255,0.25);
+  --hy-plate-ground:#1a2b1a; --hy-plate-ridge:#223322; --hy-plate-crest:#2a3a2a; --hy-plate-tint:rgba(0,163,255,0.06);
+  --hy-plate-cell:rgba(34,51,34,0.9); --hy-plate-cell-lo:rgba(0,30,60,0.9); --hy-plate-cell-hi:rgba(0,50,80,0.9);
+  --hy-plate-cell-edge:rgba(0,221,255,0.3); --hy-plate-cell-edge-hi:rgba(0,221,255,0.6); --hy-plate-cell-edge-lo:rgba(52,211,153,0.7);
+  --hy-plate-ramp-lo:#001a40;
+  /* legacy names used by the shared widgets (quiz.css) and older module CSS */
+  --bg:var(--hy-bg); --navy:var(--hy-surface-2); --mid:var(--hy-inset);
+  --text:var(--hy-heading); --sub:var(--hy-fg); --muted:var(--hy-fg-muted);
+  --cyan:var(--hy-accent); --blue:var(--hy-link); --bright:var(--hy-accent-strong);
+  --border:var(--hy-border);
+}
+
+/* ---- dark: OS preference when the host sent nothing ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-aihydro-theme]) {
+    color-scheme: dark;
+    --hy-bg:#0d1117; --hy-surface:#161b22; --hy-inset:#0d1117; --hy-surface-2:#1c2330;
+    --hy-fg:#e6edf3; --hy-heading:#ffffff; --hy-fg-muted:#9aa7b4;
+    --hy-link:#6cb6ff; --hy-accent:#3fd0f0; --hy-accent-strong:#00ffff;
+    --hy-border:#30363d; --hy-axis:#8b949e; --hy-grid:rgba(139,148,158,0.18);
+    --hy-ok:#56d364; --hy-warn:#e3b341; --hy-err:#ff7b72;
+    --hy-stage:#0e1621; --hy-outline:#ffffff;
+    --hy-series-1:#56b4e9; --hy-series-2:#e69f00; --hy-series-3:#2fbf8f; --hy-series-4:#cc79a7; --hy-series-5:#e6edf3;
+    --hy-rain:#56b4e9;
+    --hy-accent-soft:rgba(63,208,240,0.10); --hy-accent-line:rgba(63,208,240,0.25); --hy-accent-edge:rgba(63,208,240,0.6);
+    --hy-link-soft:rgba(108,182,255,0.10); --hy-ok-soft:rgba(86,211,100,0.10);
+    --hy-glow-1:rgba(0,163,255,0.14); --hy-glow-2:rgba(0,221,255,0.08);
+    --hy-shadow:0 24px 64px rgba(0,0,0,0.55);
+    --hy-tip-bg:#010409; --hy-tip-fg:#3fd0f0; --hy-tip-border:rgba(63,208,240,0.35);
+    --hy-btn-1:#00A3FF; --hy-btn-2:#00DDFF; --hy-on-accent:#0a0a15;
+    --hy-brand-1:#00A3FF; --hy-brand-2:#00FFFF;
+  }
+}
+:root[data-aihydro-theme="dark"] {
+  color-scheme: dark;
+  --hy-bg:#0d1117; --hy-surface:#161b22; --hy-inset:#0d1117; --hy-surface-2:#1c2330;
+  --hy-fg:#e6edf3; --hy-heading:#ffffff; --hy-fg-muted:#9aa7b4;
+  --hy-link:#6cb6ff; --hy-accent:#3fd0f0; --hy-accent-strong:#00ffff;
+  --hy-border:#30363d; --hy-axis:#8b949e; --hy-grid:rgba(139,148,158,0.18);
+  --hy-ok:#56d364; --hy-warn:#e3b341; --hy-err:#ff7b72;
+  --hy-stage:#0e1621; --hy-outline:#ffffff;
+  --hy-series-1:#56b4e9; --hy-series-2:#e69f00; --hy-series-3:#2fbf8f; --hy-series-4:#cc79a7; --hy-series-5:#e6edf3;
+  --hy-rain:#56b4e9;
+  --hy-accent-soft:rgba(63,208,240,0.10); --hy-accent-line:rgba(63,208,240,0.25); --hy-accent-edge:rgba(63,208,240,0.6);
+  --hy-link-soft:rgba(108,182,255,0.10); --hy-ok-soft:rgba(86,211,100,0.10);
+  --hy-glow-1:rgba(0,163,255,0.14); --hy-glow-2:rgba(0,221,255,0.08);
+  --hy-shadow:0 24px 64px rgba(0,0,0,0.55);
+  --hy-tip-bg:#010409; --hy-tip-fg:#3fd0f0; --hy-tip-border:rgba(63,208,240,0.35);
+  --hy-btn-1:#00A3FF; --hy-btn-2:#00DDFF; --hy-on-accent:#0a0a15;
+  --hy-brand-1:#00A3FF; --hy-brand-2:#00FFFF;
+}
+
+/* ---- high contrast, dark ---- (series are not separable by hue alone here: dash patterns are mandatory) */
+:root[data-aihydro-theme="hc-dark"] {
+  color-scheme: dark;
+  --hy-bg:#000000; --hy-surface:#000000; --hy-inset:#000000; --hy-surface-2:#000000;
+  --hy-fg:#ffffff; --hy-heading:#ffffff; --hy-fg-muted:#ffffff;
+  --hy-link:#ffff00; --hy-accent:#00ffff; --hy-accent-strong:#00ffff;
+  --hy-border:#ffffff; --hy-axis:#ffffff; --hy-grid:rgba(255,255,255,0.35);
+  --hy-ok:#00ff00; --hy-warn:#ffd700; --hy-err:#ff8080;
+  --hy-stage:#000000; --hy-outline:#ffffff;
+  --hy-series-1:#ffffff; --hy-series-2:#ffd700; --hy-series-3:#00ffff; --hy-series-4:#ff8c00; --hy-series-5:#ff80ff;
+  --hy-dash-1:none; --hy-dash-2:8 4; --hy-dash-3:2 3; --hy-dash-4:10 3 2 3; --hy-dash-5:4 4;
+  --hy-rain:#ffffff;
+  --hy-accent-soft:rgba(0,0,0,0); --hy-accent-line:#ffffff; --hy-accent-edge:#ffffff;
+  --hy-link-soft:rgba(0,0,0,0); --hy-ok-soft:rgba(0,0,0,0);
+  --hy-glow-1:rgba(0,0,0,0); --hy-glow-2:rgba(0,0,0,0);
+  --hy-shadow:none;
+  --hy-tip-bg:#000000; --hy-tip-fg:#ffffff; --hy-tip-border:#ffffff;
+  --hy-btn-1:#00ffff; --hy-btn-2:#00ffff; --hy-on-accent:#000000;
+  --hy-brand-1:#00ffff; --hy-brand-2:#00ffff;
+}
+
+/* ---- high contrast, light ---- */
+:root[data-aihydro-theme="hc-light"] {
+  color-scheme: light;
+  --hy-bg:#ffffff; --hy-surface:#ffffff; --hy-inset:#ffffff; --hy-surface-2:#ffffff;
+  --hy-fg:#000000; --hy-heading:#000000; --hy-fg-muted:#000000;
+  --hy-link:#0000c0; --hy-accent:#0000c0; --hy-accent-strong:#0000c0;
+  --hy-border:#000000; --hy-axis:#000000; --hy-grid:rgba(0,0,0,0.35);
+  --hy-ok:#006400; --hy-warn:#6b3a00; --hy-err:#a00000;
+  --hy-stage:#ffffff; --hy-outline:#000000;
+  --hy-series-1:#0000c0; --hy-series-2:#a00000; --hy-series-3:#006400; --hy-series-4:#6b006b; --hy-series-5:#000000;
+  --hy-dash-1:none; --hy-dash-2:8 4; --hy-dash-3:2 3; --hy-dash-4:10 3 2 3; --hy-dash-5:4 4;
+  --hy-rain:#0000c0;
+  --hy-accent-soft:rgba(255,255,255,0); --hy-accent-line:#000000; --hy-accent-edge:#000000;
+  --hy-link-soft:rgba(255,255,255,0); --hy-ok-soft:rgba(255,255,255,0);
+  --hy-glow-1:rgba(255,255,255,0); --hy-glow-2:rgba(255,255,255,0);
+  --hy-shadow:none;
+  --hy-tip-bg:#ffffff; --hy-tip-fg:#000000; --hy-tip-border:#000000;
+  --hy-btn-1:#0000c0; --hy-btn-2:#0000c0; --hy-on-accent:#ffffff;
+  --hy-brand-1:#0000c0; --hy-brand-2:#0000c0;
+}
+
+/* ---- the OS forces its own colours and the host sent nothing ---- */
+@media (forced-colors: active) {
+  :root:not([data-aihydro-theme]) {
+    --hy-bg:Canvas; --hy-surface:Canvas; --hy-inset:Canvas; --hy-surface-2:Canvas;
+    --hy-fg:CanvasText; --hy-heading:CanvasText; --hy-fg-muted:CanvasText;
+    --hy-link:LinkText; --hy-accent:LinkText; --hy-accent-strong:LinkText;
+    --hy-border:CanvasText; --hy-axis:CanvasText; --hy-outline:CanvasText; --hy-stage:Canvas;
+    --hy-dash-1:none; --hy-dash-2:8 4; --hy-dash-3:2 3; --hy-dash-4:10 3 2 3; --hy-dash-5:4 4;
+  }
+}
+
+/* ---- shared widgets (quiz.css, a11y.css) re-coloured with the tokens; this file is inlined after them ---- */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible { outline-color:var(--hy-accent); }
+.hq-opt { background:var(--hy-inset); }
+.hq-opt:has(input:checked) { background:var(--hy-accent-soft); }
+.hq-input { border-color:var(--hy-axis); background:var(--hy-inset); }
+.hq-check { background:linear-gradient(135deg,var(--hy-btn-1),var(--hy-btn-2)); color:var(--hy-on-accent); }
+.hq-item[data-state="correct"] .hq-feedback { color:var(--hy-ok); border-left-color:var(--hy-ok); }
+.hq-item[data-state="incorrect"] .hq-feedback { color:var(--hy-err); border-left-color:var(--hy-err); }
+.hq-item[data-state="revealed"] .hq-feedback { color:var(--hy-fg); border-left-color:var(--hy-axis); }
+.hq-summary[data-complete="1"] { color:var(--hy-ok); }
+
+/* ---- figures: every matplotlib / PNG output sits on a paper card, in every theme ---- */
+.aihydro-output img, .hy-paper { background:var(--hy-figure-bg); color:var(--hy-figure-fg); border:1px solid var(--hy-border); border-radius:10px; padding:8px; max-width:100%; height:auto; }
+
+/* legend swatches may be white (a path colour): an outline keeps them visible on any page */
+.legend-swatch { outline:1px solid var(--hy-axis); outline-offset:0; }
+
+/* ---- print: always light, on white ---- */
+@media print {
+  :root, :root[data-aihydro-theme] {
+    color-scheme: light;
+    --hy-bg:#ffffff; --hy-surface:#f3f6f9; --hy-inset:#ffffff; --hy-surface-2:#e8eef4;
+    --hy-fg:#1b2430; --hy-heading:#0b1320; --hy-fg-muted:#4a5868;
+    --hy-link:#005a9e; --hy-accent:#00668a; --hy-accent-strong:#004a66;
+    --hy-border:#d0d7de; --hy-axis:#57606a; --hy-grid:rgba(27,36,48,0.10);
+    --hy-ok:#176d30; --hy-warn:#8a5300; --hy-err:#c62828;
+    --hy-stage:#eef1f4; --hy-outline:#1b2430;
+    --hy-series-1:#0072b2; --hy-series-2:#c25400; --hy-series-3:#007a5a; --hy-series-4:#a8507f; --hy-series-5:#1b2430;
+    --hy-dash-1:none; --hy-dash-2:none; --hy-dash-3:none; --hy-dash-4:none; --hy-dash-5:none;
+    --hy-rain:#3b8cc0;
+    --hy-accent-soft:rgba(0,102,138,0.08); --hy-accent-line:rgba(0,102,138,0.25); --hy-accent-edge:rgba(0,102,138,0.6);
+    --hy-link-soft:rgba(0,90,158,0.07); --hy-ok-soft:rgba(26,127,55,0.08);
+    --hy-glow-1:rgba(0,0,0,0); --hy-glow-2:rgba(0,0,0,0);
+    --hy-shadow:none;
+    --hy-tip-bg:#1b2430; --hy-tip-fg:#e6edf3; --hy-tip-border:#4a5868;
+    --hy-btn-1:#00668a; --hy-btn-2:#005a9e; --hy-on-accent:#ffffff;
+    --hy-brand-1:#00668a; --hy-brand-2:#0072b2;
+  }
+  body { background:#fff !important; min-height:0 !important; }
+  main { max-width:none !important; padding:0 !important; }
+  .card, .hero, .plot-wrap, .metric, .callout, .hq-item { box-shadow:none !important; backdrop-filter:none !important; break-inside:avoid; }
+  .scrolly { display:block !important; }
+  .scrolly .scrolly-sticky { position:static !important; break-inside:avoid; }
+  .scrolly .scrolly-steps { padding:0 !important; gap:14px !important; }
+  .scrolly-step { opacity:1 !important; transform:none !important; box-shadow:none !important; break-inside:avoid; }
+  .run-btn, .aihydro-run, .hq-actions, .hy-noprint { display:none !important; }
+  .brand-logo { animation:none !important; }
+}

@@ -1,0 +1,32 @@
+{
+  "main_before": {
+    "baseflow-separation": 115,
+    "capstone-basin-story": 122,
+    "course-certificate": 89,
+    "dem-to-twi": 148,
+    "evapotranspiration-budyko": 158,
+    "precipitation-point-to-basin": 150,
+    "reading-a-hydrograph": 119,
+    "real-streamflow-data": 98,
+    "runoff-generation": 195,
+    "water-cycle-in-motion": 144,
+    "watershed-runoff": 164
+  },
+  "max": {
+    "baseflow-separation": 115,
+    "capstone-basin-story": 122,
+    "course-certificate": 89,
+    "dem-to-twi": 148,
+    "evapotranspiration-budyko": 158,
+    "precipitation-point-to-basin": 150,
+    "reading-a-hydrograph": 11,
+    "real-streamflow-data": 98,
+    "runoff-generation": 195,
+    "water-cycle-in-motion": 144,
+    "watershed-runoff": 5
+  },
+  "migrated": [
+    "reading-a-hydrograph",
+    "watershed-runoff"
+  ]
+}

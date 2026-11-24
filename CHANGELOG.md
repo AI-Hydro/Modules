@@ -2,6 +2,34 @@
 
 All notable changes to the learning modules. Versions are per module (`manifest.json` and the manifest embedded in `module.html` carry the same number).
 
+## 2026-11-24 — Light theme fast-track (shared theme tokens, two pilot lessons)
+
+Owner approved the fast-track of docs/vision-2040/findings/module-theme-study-2026-11-24.md. Text, numbers and claims are unchanged; only colours and styles moved.
+
+### Shared theme (new)
+- `shared/theme.css`: `--hy-*` colour tokens for four themes (light, dark, hc-dark, hc-light) and the precedence `html[data-aihydro-theme]` (set by the Studio host) > `forced-colors` > `prefers-color-scheme` > light. Light is the default when nothing signals a theme. Also: dark "plate" tokens for maps, 3-D stages and diagram panels, a paper card for every matplotlib figure (`.aihydro-output img`), token versions of the quiz and focus-ring colours, and a light `@media print` sheet.
+- `shared/theme.js`: `HydroTheme.kind() / color(name) / series(i) / dash(i) / onChange(cb)` so SVG, canvas, three.js and Plotly code read the same tokens and redraw on a theme change.
+- Tests: `tests/test_theme_tokens.py` (contrast, tinted-panel contrast, colour-vision separation, print block, plate), `tests/js/theme.test.js` (HydroTheme), `tests/test_theme_ratchet.py` + `tests/theme_hex_baseline.json` (hard-coded colour count per lesson only goes down).
+
+### reading-a-hydrograph 0.4.0 → 0.5.0
+- Fully on the tokens: prose, cards, callouts, the scrolly tour, the three SVG charts (grid, axes and ticks now `--hy-grid`/`--hy-axis`), controls, quiz, buttons and the gradient headings (a solid fallback colour in every theme and in forced-colors). Inactive tour steps are no longer dimmed with `opacity` (that put their text below 4.5:1); the active step is marked by its border.
+- The python cell draws its figure in a light "paper" style (white figure, series colours of the shared palette) and the static output was re-rendered; the figure sits on a paper card in all themes. Same data, same plot.
+
+### watershed-runoff 0.4.0 → 0.5.0
+- Prose, cards, callouts, controls and the quiz on the tokens. The two pre-rendered chart PNGs (white) sit on the paper card; their dots and lines now use colours that read on white (the rational-method worked-example dot is orange, the alt text says so; it was cyan on white).
+- Maps (routing canvas, Fish River drop-rain map), both 3-D stages, the poster and the two diagrams stay on a dark plate (`--hy-plate*`) in every theme. See DECISIONS.md.
+- The horseshoe scene's blue ambient and cyan key lights are replaced by white lights (the elevation colours were tinted), as the Fish River scene already did; the horseshoe scene sets its own plate-coloured background; both scenes read their line, marker and light colours from the tokens. A test pins white lights and the plate stage for both scenes; the plate is put back after each theme switch in case the host bridge repaints the stage colour.
+- Page size 228,789 B → 246,682 B (hard cap 250,000 kept; the added-bytes budget in `tests/test_scene3d.py` 130,000 → 140,000 for the 15 KB of shared theme code).
+
+### evapotranspiration-budyko 0.1.0 → 0.1.1
+- P0 contrast fix: axis strokes `#475569` (2.6:1 on the page) and the matplotlib `axes.edgecolor` `#334155` (1.8:1) become `#8b949e` (6.4:1), above the 3:1 needed for axes. Static outputs re-rendered (axis colour only).
+
+### Course intro-to-hydrology 0.4.1 → 0.4.2
+- Version follows the three lessons above; no course content change.
+
+### Not changed (known, queued)
+- The other eight lessons are untouched and stay dark-only until the follow-up migration. `#475569` / `#334155` still appear in capstone-basin-story, dem-to-twi, precipitation-point-to-basin, real-streamflow-data and runoff-generation (same P0 defect, outside this change).
+
 ## 2026-11-17 — dem-to-twi forward claims
 
 ### dem-to-twi 0.4.0 → 0.4.1

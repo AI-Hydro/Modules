@@ -1,7 +1,7 @@
 {
   "hydrograph-camels": {
     "mode": "headless",
-    "source_sha256": "1b42c623fbdf9592a22b502baba6e263fc823ed92b0b8db5d5fcb12a54876318",
+    "source_sha256": "423d8eb166868ce858c551e50d0879e07af831c1be5d7ad94ecf849bbac02fa0",
     "figures": 1,
     "python": "3.13.2",
     "numpy": "2.4.6",

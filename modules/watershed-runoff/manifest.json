@@ -2,7 +2,7 @@
   "moduleId": "watershed-runoff",
   "title": "The Watershed: Where Rain Becomes Runoff",
   "description": "Define a catchment, trace D8 flow paths across a SYNTHETIC 3-D terrain (depression-filled, drop/distance routing, stream network from flow accumulation), orbit a real basin (the Fish River, Maine, from the Copernicus GLO-30 DEM) and drop rain on it, then turn rainfall into runoff with an executable rational-method cell and an SCS curve-number cell.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "CC-BY-4.0",
   "topic": "watershed-hydrology",
   "level": "intro",

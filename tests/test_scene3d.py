@@ -114,7 +114,7 @@ def test_poster_is_a_small_png_of_the_documented_size():
 def test_page_size_stays_under_the_cap_and_the_added_bytes_are_within_budget():
     size = len((MODULES / MOD / "module.html").read_bytes())
     assert size < 250_000, size
-    assert size - PAGE_BEFORE <= 130_000, size - PAGE_BEFORE
+    assert size - PAGE_BEFORE <= 140_000, size - PAGE_BEFORE   # 130 000 before the shared theme tokens (theme.css + theme.js, about 15 KB inlined)
     assert len(PAYLOAD_BYTES) <= 40_000
 
 
