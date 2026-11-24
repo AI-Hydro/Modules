@@ -12,7 +12,7 @@
 {
   "id": "watershed-runoff",
   "title": "The Watershed: Where Rain Becomes Runoff",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "authors": [
     {
       "name": "Mohammad Galib",
@@ -40,128 +40,124 @@
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --blue:#00A3FF; --cyan:#00DDFF; --bright:#00FFFF;
-  --bg:#0a0a15;   --navy:#1a1a2e; --mid:#0f0f1e;
-  --text:#FFFFFF; --sub:#7dd3fc;  --muted:#94a3b8;
-  --border:rgba(125,211,252,0.15);
-  --shadow:0 24px 64px rgba(0,0,0,0.55);
-  --green:#34d399; --violet:#a78bfa; --amber:#fbbf24;
-}
-body { font-family:'Nunito',system-ui,sans-serif; font-size:16px; line-height:1.65; color:var(--sub);
-  background: radial-gradient(ellipse at 20% 0%, rgba(0,163,255,0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 100%, rgba(52,211,153,0.08) 0%, transparent 40%),
-              var(--bg); min-height:100vh; }
+/* Colours come from the shared tokens (--hy-*, inlined from shared/theme.css below); the host picks the theme.
+   Maps, the 3-D stages and the two diagrams sit on a dark "plate" (--hy-plate-*) in every theme. */
+:root { --shadow:var(--hy-shadow); --green:var(--hy-series-3); --amber:var(--hy-warn); }
+body { font-family:'Nunito',system-ui,sans-serif; font-size:16px; line-height:1.65; color:var(--hy-fg);
+  background: radial-gradient(ellipse at 20% 0%, var(--hy-glow-1) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 100%, var(--hy-glow-2) 0%, transparent 40%),
+              var(--hy-bg); min-height:100vh; }
 main { max-width:1160px; margin:0 auto; padding:32px 24px 80px; }
-h1 { font-family:'Quicksand',sans-serif; font-weight:700; color:var(--text);
+h1 { font-family:'Quicksand',sans-serif; font-weight:700; color:var(--hy-heading);
      font-size:clamp(32px,5vw,52px); line-height:1.05; letter-spacing:-0.03em; }
-h2 { font-family:'Poppins',sans-serif; font-weight:600; color:var(--text); font-size:22px; margin-bottom:10px; }
-h3 { font-family:'Poppins',sans-serif; font-weight:500; color:var(--sub); font-size:13px; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
-p  { color:var(--sub); margin-bottom:12px; }
-strong { color:var(--text); }
-code { font-family:'JetBrains Mono',monospace; font-size:0.88em; background:rgba(0,221,255,0.10); padding:2px 7px; border-radius:5px; color:var(--cyan); }
-a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,221,255,0.3); }
+h2 { font-family:'Poppins',sans-serif; font-weight:600; color:var(--hy-heading); font-size:22px; margin-bottom:10px; }
+h3 { font-family:'Poppins',sans-serif; font-weight:500; color:var(--hy-fg); font-size:13px; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
+p  { color:var(--hy-fg); margin-bottom:12px; }
+strong { color:var(--hy-heading); }
+code { font-family:'JetBrains Mono',monospace; font-size:0.88em; background:var(--hy-accent-soft); padding:2px 7px; border-radius:5px; color:var(--hy-accent); }
+a { color:var(--hy-link); text-decoration:none; border-bottom:1px solid var(--hy-accent-edge); }
 
-.card { background:rgba(26,26,46,0.82); border:1px solid var(--border); border-radius:24px; padding:26px 28px; box-shadow:var(--shadow); backdrop-filter:blur(4px); }
-.card.glow { box-shadow:var(--shadow),0 0 0 1px rgba(0,221,255,0.18),inset 0 0 40px rgba(0,163,255,0.04); }
+.card { background:var(--hy-surface); border:1px solid var(--hy-border); border-radius:24px; padding:26px 28px; box-shadow:var(--hy-shadow); }
+.card.glow { box-shadow:var(--hy-shadow),0 0 0 1px var(--hy-accent-line); }
 .wide { margin:20px 0; }
 .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:20px 0; }
 @media(max-width:860px){ .grid2{ grid-template-columns:1fr; } }
 
 /* Hero */
-.hero { border:1px solid rgba(0,221,255,0.25); border-radius:28px; padding:36px 38px; margin-bottom:22px;
-  background:linear-gradient(135deg,rgba(0,163,255,0.09) 0%,rgba(52,211,153,0.04) 100%); position:relative; overflow:hidden; }
-.hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 0% 60%,rgba(52,211,153,0.07),transparent 55%); pointer-events:none; }
+.hero { border:1px solid var(--hy-accent-line); border-radius:28px; padding:36px 38px; margin-bottom:22px;
+  background:linear-gradient(135deg,var(--hy-accent-soft) 0%,var(--hy-ok-soft) 100%); position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 0% 60%,var(--hy-ok-soft),transparent 55%); pointer-events:none; }
 .brand-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; position:relative; z-index:1; }
 .brand-logo { width:42px; height:42px; flex-shrink:0; }
 @keyframes aihydro-pulse {
-  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 8px rgba(0,163,255,0.40)); }
-  50%      { transform: scale(1.04); filter: drop-shadow(0 0 14px rgba(0,221,255,0.65)); }
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 8px var(--hy-accent-line)); }
+  50%      { transform: scale(1.04); filter: drop-shadow(0 0 14px var(--hy-accent-edge)); }
 }
 .brand-logo { animation: aihydro-pulse 3s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .brand-logo { animation: none; } }
-.brand-name { font-family:'Quicksand',sans-serif; font-weight:700; font-size:22px; background:linear-gradient(135deg,#00A3FF,#00FFFF); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.brand-tag { font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; padding-left:14px; border-left:1px solid var(--border); }
-.gradient-text { background:linear-gradient(135deg,#34d399,#00FFFF); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.hero-sub { font-size:17px; color:var(--sub); max-width:640px; margin:12px 0 18px; position:relative; z-index:1; }
-.instruction { display:inline-flex; gap:10px; align-items:flex-start; background:rgba(0,221,255,0.07); border:1px solid rgba(0,221,255,0.20); border-radius:14px; padding:12px 16px; color:var(--muted); font-size:14px; }
+.brand-name { font-family:'Quicksand',sans-serif; font-weight:700; font-size:22px; color:var(--hy-brand-1); background:linear-gradient(135deg,var(--hy-brand-1),var(--hy-brand-2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.brand-tag { font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:var(--hy-fg-muted); text-transform:uppercase; letter-spacing:0.1em; padding-left:14px; border-left:1px solid var(--hy-border); }
+.gradient-text { color:var(--hy-brand-1); background:linear-gradient(135deg,var(--hy-series-3),var(--hy-brand-2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+@media (forced-colors: active) { .brand-name, .gradient-text { background:none; -webkit-text-fill-color:currentColor; color:CanvasText; } }
+.hero-sub { font-size:17px; color:var(--hy-fg); max-width:640px; margin:12px 0 18px; position:relative; z-index:1; }
+.instruction { display:inline-flex; gap:10px; align-items:flex-start; background:var(--hy-accent-soft); border:1px solid var(--hy-accent-line); border-radius:14px; padding:12px 16px; color:var(--hy-fg-muted); font-size:14px; }
 .instruction::before { content:'💡'; flex-shrink:0; }
 
 /* Workflow strip */
 .workflow-strip { display:grid; grid-template-columns:repeat(8,1fr); gap:0; margin:20px 0; position:relative; }
-.workflow-strip::before { content:''; position:absolute; top:28px; left:calc(100%/16); right:calc(100%/16); height:2px; background:linear-gradient(90deg,var(--green),var(--cyan)); z-index:0; }
+.workflow-strip::before { content:''; position:absolute; top:28px; left:calc(100%/16); right:calc(100%/16); height:2px; background:linear-gradient(90deg,var(--hy-series-3),var(--hy-brand-2)); z-index:0; }
 .wf-node { display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; z-index:1; padding:0 4px; cursor:pointer; }
-.wf-icon { width:56px; height:56px; border-radius:50%; border:2px solid var(--border); background:var(--navy); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 0 0 4px rgba(0,163,255,0.08); transition:transform 0.2s,box-shadow 0.2s; }
-.wf-node:hover .wf-icon { transform:scale(1.12); box-shadow:0 0 20px rgba(0,221,255,0.35); }
-.wf-label { font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:var(--sub); text-align:center; }
+.wf-icon { width:56px; height:56px; border-radius:50%; border:2px solid var(--hy-border); background:var(--hy-surface-2); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 0 0 4px var(--hy-accent-soft); transition:transform 0.2s,box-shadow 0.2s; }
+.wf-node:hover .wf-icon { transform:scale(1.12); box-shadow:0 0 20px var(--hy-accent-line); }
+.wf-label { font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:var(--hy-fg); text-align:center; }
 @media(max-width:700px){ .workflow-strip{ grid-template-columns:repeat(3,1fr); gap:16px; } .workflow-strip::before{ display:none; } }
 
 /* Callouts */
-.callout { border-left:3px solid var(--cyan); background:rgba(0,221,255,0.06); padding:13px 16px; border-radius:0 12px 12px 0; margin:14px 0; font-size:15px; }
-.callout.tip { border-color:#34d399; background:rgba(52,211,153,0.07); }
-.callout-label { font-family:'Poppins',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; display:block; margin-bottom:5px; color:var(--cyan); }
-.callout.tip .callout-label { color:#34d399; }
+.callout { border-left:3px solid var(--hy-accent); background:var(--hy-accent-soft); padding:13px 16px; border-radius:0 12px 12px 0; margin:14px 0; font-size:15px; }
+.callout.tip { border-color:var(--hy-ok); background:var(--hy-ok-soft); }
+.callout-label { font-family:'Poppins',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; display:block; margin-bottom:5px; color:var(--hy-accent); }
+.callout.tip .callout-label { color:var(--hy-ok); }
 
 /* Concept cards */
-.concept-card { background:rgba(15,15,30,0.8); border:1px solid var(--border); border-radius:18px; padding:20px 22px; }
+.concept-card { background:var(--hy-inset); border:1px solid var(--hy-border); border-radius:18px; padding:20px 22px; }
 .concept-icon { font-size:32px; margin-bottom:10px; }
-.concept-title { font-family:'Poppins',sans-serif; font-weight:700; color:var(--text); font-size:15px; margin-bottom:8px; }
+.concept-title { font-family:'Poppins',sans-serif; font-weight:700; color:var(--hy-heading); font-size:15px; margin-bottom:8px; }
 
-/* Terrain canvas */
-.terrain-wrap { position:relative; border-radius:20px; overflow:hidden; background:var(--mid); border:1px solid var(--border); }
+/* Terrain canvas (3-D stage: dark plate in every theme) */
+.terrain-wrap { position:relative; border-radius:20px; overflow:hidden; background:var(--hy-plate); border:1px solid var(--hy-border); }
 .terrain-wrap canvas[data-aihydro-scene3d] { display:block; width:100%; height:400px; }
 .terrain-wrap canvas#terrainFallback { display:block; height:400px; width:auto; max-width:100%; aspect-ratio:1; margin:0 auto; }
 .terrain-wrap canvas[hidden] { display:none; }
-.terrain-hint { position:absolute; bottom:14px; right:14px; background:rgba(0,0,0,0.65); border:1px solid rgba(0,221,255,0.25); border-radius:10px; padding:6px 12px; font-size:12px; color:var(--muted); pointer-events:none; }
+.terrain-hint { position:absolute; bottom:14px; right:14px; background:var(--hy-plate-shade); border:1px solid var(--hy-plate-edge); border-radius:10px; padding:6px 12px; font-size:12px; color:var(--hy-plate-muted); pointer-events:none; }
 
 /* Real basin (Fish River): 3-D canvas under a poster that is shown until the first 3-D frame is drawn */
-.real-wrap { position:relative; height:440px; border-radius:20px; overflow:hidden; background:#0a1622; border:1px solid var(--border); }
+.real-wrap { position:relative; height:440px; border-radius:20px; overflow:hidden; background:var(--hy-plate); border:1px solid var(--hy-border); }
 .real-wrap canvas[data-aihydro-scene3d] { position:absolute; inset:0; width:100%; height:100%; min-height:0; border:0; border-radius:0; }
-.real-wrap .scene-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#0a1622; }
+.real-wrap .scene-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:var(--hy-plate); }
 .real-wrap .scene-poster[hidden] { display:none; }
-.scene-label { position:absolute; left:12px; top:12px; max-width:min(62%,380px); background:rgba(0,0,0,0.7); border:1px solid rgba(0,221,255,0.25); border-radius:10px; padding:6px 12px; font-size:12px; color:var(--text); pointer-events:none; }
+.scene-label { position:absolute; left:12px; top:12px; max-width:min(62%,380px); background:var(--hy-plate-shade); border:1px solid var(--hy-plate-edge); border-radius:10px; padding:6px 12px; font-size:12px; color:var(--hy-plate-fg); pointer-events:none; }
 .scene-label[hidden] { display:none; }
-.scene-status { font-size:13px; color:var(--muted); margin:8px 0 0; min-height:1.4em; }
-.fish-map-wrap { max-width:460px; border-radius:18px; overflow:hidden; background:#0a1622; border:1px solid var(--border); }
+.scene-status { font-size:13px; color:var(--hy-fg-muted); margin:8px 0 0; min-height:1.4em; }
+.fish-map-wrap { max-width:460px; border-radius:18px; overflow:hidden; background:var(--hy-plate); border:1px solid var(--hy-border); }
 .fish-map-wrap canvas { display:block; width:100%; height:auto; cursor:crosshair; }
-.fish-map-wrap canvas:focus-visible { outline:3px solid #00FFFF; outline-offset:-3px; }
+.fish-map-wrap canvas:focus-visible { outline:3px solid var(--hy-plate-stream); outline-offset:-3px; }
 @media(max-width:600px){ .real-wrap{ height:340px; } }
 
 /* Routing canvas */
-.routing-wrap { border-radius:18px; overflow:hidden; background:var(--mid); border:1px solid var(--border); }
+.routing-wrap { border-radius:18px; overflow:hidden; background:var(--hy-plate); border:1px solid var(--hy-border); }
 .routing-wrap canvas { display:block; cursor:crosshair; width:100%; }
-.routing-wrap canvas:focus-visible { outline:3px solid #00FFFF; outline-offset:-3px; }
-.routing-legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:12px; color:var(--muted); }
+.routing-wrap canvas:focus-visible { outline:3px solid var(--hy-plate-stream); outline-offset:-3px; }
+.routing-legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:12px; color:var(--hy-fg-muted); }
 .legend-item { display:flex; align-items:center; gap:6px; }
 .legend-swatch { width:14px; height:8px; border-radius:3px; }
 
 /* Stat chips */
 .stat-row { display:flex; gap:12px; flex-wrap:wrap; margin:12px 0; }
-.stat-chip { background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:12px; padding:10px 16px; min-width:100px; }
-.stat-label { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
-.stat-val { font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--bright); margin-top:4px; line-height:1; }
+.stat-chip { background:var(--hy-inset); border:1px solid var(--hy-border); border-radius:12px; padding:10px 16px; min-width:100px; }
+.stat-label { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--hy-fg-muted); }
+.stat-val { font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--hy-accent); margin-top:4px; line-height:1; }
 
 /* Code cells (Python rain→runoff section) */
-.aihydro-cell { border:1px solid rgba(0,221,255,0.22); border-radius:18px; background:rgba(2,6,23,0.55); padding:18px 20px; margin:16px 0; }
+.aihydro-cell { border:1px solid var(--hy-accent-line); border-radius:18px; background:var(--hy-surface); padding:18px 20px; margin:16px 0; }
 .aihydro-cell-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-.aihydro-cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,221,255,0.12); color:var(--cyan); padding:3px 10px; border-radius:6px; }
-.aihydro-cell-desc { font-size:13px; color:var(--muted); flex:1; }
-.run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
-.run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,221,255,0.35); }
-.aihydro-source { font-family:'JetBrains Mono',monospace; font-size:12.5px; white-space:pre; overflow-x:auto; background:rgba(0,0,0,0.45); border-radius:10px; padding:14px; margin-bottom:12px; color:var(--text); border:1px solid rgba(125,211,252,0.08); max-height:380px; }
-.aihydro-output { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; min-height:2em; background:rgba(0,0,0,0.30); border-radius:10px; padding:12px; color:var(--sub); overflow:auto; max-height:480px; }
-.aihydro-output:empty::before { content:'(no output yet — run the cell)'; color:var(--muted); font-style:italic; }
+.aihydro-cell-lang { font-family:'Poppins',sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; background:var(--hy-accent-soft); color:var(--hy-accent); padding:3px 10px; border-radius:6px; }
+.aihydro-cell-desc { font-size:13px; color:var(--hy-fg-muted); flex:1; }
+.run-btn { font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; background:linear-gradient(135deg,var(--hy-btn-1),var(--hy-btn-2)); color:var(--hy-on-accent); border:none; border-radius:999px; padding:6px 16px; cursor:pointer; transition:transform 0.1s,box-shadow 0.2s; }
+.run-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px var(--hy-accent-line); }
+.aihydro-source { font-family:'JetBrains Mono',monospace; font-size:12.5px; white-space:pre; overflow-x:auto; background:var(--hy-inset); border-radius:10px; padding:14px; margin-bottom:12px; color:var(--hy-fg); border:1px solid var(--hy-border); max-height:380px; }
+.aihydro-output { font-family:'JetBrains Mono',monospace; font-size:13px; white-space:pre-wrap; min-height:2em; background:var(--hy-inset); border:1px solid var(--hy-border); border-radius:10px; padding:12px; color:var(--hy-fg); overflow:auto; max-height:480px; }
+.aihydro-output:empty::before { content:'(no output yet — run the cell)'; color:var(--hy-fg-muted); font-style:italic; }
 
 /* Quiz */
 
 /* References */
 .refs ol { counter-reset:r; padding:0; list-style:none; }
-.refs li { counter-increment:r; padding-left:36px; position:relative; margin-bottom:12px; font-size:14px; color:var(--sub); line-height:1.55; }
-.refs li::before { content:counter(r); position:absolute; left:0; top:0; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#00A3FF,#00DDFF); color:var(--bg); font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center; }
-.refs em { color:var(--text); font-style:italic; }
-.provenance { border-top:1px solid var(--border); margin-top:32px; padding:22px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:16px 32px; }
-.prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:3px; }
-.prov-item dd { font-size:13px; color:var(--sub); }
+.refs li { counter-increment:r; padding-left:36px; position:relative; margin-bottom:12px; font-size:14px; color:var(--hy-fg); line-height:1.55; }
+.refs li::before { content:counter(r); position:absolute; left:0; top:0; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--hy-btn-1),var(--hy-btn-2)); color:var(--hy-on-accent); font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center; }
+.refs em { color:var(--hy-heading); font-style:italic; }
+.provenance { border-top:1px solid var(--hy-border); margin-top:32px; padding:22px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:16px 32px; }
+.prov-item dt { font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--hy-fg-muted); margin-bottom:3px; }
+.prov-item dd { font-size:13px; color:var(--hy-fg); }
 @media(max-width:600px){ .provenance{ grid-template-columns:1fr; } }
 /*@@BEGIN css:shared/a11y.css@@*/
 /* Shared accessibility styles (inlined by scripts/build_modules.py). */
@@ -201,6 +197,196 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .hq-summary[data-complete="1"] { color:#86efac; }
 [hidden] { display:none !important; }
 /*@@END css:shared/quiz.css@@*/
+/*@@BEGIN css:shared/theme.css@@*/
+/* Shared theme tokens (inlined by scripts/build_modules.py). Light is the default.
+ * Precedence: html[data-aihydro-theme] (set by the Studio host) > forced-colors > prefers-color-scheme > light.
+ * Values are the ones measured in docs/vision-2040/findings/module-theme-study-2026-11-24.md and are gated by
+ * tests/test_theme_tokens.py (text >= 4.5:1, body >= 7:1, graphics >= 3:1, series CVD separation).
+ * Lessons use only the --hy-* tokens (plus the legacy aliases at the end of the first block); a new hard-coded
+ * colour in module.html is blocked by the ratchet in tests/test_theme_ratchet.py. */
+
+/* ---- light: the default when there is no host signal ---- */
+:root {
+  color-scheme: light;
+  --hy-bg:#ffffff; --hy-surface:#f3f6f9; --hy-inset:#ffffff; --hy-surface-2:#e8eef4;
+  --hy-fg:#1b2430; --hy-heading:#0b1320; --hy-fg-muted:#4a5868;
+  --hy-link:#005a9e; --hy-accent:#00668a; --hy-accent-strong:#004a66;
+  --hy-border:#d0d7de; --hy-axis:#57606a; --hy-grid:rgba(27,36,48,0.10);
+  --hy-ok:#176d30; --hy-warn:#8a5300; --hy-err:#c62828;
+  --hy-stage:#eef1f4; --hy-outline:#1b2430;
+  --hy-series-1:#0072b2; --hy-series-2:#c25400; --hy-series-3:#007a5a; --hy-series-4:#a8507f; --hy-series-5:#1b2430;
+  --hy-dash-1:none; --hy-dash-2:none; --hy-dash-3:none; --hy-dash-4:none; --hy-dash-5:none;
+  --hy-rain:#3b8cc0;
+  --hy-accent-soft:rgba(0,102,138,0.08); --hy-accent-line:rgba(0,102,138,0.25); --hy-accent-edge:rgba(0,102,138,0.6);
+  --hy-link-soft:rgba(0,90,158,0.07); --hy-ok-soft:rgba(26,127,55,0.08);
+  --hy-glow-1:rgba(0,114,178,0.07); --hy-glow-2:rgba(0,102,138,0.04);
+  --hy-shadow:0 8px 24px rgba(27,36,48,0.10);
+  --hy-tip-bg:#1b2430; --hy-tip-fg:#e6edf3; --hy-tip-border:#4a5868;
+  --hy-btn-1:#00668a; --hy-btn-2:#005a9e; --hy-on-accent:#ffffff;
+  --hy-brand-1:#00668a; --hy-brand-2:#0072b2;
+  --hy-logo-a:#00A3FF; --hy-logo-b:#00DDFF; --hy-logo-eye:#1a1a2e;
+  --hy-figure-bg:#ffffff; --hy-figure-fg:#1b2430;
+  /* "plate" tokens: maps, 3-D stages and diagram panels that keep a dark ground in every theme (the baked
+     Fish River poster is drawn on it, and no single background gives both viridis ends 3:1; see the study, section 3.3).
+     Theme-independent on purpose: they are not restated in the themed blocks below. */
+  --hy-plate:#0a1622; --hy-plate-fg:#e2e8f0; --hy-plate-muted:#b4c0ce; --hy-plate-ink:#000000;
+  --hy-plate-line:#ffffff; --hy-plate-path:rgba(255,255,255,0.9); --hy-plate-stream:#00ffff; --hy-plate-stream-soft:rgba(0,221,255,0.75);
+  --hy-plate-drop:#f87171; --hy-plate-focus:#fde047; --hy-plate-ok:#34d399; --hy-plate-blue:#60a5fa;
+  --hy-plate-area:rgba(251,191,36,0.38); --hy-plate-shade:rgba(0,0,0,0.6); --hy-plate-edge:rgba(0,221,255,0.25);
+  --hy-plate-ground:#1a2b1a; --hy-plate-ridge:#223322; --hy-plate-crest:#2a3a2a; --hy-plate-tint:rgba(0,163,255,0.06);
+  --hy-plate-cell:rgba(34,51,34,0.9); --hy-plate-cell-lo:rgba(0,30,60,0.9); --hy-plate-cell-hi:rgba(0,50,80,0.9);
+  --hy-plate-cell-edge:rgba(0,221,255,0.3); --hy-plate-cell-edge-hi:rgba(0,221,255,0.6); --hy-plate-cell-edge-lo:rgba(52,211,153,0.7);
+  --hy-plate-ramp-lo:#001a40;
+  /* legacy names used by the shared widgets (quiz.css) and older module CSS */
+  --bg:var(--hy-bg); --navy:var(--hy-surface-2); --mid:var(--hy-inset);
+  --text:var(--hy-heading); --sub:var(--hy-fg); --muted:var(--hy-fg-muted);
+  --cyan:var(--hy-accent); --blue:var(--hy-link); --bright:var(--hy-accent-strong);
+  --border:var(--hy-border);
+}
+
+/* ---- dark: OS preference when the host sent nothing ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-aihydro-theme]) {
+    color-scheme: dark;
+    --hy-bg:#0d1117; --hy-surface:#161b22; --hy-inset:#0d1117; --hy-surface-2:#1c2330;
+    --hy-fg:#e6edf3; --hy-heading:#ffffff; --hy-fg-muted:#9aa7b4;
+    --hy-link:#6cb6ff; --hy-accent:#3fd0f0; --hy-accent-strong:#00ffff;
+    --hy-border:#30363d; --hy-axis:#8b949e; --hy-grid:rgba(139,148,158,0.18);
+    --hy-ok:#56d364; --hy-warn:#e3b341; --hy-err:#ff7b72;
+    --hy-stage:#0e1621; --hy-outline:#ffffff;
+    --hy-series-1:#56b4e9; --hy-series-2:#e69f00; --hy-series-3:#2fbf8f; --hy-series-4:#cc79a7; --hy-series-5:#e6edf3;
+    --hy-rain:#56b4e9;
+    --hy-accent-soft:rgba(63,208,240,0.10); --hy-accent-line:rgba(63,208,240,0.25); --hy-accent-edge:rgba(63,208,240,0.6);
+    --hy-link-soft:rgba(108,182,255,0.10); --hy-ok-soft:rgba(86,211,100,0.10);
+    --hy-glow-1:rgba(0,163,255,0.14); --hy-glow-2:rgba(0,221,255,0.08);
+    --hy-shadow:0 24px 64px rgba(0,0,0,0.55);
+    --hy-tip-bg:#010409; --hy-tip-fg:#3fd0f0; --hy-tip-border:rgba(63,208,240,0.35);
+    --hy-btn-1:#00A3FF; --hy-btn-2:#00DDFF; --hy-on-accent:#0a0a15;
+    --hy-brand-1:#00A3FF; --hy-brand-2:#00FFFF;
+  }
+}
+:root[data-aihydro-theme="dark"] {
+  color-scheme: dark;
+  --hy-bg:#0d1117; --hy-surface:#161b22; --hy-inset:#0d1117; --hy-surface-2:#1c2330;
+  --hy-fg:#e6edf3; --hy-heading:#ffffff; --hy-fg-muted:#9aa7b4;
+  --hy-link:#6cb6ff; --hy-accent:#3fd0f0; --hy-accent-strong:#00ffff;
+  --hy-border:#30363d; --hy-axis:#8b949e; --hy-grid:rgba(139,148,158,0.18);
+  --hy-ok:#56d364; --hy-warn:#e3b341; --hy-err:#ff7b72;
+  --hy-stage:#0e1621; --hy-outline:#ffffff;
+  --hy-series-1:#56b4e9; --hy-series-2:#e69f00; --hy-series-3:#2fbf8f; --hy-series-4:#cc79a7; --hy-series-5:#e6edf3;
+  --hy-rain:#56b4e9;
+  --hy-accent-soft:rgba(63,208,240,0.10); --hy-accent-line:rgba(63,208,240,0.25); --hy-accent-edge:rgba(63,208,240,0.6);
+  --hy-link-soft:rgba(108,182,255,0.10); --hy-ok-soft:rgba(86,211,100,0.10);
+  --hy-glow-1:rgba(0,163,255,0.14); --hy-glow-2:rgba(0,221,255,0.08);
+  --hy-shadow:0 24px 64px rgba(0,0,0,0.55);
+  --hy-tip-bg:#010409; --hy-tip-fg:#3fd0f0; --hy-tip-border:rgba(63,208,240,0.35);
+  --hy-btn-1:#00A3FF; --hy-btn-2:#00DDFF; --hy-on-accent:#0a0a15;
+  --hy-brand-1:#00A3FF; --hy-brand-2:#00FFFF;
+}
+
+/* ---- high contrast, dark ---- (series are not separable by hue alone here: dash patterns are mandatory) */
+:root[data-aihydro-theme="hc-dark"] {
+  color-scheme: dark;
+  --hy-bg:#000000; --hy-surface:#000000; --hy-inset:#000000; --hy-surface-2:#000000;
+  --hy-fg:#ffffff; --hy-heading:#ffffff; --hy-fg-muted:#ffffff;
+  --hy-link:#ffff00; --hy-accent:#00ffff; --hy-accent-strong:#00ffff;
+  --hy-border:#ffffff; --hy-axis:#ffffff; --hy-grid:rgba(255,255,255,0.35);
+  --hy-ok:#00ff00; --hy-warn:#ffd700; --hy-err:#ff8080;
+  --hy-stage:#000000; --hy-outline:#ffffff;
+  --hy-series-1:#ffffff; --hy-series-2:#ffd700; --hy-series-3:#00ffff; --hy-series-4:#ff8c00; --hy-series-5:#ff80ff;
+  --hy-dash-1:none; --hy-dash-2:8 4; --hy-dash-3:2 3; --hy-dash-4:10 3 2 3; --hy-dash-5:4 4;
+  --hy-rain:#ffffff;
+  --hy-accent-soft:rgba(0,0,0,0); --hy-accent-line:#ffffff; --hy-accent-edge:#ffffff;
+  --hy-link-soft:rgba(0,0,0,0); --hy-ok-soft:rgba(0,0,0,0);
+  --hy-glow-1:rgba(0,0,0,0); --hy-glow-2:rgba(0,0,0,0);
+  --hy-shadow:none;
+  --hy-tip-bg:#000000; --hy-tip-fg:#ffffff; --hy-tip-border:#ffffff;
+  --hy-btn-1:#00ffff; --hy-btn-2:#00ffff; --hy-on-accent:#000000;
+  --hy-brand-1:#00ffff; --hy-brand-2:#00ffff;
+}
+
+/* ---- high contrast, light ---- */
+:root[data-aihydro-theme="hc-light"] {
+  color-scheme: light;
+  --hy-bg:#ffffff; --hy-surface:#ffffff; --hy-inset:#ffffff; --hy-surface-2:#ffffff;
+  --hy-fg:#000000; --hy-heading:#000000; --hy-fg-muted:#000000;
+  --hy-link:#0000c0; --hy-accent:#0000c0; --hy-accent-strong:#0000c0;
+  --hy-border:#000000; --hy-axis:#000000; --hy-grid:rgba(0,0,0,0.35);
+  --hy-ok:#006400; --hy-warn:#6b3a00; --hy-err:#a00000;
+  --hy-stage:#ffffff; --hy-outline:#000000;
+  --hy-series-1:#0000c0; --hy-series-2:#a00000; --hy-series-3:#006400; --hy-series-4:#6b006b; --hy-series-5:#000000;
+  --hy-dash-1:none; --hy-dash-2:8 4; --hy-dash-3:2 3; --hy-dash-4:10 3 2 3; --hy-dash-5:4 4;
+  --hy-rain:#0000c0;
+  --hy-accent-soft:rgba(255,255,255,0); --hy-accent-line:#000000; --hy-accent-edge:#000000;
+  --hy-link-soft:rgba(255,255,255,0); --hy-ok-soft:rgba(255,255,255,0);
+  --hy-glow-1:rgba(255,255,255,0); --hy-glow-2:rgba(255,255,255,0);
+  --hy-shadow:none;
+  --hy-tip-bg:#ffffff; --hy-tip-fg:#000000; --hy-tip-border:#000000;
+  --hy-btn-1:#0000c0; --hy-btn-2:#0000c0; --hy-on-accent:#ffffff;
+  --hy-brand-1:#0000c0; --hy-brand-2:#0000c0;
+}
+
+/* ---- the OS forces its own colours and the host sent nothing ---- */
+@media (forced-colors: active) {
+  :root:not([data-aihydro-theme]) {
+    --hy-bg:Canvas; --hy-surface:Canvas; --hy-inset:Canvas; --hy-surface-2:Canvas;
+    --hy-fg:CanvasText; --hy-heading:CanvasText; --hy-fg-muted:CanvasText;
+    --hy-link:LinkText; --hy-accent:LinkText; --hy-accent-strong:LinkText;
+    --hy-border:CanvasText; --hy-axis:CanvasText; --hy-outline:CanvasText; --hy-stage:Canvas;
+    --hy-dash-1:none; --hy-dash-2:8 4; --hy-dash-3:2 3; --hy-dash-4:10 3 2 3; --hy-dash-5:4 4;
+  }
+}
+
+/* ---- shared widgets (quiz.css, a11y.css) re-coloured with the tokens; this file is inlined after them ---- */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible, [role="slider"]:focus-visible, [role="button"]:focus-visible, summary:focus-visible { outline-color:var(--hy-accent); }
+.hq-opt { background:var(--hy-inset); }
+.hq-opt:has(input:checked) { background:var(--hy-accent-soft); }
+.hq-input { border-color:var(--hy-axis); background:var(--hy-inset); }
+.hq-check { background:linear-gradient(135deg,var(--hy-btn-1),var(--hy-btn-2)); color:var(--hy-on-accent); }
+.hq-item[data-state="correct"] .hq-feedback { color:var(--hy-ok); border-left-color:var(--hy-ok); }
+.hq-item[data-state="incorrect"] .hq-feedback { color:var(--hy-err); border-left-color:var(--hy-err); }
+.hq-item[data-state="revealed"] .hq-feedback { color:var(--hy-fg); border-left-color:var(--hy-axis); }
+.hq-summary[data-complete="1"] { color:var(--hy-ok); }
+
+/* ---- figures: every matplotlib / PNG output sits on a paper card, in every theme ---- */
+.aihydro-output img, .hy-paper { background:var(--hy-figure-bg); color:var(--hy-figure-fg); border:1px solid var(--hy-border); border-radius:10px; padding:8px; max-width:100%; height:auto; }
+
+/* legend swatches may be white (a path colour): an outline keeps them visible on any page */
+.legend-swatch { outline:1px solid var(--hy-axis); outline-offset:0; }
+
+/* ---- print: always light, on white ---- */
+@media print {
+  :root, :root[data-aihydro-theme] {
+    color-scheme: light;
+    --hy-bg:#ffffff; --hy-surface:#f3f6f9; --hy-inset:#ffffff; --hy-surface-2:#e8eef4;
+    --hy-fg:#1b2430; --hy-heading:#0b1320; --hy-fg-muted:#4a5868;
+    --hy-link:#005a9e; --hy-accent:#00668a; --hy-accent-strong:#004a66;
+    --hy-border:#d0d7de; --hy-axis:#57606a; --hy-grid:rgba(27,36,48,0.10);
+    --hy-ok:#176d30; --hy-warn:#8a5300; --hy-err:#c62828;
+    --hy-stage:#eef1f4; --hy-outline:#1b2430;
+    --hy-series-1:#0072b2; --hy-series-2:#c25400; --hy-series-3:#007a5a; --hy-series-4:#a8507f; --hy-series-5:#1b2430;
+    --hy-dash-1:none; --hy-dash-2:none; --hy-dash-3:none; --hy-dash-4:none; --hy-dash-5:none;
+    --hy-rain:#3b8cc0;
+    --hy-accent-soft:rgba(0,102,138,0.08); --hy-accent-line:rgba(0,102,138,0.25); --hy-accent-edge:rgba(0,102,138,0.6);
+    --hy-link-soft:rgba(0,90,158,0.07); --hy-ok-soft:rgba(26,127,55,0.08);
+    --hy-glow-1:rgba(0,0,0,0); --hy-glow-2:rgba(0,0,0,0);
+    --hy-shadow:none;
+    --hy-tip-bg:#1b2430; --hy-tip-fg:#e6edf3; --hy-tip-border:#4a5868;
+    --hy-btn-1:#00668a; --hy-btn-2:#005a9e; --hy-on-accent:#ffffff;
+    --hy-brand-1:#00668a; --hy-brand-2:#0072b2;
+  }
+  body { background:#fff !important; min-height:0 !important; }
+  main { max-width:none !important; padding:0 !important; }
+  .card, .hero, .plot-wrap, .metric, .callout, .hq-item { box-shadow:none !important; backdrop-filter:none !important; break-inside:avoid; }
+  .scrolly { display:block !important; }
+  .scrolly .scrolly-sticky { position:static !important; break-inside:avoid; }
+  .scrolly .scrolly-steps { padding:0 !important; gap:14px !important; }
+  .scrolly-step { opacity:1 !important; transform:none !important; box-shadow:none !important; break-inside:avoid; }
+  .run-btn, .aihydro-run, .hq-actions, .hy-noprint { display:none !important; }
+  .brand-logo { animation:none !important; }
+}
+/*@@END css:shared/theme.css@@*/
 </style>
 </head>
 <body>
@@ -212,16 +398,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
         <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="AI-Hydro logo">
       <defs>
         <linearGradient id="aihydroG" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stop-color="#00A3FF"/>
-          <stop offset="100%" stop-color="#00DDFF"/>
+          <stop offset="0%"  stop-color="var(--hy-logo-a)"/>
+          <stop offset="100%" stop-color="var(--hy-logo-b)"/>
         </linearGradient>
       </defs>
       <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroG)"/>
       <ellipse cx="20" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
       <ellipse cx="80" cy="52" rx="5" ry="7" fill="url(#aihydroG)"/>
-      <ellipse cx="40" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
-      <ellipse cx="60" cy="48" rx="6" ry="9" fill="#1a1a2e"/>
-      <path d="M 38 62 Q 50 68 62 62" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="40" cy="48" rx="6" ry="9" fill="var(--hy-logo-eye)"/>
+      <ellipse cx="60" cy="48" rx="6" ry="9" fill="var(--hy-logo-eye)"/>
+      <path d="M 38 62 Q 50 68 62 62" stroke="var(--hy-logo-eye)" stroke-width="3" fill="none" stroke-linecap="round"/>
       <circle cx="50" cy="14" r="4" fill="url(#aihydroG)"/>
     </svg>
     <span class="brand-name">AI-Hydro</span>
@@ -249,7 +435,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     <div class="wf-node" data-scroll="sec-runoff"><div class="wf-icon">💧</div><span class="wf-label">Runoff</span></div>
     <div class="wf-node" data-scroll="sec-quiz"><div class="wf-icon">✓</div><span class="wf-label">Check</span></div>
     <div class="wf-node" data-scroll="sec-prov">
-      <div class="wf-icon" style="border-color:rgba(0,221,255,0.6);box-shadow:0 0 20px rgba(0,221,255,0.25);">📜</div>
+      <div class="wf-icon" style="border-color:var(--hy-accent-edge);box-shadow:0 0 20px var(--hy-accent-line);">📜</div>
       <span class="wf-label" style="color:var(--cyan);">Sources</span>
     </div>
   </div>
@@ -285,20 +471,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   <!-- Watershed concept SVG -->
   <div style="margin:22px 0;background:var(--mid);border:1px solid var(--border);border-radius:18px;padding:18px;">
     <svg viewBox="0 0 700 260" role="img" aria-label="Watershed concept diagram" style="width:100%;height:auto;">
-      <rect x="0" y="0" width="700" height="260" fill="#0a0a15"/>
-      <polygon points="0,180 700,180 700,260 0,260" fill="#1a2b1a"/>
-      <polygon points="0,180 0,60 200,100 280,180" fill="#223322"/>
-      <polygon points="700,180 700,60 500,100 420,180" fill="#223322"/>
-      <polygon points="200,100 280,60 350,40 420,60 500,100 350,80" fill="#2a3a2a"/>
-      <polyline points="0,60 200,100 280,60 350,40 420,60 500,100 700,60" stroke="#00FFFF" stroke-width="2.5" fill="none" stroke-dasharray="8 4" opacity="0.85"/>
-      <path d="M 350,75 Q 340,120 330,160 Q 320,195 310,230" stroke="#00A3FF" stroke-width="3" fill="none" opacity="0.9"/>
-      <path d="M 280,130 Q 300,155 315,185" stroke="#00A3FF" stroke-width="2" fill="none" opacity="0.7"/>
-      <path d="M 420,130 Q 390,160 350,190 Q 325,210 310,230" stroke="#00A3FF" stroke-width="2" fill="none" opacity="0.7"/>
-      <circle cx="310" cy="232" r="7" fill="#00FFFF" opacity="0.9"/>
-      <text x="322" y="237" font-family="Poppins,sans-serif" font-size="12" fill="#00FFFF" font-weight="700">Outlet (gauge)</text>
-      <text x="350" y="28" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#00FFFF" font-weight="700" opacity="0.9">— — watershed divide — —</text>
-      <polygon points="200,100 280,60 350,40 420,60 500,100 420,180 280,180" fill="rgba(0,163,255,0.06)"/>
-      <g fill="#60a5fa" opacity="0.55">
+      <rect x="0" y="0" width="700" height="260" fill="var(--hy-plate)"/>
+      <polygon points="0,180 700,180 700,260 0,260" fill="var(--hy-plate-ground)"/>
+      <polygon points="0,180 0,60 200,100 280,180" fill="var(--hy-plate-ridge)"/>
+      <polygon points="700,180 700,60 500,100 420,180" fill="var(--hy-plate-ridge)"/>
+      <polygon points="200,100 280,60 350,40 420,60 500,100 350,80" fill="var(--hy-plate-crest)"/>
+      <polyline points="0,60 200,100 280,60 350,40 420,60 500,100 700,60" stroke="var(--hy-plate-stream)" stroke-width="2.5" fill="none" stroke-dasharray="8 4" opacity="0.85"/>
+      <path d="M 350,75 Q 340,120 330,160 Q 320,195 310,230" stroke="var(--hy-plate-blue)" stroke-width="3" fill="none" opacity="0.9"/>
+      <path d="M 280,130 Q 300,155 315,185" stroke="var(--hy-plate-blue)" stroke-width="2" fill="none" opacity="0.7"/>
+      <path d="M 420,130 Q 390,160 350,190 Q 325,210 310,230" stroke="var(--hy-plate-blue)" stroke-width="2" fill="none" opacity="0.7"/>
+      <circle cx="310" cy="232" r="7" fill="var(--hy-plate-stream)" opacity="0.9"/>
+      <text x="322" y="237" font-family="Poppins,sans-serif" font-size="12" fill="var(--hy-plate-stream)" font-weight="700">Outlet (gauge)</text>
+      <text x="350" y="28" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="var(--hy-plate-stream)" font-weight="700" opacity="0.9">— — watershed divide — —</text>
+      <polygon points="200,100 280,60 350,40 420,60 500,100 420,180 280,180" fill="var(--hy-plate-tint)"/>
+      <g fill="var(--hy-plate-blue)" opacity="0.55">
         <ellipse cx="150" cy="90" rx="2.5" ry="5"/><ellipse cx="180" cy="110" rx="2" ry="4.5"/>
         <ellipse cx="450" cy="85" rx="2.5" ry="5"/><ellipse cx="480" cy="108" rx="2" ry="4.5"/>
         <ellipse cx="320" cy="65" rx="2.5" ry="5"/><ellipse cx="370" cy="58" rx="2" ry="4"/>
@@ -321,7 +507,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
   <p id="terrainDesc" class="hydro-sr-only">Text description of the 3-D view: the surface is a 32 by 32 cell horseshoe-shaped catchment. Elevation is lowest along a central channel that runs north to south and highest on the ridges to the west, north and east. The stream network branches like a tree and leaves the model at one outlet on the south edge. The 2-D map in section 4 shows the same terrain and can be explored with the keyboard.</p>
   <div style="margin-top:16px;">
-    <p>Colour: <span style="color:#34d399;">■ green-teal</span> = valleys · <span style="color:#60a5fa;">■ blue</span> = mid-slope · <span style="color:#e2e8f0;">■ white</span> = ridges. Cyan lines are the stream network derived from flow accumulation (cells with at least 60 cells draining through them — an arbitrary threshold), converging to the outlet at bottom-centre.</p>
+    <p>Colour: <span style="color:var(--hy-series-3);">■</span> green-teal = valleys · <span style="color:var(--hy-link);">■</span> blue = mid-slope · <span style="color:var(--hy-axis);">■</span> white = ridges. Cyan lines are the stream network derived from flow accumulation (cells with at least 60 cells draining through them — an arbitrary threshold), converging to the outlet at bottom-centre.</p>
   </div>
   <div class="callout">
     <span class="callout-label">Look for</span>
@@ -353,28 +539,28 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
       <!-- D8 grid diagram -->
       <div style="background:var(--mid);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <svg viewBox="0 0 280 225" role="img" aria-label="D8 flow direction grid" style="width:100%;height:auto;">
-          <defs><marker id="arH" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5 Z" fill="#00FFFF"/></marker></defs>
-          <rect x="10"  y="10"  width="80" height="60" fill="rgba(34,51,34,0.9)" stroke="rgba(0,221,255,0.3)" stroke-width="1"/>
-          <rect x="100" y="10"  width="80" height="60" fill="rgba(34,51,34,0.9)" stroke="rgba(0,221,255,0.3)" stroke-width="1"/>
-          <rect x="190" y="10"  width="80" height="60" fill="rgba(34,51,34,0.9)" stroke="rgba(0,221,255,0.3)" stroke-width="1"/>
-          <rect x="10"  y="80"  width="80" height="60" fill="rgba(34,51,34,0.9)" stroke="rgba(0,221,255,0.3)" stroke-width="1"/>
-          <rect x="100" y="80"  width="80" height="60" fill="rgba(0,50,80,0.9)"  stroke="rgba(0,221,255,0.6)" stroke-width="2"/>
-          <rect x="190" y="80"  width="80" height="60" fill="rgba(34,51,34,0.9)" stroke="rgba(0,221,255,0.3)" stroke-width="1"/>
-          <rect x="10"  y="150" width="80" height="60" fill="rgba(34,51,34,0.9)" stroke="rgba(0,221,255,0.3)" stroke-width="1"/>
-          <rect x="100" y="150" width="80" height="60" fill="rgba(0,30,60,0.9)"  stroke="rgba(52,211,153,0.7)" stroke-width="2"/>
-          <rect x="190" y="150" width="80" height="60" fill="rgba(34,51,34,0.9)" stroke="rgba(0,221,255,0.3)" stroke-width="1"/>
-          <text x="50"  y="47"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">120</text>
-          <text x="140" y="47"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">115</text>
-          <text x="230" y="47"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">118</text>
-          <text x="50"  y="117" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">112</text>
-          <text x="140" y="117" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#00FFFF" font-weight="bold">108</text>
-          <text x="230" y="117" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">110</text>
-          <text x="50"  y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">105</text>
-          <text x="140" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#34d399" font-weight="bold">98</text>
-          <text x="230" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#94a3b8">102</text>
-          <line x1="140" y1="132" x2="140" y2="168" stroke="#00FFFF" stroke-width="3" marker-end="url(#arH)"/>
-          <text x="140" y="68"  text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#00FFFF">current cell</text>
-          <text x="140" y="215" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#34d399">steepest neighbour (drop = 10 m over 1 cell)</text>
+          <defs><marker id="arH" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5 Z" fill="var(--hy-plate-stream)"/></marker></defs>
+          <rect x="10"  y="10"  width="80" height="60" fill="var(--hy-plate-cell)" stroke="var(--hy-plate-cell-edge)" stroke-width="1"/>
+          <rect x="100" y="10"  width="80" height="60" fill="var(--hy-plate-cell)" stroke="var(--hy-plate-cell-edge)" stroke-width="1"/>
+          <rect x="190" y="10"  width="80" height="60" fill="var(--hy-plate-cell)" stroke="var(--hy-plate-cell-edge)" stroke-width="1"/>
+          <rect x="10"  y="80"  width="80" height="60" fill="var(--hy-plate-cell)" stroke="var(--hy-plate-cell-edge)" stroke-width="1"/>
+          <rect x="100" y="80"  width="80" height="60" fill="var(--hy-plate-cell-hi)"  stroke="var(--hy-plate-cell-edge-hi)" stroke-width="2"/>
+          <rect x="190" y="80"  width="80" height="60" fill="var(--hy-plate-cell)" stroke="var(--hy-plate-cell-edge)" stroke-width="1"/>
+          <rect x="10"  y="150" width="80" height="60" fill="var(--hy-plate-cell)" stroke="var(--hy-plate-cell-edge)" stroke-width="1"/>
+          <rect x="100" y="150" width="80" height="60" fill="var(--hy-plate-cell-lo)"  stroke="var(--hy-plate-cell-edge-lo)" stroke-width="2"/>
+          <rect x="190" y="150" width="80" height="60" fill="var(--hy-plate-cell)" stroke="var(--hy-plate-cell-edge)" stroke-width="1"/>
+          <text x="50"  y="47"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--hy-plate-muted)">120</text>
+          <text x="140" y="47"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--hy-plate-muted)">115</text>
+          <text x="230" y="47"  text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--hy-plate-muted)">118</text>
+          <text x="50"  y="117" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--hy-plate-muted)">112</text>
+          <text x="140" y="117" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="var(--hy-plate-stream)" font-weight="bold">108</text>
+          <text x="230" y="117" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--hy-plate-muted)">110</text>
+          <text x="50"  y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--hy-plate-muted)">105</text>
+          <text x="140" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="var(--hy-plate-ok)" font-weight="bold">98</text>
+          <text x="230" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--hy-plate-muted)">102</text>
+          <line x1="140" y1="132" x2="140" y2="168" stroke="var(--hy-plate-stream)" stroke-width="3" marker-end="url(#arH)"/>
+          <text x="140" y="68"  text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="var(--hy-plate-stream)">current cell</text>
+          <text x="140" y="215" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="var(--hy-plate-ok)">steepest neighbour (drop = 10 m over 1 cell)</text>
         </svg>
       </div>
     </div>
@@ -393,11 +579,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
       </div>
       <p id="cursorMsg" role="status" aria-live="polite" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:8px 0 0;min-height:1.4em;">Focus the map and use the arrow keys to move the cursor.</p>
       <div class="routing-legend">
-        <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(90deg,#001a40,#34d399);"></div><span>Low → High elev.</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:rgba(255,255,255,0.9);"></div><span>Flow path</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:rgba(251,191,36,0.7);"></div><span>Contributing area</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:rgba(0,221,255,0.75);"></div><span>Stream (≥ 60 cells)</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#f87171;border-radius:50%;width:12px;height:12px;"></div><span>Drop point</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(90deg,var(--hy-plate-ramp-lo),var(--hy-plate-ok));"></div><span>Low → High elev.</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-path);"></div><span>Flow path</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-area);"></div><span>Contributing area</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-stream-soft);"></div><span>Stream (≥ 60 cells)</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-drop);border-radius:50%;width:12px;height:12px;"></div><span>Drop point</span></div>
       </div>
       <button type="button" class="run-btn" id="showWatershed" style="margin-top:10px;">Show whole watershed</button>
     </div>
@@ -438,10 +624,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
       </div>
       <p id="fishCursorMsg" role="status" aria-live="polite" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:8px 0 0;min-height:1.4em;">Focus the map and use the arrow keys to move the cursor.</p>
       <div class="routing-legend">
-        <div class="legend-item"><div class="legend-swatch" style="background:#ffffff;height:3px;"></div><span>D8 flow path</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:rgba(251,191,36,0.7);"></div><span>Contributing area</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#f87171;border-radius:50%;width:12px;height:12px;"></div><span>Drop point</span></div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#00ffff;height:3px;"></div><span>Channel (≥ 25 km²)</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-line);height:3px;"></div><span>D8 flow path</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-area);"></div><span>Contributing area</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-drop);border-radius:50%;width:12px;height:12px;"></div><span>Drop point</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--hy-plate-stream);height:3px;"></div><span>Channel (≥ 25 km²)</span></div>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
         <button type="button" class="run-btn" id="fishDropBtn">Drop at the cursor</button>
@@ -526,14 +712,14 @@ i_grid = np.linspace(5, 80, 50)
 fig, ax = plt.subplots(figsize=(7, 3.6))
 for c in (0.2, 0.35, 0.6):
     ax.plot(i_grid, c * i_grid * AREA_HA / 360.0, label=f"C = {c}")
-ax.plot([I_MM_H], [Q_m3s], "o", color="#00FFFF")
+ax.plot([I_MM_H], [Q_m3s], "o", color="#c25400")
 ax.set(xlabel="rainfall intensity i (mm/h)", ylabel="peak flow Q (m³/s)", title="Rational method (SYNTHETIC inputs)")
 ax.legend(); plt.tight_layout()</pre>
     <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:rational-method@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">SYNTHETIC rational-method example
   A = 92.16 ha (921,600 m²),  C = 0.35,  i = 40.0 mm/h
   Q = 3.584 m³/s   (= C·i·A/360 = 3.584)
   Valid for: steady uniform rain at least as long as the time of concentration,
-  constant C, small catchment. Not a measured flood.</pre><div class="aihydro-static-figure"><img alt="Line chart, rational method with SYNTHETIC inputs: peak flow in cubic metres per second rises in a straight line with rainfall intensity from 5 to 80 millimetres per hour. Three lines for runoff coefficients 0.2, 0.35 and 0.6 reach about 4, 7 and 12 cubic metres per second at 80 millimetres per hour; a cyan dot marks the worked example at 40 millimetres per hour, about 3.6 cubic metres per second on the 0.35 line." src="data:image/png;base64,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"></div></div><!--@@END static:rational-method@@--></div>
+  constant C, small catchment. Not a measured flood.</pre><div class="aihydro-static-figure"><img alt="Line chart, rational method with SYNTHETIC inputs: peak flow in cubic metres per second rises in a straight line with rainfall intensity from 5 to 80 millimetres per hour. Three lines for runoff coefficients 0.2, 0.35 and 0.6 reach about 4, 7 and 12 cubic metres per second at 80 millimetres per hour; an orange dot marks the worked example at 40 millimetres per hour, about 3.6 cubic metres per second on the 0.35 line." src="data:image/png;base64,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"></div></div><!--@@END static:rational-method@@--></div>
   </div>
 
   <h3 style="margin-top:18px;">SCS curve number — runoff depth from storm depth</h3>
@@ -571,14 +757,14 @@ for P in (40.0, 80.0):
 # the curve
 P_grid = np.linspace(0, 120, 200)
 fig, ax = plt.subplots(figsize=(7, 3.6))
-ax.plot(P_grid, scs_runoff(P_grid), color="#00DDFF")
-ax.axvline(Ia, color="#f59e0b", ls="--", label=f"Ia = {Ia:.1f} mm")
-ax.plot([40, 80], [scs_runoff(40.0), scs_runoff(80.0)], "o", color="#34d399", label="demo storms")
+ax.plot(P_grid, scs_runoff(P_grid), color="#0072b2")
+ax.axvline(Ia, color="#c25400", ls="--", label=f"Ia = {Ia:.1f} mm")
+ax.plot([40, 80], [scs_runoff(40.0), scs_runoff(80.0)], "o", color="#007a5a", label="demo storms")
 ax.set(xlabel="storm depth P (mm)", ylabel="runoff depth Q (mm)", title="SCS curve number, CN = 75 (SYNTHETIC)")
 ax.legend(); plt.tight_layout()</pre>
     <div class="aihydro-output" aria-live="polite"><!--@@BEGIN static:scs-cn@@--><div class="aihydro-static" data-static-output="prerendered"><div class="aihydro-static-note">Pre-rendered output with the default settings. Run the cell in AI-Hydro to recompute it.</div><pre class="aihydro-stdout">CN = 75:  S = 84.7 mm,  Ia = 16.9 mm
   storm P =  40.0 mm  -&gt;  runoff Q =   4.94 mm  (Q/P = 0.123),  volume = 4,552 m³
-  storm P =  80.0 mm  -&gt;  runoff Q =  26.92 mm  (Q/P = 0.337),  volume = 24,812 m³</pre><div class="aihydro-static-figure"><img alt="Line chart, SCS curve number 75 with SYNTHETIC inputs: runoff depth in millimetres stays at zero until the storm depth passes the initial abstraction of 16.9 millimetres (dashed vertical line), then rises as a curve to about 57 millimetres at 120 millimetres of rain. Two dots mark the demo storms: 40 millimetres of rain gives about 4.9 millimetres of runoff and 80 millimetres gives about 26.9." src="data:image/png;base64,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"></div></div><!--@@END static:scs-cn@@--></div>
+  storm P =  80.0 mm  -&gt;  runoff Q =  26.92 mm  (Q/P = 0.337),  volume = 24,812 m³</pre><div class="aihydro-static-figure"><img alt="Line chart, SCS curve number 75 with SYNTHETIC inputs: runoff depth in millimetres stays at zero until the storm depth passes the initial abstraction of 16.9 millimetres (dashed vertical line), then rises as a curve to about 57 millimetres at 120 millimetres of rain. Two dots mark the demo storms: 40 millimetres of rain gives about 4.9 millimetres of runoff and 80 millimetres gives about 26.9." src="data:image/png;base64,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"></div></div><!--@@END static:scs-cn@@--></div>
   </div>
 </div>
 
@@ -603,7 +789,7 @@ ax.legend(); plt.tight_layout()</pre>
   <dl class="provenance">
     <div class="prov-item"><dt>Author</dt><dd>Mohammad Galib · Purdue University</dd></div>
     <div class="prov-item"><dt>License</dt><dd>CC-BY-4.0 — free to reuse with attribution, except the §5 elevation data and poster, which are adapted Copernicus WorldDEM-30 data under the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/DEM/resources/license/License-COPDEM-30.pdf" target="_blank" rel="noopener">Licence for the use of the Copernicus WorldDEM-30</a> (notice in Sources &amp; Further Reading), not CC-BY.</dd></div>
-    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.4.0</dd></div>
+    <div class="prov-item"><dt>Module ID</dt><dd><code>watershed-runoff</code> · v0.5.0</dd></div>
     <div class="prov-item"><dt>Course</dt><dd>Introduction to Hydrology · <code>intro-hydro-2026</code></dd></div>
     <div class="prov-item"><dt>Data</dt><dd>§2–§4 and §6 are SYNTHETIC: terrain is procedurally generated (32×32, 30 m cells assumed, synthetic metres); rational-method and curve-number inputs are assumptions. §5 is REAL: the Copernicus GLO-30 DEM of the Fish River basin (USGS 01013500), cut to the divide polygon returned by AI-Hydro's watershed tool (2258.5 km²); channels are derived from that DEM at a 25 km² threshold, not mapped.</dd></div>
     <div class="prov-item"><dt>Dependencies</dt><dd>three.js r128 (supplied by the AI-Hydro bridge, 3-D only; the §5 poster and drop-rain map need no bridge); Python (numpy, matplotlib) for the two design cells; D8 code shared with Modules 9 and 10</dd></div>
@@ -611,16 +797,16 @@ ax.legend(); plt.tight_layout()</pre>
 </div>
 
   <!-- Made with AI-Hydro -->
-  <div class="aihydro-made-with" style="border-top:1px solid var(--border, rgba(125,211,252,0.10)); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--muted,#94a3b8);">
+  <div class="aihydro-made-with" style="border-top:1px solid var(--hy-border); margin-top:32px; padding:18px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Poppins',sans-serif; font-size:11px; color:var(--hy-fg-muted);">
     <span class="aihydro-mini-logo" style="display:inline-flex; align-items:center; gap:6px;">
       <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <defs><linearGradient id="aihydroMiniGrad" x1="50" y1="10" x2="50" y2="90" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#00A3FF"/><stop offset="100%" stop-color="#00DDFF"/></linearGradient></defs>
+          <stop offset="0%" stop-color="var(--hy-logo-a)"/><stop offset="100%" stop-color="var(--hy-logo-b)"/></linearGradient></defs>
         <path d="M50 10 C50 10 25 35 25 55 C25 70 35 85 50 85 C65 85 75 70 75 55 C75 35 50 10 50 10 Z" fill="url(#aihydroMiniGrad)"/>
       </svg>
-      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">AI-Hydro</a>
+      Made with <a href="https://github.com/AI-Hydro/AI-Hydro" target="_blank" rel="noopener" style="color:var(--hy-link);text-decoration:none;">AI-Hydro</a>
     </span>
-    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--cyan,#00DDFF);text-decoration:none;">CC-BY-4.0</a></span>
+    <span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--hy-link);text-decoration:none;">CC-BY-4.0</a></span>
   </div>
 </main>
 <script>
@@ -653,6 +839,61 @@ function whenReady(fn) {
   aihydroReady().then(function () { fn(); });
 }
 /*@@END js:shared/ready.js@@*/
+/*@@BEGIN js:shared/theme.js@@*/
+/* HydroTheme: read the lesson's theme and its colour tokens from script (SVG, canvas, three.js, Plotly).
+ *
+ * The host (AI-Hydro Studio) sets html[data-aihydro-theme] to light | dark | hc-dark | hc-light and updates it
+ * live. With no attribute the CSS follows prefers-color-scheme, and this helper does the same, so a lesson
+ * opened in a plain browser tab still themes itself. Colours live in shared/theme.css (--hy-*); this file only
+ * reads them, so there is one source of truth.
+ *
+ *   HydroTheme.kind()          -> 'light' | 'dark' | 'hc-dark' | 'hc-light'
+ *   HydroTheme.color('axis')   -> '#57606a'  (computed value of --hy-axis; 'hy-axis' and '--hy-axis' also work)
+ *   HydroTheme.series(i)       -> colour of --hy-series-<i>, i = 1..5;  HydroTheme.dash(i) -> dash array or ''
+ *   HydroTheme.onChange(cb)    -> cb(kind) on every theme switch (attribute change or OS scheme change);
+ *                                 returns a function that stops listening
+ * Redraw canvases, three.js materials and Plotly layouts in the callback; SVG that uses var(--hy-...) needs none.
+ */
+var HydroTheme = (function () {
+  var KINDS = ['light', 'dark', 'hc-dark', 'hc-light'];
+  var ATTR = 'data-aihydro-theme';
+  function root() { return typeof document !== 'undefined' ? document.documentElement : null; }
+  function osDark() {
+    try { return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); } catch (e) { return false; }
+  }
+  function kind() {
+    var r = root(), a = r && r.getAttribute ? r.getAttribute(ATTR) : null;
+    if (a && KINDS.indexOf(a) >= 0) return a;
+    return osDark() ? 'dark' : 'light';
+  }
+  function color(name) {
+    var n = String(name);
+    if (n.indexOf('--') !== 0) n = '--' + (n.indexOf('hy-') === 0 ? n : 'hy-' + n);
+    var r = root(), v = '';
+    try { v = window.getComputedStyle(r).getPropertyValue(n); } catch (e) { v = ''; }
+    return (v || '').trim();
+  }
+  function series(i) { return color('series-' + i); }
+  function dash(i) { var d = color('dash-' + i); return d === 'none' ? '' : d; }
+  function onChange(cb) {
+    var stops = [], last = kind();
+    function fire() { var k = kind(); if (k !== last) { last = k; cb(k); } }
+    var r = root();
+    if (r && typeof MutationObserver !== 'undefined') {
+      var mo = new MutationObserver(fire);
+      mo.observe(r, { attributes: true, attributeFilter: [ATTR] });
+      stops.push(function () { mo.disconnect(); });
+    }
+    try {
+      var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq && mq.addEventListener) { mq.addEventListener('change', fire); stops.push(function () { mq.removeEventListener('change', fire); }); }
+    } catch (e) { /* no matchMedia: the attribute path still works */ }
+    return function () { stops.forEach(function (s) { s(); }); };
+  }
+  return { kinds: KINDS.slice(), kind: kind, color: color, series: series, dash: dash, onChange: onChange };
+})();
+if (typeof window !== 'undefined') window.HydroTheme = HydroTheme;
+/*@@END js:shared/theme.js@@*/
 /*@@BEGIN js:shared/a11y.js@@*/
 /* Accessibility helpers shared by every module (keyboard access, live announcements,
  * reduced motion). Single source of truth: shared/a11y.js, inlined by scripts/build_modules.py.
@@ -1104,6 +1345,23 @@ var HydroCmap = (function () {
   'use strict';
 
   HydroA11y.wireScrollNav();
+  /* colours of the dark map/scene plate, read from the shared tokens (they do not change with the theme) */
+  var PL = { plate: HydroTheme.color('plate') };
+  ['ink','line','path','stream','stream-soft','drop','focus','area','shade'].forEach(function (k) { PL[k] = HydroTheme.color('plate-' + k); });
+  /* Both 3-D stages stay on the dark plate in every theme. A host bridge may repaint scene.background with its own
+     stage colour when the theme changes, so the plate is put back after each switch. */
+  var plateScenes = [];
+  function holdPlate (ctx) {
+    plateScenes = plateScenes.filter(function (c) { return c.canvas !== ctx.canvas; }).concat(ctx);
+    if (ctx.scene && ctx.THREE) ctx.scene.background = new ctx.THREE.Color(PL.plate);
+  }
+  HydroTheme.onChange(function () {
+    requestAnimationFrame(function () {
+      plateScenes.forEach(function (c) {
+        if (c.scene && c.THREE) { c.scene.background = new c.THREE.Color(PL.plate); if (c.invalidate) c.invalidate(); }
+      });
+    });
+  });
 
   /* One D8 implementation (shared/d8.js): priority-flood fill, drop/distance directions, accumulation */
 /*@@BEGIN js:shared/d8.js@@*/
@@ -1313,7 +1571,7 @@ function d8Upstream(rec, target) {
       return 'rgb(' + r + ',' + g + ',' + b + ')';
     }
     function drawOutlet () {
-      ctx.fillStyle = '#00FFFF';
+      ctx.fillStyle = PL.stream;
       ctx.beginPath();
       ctx.arc((oI + 0.5) * cW, (oJ + 0.5) * cH, 5, 0, Math.PI * 2);
       ctx.fill();
@@ -1325,7 +1583,7 @@ function d8Upstream(rec, target) {
           ctx.fillRect(i * cW, j * cH, cW + 0.5, cH + 0.5);
         }
       /* stream network: cells with at least STREAM_MIN_CELLS cells draining through them */
-      ctx.fillStyle = 'rgba(0,221,255,0.75)';
+      ctx.fillStyle = PL['stream-soft'];
       for (var k = 0; k < N * N; k++)
         if (ROUTE.acc[k] >= STREAM_MIN_CELLS) ctx.fillRect((k % N) * cW + cW * 0.25, ((k / N) | 0) * cH + cH * 0.25, cW * 0.5, cH * 0.5);
       drawOutlet();
@@ -1337,12 +1595,12 @@ function d8Upstream(rec, target) {
     function drawState () {
       drawBase();
       if (area) {
-        ctx.fillStyle = 'rgba(251,191,36,0.35)';
+        ctx.fillStyle = PL.area;
         for (var q = 0; q < area.length; q++)
           ctx.fillRect((area[q] % N) * cW, ((area[q] / N) | 0) * cH, cW, cH);
       }
       if (curPath && curPath.length > 1) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctx.strokeStyle = PL.path;
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         ctx.moveTo((curPath[0] % N + 0.5) * cW, (((curPath[0] / N) | 0) + 0.5) * cH);
@@ -1351,16 +1609,16 @@ function d8Upstream(rec, target) {
         ctx.stroke();
       }
       if (dropCell != null) {
-        ctx.fillStyle = '#f87171';
+        ctx.fillStyle = PL.drop;
         ctx.beginPath();
         ctx.arc((dropCell % N + 0.5) * cW, (((dropCell / N) | 0) + 0.5) * cH, cW * 0.6, 0, Math.PI * 2);
         ctx.fill();
       }
       drawOutlet();
       if (focused) {                                   /* keyboard cursor: two-tone outline, visible on any cell colour */
-        ctx.lineWidth = 3; ctx.strokeStyle = '#000';
+        ctx.lineWidth = 3; ctx.strokeStyle = PL.ink;
         ctx.strokeRect(cursor.c * cW + 1.5, cursor.r * cH + 1.5, cW - 3, cH - 3);
-        ctx.lineWidth = 1.5; ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5; ctx.strokeStyle = PL.line;
         ctx.strokeRect(cursor.c * cW + 1.5, cursor.r * cH + 1.5, cW - 3, cH - 3);
       }
     }
@@ -1480,11 +1738,14 @@ function d8Upstream(rec, target) {
         }
         var lGeo = new THREE.BufferGeometry();
         lGeo.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3));
-        scene.add(new THREE.LineSegments(lGeo, new THREE.LineBasicMaterial({ color: 0x00FFFF, opacity: 0.8, transparent: true })));
+        scene.add(new THREE.LineSegments(lGeo, new THREE.LineBasicMaterial({ color: PL.stream, opacity: 0.8, transparent: true })));
 
-        scene.add(new THREE.AmbientLight(0x334466, 0.9));
-        var dl = new THREE.DirectionalLight(0x00DDFF, 1.4); dl.position.set(6,12,4); scene.add(dl);
-        var dl2 = new THREE.DirectionalLight(0x334433, 0.5); dl2.position.set(-4,6,-6); scene.add(dl2);
+        /* white, untinted lights (the bridge's blue ambient and cyan key light would tint the elevation colours) */
+        scene.children.filter(function (o) { return o.isLight; }).forEach(function (o) { scene.remove(o); });
+        holdPlate(ctx);
+        scene.add(new THREE.AmbientLight(PL.line, 0.5));
+        var dl = new THREE.DirectionalLight(PL.line, 0.8); dl.position.set(6,12,4); scene.add(dl);
+        var dl2 = new THREE.DirectionalLight(PL.line, 0.25); dl2.position.set(-4,6,-6); scene.add(dl2);
 
         camera.position.set(10, 9, 10);
         controls.target.set(0, 1.2, 0);
@@ -1602,25 +1863,25 @@ function d8Upstream(rec, target) {
     function cellPx (idx) { return [((idx % FISH.C) + 0.5) * S, (((idx / FISH.C) | 0) + 0.5) * S]; }
 
     function draw () {
-      ctx2.fillStyle = '#0a1622'; ctx2.fillRect(0, 0, map.width, map.height);
+      ctx2.fillStyle = PL.plate; ctx2.fillRect(0, 0, map.width, map.height);
       if (poster && poster.complete && poster.naturalWidth) ctx2.drawImage(poster, 0, 0, map.width, map.height);
       var d = FISH.drop, q, p;
       if (d) {
-        ctx2.fillStyle = 'rgba(251,191,36,0.38)';
+        ctx2.fillStyle = PL.area;
         for (q = 0; q < d.upstream.length; q++) ctx2.fillRect((d.upstream[q] % FISH.C) * S, ((d.upstream[q] / FISH.C) | 0) * S, S, S);
         ctx2.lineJoin = 'round'; ctx2.lineCap = 'round';
         ctx2.beginPath();
         for (q = 0; q < d.path.length; q++) { p = cellPx(d.path[q]); if (q) ctx2.lineTo(p[0], p[1]); else ctx2.moveTo(p[0], p[1]); }
-        ctx2.strokeStyle = 'rgba(0,0,0,0.6)'; ctx2.lineWidth = 4; ctx2.stroke();
-        ctx2.strokeStyle = '#ffffff'; ctx2.lineWidth = 2; ctx2.stroke();
+        ctx2.strokeStyle = PL.shade; ctx2.lineWidth = 4; ctx2.stroke();
+        ctx2.strokeStyle = PL.line; ctx2.lineWidth = 2; ctx2.stroke();
         p = cellPx(d.idx);
-        ctx2.beginPath(); ctx2.arc(p[0], p[1], 5, 0, 6.2832); ctx2.fillStyle = '#f87171'; ctx2.fill();
-        ctx2.strokeStyle = '#ffffff'; ctx2.lineWidth = 1.5; ctx2.stroke();
+        ctx2.beginPath(); ctx2.arc(p[0], p[1], 5, 0, 6.2832); ctx2.fillStyle = PL.drop; ctx2.fill();
+        ctx2.strokeStyle = PL.line; ctx2.lineWidth = 1.5; ctx2.stroke();
       }
       p = cellPx(FISH.outletIdx);
-      ctx2.beginPath(); ctx2.arc(p[0], p[1], 5, 0, 6.2832); ctx2.strokeStyle = '#00ffff'; ctx2.lineWidth = 2; ctx2.stroke();
+      ctx2.beginPath(); ctx2.arc(p[0], p[1], 5, 0, 6.2832); ctx2.strokeStyle = PL.stream; ctx2.lineWidth = 2; ctx2.stroke();
       if (document.activeElement === map) {
-        ctx2.strokeStyle = '#fde047'; ctx2.lineWidth = 2;
+        ctx2.strokeStyle = PL.focus; ctx2.lineWidth = 2;
         ctx2.strokeRect(cur.c * S - 1, cur.r * S - 1, S + 2, S + 2);
       }
     }
@@ -1696,14 +1957,14 @@ function d8Upstream(rec, target) {
       var m = new T.Mesh(new T.SphereGeometry(size, 12, 8), new T.MeshBasicMaterial({ color: colour })), p = at(idx, 0.03);
       m.position.set(p[0], p[1], p[2]); g.add(m);
     }
-    ball(FISH.outletIdx, 0x00ffff, 0.07);
+    ball(FISH.outletIdx, PL.stream, 0.07);
     if (d) {
       for (q = 0; q < d.path.length; q++) { var p = at(d.path[q], 0.02); pts.push(p[0], p[1], p[2]); }
       var lg = new T.BufferGeometry();
       lg.setAttribute('position', new T.Float32BufferAttribute(pts, 3));
-      g.add(new T.Line(lg, new T.LineBasicMaterial({ color: 0xffffff })));
-      g.add(new T.Points(lg, new T.PointsMaterial({ color: 0xffffff, size: 3, sizeAttenuation: false })));   /* 1 px lines are hard to see */
-      ball(d.idx, 0xf87171, 0.06);
+      g.add(new T.Line(lg, new T.LineBasicMaterial({ color: PL.line })));
+      g.add(new T.Points(lg, new T.PointsMaterial({ color: PL.line, size: 3, sizeAttenuation: false })));   /* 1 px lines are hard to see */
+      ball(d.idx, PL.drop, 0.06);
     }
     ctx.scene.add(g);
     if (ctx.invalidate) ctx.invalidate();
@@ -1747,19 +2008,20 @@ function d8Upstream(rec, target) {
     var ol = drape(FISH.outline, 0.012, true), flat = [], q;
     for (q = 0; q < ol.length; q++) flat.push(ol[q][0], ol[q][1], ol[q][2]);
     var og = new T.BufferGeometry(); og.setAttribute('position', new T.Float32BufferAttribute(flat, 3));
-    scene.add(new T.Line(og, new T.LineBasicMaterial({ color: 0xffffff })));
+    scene.add(new T.Line(og, new T.LineBasicMaterial({ color: PL.line })));
     var seg = [], pl;
     for (i = 0; i < FISH.channels.length; i++) {
       pl = drape(FISH.channels[i], 0.012, false);
       for (q = 1; q < pl.length; q++) seg.push(pl[q - 1][0], pl[q - 1][1], pl[q - 1][2], pl[q][0], pl[q][1], pl[q][2]);
     }
     var cg = new T.BufferGeometry(); cg.setAttribute('position', new T.Float32BufferAttribute(seg, 3));
-    scene.add(new T.LineSegments(cg, new T.LineBasicMaterial({ color: 0x00ffff })));
+    scene.add(new T.LineSegments(cg, new T.LineBasicMaterial({ color: PL.stream })));
 
     /* the bridge adds a blue-tinted ambient and a cyan key light; replace them so the elevation colours read as drawn */
     scene.children.filter(function (o) { return o.isLight; }).forEach(function (o) { scene.remove(o); });
-    scene.add(new T.AmbientLight(0xffffff, 0.5));
-    var dl = new T.DirectionalLight(0xffffff, 0.7); dl.position.set(-4, 8, -3); scene.add(dl);
+    holdPlate(ctx);
+    scene.add(new T.AmbientLight(PL.line, 0.5));
+    var dl = new T.DirectionalLight(PL.line, 0.7); dl.position.set(-4, 8, -3); scene.add(dl);
     ctx.camera.position.set(1.8, 5.0, 4.6);
     if (ctx.controls) { ctx.controls.target.set(0, 0, 0); ctx.controls.update(); }
     FISH.markers = null;

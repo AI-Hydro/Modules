@@ -33,3 +33,9 @@ Merged the three lesson packets (precipitation-point-to-basin, evapotranspiratio
 Phase B: course 0.4.0 (eleven modules, ten learning modules plus the certificate, estimatedHours 7), certificate 0.1.3 (counts), renumbered cross-references, DOI scan fixed for SICI-style DOIs, tests tightened (module set equals course set; SYNTHETIC labelling covers the new lessons), generated README/course page/API rebuilt.
 Verification (no network): `build_modules.py --check`, `render_static_outputs.py --check`, `gen_docs.py --check`, `validate_manifests.py`, `check_csp.py`, `build_api.py --check`, `/opt/miniconda3/bin/python -s -E -m pytest tests -q` (with and without `CAMELS_ROOT`), `node --test tests/js/*.test.js`.
 Not done: rendering the three new lessons inside the installed AI-Hydro build; owner decisions on the references without DOI (FAO-56, Budyko 1974, NEH-4).
+
+## 2026-11-24 — Light theme fast-track (Modules side)
+
+Branch `feat/light-theme-fasttrack`. Shared `theme.css`/`theme.js`; reading-a-hydrograph 0.5.0 and watershed-runoff 0.5.0 on the tokens; evapotranspiration-budyko 0.1.1 axis contrast fix; course 0.4.2; catalog regenerated. Tests: T1 (tokens), T2 (ratchet), T3 (HydroTheme) added; the existing suites pass (see the PR for the commands and counts).
+Not done: the other eight lessons; the extension side that sets `data-aihydro-theme` (separate PR); a check in the installed AI-Hydro build (owner's T5); a light stage for the Fish River scene.
+

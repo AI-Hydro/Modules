@@ -2,7 +2,7 @@
   "moduleId": "reading-a-hydrograph",
   "title": "Reading a Hydrograph",
   "description": "Anatomy of a storm hydrograph — rising limb, peak, recession — with an interactive BFI explorer on a synthetic event, a curve-number storm-pair comparison showing non-linear runoff response, and a live Python cell that plots a real CAMELS-US water year (observed flow and basin precipitation) for three contrasting gauges.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "CC-BY-4.0",
   "topic": "streamflow",
   "level": "intro",

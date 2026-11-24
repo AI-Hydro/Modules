@@ -1,7 +1,7 @@
 {
   "pet-two-ways": {
     "mode": "headless",
-    "source_sha256": "a78746926531188941a68888ed330f0b9c9e648d53acbf8632ae9eca70bda10c",
+    "source_sha256": "f7cf76daca1bf15374adc7d20261a0678528f3bb11956fdc2448d8adbdda42d5",
     "figures": 1,
     "python": "3.13.2",
     "numpy": "2.4.6",
@@ -9,7 +9,7 @@
   },
   "budyko-camels": {
     "mode": "headless",
-    "source_sha256": "f4b959afa078612c041a9e493350375f536389509038b94e85a9c690d2878e1e",
+    "source_sha256": "567c8479e06050305e58a743d7dba29fee958fe3fe282863511d9983741ebb85",
     "figures": 1,
     "python": "3.13.2",
     "numpy": "2.4.6",

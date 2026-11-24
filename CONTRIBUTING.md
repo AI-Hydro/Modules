@@ -58,7 +58,7 @@ The embedded block also carries `ai_hydro_preview_min_version`. `scripts/validat
 ## Branding contract
 
 Every module must follow the [AI-Hydro brand guide](https://github.com/AI-Hydro/AI-Hydro/blob/main/branding.md):
-- Dark-first design (`#0a0a15` background)
+- Themeable: colours come from the shared `--hy-*` tokens (`shared/theme.css`); light by default, dark and high contrast follow the host (`html[data-aihydro-theme]`) or `prefers-color-scheme`. New lessons use the tokens; the brand look (cyan on dark) is the dark theme
 - Cyan/blue accent palette (`#00A3FF`, `#00DDFF`)
 - Quicksand (display), Poppins (headings), Nunito (body), JetBrains Mono (code), loaded from the Google Fonts link with system-font fallbacks; that link is the **only** external host a module may reference
 - AI-Hydro logo in the module header
@@ -82,6 +82,7 @@ Code used by more than one module lives in `shared/` and is inlined between `@@B
 | `shared/ready.js` | one shared promise behind `whenReady()`; never write your own `setInterval` poll |
 | `shared/quiz.js`, `quiz.css` | the checkpoint engine |
 | `shared/a11y.js`, `a11y.css` | keyboard sliders, `activatable`, `data-scroll` navigation, live regions, reduced-motion helper, focus styles |
+| `shared/theme.css`, `theme.js` | colour tokens for light, dark and high contrast, the dark "plate" for maps and 3-D stages, the paper card for matplotlib figures, print sheet; `HydroTheme` reads them from script (canvas, three.js, Plotly) and fires `onChange`. No new hard-coded colours: `tests/test_theme_ratchet.py` counts them |
 | `shared/cmap.js` | viridis colour map and shaded-relief renderer (use it instead of red-green scales) |
 | `shared/geosketch.js` | longitude/latitude SVG sketch of points and polygons |
 | `shared/lyne_hollick.*`, `shared/d8.*` | the one baseflow filter and D8 pipeline (JS and Python twins) |

@@ -2,7 +2,7 @@
   "moduleId": "evapotranspiration-budyko",
   "title": "The Return Flow: Evapotranspiration and the Budyko Curve",
   "description": "Compute potential evapotranspiration two ways (Hargreaves–Samani and Priestley–Taylor) from real Daymet weather, reproduce the tabulated CAMELS pet_mean as a check, derive long-term actual evapotranspiration from P − Q, and place 670 CAMELS basins in Budyko space with a Fu curve whose ω you fit yourself.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "CC-BY-4.0",
   "topic": "evapotranspiration",
   "level": "intro",
