@@ -210,7 +210,7 @@
     "moduleId": "evapotranspiration-budyko",
     "title": "The Return Flow: Evapotranspiration and the Budyko Curve",
     "description": "Compute potential evapotranspiration two ways (Hargreaves\u2013Samani and Priestley\u2013Taylor) from real Daymet weather, reproduce the tabulated CAMELS pet_mean as a check, derive long-term actual evapotranspiration from P \u2212 Q, and place 670 CAMELS basins in Budyko space with a Fu curve whose \u03c9 you fit yourself.",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "CC-BY-4.0",
     "topic": "evapotranspiration",
     "level": "intro",
@@ -247,7 +247,7 @@
     "downloadCount": 0,
     "githubReactions": 0,
     "discussionUrl": "",
-    "updatedAt": "2026-11-17",
+    "updatedAt": "2026-11-24",
     "certification": {
       "metadata_complete": true,
       "checks_passed": [
@@ -318,7 +318,7 @@
     "moduleId": "reading-a-hydrograph",
     "title": "Reading a Hydrograph",
     "description": "Anatomy of a storm hydrograph \u2014 rising limb, peak, recession \u2014 with an interactive BFI explorer on a synthetic event, a curve-number storm-pair comparison showing non-linear runoff response, and a live Python cell that plots a real CAMELS-US water year (observed flow and basin precipitation) for three contrasting gauges.",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "license": "CC-BY-4.0",
     "topic": "streamflow",
     "level": "intro",
@@ -354,7 +354,7 @@
     "downloadCount": 0,
     "githubReactions": 0,
     "discussionUrl": "",
-    "updatedAt": "2026-11-17",
+    "updatedAt": "2026-11-24",
     "certification": {
       "metadata_complete": true,
       "checks_passed": [
@@ -534,7 +534,7 @@
     "moduleId": "watershed-runoff",
     "title": "The Watershed: Where Rain Becomes Runoff",
     "description": "Define a catchment, trace D8 flow paths across a SYNTHETIC 3-D terrain (depression-filled, drop/distance routing, stream network from flow accumulation), orbit a real basin (the Fish River, Maine, from the Copernicus GLO-30 DEM) and drop rain on it, then turn rainfall into runoff with an executable rational-method cell and an SCS curve-number cell.",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "license": "CC-BY-4.0",
     "topic": "watershed-hydrology",
     "level": "intro",
@@ -571,7 +571,7 @@
     "downloadCount": 0,
     "githubReactions": 0,
     "discussionUrl": "",
-    "updatedAt": "2026-11-17",
+    "updatedAt": "2026-11-24",
     "certification": {
       "metadata_complete": true,
       "checks_passed": [

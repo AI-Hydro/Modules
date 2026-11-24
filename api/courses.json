@@ -3,7 +3,7 @@
     "courseId": "intro-hydro-2026",
     "title": "Introduction to Hydrology",
     "abstract": "A hands-on, animated tour through the whole hydrologic cycle \u2014 from the first flash of water vapour rising off the ocean, through precipitation, evapotranspiration and runoff generation, to a full basin characterisation at your fingertips. Ten learning modules, each showcasing a different interactive capability of the AI-Hydro learning hub, followed by a personalised certificate of completion.",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "author": "Mohammad Galib, Purdue University",
     "authorAffiliation": "Purdue University",
     "authorUrl": "https://github.com/mgalib",
@@ -132,6 +132,6 @@
     "isFeatured": true,
     "manifestUrl": "https://raw.githubusercontent.com/AI-Hydro/Modules/main/courses/intro-to-hydrology/course.json",
     "githubUrl": "https://github.com/AI-Hydro/Modules/tree/main/courses/intro-to-hydrology",
-    "updatedAt": "2026-11-17"
+    "updatedAt": "2026-11-24"
   }
 ]
